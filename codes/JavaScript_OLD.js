@@ -482,7 +482,7 @@ Macro.add('setcoords', {
 
         // SOURCE DE VÉRITÉ UNIQUE pour le passage actuel
         const currentPassage = State.variables.currentPassage ||
-                              State.passage?.title ||
+                              State.passage ||
                               "Geole";
 
         if (!currentPassage) {
@@ -525,7 +525,7 @@ window.setup.ensurePassageCoords = function(passageName) {
     const v = State.variables;
     v.passageCoords = v.passageCoords || {};
 
-    const actualPassageName = passageName || State.variables.currentPassage || State.passage?.title || 'Geole';
+    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
 
     // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
     if (!v.passageCoords[actualPassageName] ||
@@ -552,7 +552,7 @@ window.setup.updateFollowersCoordinates = function() {
 
     // SOURCE DE VÉRITÉ FIABLE pour le passage actuel
     const currentPassage = State.variables.currentPassage ||
-                          State.passage?.title ||
+                          State.passage ||
                           'Geole';
 
     console.log(`📍 updateFollowersCoordinates pour: "${currentPassage}"`);
@@ -593,7 +593,7 @@ window.setup.updateFollowersCoordinates = function() {
   Macro.add('displaylocation', {
     handler: function() {
       const v = V();
-      const currentPassage = State.passage.title;
+      const currentPassage = State.passage;
       // Récupérer les coordonnées du passage actuel
       const passageCoords = (v.passageCoords || {})[currentPassage];
       if (!passageCoords) {
@@ -855,7 +855,7 @@ window.setup.updateFollowersCoordinates = function() {
       npc.health = npc.maxHealth || 20;
 
       // CORRECTION CRITIQUE : Utiliser State.currentPassage si disponible
-      const currentPassage = State.passage?.title || State.variables.currentPassage ||'PassageInconnu';
+      const currentPassage = State.passage || State.variables.currentPassage ||'PassageInconnu';
       npc.passage = currentPassage;
 
       // CORRECTION : Utiliser les coordonnées du passage actuel
@@ -914,7 +914,7 @@ window.setup.updateFollowersCoordinates = function() {
         case 'fix':
         case 'fixed':
           npc.status = 'fixed';
-          npc.passage = State.passage.title;
+          npc.passage = State.passage;
           npc.isBuddy = true;
           moveType = 'fixed';
           break;
@@ -960,7 +960,7 @@ Macro.add('pnjfollow', {
 
         // SOURCE DE VÉRITÉ FIABLE
         const currentPassage = State.variables.currentPassage ||
-                              State.passage?.title ||
+                              State.passage ||
                               'Geole';
 
         console.log(`📍 Passage actuel: "${currentPassage}"`);
@@ -1012,7 +1012,7 @@ Macro.add('pnjfollow', {
       npc.status = 'fixed';
 
       // CORRECTION : Utiliser State.currentPassage
-      const currentPassage = State.passage?.title || State.variables.currentPassage ||'PassageInconnu';
+      const currentPassage = State.passage || State.variables.currentPassage ||'PassageInconnu';
       npc.passage = currentPassage;
       npc.isAlive = true;
       npc.isActive = true;
@@ -1057,7 +1057,7 @@ Macro.add('pnjfollow', {
       window.setup.notifyPnjMove(pnjId, 'goto');
 
       // Mettre à jour l'affichage si le PNJ est dans le même passage
-      if (State.passage.title === targetPassage) {
+      if (State.passage === targetPassage) {
         window.renderBuddiesPanel && window.renderBuddiesPanel();
       }
     }
@@ -1214,7 +1214,7 @@ Macro.add('pnjfollow', {
       npc.isActive = true;
 
       const v = V();
-      const currentPassage = State.passage.title;
+      const currentPassage = State.passage;
       const passageCoords = (v.passageCoords || {})[currentPassage];
 
       if (!passageCoords) {
@@ -1569,7 +1569,7 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
     // VALIDATION de la destination
     const safeDestinationPassage = destinationPassage ||
                                   State.variables.currentPassage ||
-                                  State.passage?.title ||
+                                  State.passage ||
                                   'Geole';
 
     if (!safeDestinationPassage) {
@@ -1761,8 +1761,8 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
     });
 
     console.log("📍 Coordonnées joueur:", v.playerCoordinates);
-    console.log("📍 Passage actuel:", State.passage?.title);
-    console.log("📍 Coordonnées passage actuel:", v.passageCoords?.[State.passage?.title]);
+    console.log("📍 Passage actuel:", State.passage);
+    console.log("📍 Coordonnées passage actuel:", v.passageCoords?.[State.passage]);
     console.groupEnd();
   };
 
@@ -3712,7 +3712,7 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
       const rewardLines = [];
       // --- Récompense en or ---
       if (reward.gold) {
-        v.gold = (v.gold || 0) + Number(reward.gold || 0);
+        v.gold = (v.gold || 0) + Number(reward.gold);
         rewardLines.push(`• ${Number(reward.gold || 0)} or`);
       }
       // --- Récompenses objets ---
@@ -3880,7 +3880,7 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
   })();
 
   /* ==========================================================
-  FONCTION : Notification de mouvement PNJ avec réactions JSON
+     Notification de mouvement PNJ avec réactions JSON
   ========================================================== */
 
   window.setup.notifyPnjMove = function(pnjId, moveType) {
@@ -4090,7 +4090,7 @@ window.setup.validatePNJCoordinates = function(pnjId) {
 
     // Validation du passage
     if (!npc.passage && npc.isSpawned) {
-        npc.passage = State.variables.currentPassage || State.passage?.title || 'Geole';
+        npc.passage = State.variables.currentPassage || State.passage || 'Geole';
     }
 
     console.log(`📍 Coordonnées validées pour ${pnjId}: (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent}) dans ${npc.passage}`);
@@ -4105,7 +4105,7 @@ window.setup.validatePNJCoordinates = function(pnjId) {
         const v = State.variables;
 
         // VERSION CORRIGÉE : Utiliser la source de vérité fiable
-        const currentPassage = State.passage?.title || State.variables.currentPassage || 'Geole';
+        const currentPassage = State.passage || State.variables.currentPassage || 'Geole';
 
         if (!currentPassage) {
             console.error("❌ ERREUR CRITIQUE: Impossible de déterminer le passage actuel");
@@ -4249,7 +4249,6 @@ window.setup.validatePNJCoordinates = function(pnjId) {
       window.setup.showNotification('Impossible', `${npc.name} ne peut pas recevoir d'objets`, 3000);
       return false;
     }
-    // Vérifier si l'item existe dans l'inventaire du joueur
     const playerInventory = v.inventory || [];
     const playerItem = playerInventory.find(item => item.id === itemId);
     if (!playerItem || playerItem.qty < quantity) {
@@ -4260,7 +4259,6 @@ window.setup.validatePNJCoordinates = function(pnjId) {
     // CORRECTION : RETIRER L'OBJET DE L'INVENTAIRE DU JOUEUR
     playerItem.qty -= quantity;
     if (playerItem.qty <= 0) {
-      // Supprimer l'objet si la quantité devient 0
       v.inventory = playerInventory.filter(item => item.id !== itemId);
       // Déséquiper l'objet si il était équipé
       const equipped = v.equipped || {};
@@ -4494,7 +4492,6 @@ window.setup.validatePNJCoordinates = function(pnjId) {
   window.renderBuddiesPanel = function() {
     const v = V();
     const $panel = $('#buddies-panel');
-    if (!$panel.length) return;
     // --- Sauvegarde du menu si ouvert ---
     const $existingMenu = $('#buddy-context-menu');
     const hasMenu = $existingMenu.length > 0;
@@ -4690,7 +4687,7 @@ window.setup.validatePNJCoordinates = function(pnjId) {
       } else if (!npc.isActive) {
         addOption('Rappeler', () => {
           npc.isActive = true;
-          npc.passage = State.passage.title;
+          npc.passage = State.passage;
           window.setup.notifyBuddy(`${npc.name} revient.`);
           window.renderBuddiesPanel();
         });
@@ -4698,10 +4695,10 @@ window.setup.validatePNJCoordinates = function(pnjId) {
         if (npc.status === 'follow') {
           addOption('Rester ici', () => {
             npc.status = 'fixed';
-            npc.passage = State.passage.title;
+            npc.passage = State.passage;
             // Mettre à jour les coordonnées avec le passage actuel
             const v = V();
-            const passageCoords = (v.passageCoords || {})[State.passage.title];
+            const passageCoords = (v.passageCoords || {})[State.passage];
             if (passageCoords) {
               npc.coordinates = {
                 x: passageCoords.x,
@@ -4722,7 +4719,7 @@ window.setup.validatePNJCoordinates = function(pnjId) {
             npc.status = 'follow';
 
             // Mise à jour IMMÉDIATE et sûre des coordonnées
-            const currentPassage = State.passage?.title;
+            const currentPassage = State.passage;
             const passageCoords = (v.passageCoords || {})[currentPassage];
 
             if (passageCoords) {
@@ -5118,7 +5115,7 @@ window.setup.validatePNJCoordinates = function(pnjId) {
     }
   };
 
-  // CHARGEMENT ASYNCRONE AVEC INDEX
+  // CHARGEMENT ASYNCHRONE AVEC INDEX
   async function loadAllPNJ() {
     if (window.setup.pnjState.loading) {
       console.log("⚠️ Chargement PNJ déjà en cours");
@@ -5331,7 +5328,7 @@ async function detectAvailablePNJs() {
 
         // Correspondance exacte
         if (searchString === searchId) {
-          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId} (${searchString})`);
           return pnjData;
         }
 
@@ -5426,9 +5423,9 @@ window.setup.getPnjData = function(pnjId) {
     };
 };
 
-  /* ==========================================================
-     FONCTION DE RECHERCHE PNJ — VERSION AMÉLIORÉE POUR VOTRE STRUCTURE
-     ========================================================== */
+  // ==========================================================
+  // FONCTION DE RECHERCHE PNJ — VERSION AMÉLIORÉE POUR VOTRE STRUCTURE
+  // ==========================================================
   window.setup.loadPNJ = function(id) {
     if (!id || typeof id !== 'string') {
       console.warn("❌ ID PNJ manquant ou invalide:", id);
@@ -5478,7 +5475,7 @@ window.setup.getPnjData = function(pnjId) {
 
         // Correspondance exacte
         if (searchString === searchId) {
-          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId} (${searchString})`);
           return pnjData;
         }
 
@@ -5487,13 +5484,13 @@ window.setup.getPnjData = function(pnjId) {
         const normalizedString = searchString.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
         if (normalizedString === normalizedSearch) {
-          console.log(`✅ PNJ trouvé par correspondance normalisée: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance normalisée: ${pnjId} (${searchString})`);
           return pnjData;
         }
 
         // Correspondance partielle (contient le terme)
         if (normalizedString.includes(normalizedSearch) || normalizedSearch.includes(normalizedString)) {
-          console.log(`✅ PNJ trouvé par correspondance partielle: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance partielle: ${pnjId} (${searchString})`);
           return pnjData;
         }
       }
@@ -5626,7 +5623,7 @@ window.setup.getPnjData = function(pnjId) {
           body: JSON.stringify({
             pnj_id: pnjId,
             player_message: text,
-            history: history.slice(-12),
+            player_history: history.slice(-12),
             pnj_data: pnj
           })
         });
@@ -5664,6 +5661,9 @@ window.setup.getPnjData = function(pnjId) {
     setTimeout(() => $input.focus(), 100);
   };
 
+  // ==========================================================
+  // DEBUG IMMÉDIAT
+  // ==========================================================
   // Remplacer TOUTES les références à v dans window.setup.debugImmediate
   window.setup.debugImmediate = function() {
     console.group("🚨 DIAGNOSTIC URGENT");
@@ -5675,7 +5675,6 @@ window.setup.getPnjData = function(pnjId) {
 
     // Passage actuel - CORRECTION CRITIQUE
     console.log("📍 State.passage:", State.passage);
-    console.log("📍 State.passage.title:", State.passage?.title);
 
     // Variables - CORRECTION : Utiliser State.variables directement
     const variables = State.variables;
@@ -5696,14 +5695,13 @@ window.setup.getPnjData = function(pnjId) {
     window.setup.debugImmediate();
   }, 1000);
 
-window.setup.debugLocationSystem = function() {
+  window.setup.debugLocationSystem = function() {
     console.group("🔍 DIAGNOSTIC SYSTÈME LOCALISATION");
 
     const v = State.variables;
 
     console.log("📍 Passage actuel:");
     console.log("  - State.passage:", State.passage);
-    console.log("  - State.passage.title:", State.passage?.title);
     console.log("  - State.variables.currentPassage:", v.currentPassage);
 
     console.log("🗺️ Coordonnées:");
@@ -5731,7 +5729,7 @@ window.setup.debugLocationSystem = function() {
     console.log("🎮 STORY READY - INITIALISATION SÉCURISÉE");
 
     // 🔴 CORRECTION CRITIQUE : Synchroniser IMMÉDIATEMENT currentPassage
-    State.variables.currentPassage = State.passage?.title || 'Geole';
+    State.variables.currentPassage = State.passage || 'Geole';
     console.log(`🔧 State.variables.currentPassage = "${State.variables.currentPassage}"`);
 
     // Initialiser les variables de base
@@ -5799,18 +5797,11 @@ window.setup.ensurePassageCoords = function(passageName) {
     const v = State.variables;
     v.passageCoords = v.passageCoords || {};
 
-    // SOURCE DE VÉRITÉ UNIQUE pour le passage actuel
-    const actualPassageName = passageName ||
-                            State.variables.currentPassage ||
-                            State.passage?.title ||
-                            'Geole';
+    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
 
-    console.log(`📍 ensurePassageCoords pour: "${actualPassageName}"`);
-
-    // VALIDATION FORCÉE des coordonnées
+    // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
     if (!v.passageCoords[actualPassageName] ||
-        typeof v.passageCoords[actualPassageName].x !== 'number' ||
-        typeof v.passageCoords[actualPassageName].y !== 'number') {
+        typeof v.passageCoords[actualPassageName].x !== 'number') {
 
         // Coordonnées par défaut sécurisées
         const defaultCoords = {
@@ -5848,7 +5839,7 @@ window.setup.ensurePassageCoords = function(passageName) {
 
 $(document).on(':passagedisplay', function() {
     // 🔴 CORRECTION : S'assurer que currentPassage est à jour
-    State.variables.currentPassage = State.passage?.title || 'Geole';
+    State.variables.currentPassage = State.passage || 'Geole';
 
     $('#passages').stop(true, true).animate({
         opacity: 1
@@ -5905,7 +5896,7 @@ $(document).on(':passagedisplay', function() {
         });
         const v = State.variables;
         v.visitedPassages = v.visitedPassages || {};
-        v.visitedPassages[State.passage.title] = true;
+        v.visitedPassages[State.passage] = true;
 
         // Rafraîchir l'affichage des compagnons après le déplacement
         if (window.renderBuddiesPanel) {

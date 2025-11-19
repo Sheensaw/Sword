@@ -482,7 +482,7 @@ Macro.add('setcoords', {
 
         // SOURCE DE VÉRITÉ UNIQUE pour le passage actuel
         const currentPassage = State.variables.currentPassage ||
-                              State.passage ||
+                              (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
                               "Geole";
 
         if (!currentPassage) {
@@ -525,7 +525,7 @@ window.setup.ensurePassageCoords = function(passageName) {
     const v = State.variables;
     v.passageCoords = v.passageCoords || {};
 
-    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
+    const actualPassageName = passageName || State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
 
     // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
     if (!v.passageCoords[actualPassageName] ||
@@ -552,7 +552,7 @@ window.setup.updateFollowersCoordinates = function() {
 
     // SOURCE DE VÉRITÉ FIABLE pour le passage actuel
     const currentPassage = State.variables.currentPassage ||
-                          State.passage ||
+                          (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
                           'Geole';
 
     console.log(`📍 updateFollowersCoordinates pour: "${currentPassage}"`);
@@ -960,7 +960,7 @@ Macro.add('pnjfollow', {
 
         // SOURCE DE VÉRITÉ FIABLE
         const currentPassage = State.variables.currentPassage ||
-                              State.passage ||
+                              (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
                               'Geole';
 
         console.log(`📍 Passage actuel: "${currentPassage}"`);
@@ -993,6 +993,16 @@ Macro.add('pnjfollow', {
                 y: Number(passageCoords.y)
             };
             npc.continent = passageCoords.continent || "Eldaron";
+
+            // Ajouter notification d'arrivée immédiate
+            const pnjData = window.setup.loadPNJ(name);
+            const joinReactions = pnjData.pnj?.réaction_joueur?.has_join_player;
+            let arrivalText = `${npc.name} vous suit.`;
+            if (joinReactions && Array.isArray(joinReactions) && joinReactions.length > 0) {
+              const randomIndex = Math.floor(Math.random() * joinReactions.length);
+              arrivalText = joinReactions[randomIndex];
+            }
+            window.setup.showDialogueNotificationShort(npc.name, arrivalText, arrivalText, false);
         }
 
         updateBuddyHUDVisibility();
@@ -1572,8 +1582,8 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
                                   State.passage ||
                                   'Geole';
 
-    if (!safeDestinationPassage) {
-        console.error(`❌ Destination invalide pour ${pnjId}`);
+    if (!safeDestinationPassage || typeof safeDestinationPassage !== 'string') {
+        console.error(`❌ Destination invalide pour ${pnjId}: ${safeDestinationPassage}`);
         console.groupEnd();
         return false;
     }
@@ -1608,6 +1618,21 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
         destinationContinent || finalDestinationCoords.continent
     );
 
+    // AJOUT : Gestion immédiate si distance zéro
+    npc.travelDestination = {  // Définir avant pour completePNJTravel
+        passage: safeDestinationPassage,
+        coordinates: finalDestinationCoords,
+        continent: destinationContinent || finalDestinationCoords.continent,
+        type: travelType
+    };
+
+    if (distance <= 0) {
+        console.log(`✅ Distance zéro - Arrivée immédiate pour ${pnjId}`);
+        window.setup.completePNJTravel(pnjId);
+        console.groupEnd();
+        return true;
+    }
+
     const travelTime = window.setup.calculateTravelTime(distance);
 
     console.log(`📊 Détails du voyage:
@@ -1621,12 +1646,6 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
     npc.status = 'traveling';
     npc.travelStartTime = Date.now();
     npc.travelEndTime = Date.now() + travelTime;
-    npc.travelDestination = {
-        passage: safeDestinationPassage,
-        coordinates: finalDestinationCoords,
-        continent: destinationContinent || finalDestinationCoords.continent,
-        type: travelType
-    };
 
     // Notification de départ
     const pnjData = window.setup.loadPNJ(pnjId);
@@ -2231,7 +2250,9 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
     // Son de notification (optionnel)
     try {
       new Wikifier(null, '<<audio "notif_dialogue" play volume 0.8>>');
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio notification failed:', e);
+    }
   };
 
   // ------------------------------------------------------
@@ -4090,7 +4111,7 @@ window.setup.validatePNJCoordinates = function(pnjId) {
 
     // Validation du passage
     if (!npc.passage && npc.isSpawned) {
-        npc.passage = State.variables.currentPassage || State.passage || 'Geole';
+        npc.passage = State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
     }
 
     console.log(`📍 Coordonnées validées pour ${pnjId}: (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent}) dans ${npc.passage}`);
@@ -4105,7 +4126,9 @@ window.setup.validatePNJCoordinates = function(pnjId) {
         const v = State.variables;
 
         // VERSION CORRIGÉE : Utiliser la source de vérité fiable
-        const currentPassage = State.passage || State.variables.currentPassage || 'Geole';
+        const currentPassage = State.variables.currentPassage ||
+                              (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
+                              'Geole';
 
         if (!currentPassage) {
             console.error("❌ ERREUR CRITIQUE: Impossible de déterminer le passage actuel");
@@ -5731,7 +5754,7 @@ window.setup.getPnjData = function(pnjId) {
     console.log("🎮 STORY READY - INITIALISATION SÉCURISÉE");
 
     // 🔴 CORRECTION CRITIQUE : Synchroniser IMMÉDIATEMENT currentPassage
-    State.variables.currentPassage = State.passage || 'Geole';
+    State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
     console.log(`🔧 State.variables.currentPassage = "${State.variables.currentPassage}"`);
 
     // Initialiser les variables de base
@@ -5799,7 +5822,7 @@ window.setup.ensurePassageCoords = function(passageName) {
     const v = State.variables;
     v.passageCoords = v.passageCoords || {};
 
-    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
+    const actualPassageName = passageName || State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
 
     // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
     if (!v.passageCoords[actualPassageName] ||
@@ -5841,7 +5864,7 @@ window.setup.ensurePassageCoords = function(passageName) {
 
 $(document).on(':passagedisplay', function() {
     // 🔴 CORRECTION : S'assurer que currentPassage est à jour
-    State.variables.currentPassage = State.passage || 'Geole';
+    State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
 
     $('#passages').stop(true, true).animate({
         opacity: 1

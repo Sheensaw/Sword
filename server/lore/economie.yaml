@@ -1,0 +1,297 @@
+# economie.yaml
+modele: "hybride_ia_semantique"
+description: "Système économique complet de Velkarum - Échelles mondiale, régionale et nationale"
+
+# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+embedding_optimized:
+  themes: ["économie", "commerce", "monnaie", "ressources", "échanges", "marchés", "production"]
+  mots_cles: ["couronne_eldarienne", "glace_noire", "cendres_fertilisantes", "bois_rhall", "commerce_intercontinental", "taxes", "guildes"]
+  description_semantique: "Système économique complet de Velkarum avec monnaies, échanges intercontinentaux, ressources stratégiques et structures commerciales"
+
+# SYSTÈME MONÉTAIRE UNIFIÉ
+systeme_monetaire:
+  monnaie_principale:
+    nom: "Couronne Eldarienne"
+    symbole: "♔"
+    origine: "Royaume Central de Valnoria (45,55)"
+    statut: "Monnaie de réserve intercontinentale"
+    subdivisions: ["Écu (1/4 couronne)", "Livre (1/20 couronne)", "Denier (1/100 couronne)"]
+    taux_change_fixe: "1 Couronne = 20 Livres = 100 Deniers"
+    materiau: "Alliage argent-fer (résistant à l'humidité et à la chaleur)"
+
+  monnaies_regionales:
+    - nom: "Pierre Solaire"
+      region: "Iskarion"
+      valeur: "0.8 Couronne"
+      utilisation: "Commerce énergétique et transactions sacrées"
+      particularite: "Pierre imprégnée d'énergie solaire, valeur fluctuante selon la saison"
+
+    - nom: "Sceau de Glace"
+      region: "Helrün"
+      valeur: "1.2 Couronne"
+      utilisation: "Commerce de la glace noire et du sel fossile"
+      particularite: "Cristal d'Ygral gravé, valeur stable grâce à la rareté"
+
+    - nom: "Masse de Cendre"
+      region: "Thaurgrim"
+      valeur: "0.6 Couronne"
+      utilisation: "Commerce des cendres fertilisantes et du soufre"
+      particularite: "Compressé de cendres volcaniques, valeur liée à la fertilité"
+
+    - nom: "Souffle de Rhaal"
+      region: "Varnäl"
+      valeur: "1.5 Couronne"
+      utilisation: "Commerce du bois et produits biologiques"
+      particularite: "Ambre organique imprégné d'oxygène pur, valeur écologique"
+
+    - nom: "Couronne Eldarienne"
+      region: "Eldaron"
+      valeur: "1.0 Couronne (référence)"
+      utilisation: "Commerce intercontinental et réserves"
+      particularite: "Monnaie de référence continentale, acceptée partout"
+
+# SYSTÈME BANCAIRE ET FINANCIER
+institutions_financieres:
+  - nom: "Trésor Royal de Lorn"
+    type: "Banque centrale"
+    coordonnees: {x: 45, y: 55}
+    fonction: "Émission monétaire et réserves intercontinentales"
+    reserves: ["500,000 couronnes or", "1,200,000 couronnes argent", "Ressources stratégiques"]
+    influence: "Contrôle 60% de la masse monétaire continentale"
+
+  - nom: "Bourse Maritime de Lirn"
+    type: "Marché financier international"
+    coordonnees: {x: 15, y: 45}
+    fonction: "Fixation des prix des matières premières"
+    volume_journalier: "25,000 couronnes"
+    produits_echanges: ["Contrats de transport", "Assurances maritimes", "Dérivés de ressources"]
+
+  - nom: "Guilde des Changeurs d'Ardel"
+    type: "Bureau de change international"
+    coordonnees: {x: 60, y: 35}
+    fonction: "Conversion des monnaies régionales"
+    taux_moyen: "2.5% de commission"
+    securite: "Gardes nains et systèmes eldariens"
+
+# RESSOURCES STRATÉGIQUES ET LEUR VALEUR
+ressources_strategiques:
+  - nom: "Glace Noire"
+    origine: "Helrün (25,15)"
+    valeur_unitaire: "120 couronnes/tonne"
+    utilisation: "Conservation biologique, recherche, refroidissement industriel"
+    production_annuelle: "8,000 tonnes"
+    consommateurs_majeurs: ["Varnäl (40%)", "Thaurgrim (35%)", "Iskarion (25%)"]
+
+  - nom: "Cendres Fertilisantes"
+    origine: "Thaurgrim (55,50)"
+    valeur_unitaire: "8 couronnes/tonne"
+    utilisation: "Agriculture, purification des sols, alchimie"
+    production_annuelle: "8 millions de tonnes"
+    consommateurs_majeurs: ["Eldaron (45%)", "Varnäl (40%)", "Iskarion (15%)"]
+
+  - nom: "Bois de Rhaal"
+    origine: "Varnäl (35,75)"
+    valeur_unitaire: "80 couronnes/m³"
+    utilisation: "Construction, artisanat, supports énergétiques"
+    production_annuelle: "800,000 m³"
+    consommateurs_majeurs: ["Iskarion (50%)", "Eldaron (30%)", "Thaurgrim (20%)"]
+
+  - nom: "Pierre Solaire"
+    origine: "Iskarion (35,75)"
+    valeur_unitaire: "120 couronnes/unité"
+    utilisation: "Énergie, spiritualité, technologie"
+    production_annuelle: "20,000 unités"
+    consommateurs_majeurs: ["Thaurgrim (60%)", "Eldaron (25%)", "Helrün (15%)"]
+
+  - nom: "Sel Fossile"
+    origine: "Helrün (25,15)"
+    valeur_unitaire: "25 couronnes/tonne"
+    utilisation: "Conservation, industrie, alimentation"
+    production_annuelle: "150,000 tonnes"
+    consommateurs_majeurs: ["Eldaron (50%)", "Thaurgrim (30%)", "Varnäl (20%)"]
+
+# ÉCHANGES INTERCONTINENTAUX PRINCIPAUX
+flux_commerciaux_intercontinentaux:
+  - nom: "Triangle Énergétique"
+    participants: ["Iskarion", "Thaurgrim", "Eldaron"]
+    flux: "Énergie solaire ↔ Cendres fertilisantes ↔ Outils manufacturés"
+    valeur_annuelle: "8 millions de couronnes"
+    routes: ["Voie Solaire du Zhaïr", "Route Maritime du Surn", "Voie Royale du Draen"]
+
+  - nom: "Arc Nord"
+    participants: ["Helrün", "Varnäl", "Eldaron"]
+    flux: "Glace noire ↔ Produits biologiques ↔ Textiles et céréales"
+    valeur_annuelle: "4.5 millions de couronnes"
+    routes: ["Route du Fer-Bleu", "Voie des Fjords", "Route Côtière du Fer-Bleu"]
+
+  - nom: "Symbiose Agricole"
+    participants: ["Eldaron", "Thaurgrim"]
+    flux: "Céréales ↔ Cendres fertilisantes"
+    valeur_annuelle: "6 millions de couronnes"
+    routes: ["Route des Cendres", "Voie du Ghaarn"]
+
+  - nom: "Circuit des Énergies Polaires"
+    participants: ["Helrün", "Iskarion", "Thaurgrim"]
+    flux: "Glace pour refroidissement ↔ Énergie solaire ↔ Vapeur géothermale"
+    valeur_annuelle: "3 millions de couronnes"
+    routes: ["Canal du Drann", "Route Maritime du Surn"]
+
+# SYSTÈME FISCAL ET TAXATION
+systeme_fiscal:
+  echelle_mondiale:
+    - nom: "Taxe du Conseil"
+      taux: "2% sur les échanges intercontinentaux"
+      utilisation: "Fonctionnement du Conseil des Royaumes, maintenance des routes"
+      perception: "Bourse Maritime de Lirn"
+
+  echelle_continentale:
+    - continent: "Eldaron"
+      taxes: ["Droit de douane (5%)", "Taxe portuaire (3%)", "Impôt royal (10%)"]
+      revenu_annuel: "12 millions de couronnes"
+
+    - continent: "Varnäl"
+      taxes: ["Taxe écologique (8%)", "Droit de coupe (15%)", "Impôt communautaire (7%)"]
+      revenu_annuel: "9 millions de couronnes"
+
+    - continent: "Iskarion"
+      taxes: ["Taxe énergétique (12%)", "Droit sacré (5%)", "Impôt solaire (8%)"]
+      revenu_annuel: "7 millions de couronnes"
+
+    - continent: "Thaurgrim"
+      taxes: ["Taxe volcanique (10%)", "Droit de forge (8%)", "Impôt clanique (6%)"]
+      revenu_annuel: "6 millions de couronnes"
+
+    - continent: "Helrün"
+      taxes: ["Taxe polaire (15%)", "Droit de glace (20%)", "Impôt tribal (5%)"]
+      revenu_annuel: "3 millions de couronnes"
+
+# GUILDES ET CORPORATIONS MAJEURES
+guildes_influentes:
+  - nom: "Guilde des Nautes du Draen"
+    specialite: "Transport maritime international"
+    siege: "Territoires des Nautes du Draen (10,50)"
+    membres: "8,000 navigateurs et marchands"
+    influence: "Contrôle 70% du commerce maritime"
+    fortune_estimee: "5 millions de couronnes"
+
+  - nom: "Confrérie des Forgerons Thaurgriens"
+    specialite: "Métallurgie et artisanat du feu"
+    siege: "Vulkar (75,70)"
+    membres: "12,000 forgerons et mineurs"
+    influence: "Monopole sur les armes et outils de qualité"
+    fortune_estimee: "8 millions de couronnes"
+
+  - nom: "Syndicat des Marchands de Glace"
+    specialite: "Commerce de la glace noire et du sel"
+    siege: "Nerr (25,15)"
+    membres: "3,000 commerçants polaires"
+    influence: "Contrôle 90% du marché de la glace noire"
+    fortune_estimee: "4 millions de couronnes"
+
+  - nom: "Alliance des Sylviculteurs de Rhaal"
+    specialite: "Exploitation durable des forêts"
+    siege: "Rhaal (35,75)"
+    membres: "15,000 sylviculteurs et artisans"
+    influence: "Gestion de 80% de la production de bois"
+    fortune_estimee: "6 millions de couronnes"
+
+# SYSTÈME DE PRIX ET COÛTS DE VIE
+couts_de_vie_par_region:
+  - region: "Royaume Central de Valnoria"
+    niveau_vie: "Élevé"
+    repas_simple: "2 deniers"
+    nuit_auberge: "8 deniers"
+    salaire_journalier_moyen: "25 deniers"
+    particularites: "Prix stables, économie diversifiée"
+
+  - region: "Forêts Primaires de Rhaal"
+    niveau_vie: "Moyen"
+    repas_simple: "1 denier"
+    nuit_auberge: "5 deniers"
+    salaire_journalier_moyen: "18 deniers"
+    particularites: "Économie communautaire, troc fréquent"
+
+  - region: "Royaume Volcanique du Vulkar"
+    niveau_vie: "Moyen-Élevé"
+    repas_simple: "3 deniers"
+    nuit_auberge: "10 deniers"
+    salaire_journalier_moyen: "30 deniers"
+    particularites: "Prix élevés pour l'importation, salaires industriels"
+
+  - region: "Territoire des Clans du Nerr"
+    niveau_vie: "Faible"
+    repas_simple: "4 deniers"
+    nuit_auberge: "15 deniers"
+    salaire_journalier_moyen: "20 deniers"
+    particularites: "Prix élevés due à l'isolement, économie de survie"
+
+  - region: "Royaume Solaire du Zhaïr"
+    niveau_vie: "Élevé"
+    repas_simple: "3 deniers"
+    nuit_auberge: "12 deniers"
+    salaire_journalier_moyen: "28 deniers"
+    particularites: "Économie sacrée, prix contrôlés par les temples"
+
+# CRISES ÉCONOMIQUES ET DÉFIS
+defis_economiques:
+  - nom: "Dépendance énergétique"
+    description: "Iskarion dépend des cendres thaurgrimmiennes pour ses miroirs solaires"
+    impact: "Risque de pénurie en cas d'éruption volcanique majeure"
+    solutions: ["Diversification des sources", "Stockage stratégique"]
+
+  - nom: "Fragilité des routes polaires"
+    description: "Le commerce helrunien dépend des conditions glaciaires"
+    impact: "Interruptions fréquentes des approvisionnements en glace noire"
+    solutions: ["Développement du Canal du Drann", "Recherche de solutions alternatives"]
+
+  - nom: "Surexploitation forestière"
+    description: "Pression croissante sur les forêts de Rhaal"
+    impact: "Risque écologique et économique à long terme"
+    solutions: ["Replantation intensive", "Contrôles stricts des coupes"]
+
+  - nom: "Inflation des matières premières"
+    description: "Hausse constante des prix des ressources stratégiques"
+    impact: "Tensions sociales et commerciales"
+    solutions: ["Accords de stabilisation", "Développement de substituts"]
+
+# SYSTÈME D'AIDE ET SOLIDARITÉ ÉCONOMIQUE
+reseaux_solidarite:
+  - nom: "Fonds de Stabilisation Continentale"
+    capital: "2 millions de couronnes"
+    objectif: "Aider les régions en crise économique ou écologique"
+    financement: "Taxes intercontinentales et dons volontaires"
+    interventions_recentes: ["Aide à Helrün après tempête polaire (50,000 couronnes)"]
+
+  - nom: "Banque de Semences de Velkar"
+    type: "Ressource stratégique alimentaire"
+    localisation: "Velkar (45,20)"
+    valeur: "Incaculable (sécurité alimentaire continentale)"
+    acces: "Contrôlé par le Conseil des Royaumes"
+
+# INDICATEURS ÉCONOMIQUES GLOBAUX
+indicateurs_macroeconomiques:
+  pib_continental_total: "164 millions de couronnes/an"
+  croissance_moyenne: "2.3%/an"
+  inflation_moyenne: "3.1%/an"
+  commerce_exterieur: "45% du PIB continental"
+  chomage_moyen: "8.2%"
+  repartition_secteurs:
+    primaire: "35% (agriculture, ressources)"
+    secondaire: "28% (industrie, artisanat)"
+    tertiaire: "37% (commerce, services)"
+
+# MÉTA-DONNÉES IA
+meta_ia:
+  date_creation: "2025-11-05"
+  version: 1.1
+  type_contenu: "economie_complete_velkarum"
+  coherence_verifiee: ["monnaies", "ressources", "flux_commerciaux", "fiscalite", "guildes"]
+  points_entree_semantiques: [
+    "recherche_par_monnaie",
+    "recherche_par_ressource",
+    "recherche_par_flux_commercial",
+    "recherche_par_guilde",
+    "recherche_par_taxe",
+    "couts_de_vie",
+    "crises_economiques"
+  ]

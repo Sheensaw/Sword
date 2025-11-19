@@ -1,0 +1,397 @@
+# eldaron.yaml
+modele: "hybride_ia_semantique"
+description: "Continent Eldaron - Géographie complète avec régions, villes et routes"
+
+# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+embedding_optimized:
+  themes: ["continent", "géographie", "régions", "villes", "routes", "civilisations", "commerce", "biomes"]
+  mots_cles: ["eldaron", "plaines_draen", "valnari", "centaures", "nains", "elfes", "commerce", "routes_commerciales", "coordonnées_géographiques"]
+  description_semantique: "Eldaron, continent structuré en 8 régions géopolitiques avec villes, routes commerciales et peuplements multi-ethniques coordonnés"
+
+# DONNÉES FONDAMENTALES
+nom: "Eldaron"
+designation: "Le Cœur des Terres"
+type: "continent"
+superficie_mkm2: 35.5
+population_estimee_millions: 62
+systeme_coordonnees: "grid_eldarien_100x100"
+
+# RÉGIONS GÉOPOLITIQUES DÉTAILLÉES
+regions:
+  - nom: "Royaume Central de Valnoria"
+    coordonnees: { x_min: 30, x_max: 60, y_min: 40, y_max: 70 }
+    biome_principal: "Plaines du Draen"
+    capitale: "Lorn"
+    peuples_principaux: ["Humains Valnari (85%)", "Centaures Talren (10%)", "Nains Thaurgriens (5%)"]
+    population_region: 18.5
+    description: "Cœur politique et agricole d'Eldaron, contrôlant le bassin fertile du Draen"
+    ressources: ["céréales", "textiles", "argile cuite", "produits laitiers"]
+    particularites: ["siège du Conseil des Royaumes", "académie du Draen", "temple des Quatre Saisons"]
+
+  - nom: "Marches du Dalen"
+    coordonnees: { x_min: 15, x_max: 45, y_min: 65, y_max: 85 }
+    biome_principal: "Forêts du Dalen"
+    capitale: "Dalen"
+    peuples_principaux: ["Humains Valnari (70%)", "Elfes Sylvarin (25%)", "Fées Aelrin (5%)"]
+    population_region: 8.2
+    description: "Région forestière aux traditions druidiques, gardienne des forêts anciennes"
+    ressources: ["bois précieux", "herbes médicinales", "miel", "fourrures"]
+    particularites: ["cercles lunaires elfiques", "sanctuaires fées", "école de sylviculture"]
+
+  - nom: "Confédération Méridionale d'Ardel"
+    coordonnees: { x_min: 45, x_max: 80, y_min: 20, y_max: 45 }
+    biome_principal: "Collines de Cendre"
+    capitale: "Ardel"
+    peuples_principaux: ["Humains Valnari (75%)", "Nains Thaurgriens (20%)", "Centaures Talren (5%)"]
+    population_region: 12.8
+    description: "Région commerçante frontalière avec Thaurgrim, spécialisée dans la métallurgie"
+    ressources: ["métaux", "poteries", "vins", "outils"]
+    particularites: ["foire continentale", "ambassade naine", "marché aux esclaves (interdit)"]
+
+  - nom: "Principauté de Ferharn"
+    coordonnees: { x_min: 65, x_max: 90, y_min: 45, y_max: 70 }
+    biome_principal: "Plateaux du Fer-d'Acier"
+    capitale: "Ferharn"
+    peuples_principaux: ["Nains Thaurgriens (60%)", "Humains Valnari (35%)", "Trolls Grünnar (5%)"]
+    population_region: 6.3
+    description: "Région minière montagneuse, bastion de la culture naine en surface"
+    ressources: ["minerai ferrique", "pierres de construction", "cristaux", "armes"]
+    particularites: ["forteresses naines", "mines à ciel ouvert", "école des maîtres-forgerons"]
+
+  - nom: "Ligues Côtières de Lirn"
+    coordonnees: { x_min: 5, x_max: 30, y_min: 30, y_max: 60 }
+    biome_principal: "Falaises de Lirn"
+    capitale: "Lirn"
+    peuples_principaux: ["Humains Valnari (80%)", "Batraciens Grolka (15%)", "Divers (5%)"]
+    population_region: 9.1
+    description: "Région maritime ouverte sur le Fer-Bleu, carrefour commercial international"
+    ressources: ["poisson", "sel", "corail", "produits maritimes"]
+    particularites: ["phares à cristaux", "quartier batracien", "bourse maritime"]
+
+  - nom: "Terres Tribales du Nord"
+    coordonnees: { x_min: 20, x_max: 50, y_min: 80, y_max: 95 }
+    biome_principal: "Forêts du Dalen (nord)"
+    capitale: "Aucune (nomadisme)"
+    peuples_principaux: ["Centaures Talren (65%)", "Humains Valnari (30%)", "Elfes Sylvarin (5%)"]
+    population_region: 3.2
+    description: "Territoires nomades peu peuplés, suivant les migrations saisonnières"
+    ressources: ["cuir", "viande séchée", "plumes", "remèdes traditionnels"]
+    particularites: ["conseil tribal mobile", "sanctuaires naturels", "routes de migration"]
+
+  - nom: "Marches Orientales"
+    coordonnees: { x_min: 75, x_max: 95, y_min: 70, y_max: 90 }
+    biome_principal: "Plateaux du Fer-d'Acier (est)"
+    capitale: "Khar-Ghul"
+    peuples_principaux: ["Humains Valnari (55%)", "Gobelins Vrakari (30%)", "Nains Thaurgriens (15%)"]
+    population_region: 2.9
+    description: "Région frontalière disputée, zone tampon avec les territoires hostiles"
+    ressources: ["minerais pauvres", "pierres", "champignons", "artefacts anciens"]
+    particularites: ["fortifications", "avant-postes militaires", "marché noir"]
+
+  - nom: "Delta du Draen"
+    coordonnees: { x_min: 25, x_max: 45, y_min: 10, y_max: 25 }
+    biome_principal: "Marais et plaines inondables"
+    capitale: "Draenport"
+    peuples_principaux: ["Batraciens Grolka (50%)", "Humains Valnari (40%)", "Divers (10%)"]
+    population_region: 1.2
+    description: "Région marécageuse à l'embouchure du Draen, culture unique d'adaptation"
+    ressources: ["riz sauvage", "poisson-brume", "plantes aquatiques", "perles"]
+    particularites: ["architecture sur pilotis", "culture amphibie", "temple de Syl-Mara"]
+
+# VILLES PRINCIPALES AVEC COORDONNÉES DÉTAILLÉES
+villes_principales:
+  - nom: "Lorn"
+    region: "Royaume Central de Valnoria"
+    type: "Capitale impériale"
+    coordonnees: { x: 45, y: 55 }
+    population: 4200000
+    altitude_m: 120
+    fondation: "-3200"
+    caracteristiques: ["port fluvial", "murailles de pierre", "quartier académique", "palais royal"]
+    peuples: ["Humains Valnari (70%)", "Centaures Talren (15%)", "Nains Thaurgriens (10%)", "Autres (5%)"]
+
+  - nom: "Ardel"
+    region: "Confédération Méridionale d'Ardel"
+    type: "Ville marchande"
+    coordonnees: { x: 60, y: 35 }
+    population: 2100000
+    altitude_m: 280
+    fondation: "-2850"
+    caracteristiques: ["caravansérail", "forges", "ambassades", "grand marché"]
+    peuples: ["Humains Valnari (65%)", "Nains Thaurgriens (25%)", "Centaures Talren (10%)"]
+
+  - nom: "Dorr"
+    region: "Royaume Central de Valnoria"
+    type: "Cité artisanale"
+    coordonnees: { x: 50, y: 60 }
+    population: 1200000
+    altitude_m: 150
+    fondation: "-2700"
+    caracteristiques: ["quartier des artisans", "four à céramique", "canaux", "école des arts"]
+    peuples: ["Humains Valnari (80%)", "Nains Thaurgriens (15%)", "Elfes Sylvarin (5%)"]
+
+  - nom: "Lirn"
+    region: "Ligues Côtières de Lirn"
+    type: "Port maritime"
+    coordonnees: { x: 15, y: 45 }
+    population: 1400000
+    altitude_m: 20
+    fondation: "-2500"
+    caracteristiques: ["phare cristallin", "docks", "quartier étranger", "bourse"]
+    peuples: ["Humains Valnari (75%)", "Batraciens Grolka (20%)", "Divers (5%)"]
+
+  - nom: "Ferharn"
+    region: "Principauté de Ferharn"
+    type: "Ville minière"
+    coordonnees: { x: 75, y: 55 }
+    population: 600000
+    altitude_m: 650
+    fondation: "-3100"
+    caracteristiques: ["mines", "forteresses", "tunnel nain", "marché minéral"]
+    peuples: ["Nains Thaurgriens (55%)", "Humains Valnari (35%)", "Trolls Grünnar (10%)"]
+
+  - nom: "Dalen"
+    region: "Marches du Dalen"
+    type: "Cité forestière"
+    coordonnees: { x: 30, y: 75 }
+    population: 800000
+    altitude_m: 320
+    fondation: "-2950"
+    caracteristiques: ["architecture organique", "sanctuaires", "arbres-habitations", "école druidique"]
+    peuples: ["Humains Valnari (60%)", "Elfes Sylvarin (35%)", "Fées Aelrin (5%)"]
+
+  - nom: "Khar-Ghul"
+    region: "Marches Orientales"
+    type: "Forteresse frontalière"
+    coordonnees: { x: 85, y: 80 }
+    population: 180000
+    altitude_m: 420
+    fondation: "-1800"
+    caracteristiques: ["murailles défensives", "casernes", "marché aux armes", "tunnel gobelin"]
+    peuples: ["Humains Valnari (50%)", "Gobelins Vrakari (40%)", "Nains Thaurgriens (10%)"]
+
+  - nom: "Draenport"
+    region: "Delta du Draen"
+    type: "Ville amphibie"
+    coordonnees: { x: 35, y: 15 }
+    population: 90000
+    altitude_m: 5
+    fondation: "-1500"
+    caracteristiques: ["architecture sur pilotis", "canaux", "temple marécageux", "marché amphibie"]
+    peuples: ["Batraciens Grolka (60%)", "Humains Valnari (35%)", "Divers (5%)"]
+
+# RÉSEAU ROUTIER COMPLET
+routes_principales:
+  - nom: "Voie Royale du Draen"
+    type: "Route commerciale majeure"
+    longueur_km: 850
+    statut: "Pavée, entretenue"
+    points_cles: [
+      { ville: "Lorn", type: "départ", coordonnees: {x: 45, y: 55} },
+      { ville: "Dorr", type: "jonction", coordonnees: {x: 50, y: 60} },
+      { ville: "Ardel", type: "terminus", coordonnees: {x: 60, y: 35} }
+    ]
+    trafic: "Élevé (marchandises, troupes, pèlerins)"
+    securite: "Haute (patrouilles royales)"
+
+  - nom: "Route Côtière du Fer-Bleu"
+    type: "Route maritime et terrestre"
+    longueur_km: 1200
+    statut: "Mixte (pavée + maritime)"
+    points_cles: [
+      { ville: "Lirn", type: "port principal", coordonnees: {x: 15, y: 45} },
+      { ville: "Lorn", type: "capitale", coordonnees: {x: 45, y: 55} },
+      { ville: "Draenport", type: "port secondaire", coordonnees: {x: 35, y: 15} }
+    ]
+    trafic: "Moyen-Élevé (commerce international)"
+    securite: "Moyenne (pirates occasionnels)"
+
+  - nom: "Chemin des Forêts"
+    type: "Route druidique"
+    longueur_km: 600
+    statut: "Naturelle, entretenue magiquement"
+    points_cles: [
+      { ville: "Dalen", type: "cité forestière", coordonnees: {x: 30, y: 75} },
+      { lieu: "Cercles Lunaires", type: "sanctuaire", coordonnees: {x: 25, y: 80} },
+      { lieu: "Arbre-Monde", type: "site sacré", coordonnees: {x: 35, y: 85} }
+    ]
+    trafic: "Faible (druides, pèlerins)"
+    securite: "Variable (créatures forestières)"
+
+  - nom: "Route des Mines"
+    type: "Route commerciale minière"
+    longueur_km: 450
+    statut: "Pavée, fortifiée"
+    points_cles: [
+      { ville: "Ferharn", type: "ville minière", coordonnees: {x: 75, y: 55} },
+      { ville: "Ardel", type: "centre commercial", coordonnees: {x: 60, y: 35} },
+      { ville: "Khar-Ghul", type: "avant-poste", coordonnees: {x: 85, y: 80} }
+    ]
+    trafic: "Moyen (minerais, armes, matériel)"
+    securite: "Haute (gardes nains)"
+
+  - nom: "Piste Nomade"
+    type: "Route saisonnière"
+    longueur_km: 800
+    statut: "Naturelle, variable"
+    points_cles: [
+      { lieu: "Plaines Nord", type: "estivage", coordonnees: {x: 35, y: 85} },
+      { lieu: "Vallée Centrale", type: "automne", coordonnees: {x: 40, y: 65} },
+      { lieu: "Collines Sud", type: "hivernage", coordonnees: {x: 50, y: 45} }
+    ]
+    trafic: "Saisonnière (tribus centaures)"
+    securite: "Bonne (territoire tribal)"
+
+  - nom: "Voie du Delta"
+    type: "Route amphibie"
+    longueur_km: 300
+    statut: "Pilotis et canaux"
+    points_cles: [
+      { ville: "Draenport", type: "ville amphibie", coordonnees: {x: 35, y: 15} },
+      { lieu: "Temple de Syl-Mara", type: "sanctuaire", coordonnees: {x: 30, y: 12} },
+      { lieu: "Marais aux Perles", type: "ressource", coordonnees: {x: 40, y: 18} }
+    ]
+    trafic: "Local (batraciens, pêcheurs)"
+    securite: "Moyenne (risques d'inondation)"
+
+# INTERACTIONS INTER-RÉGIONALES
+relations_interregionales:
+  - regions: ["Valnoria", "Ardel"]
+    type: "Alliance commerciale"
+    intensite: "Forte"
+    echanges: ["céréales ↔ métaux", "textiles ↔ outils"]
+
+  - regions: ["Dalen", "Ferharn"]
+    type: "Relation tendue"
+    intensite: "Faible"
+    causes: ["déforestation vs exploitation minière"]
+
+  - regions: ["Lirn", "Delta du Draen"]
+    type: "Coopération économique"
+    intensite: "Moyenne"
+    echanges: ["produits maritimes ↔ produits du delta"]
+
+  - regions: ["Terres Tribales", "Marches Orientales"]
+    type: "Conflit latent"
+    intensite: "Variable"
+    causes: ["terres de pâturage vs expansion minière"]
+
+# DESCRIPTION NARRATIVE SYNTHÈSE COMPLÈTE ET COHÉRENTE
+description_narrative: |
+  Eldaron s'étend comme une tapisserie vivante de huit régions aux identités marquées. 
+  Au centre, le Royaume de Valnoria domine les plaines fertiles du Draen, avec sa capitale Lorn 
+  (45,55) qui rayonne d'influence politique et culturelle. De Lorn part la Voie Royale du Draen 
+  (850 km) vers Dorr (50,60) à 180 km au nord-est et Ardel (60,35) à 280 km au sud-est, 
+  charriant céréales et marchandises dans les deux directions.
+  
+  À l'ouest, les Ligues Côtières de Lirn (15,45) contrôlent la Route Côtière du Fer-Bleu 
+  (1200 km) qui relie la capitale aux ports maritimes, formant un arc de 450 km jusqu'à Lorn 
+  puis 350 km jusqu'à Draenport. Plus au nord, les Marches du Dalen abritent la cité forestière 
+  de Dalen (30,75), départ du Chemin des Forêts (600 km) qui serpente vers le nord sur 150 km 
+  vers les sanctuaires elfiques des Cercles Lunaires (25,80) puis 200 km vers l'est jusqu'à 
+  l'Arbre-Monde (35,85).
+  
+  À l'est, la Principauté de Ferharn (75,55) commande la Route des Mines (450 km) qui 
+  approvisionne Ardel en minerais et armes sur 300 km vers le sud-ouest, tandis que plus 
+  au nord-est, la forteresse de Khar-Ghul (85,80) garde les Marches Orientales disputées 
+  à 350 km de Ferharn. Au sud, le Delta du Draen abrite Draenport (35,15), accessible 
+  par la Voie du Delta (300 km) qui traverse les marais sur 100 km vers l'ouest jusqu'au 
+  Temple de Syl-Mara (30,12) et 150 km vers l'est jusqu'au Marais aux Perles (40,18).
+  
+  Les Terres Tribales du Nord voient circuler la Piste Nomade (800 km) des centaures, 
+  suivant un cycle saisonnier des Plaines Nord (35,85) à 250 km vers la Vallée Centrale (40,65) 
+  puis 300 km vers les Collines Sud (50,45). Chaque route a sa fonction et sa longueur : 
+  la Voie Royale (850 km) pour le commerce, le Chemin des Forêts (600 km) pour les pèlerinages, 
+  la Route des Mines (450 km) pour l'industrie, et la Piste Nomade (800 km) pour les migrations ancestrales.
+  
+  Les croisements stratégiques sont nombreux : Dorr (50,60) connecte la Voie Royale aux 
+  routes forestières, Ardel (60,35) relie le commerce du sud aux mines de l'est, et Lorn 
+  (45,55) reste le carrefour incontournable de toutes les routes continentales.
+  
+  Cet équilibre de routes spécialisées et de régions complémentaires fait d'Eldaron 
+  le cœur battant de Velkarum, où chaque déplacement de 100 km représente une journée 
+  de voyage et où aucun point n'est à plus de 15 jours de la capitale.
+
+# RELATIONS PLANÉTAIRES - NOUVELLE SECTION
+relations_planetaires:
+  role_continental: "Carrefour commercial et politique de Velkarum"
+  dependances_biologiques:
+    - "Importe 55% de son oxygène de Varnäl via courants aériens nord-ouest"
+    - "Exporte 40% de sa production céréalière vers Thaurgrim et Helrün"
+    - "Fournit 60% des outils métalliques à Iskarion"
+    - "Assure 35% du transport maritime intercontinental"
+  circuits_commerciaux_internationaux:
+    - route: "Triangle Énergétique"
+      participants: ["Eldaron", "Iskarion", "Thaurgrim"]
+      flux: "Outils ↔ Énergie solaire ↔ Cendres fertilisantes"
+      distance_totale: "2,300 km"
+      frequence: "Caravanes mensuelles via Ardel et Voie Royale"
+      impact: "Approvisionne 70% des forges continentales"
+      points_cles: ["Lorn", "Ardel", "Asuren", "Vulkar"]
+
+
+    - route: "Arc Nord"
+      participants: ["Eldaron", "Helrün", "Varnäl"]
+      flux: "Textiles ↔ Glace ↔ Produits biologiques"
+      points_echange: ["Lirn", "Nerr", "Tarran"]
+      saisonnalite: "Renforcé en été (période navigation polaire)"
+
+    - route: "Symbiose Agricole"
+      participants: ["Eldaron", "Thaurgrim"]
+      flux: "Céréales ↔ Cendres fertilisantes"
+      volume: "2 millions de tonnes/année"
+      importance: "Nourrit 45% de la population thaurgrimmienne"
+
+# INFRASTRUCTURES INTERCONTINENTALES - NOUVELLE SECTION
+infrastructures_critiques:
+  - nom: "Bourse Maritime de Lirn"
+    type: "Centre financier international"
+    coordonnees: { x: 15, y: 45 }
+    fonction: "Négociation des prix et contrats intercontinentaux"
+    importance: "Détermine 60% du commerce maritime mondial"
+    securite: "Forces spéciales eldariennes et gardes internationaux"
+
+  - nom: "Conseil des Royaumes de Lorn"
+    type: "Gouvernement continental"
+    coordonnees: { x: 45, y: 55 }
+    fonction: "Coordination politique et économique des 5 continents"
+    membres: ["Ambassadeurs des 4 autres continents", "Représentants des 8 régions eldariennes"]
+    pouvoirs: ["Gestion crises intercontinentales", "Organisation aide humanitaire", "Négociation traités"]
+
+  - nom: "Académie du Draen"
+    type: "Centre de recherche avancée"
+    coordonnees: { x: 45, y: 55 }
+    specialites: ["Diplomatie intercontinentale", "Ingénierie des transports", "Économie mondiale"]
+    partenariats: ["Académie Solaire de Zhaïr", "Observatoire de Velkar", "Sanctuaire d'Ygral"]
+
+# SYSTÈME DE TRANSPORT INTERCONTINENTAL
+reseau_transport_global:
+  maritime:
+    - "Ligne Lirn-Nerr : 300 km (Eldaron-Helrün)"
+    - "Ligne Lirn-Tarran : 400 km (Eldaron-Varnäl)"
+    - "Ligne Ardel-Kaar : 350 km (Eldaron-Thaurgrim)"
+  terrestre:
+    - "Route des Cendres : Ardel (60,35) ↔ Frontière Thaurgrim (90,35)"
+    - "Voie du Nord : Lorn (45,55) ↔ Poste frontalier Helrün (40,95)"
+  aerien:
+    - "Couloir des Vents : Réseau de dirigeables connectant les capitales continentales"
+    - "Relais aériens : Lorn, Zhaïr, Velkar, Skarnheim, Vulkar"
+
+# MÉTA-DONNÉES IA
+meta_ia:
+  date_creation: "2025-11-05"
+  version: 3.2
+  type_contenu: "continent_complet_geopolitique"
+  coherence_verifiee: ["regions", "villes", "routes", "peuplements", "coordonnees", "distances", "relations_planetaires"]
+  points_entree_semantiques: [
+    "recherche_par_ville",
+    "recherche_par_route",
+    "recherche_par_region",
+    "recherche_par_peuple",
+    "navigation_geographique",
+    "calcul_itineraire",
+    "commerce_intercontinental",
+    "diplomatie_planetaire"
+  ]
+  echelle_voyage: "100_km_par_jour"
+  unite_coordonnees: "grid_100x100_eldarien"

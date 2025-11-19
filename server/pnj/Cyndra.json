@@ -1,0 +1,434 @@
+{
+  "pnj": {
+    "identite": {
+      "nom": "Cyndra",
+      "nom_complet": "Cyndra d'Arrowyn",
+      "age": 28,
+      "sexe": "féminin",
+      "peuple": "Humaine Valnari",
+      "origine_geographique": {
+        "continent": "Eldaron",
+        "region": "Marches du Dalen",
+        "ville_origine": "Dalen",
+        "coordonnees_origine": {"x": 30, "y": 75}
+      },
+      "metier_principal": "Chasseuse et guide",
+      "statut_social": "Citoyenne libre - Classe moyenne"
+    },
+
+    "apparence_physique": {
+      "taille": "1m75",
+      "physique": "Athlétique et robuste, corps endurci par la vie en forêt",
+      "cheveux": "Bruns avec des reflets roux, coupés court pour plus de praticité",
+      "yeux": "Noisette, perçants, entourés de pattes d'oie qui trahissent ses années à scruter l'horizon",
+      "peau": "Hâlée et marquée par les éléments, cicatrices discrètes aux mains et aux avant-bras",
+      "signes_distinctifs": ["Démarche souple et silencieuse", "Regard qui observe plus qu'il ne parle", "Gestes économes et précis"],
+      "style_vestimentaire": "Fonctionnel avant tout - cuir usé mais entretenu, chemise de lin épais, bottes de randonnée solides, pas d'ornements inutiles"
+    },
+
+    "personnalite": {
+      "traits_principaux": ["Observatrice", "Pragmatique", "Loyale mais sélective", "Indépendante", "Franche jusqu'à la brusquerie"],
+      "moralite": "Neutre Bon - Code personnel basé sur l'honnêteté et la protection des siens",
+      "caractere": {
+        "forces": ["Patient et méthodique", "Perspicace", "Débrouillarde", "Fidèle à ses engagements"],
+        "faiblesses": ["Entêtée", "Méfiante envers les institutions", "Peu diplomate", "Tendance à l'isolement"]
+      },
+      "humour": "Sec et ironique, rarement démonstratif",
+      "reactions_typiques": {
+        "danger": "Évaluation rapide puis action décisive",
+        "social": "Réserve initiale, ouverture progressive si confiance établie",
+        "stress": "Calme apparent mais tension interne"
+      }
+    },
+
+    "histoire_personnelle": {
+      "naissance": "-28 ans dans une famille de guides et chasseurs établis depuis trois générations aux Marches du Dalen",
+      "enfance": "Éducation équilibrée entre apprentissage du métier familial et éducation traditionnelle valnarienne",
+      "evenement_marquant_1": {
+        "age": 22,
+        "evenement": "Décès de son père d'une maladie pulmonaire contractée lors d'un hiver particulièrement rude",
+        "impact": "Doit reprendre l'affaire familiale plus tôt que prévu, développe un sens aigu des responsabilités"
+      },
+      "evenement_marquant_2": {
+        "age": 25,
+        "evenement": "Conflit avec des bûcherons illégaux qui saccageaient une partie de la forêt qu'elle guide habituellement",
+        "impact": "Apprend à naviguer dans les conflits d'intérêts et développe un réseau d'information local"
+      },
+      "evenement_marquant_3": {
+        "age": 27,
+        "evenement": "Perte d'un client lors d'une expédition particulièrement dangereuse malgré tous ses efforts",
+        "impact": "Développe une certaine amertume et devient plus sélective dans ses contrats"
+      },
+      "situation_actuelle": "Guide indépendante reconnue pour sa fiabilité, elle survit correctement sans être prospère"
+    },
+
+    "motivations": {
+      "principales": ["Maintenir la réputation de compétence et d'honnêteté de son entreprise familiale", "Préserver l'équilibre des écosystèmes qu'elle guide", "Assurer sa liberté et son autonomie financière"],
+      "secondaires": ["Comprendre les dynamiques politiques qui affectent son travail", "Développer des techniques de guidage plus efficaces"],
+      "caches": ["Honorer la mémoire de son père en maintenant les standards qu'il avait établis", "Trouver un équilibre entre vie professionnelle et vie personnelle"]
+    },
+
+    "peurs_et_traumas": {
+      "peur_avouee": "Perdre un autre client sous sa responsabilité",
+      "peur_cachee": "Ne pas être à la hauteur des attentes de son père défunt",
+      "trauma": "L'échec de la mission où elle a perdu un client - remet en question ses compétences certaines nuits",
+      "declencheurs": ["Clients imprudents qui ignorent ses conseils", "Situations météorologiques similaires à celle de l'accident fatal"]
+    },
+
+    "relations": {
+      "familiales": {
+        "pere": "Décédé il y a 6 ans - ancien guide respecté",
+        "mere": "Vit à Dalen - relation cordiale mais distante depuis la mort du père",
+        "freres_soeurs": "Un frère cadet établi à Lorn comme commerçant - relations occasionnelles"
+      },
+      "allies": {
+        "Kaelen": "Ancien associé de son père qui continue à lui envoyer des clients - relation de respect professionnel",
+        "Lyra": "Herboriste de Dalen - échanges de services (guidage contre remèdes et informations)"
+      },
+      "ennemis": {
+        "Brak": "Chef des bûcherons illégaux - rancune depuis leur confrontation"
+      },
+      "neutres": {
+        "Confrerie_Guides_Dalen": "Respect professionnel mutuel mais concurrence commerciale"
+      }
+    },
+
+    "competences": {
+      "chasse_traque": {
+        "niveau": "Compétente",
+        "specialites": ["Orientation forestière", "Lecture de pistes", "Connaissance des comportements animaux"],
+        "limites": ["Compétences normales pour une guide expérimentée", "Pas de formation militaire ou d'élite"]
+      },
+      "survie": {
+        "niveau": "Expérimentée",
+        "capacites": ["Navigation naturelle", "Premiers secours basiques", "Construction d'abris d'urgence", "Identification des ressources"]
+      },
+      "combat": {
+        "niveau": "Défensif",
+        "armes": ["Arc de chasse standard", "Couteau de survie", "Hachette multifonction"],
+        "style": "Évitement du conflit quand possible, défense proportionnée sinon"
+      },
+      "connaissances": {
+        "faune_flore": "Connaissance approfondie des écosystèmes des Marches du Dalen",
+        "reseau_local": "Bon réseau d'informateurs et de contacts professionnels",
+        "diplomatie": "Compétences sociales basiques mais efficaces dans son domaine"
+      }
+    },
+
+    "opinions_et_croyances": {
+      "politique": "Sceptique envers le gouvernement central mais reconnaît son utilité pour le commerce",
+      "religion": "Respecte le Culte du Souffle de manière pratique plutôt que dévotionnelle",
+      "autres_peuples": {
+        "Elfes_Sylvarin": "Apprécie leurs connaissances forestières mais trouve leur approche parfois trop détachée",
+        "Nains_Thaurgriens": "Respecte leur expertise technique mais trouve leur culture trop rigide",
+        "Thaurgrims": "Curiosité professionnelle pour leurs techniques de survie en milieu extrême"
+      },
+      "justice": "Crois en la justice pratique et aux solutions locales plutôt qu'aux grands principes"
+    },
+
+    "vie_quotidienne": {
+      "base_operations": "Maison-atelier héritée de son père à la lisière de Dalen",
+      "routine": "Préparation des expéditions le matin, rencontres clients l'après-midi, comptabilité et entretien le soir",
+      "vices": "Bière artisanale locale le weekend, perfectionnisme dans la préparation de son équipement",
+      "passions": "Cartographie amateur, étude des migrations saisonnières, amélioration continue de ses techniques"
+    },
+
+    "equipement": {
+      "armes": ["Arc de chasse standard bien entretenu", "Couteau de guide multifonction", "Hachette légère"],
+      "armure": "Tenue de cuir renforcé standard pour le métier",
+      "objets_personnels": {
+        "carte_heritee": "Cartes annotées par son père qu'elle met à jour constamment",
+        "carnet_metier": "Notes détaillées sur chaque expédition et leçons apprises",
+        "boussole_familiale": "Boussole de qualité offerte par son père pour ses 18 ans"
+      },
+      "monture": "Aucune - considère que le voyage à pied fait partie du métier"
+    },
+
+    "sante_mentale": {
+      "etat_general": "Équilibrée avec les stress normaux de son métier",
+      "coping": "Retraites solitaires en forêt pour retrouver son centre, discussions avec Kaelen",
+      "vulnerabilites": "Tendance à trop s'investir professionnellement au détriment de sa vie personnelle"
+    },
+
+    "evolution_potentielle": {
+      "arc_narratif": "D'une guide compétente mais ordinaire à une figure respectée de sa communauté",
+      "conflits_internes": [
+        "Dévouement professionnel vs épanouissement personnel",
+        "Tradition familiale vs innovation personnelle"
+      ],
+      "potentiel_croissance": [
+        "Apprendre à déléguer et faire confiance",
+        "Développer de nouvelles techniques de guidage",
+        "Trouver l'équilibre entre héritage et identité propre"
+      ]
+    },
+
+    "dialogues_typiques": {
+      "presentation": "Cyndra d'Arrowyn. Je guide depuis que mon père m'a appris à marcher. Si vous cherchez du spectacle, allez au théâtre. Si vous voulez arriver à destination, on peut parler.",
+      "colere": "J'ai passé ma vie dans ces bois. Quand je dis que c'est dangereux, c'est que c'est dangereux. Votre orgueil ne vous protégera pas des prédateurs.",
+      "confiance": "Peut-être que... peut-être qu'on peut faire équipe sur ce coup. Mais je préviens, je ne prends pas de risques inutiles.",
+      "peur": "Certaines nuits... je revois son visage. Ce client que je n'ai pas pu sauver. Est-ce que j'aurais pu faire différemment ?",
+      "humour": "Quand la forêt vous envoie des orages, vous apprenez à danser sous la pluie. Ou vous restez à la maison. Je recommande de rester à la maison."
+    },
+
+    "description_narrative": "Cyndra d’Arrowyn est une femme réservée, marquée par une certaine maîtrise d’elle-même. Observatrice et prudente, elle préfère comprendre avant d’agir ou de parler. Sous son apparence sobre se trouvent une détermination constante et une vraie fiabilité envers ceux qu’elle estime.",
+
+    "réaction_joueur": {
+      "addItem": {
+        "usable": [
+          "Bien.",
+          "Je prends.",
+          "Utile.",
+          "Ça servira.",
+          "Hm.",
+          "Pratique.",
+          "Merci.",
+          "Toujours bon à avoir.",
+          "Je garde ça près de moi.",
+          "Simple, mais efficace."
+        ],
+        "health": [
+          "Merci.",
+          "Toujours utile.",
+          "Ça peut sauver la mise.",
+          "Je le garde.",
+          "Bien.",
+          "Hm.",
+          "Ça servira en cas de besoin.",
+          "Important d’en avoir.",
+          "Je le mets de côté.",
+          "Mieux vaut l’avoir."
+        ],
+        "food": [
+          "Merci.",
+          "Ça aide.",
+          "Bien.",
+          "Je prends.",
+          "De quoi tenir plus longtemps.",
+          "Hm.",
+          "Toujours bon à prendre.",
+          "Je garderai ça pour plus tard.",
+          "Ça fera l’affaire.",
+          "Utile sur la route."
+        ],
+        "weapon": [
+          "Je prends.",
+          "Bien.",
+          "Correct.",
+          "Ça peut servir.",
+          "Je testerai ça.",
+          "Hm.",
+          "Toujours utile.",
+          "On verra ce qu’elle vaut.",
+          "Merci.",
+          "Je saurai m’en servir."
+        ],
+        "shield": [
+          "Bien.",
+          "Solide.",
+          "Je prends.",
+          "Ça protégera.",
+          "Hm.",
+          "Ça fera le travail.",
+          "Utile.",
+          "Merci.",
+          "Assez robuste.",
+          "Ça devrait encaisser les coups."
+        ],
+        "head": [
+          "Ça protège.",
+          "Bien.",
+          "Je prends.",
+          "Hm.",
+          "Pratique.",
+          "Merci.",
+          "Je m’y ferai.",
+          "Ça fera l’affaire.",
+          "Utile.",
+          "Pas élégant, mais efficace."
+        ],
+        "torso": [
+          "Bien.",
+          "Je prends.",
+          "Ça renforcera.",
+          "Hm.",
+          "Solide.",
+          "Ça évite des blessures.",
+          "Merci.",
+          "Correct.",
+          "Pratique.",
+          "Ça devrait tenir."
+        ],
+        "arms": [
+          "Bien.",
+          "Je prends.",
+          "Hm.",
+          "Pratique.",
+          "Ça protège.",
+          "Merci.",
+          "Correct.",
+          "Ça ira.",
+          "Discret et utile.",
+          "Je verrai si ça gêne."
+        ],
+        "legs": [
+          "Bien.",
+          "Je prends.",
+          "Hm.",
+          "Ça aidera.",
+          "Pratique.",
+          "Merci.",
+          "Toujours utile.",
+          "Correct.",
+          "Pour les longues marches.",
+          "Ça fera le travail."
+        ],
+        "feet": [
+          "De bonnes semelles.",
+          "Bien.",
+          "Je prends.",
+          "Hm.",
+          "Ça évitera des ampoules.",
+          "Merci.",
+          "Solide.",
+          "Ça compte plus qu’on croit.",
+          "Pratique sur terrain dur.",
+          "Je les essaierai."
+        ],
+        "material": [
+          "Utile.",
+          "Merci.",
+          "Ça servira.",
+          "Hm.",
+          "Toujours bon à garder.",
+          "On peut en faire quelque chose.",
+          "Je le mets de côté.",
+          "Correct.",
+          "Ça peut dépanner.",
+          "Matière utile, oui."
+        ],
+        "key": [
+          "Intéressant.",
+          "Ça ouvre quelque chose.",
+          "Je prends.",
+          "Hm.",
+          "Je le garderai en sécurité.",
+          "Merci.",
+          "Ça pourrait servir plus tard.",
+          "Curieux objet.",
+          "On verra où ça mène.",
+          "Discret, mais important."
+        ],
+        "misc": [
+          "Je prends.",
+          "Hm.",
+          "Merci.",
+          "Curieux.",
+          "Ça pourra servir.",
+          "On ne sait jamais.",
+          "Je le garde.",
+          "Bien.",
+          "Peut-être utile plus tard.",
+          "Insolite… mais pourquoi pas."
+        ]
+      },
+      "pnjmove": {
+        "follow": [
+          "Très bien, je te suis.",
+          "Je reste derrière toi.",
+          "Je te couvre.",
+          "Passe devant, j’arrive.",
+          "Je garde le rythme.",
+          "D’accord, en route.",
+          "Je ne te lâche pas.",
+          "Je suis juste là.",
+          "Allons-y.",
+          "Je te suis de près."
+        ],
+
+        "fixed": [
+          "Je reste ici.",
+          "Ça me va, j’attends.",
+          "Je garde la position.",
+          "Je ne bouge pas.",
+          "Je surveille les environs.",
+          "Très bien, je reste là.",
+          "Je tiens le point.",
+          "Tu me retrouveras ici.",
+          "Je reste en place.",
+          "Compris. Je garde l’endroit."
+        ],
+
+        "goto": [
+          "J’y vais.",
+          "Compris, je m’en charge.",
+          "Je pars devant.",
+          "Je m’en occupe.",
+          "Je rejoins l’endroit.",
+          "Je file tout de suite.",
+          "Je me mets en route.",
+          "Je vais vérifier ça.",
+          "Très bien, j’y vais.",
+          "Je reviens dès que c’est fait."
+        ],
+
+        "recall": [
+          "J’arrive.",
+          "Je reviens.",
+          "Je suis en route.",
+          "Je fais demi-tour.",
+          "Je reviens vers ta position.",
+          "Je suis en train de revenir.",
+          "Je suis sur le retour."
+        ],
+
+        "has_join_player": [
+          "Me voilà.",
+          "Je suis là.",
+          "Je t’ai rejoint.",
+          "Me revoilà.",
+          "Je suis arrivée.",
+          "Je suis de retour.",
+          "Je suis revenue."
+        ]
+      }
+    },
+
+      "allies": {
+        "Kaelen": "Ancien associé de son père qui continue à lui envoyer des clients - relation de respect professionnel",
+        "Lyra": "Herboriste de Dalen - échanges de services (guidage contre remèdes et informations)"
+      },
+      "ennemis": {
+        "Brak": "Chef des bûcherons illégaux - rancune depuis leur confrontation"
+      },
+      "neutres": {
+        "Confrerie_Guides_Dalen": "Respect professionnel mutuel mais concurrence commerciale"
+      }
+  },
+
+    "meta_jeu": {
+      "role_campagne": "Guide professionnelle puis alliée conditionnelle",
+      "points_attachement": ["Honnêteté professionnelle", "Protection des clients", "Respect de la nature", "Loyauté aux siens"],
+      "conditions_alliance": "Respect mutuel, objectifs communs clairs, reconnaissance de son expertise",
+      "secrets_revelables": [
+        "Réseau de sentiers secrets des Marches",
+        "Histoire complète de l'accident fatal",
+        "Conflits d'intérêts dans l'industrie du guidage",
+        "Projets d'expansion de son entreprise"
+      ]
+    },
+
+    "coherence_univers": {
+      "integration_geographique": "Parfaitement intégrée à l'écosystème économique et social des Marches du Dalen",
+      "connaissances_culturelles": "Maîtrise les coutumes Valnariennes locales et les réalités commerciales d'Eldaron",
+      "impact_economique": "Actrice économique locale normale dans le secteur des services de guidage",
+      "relations_geopolitiques": "Neutre dans les grands conflits, préoccupations professionnelles locales"
+    },
+
+  "meta_generation": {
+    "date_creation": "2025-11-05",
+    "version": "2.0",
+    "auteur": "Système Velkarum",
+    "notes_development": "Personnage conçu pour être profondément humain et réaliste, évitant les clichés du héros tragique ou de la femme forte unidimensionnelle. Cyndra présente une complexité psychologique réaliste avec des contradictions et des nuances qui en font un personnage crédible et mémorable."
+  }
+}

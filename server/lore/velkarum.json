@@ -1,0 +1,353 @@
+{
+  "continent_bounds": {
+  "Helrün": {
+    "x_min": 10,
+    "x_max": 60,
+    "y_min": 0,
+    "y_max": 25
+  },
+  "Eldaron": {
+    "x_min": 5,
+    "x_max": 70,
+    "y_min": 25,
+    "y_max": 50
+  },
+  "Varnäl": {
+    "x_min": 10,
+    "x_max": 75,
+    "y_min": 50,
+    "y_max": 70
+  },
+  "Thaurgrim": {
+    "x_min": 25,
+    "x_max": 85,
+    "y_min": 70,
+    "y_max": 100
+  },
+  "Iskarion": {
+    "x_min": 60,
+    "x_max": 100,
+    "y_min": 55,
+    "y_max": 100
+  }
+},
+  "continents": {
+    "Eldaron": {
+      "regions": [
+        {
+          "name": "Royaume Central de Valnoria",
+          "bounds": { "x_min": 30, "x_max": 60, "y_min": 40, "y_max": 70 },
+          "capital": "Lorn"
+        },
+        {
+          "name": "Marches du Dalen",
+          "bounds": { "x_min": 15, "x_max": 45, "y_min": 65, "y_max": 85 },
+          "capital": "Dalen"
+        },
+        {
+          "name": "Confédération Méridionale d'Ardel",
+          "bounds": { "x_min": 45, "x_max": 80, "y_min": 20, "y_max": 45 },
+          "capital": "Ardel"
+        },
+        {
+          "name": "Principauté de Ferharn",
+          "bounds": { "x_min": 65, "x_max": 90, "y_min": 45, "y_max": 70 },
+          "capital": "Ferharn"
+        },
+        {
+          "name": "Ligues Côtières de Lirn",
+          "bounds": { "x_min": 5, "x_max": 30, "y_min": 30, "y_max": 60 },
+          "capital": "Lirn"
+        },
+        {
+          "name": "Terres Tribales du Nord",
+          "bounds": { "x_min": 20, "x_max": 50, "y_min": 80, "y_max": 95 },
+          "capital": "Aucune (nomadisme)"
+        },
+        {
+          "name": "Marches Orientales",
+          "bounds": { "x_min": 75, "x_max": 95, "y_min": 70, "y_max": 90 },
+          "capital": "Khar-Ghul"
+        },
+        {
+          "name": "Delta du Draen",
+          "bounds": { "x_min": 25, "x_max": 45, "y_min": 10, "y_max": 25 },
+          "capital": "Draenport"
+        }
+      ],
+      "cities": [
+        { "name": "Lorn", "coords": { "x": 45, "y": 55 } },
+        { "name": "Ardel", "coords": { "x": 60, "y": 35 } },
+        { "name": "Dorr", "coords": { "x": 50, "y": 60 } },
+        { "name": "Lirn", "coords": { "x": 15, "y": 45 } },
+        { "name": "Ferharn", "coords": { "x": 75, "y": 55 } },
+        { "name": "Dalen", "coords": { "x": 30, "y": 75 } },
+        { "name": "Khar-Ghul", "coords": { "x": 85, "y": 80 } },
+        { "name": "Draenport", "coords": { "x": 35, "y": 15 } }
+      ],
+      "points_of_interest": [
+        { "name": "Académie du Draen", "type": "Centre de recherche", "coords": { "x": 45, "y": 55 } },
+        { "name": "Conseil des Royaumes de Lorn", "type": "Gouvernement continental", "coords": { "x": 45, "y": 55 } },
+        { "name": "Bourse Maritime de Lirn", "type": "Marché financier international", "coords": { "x": 15, "y": 45 } },
+        { "name": "Trésor Royal de Lorn", "type": "Banque centrale", "coords": { "x": 45, "y": 55 } },
+        { "name": "Guilde des Changeurs d'Ardel", "type": "Bureau de change international", "coords": { "x": 60, "y": 35 } },
+        { "name": "Brigade Anti-Crime d'Ardel", "type": "Forces de l'ordre", "coords": { "x": 60, "y": 35 } },
+        { "name": "Maison des Plaisirs Ombragés", "type": "Établissement clandestin", "coords": { "x": 45, "y": 55 } },
+        { "name": "Les Cendres Rouges", "type": "Établissement clandestin", "coords": { "x": 60, "y": 35 } },
+        { "name": "Forge des Ombres", "type": "Atelier clandestin", "coords": { "x": 62, "y": 32 } },
+        { "name": "Marché de Khar-Ghul", "type": "Marché noir", "coords": { "x": 85, "y": 80 } },
+        { "name": "Caravansérail des Ombres", "type": "Réseau criminel", "coords": { "x": 45, "y": 20 } },
+        { "name": "Guilde des Talents", "type": "Réseau criminel", "coords": { "x": 75, "y": 55 } },
+        { "name": "Marché des Compétences", "type": "Réseau criminel", "coords": { "x": 55, "y": 45 } }
+      ]
+    },
+
+    "Varnäl": {
+      "regions": [
+        {
+          "name": "Forêts Primaires de Rhaal",
+          "bounds": { "x_min": 20, "x_max": 50, "y_min": 60, "y_max": 85 },
+          "capital": "Rhaal"
+        },
+        {
+          "name": "Bassins Marécageux de Marael",
+          "bounds": { "x_min": 40, "x_max": 70, "y_min": 30, "y_max": 60 },
+          "capital": "Marael"
+        },
+        {
+          "name": "Savanes de Cenra",
+          "bounds": { "x_min": 60, "x_max": 90, "y_min": 40, "y_max": 70 },
+          "capital": "Cenra"
+        },
+        {
+          "name": "Massif Central de Velkar",
+          "bounds": { "x_min": 30, "x_max": 65, "y_min": 10, "y_max": 35 },
+          "capital": "Velkar"
+        },
+        {
+          "name": "Côtes Océaniques de Tarran",
+          "bounds": { "x_min": 5, "x_max": 25, "y_min": 20, "y_max": 50 },
+          "capital": "Tarran"
+        }
+      ],
+      "cities": [
+        { "name": "Rhaal", "coords": { "x": 35, "y": 72 } },
+        { "name": "Marael", "coords": { "x": 55, "y": 45 } },
+        { "name": "Velkar", "coords": { "x": 45, "y": 20 } },
+        { "name": "Tarran", "coords": { "x": 15, "y": 35 } },
+        { "name": "Falaar", "coords": { "x": 25, "y": 25 } },
+        { "name": "Cenra", "coords": { "x": 75, "y": 55 } }
+      ],
+      "points_of_interest": [
+        { "name": "Observatoire Atmosphérique de Velkar", "type": "Centre climatologique", "coords": { "x": 45, "y": 20 } },
+        { "name": "Laboratoires Alchimiques de Marael", "type": "Centre de recherche", "coords": { "x": 55, "y": 45 } },
+        { "name": "Banque Génétique de Rhaal", "type": "Réserve biodiversité", "coords": { "x": 35, "y": 75 } },
+        { "name": "Temple du Souffle", "type": "Lieu sacré", "coords": { "x": 35, "y": 72 } },
+        { "name": "Marais de la Voix", "type": "Lieu sacré", "coords": { "x": 54, "y": 44 } },
+        { "name": "Arbrena de Rhaal", "type": "Lieu de divertissement", "coords": { "x": 35, "y": 75 } },
+        { "name": "Marché aux Senteurs", "type": "Marché expérientiel", "coords": { "x": 55, "y": 45 } },
+        { "name": "Refuge des Brumes", "type": "Laboratoire clandestin", "coords": { "x": 54, "y": 44 } }
+      ]
+    },
+
+    "Thaurgrim": {
+      "regions": [
+        {
+          "name": "Royaume Volcanique du Vulkar",
+          "bounds": { "x_min": 60, "x_max": 90, "y_min": 60, "y_max": 85 },
+          "capital": "Vulkar"
+        },
+        {
+          "name": "Plaines Fertiles du Drav",
+          "bounds": { "x_min": 40, "x_max": 70, "y_min": 40, "y_max": 60 },
+          "capital": "Drav"
+        },
+        {
+          "name": "Hauts Plateaux de Derna",
+          "bounds": { "x_min": 20, "x_max": 50, "y_min": 50, "y_max": 75 },
+          "capital": "Derna"
+        },
+        {
+          "name": "Côtes Géothermiques du Thun'ar",
+          "bounds": { "x_min": 30, "x_max": 60, "y_min": 20, "y_max": 40 },
+          "capital": "Thun'ar"
+        },
+        {
+          "name": "Domaine Maritime d'Ashraal",
+          "bounds": { "x_min": 50, "x_max": 80, "y_min": 10, "y_max": 30 },
+          "capital": "Ashraal"
+        }
+      ],
+      "cities": [
+        { "name": "Vulkar", "coords": { "x": 75, "y": 70 } },
+        { "name": "Derna", "coords": { "x": 35, "y": 60 } },
+        { "name": "Kaar", "coords": { "x": 85, "y": 40 } },
+        { "name": "Thun'ar", "coords": { "x": 45, "y": 30 } },
+        { "name": "Drav", "coords": { "x": 55, "y": 50 } }
+      ],
+      "points_of_interest": [
+        { "name": "Complexe Industriel de Thun'ar", "type": "Centre énergétique", "coords": { "x": 45, "y": 30 } },
+        { "name": "Observatoire Volcanique du Ghaarn", "type": "Centre sismique", "coords": { "x": 80, "y": 75 } },
+        { "name": "Port International de Kaar", "type": "Hub commercial", "coords": { "x": 85, "y": 40 } },
+        { "name": "Temples du Feu Profond", "type": "Lieu sacré", "coords": { "x": 75, "y": 70 } },
+        { "name": "Forges sacrées du Ghaarn", "type": "Lieu sacré", "coords": { "x": 80, "y": 75 } },
+        { "name": "Grande Forge de Vulkar", "type": "Forge spectacle", "coords": { "x": 75, "y": 70 } },
+        { "name": "Arène des Cendres", "type": "Stade volcanique", "coords": { "x": 55, "y": 50 } },
+        { "name": "Champs de Soufre", "type": "Zone d'extraction", "coords": { "x": 50, "y": 25 } },
+        { "name": "Caverne Acide", "type": "Laboratoire clandestin", "coords": { "x": 58, "y": 42 } }
+      ]
+    },
+
+    "Helrün": {
+      "regions": [
+        {
+          "name": "Territoire des Clans du Nerr",
+          "bounds": { "x_min": 10, "x_max": 40, "y_min": 5, "y_max": 30 },
+          "capital": "Nerr"
+        },
+        {
+          "name": "Domaine des Tribus du Nar",
+          "bounds": { "x_min": 35, "x_max": 75, "y_min": 15, "y_max": 45 },
+          "capital": "Narvik"
+        },
+        {
+          "name": "Royaume Montagnard du Skarnheim",
+          "bounds": { "x_min": 60, "x_max": 95, "y_min": 40, "y_max": 70 },
+          "capital": "Skarnheim"
+        },
+        {
+          "name": "Territoires des Nautes du Draen",
+          "bounds": { "x_min": 5, "x_max": 25, "y_min": 40, "y_max": 60 },
+          "capital": "Aucune (nomadisme maritime)"
+        },
+        {
+          "name": "Sanctuaires des Ermites du Drann",
+          "bounds": { "x_min": 45, "x_max": 65, "y_min": 65, "y_max": 85 },
+          "capital": "Ygral"
+        }
+      ],
+      "cities": [
+        { "name": "Skarnheim", "coords": { "x": 75, "y": 55 } },
+        { "name": "Nerr", "coords": { "x": 25, "y": 15 } },
+        { "name": "Narvik", "coords": { "x": 55, "y": 30 } },
+        { "name": "Ygral", "coords": { "x": 55, "y": 75 } }
+      ],
+      "points_of_interest": [
+        { "name": "Station Polaire Internationale d'Ygral", "type": "Centre de recherche", "coords": { "x": 55, "y": 75 } },
+        { "name": "Port International de Nerr", "type": "Hub commercial polaire", "coords": { "x": 25, "y": 15 } },
+        { "name": "Sanctuaire d'Ygral", "type": "Lieu sacré", "coords": { "x": 55, "y": 75 } },
+        { "name": "Sources du Drann", "type": "Lieu sacré", "coords": { "x": 65, "y": 80 } },
+        { "name": "Hall des Brumes de Skarnheim", "type": "Centre communautaire", "coords": { "x": 75, "y": 55 } },
+        { "name": "Arène de Nerr", "type": "Stade polaire", "coords": { "x": 25, "y": 15 } },
+        { "name": "Grottes du Drann", "type": "Stockage illégal", "coords": { "x": 50, "y": 60 } },
+        { "name": "Caverne du Silence", "type": "Mine clandestine", "coords": { "x": 48, "y": 62 } }
+      ]
+    },
+
+    "Iskarion": {
+      "regions": [
+        {
+          "name": "Royaume Solaire du Zhaïr",
+          "bounds": { "x_min": 20, "x_max": 50, "y_min": 60, "y_max": 85 },
+          "capital": "Zhaïr"
+        },
+        {
+          "name": "Territoires du Rift Shaar",
+          "bounds": { "x_min": 40, "x_max": 70, "y_min": 30, "y_max": 60 },
+          "capital": "Shaar-Keth"
+        },
+        {
+          "name": "Confédération des Plateaux de Surn",
+          "bounds": { "x_min": 60, "x_max": 90, "y_min": 40, "y_max": 70 },
+          "capital": "Vethar"
+        },
+        {
+          "name": "Sultanat du Désert de Korra",
+          "bounds": { "x_min": 30, "x_max": 65, "y_min": 10, "y_max": 35 },
+          "capital": "Korra"
+        },
+        {
+          "name": "Ligue Maritimes d'Asuren",
+          "bounds": { "x_min": 5, "x_max": 25, "y_min": 20, "y_max": 50 },
+          "capital": "Asuren"
+        }
+      ],
+      "cities": [
+        { "name": "Zhaïr", "coords": { "x": 35, "y": 75 } },
+        { "name": "Asuren", "coords": { "x": 15, "y": 35 } },
+        { "name": "Shaar-Keth", "coords": { "x": 55, "y": 45 } },
+        { "name": "Vethar", "coords": { "x": 75, "y": 55 } },
+        { "name": "Korra", "coords": { "x": 45, "y": 20 } }
+      ],
+      "points_of_interest": [
+        { "name": "Station de Transfert Solaire d'Asuren", "type": "Centrale énergétique", "coords": { "x": 15, "y": 35 } },
+        { "name": "Observatoire Climatique de Zhaïr", "type": "Centre de recherche", "coords": { "x": 35, "y": 75 } },
+        { "name": "Grand Autel du Zhaïr", "type": "Lieu sacré", "coords": { "x": 35, "y": 75 } },
+        { "name": "Sanctuaire du Shaar", "type": "Lieu sacré", "coords": { "x": 56, "y": 46 } },
+        { "name": "Théâtre Solaire de Zhaïr", "type": "Théâtre sacré", "coords": { "x": 35, "y": 75 } },
+        { "name": "Jardin des Reflets", "type": "Parc contemplatif", "coords": { "x": 15, "y": 35 } },
+        { "name": "Jardins de Zhaïr Cachés", "type": "Établissement clandestin", "coords": { "x": 35, "y": 75 } },
+        { "name": "Geyser Principal", "type": "Site de recherche", "coords": { "x": 60, "y": 40 } },
+        { "name": "Source Acide", "type": "Laboratoire naturel", "coords": { "x": 65, "y": 35 } }
+      ]
+    }
+  },
+
+  "strategic_locations": {
+    "mines_clandestines": [
+      { "name": "Mine de l'Ombre", "coords": { "x": 88, "y": 78 }, "region": "Marches Orientales" },
+      { "name": "Puits des Perdus", "coords": { "x": 52, "y": 22 }, "region": "Désert de Korra" },
+      { "name": "Caverne du Silence", "coords": { "x": 48, "y": 62 }, "region": "Grottes du Drann" }
+    ],
+    "ateliers_clandestins": [
+      { "name": "Forge des Ombres", "coords": { "x": 62, "y": 32 }, "region": "Ardel" },
+      { "name": "Enclume Noire", "coords": { "x": 78, "y": 68 }, "region": "Vulkar" }
+    ],
+    "sites_production_stupefiants": [
+      { "name": "Bassins Marécageux de Marael", "produit": "Poudre de Brume", "coords": { "x": 55, "y": 45 } },
+      { "name": "Forêts Primaires de Rhaal", "produit": "Sève de Rhaal Corrompue", "coords": { "x": 35, "y": 75 } },
+      { "name": "Sanctuaires des Ermites du Drann", "produit": "Larmes d'Ygral", "coords": { "x": 55, "y": 75 } },
+      { "name": "Territoires du Rift Shaar", "produit": "Sang Volcanique", "coords": { "x": 55, "y": 45 } }
+    ],
+    "repaires_pirates": [
+      { "name": "Embouchure du Drann", "type": "Repaire caché", "coords": { "x": 20, "y": 25 } },
+      { "name": "Confluence Surn-Brumes", "type": "Zone d'embuscades", "coords": { "x": 25, "y": 20 } },
+      { "name": "Golfe de Thun'ar", "type": "Trafic maritime", "coords": { "x": 70, "y": 25 } }
+    ]
+  },
+
+  "critical_infrastructure": {
+    "centres_financiers": [
+      { "name": "Trésor Royal de Lorn", "type": "Banque centrale", "coords": { "x": 45, "y": 55 } },
+      { "name": "Bourse Maritime de Lirn", "type": "Marché financier", "coords": { "x": 15, "y": 45 } },
+      { "name": "Guilde des Changeurs d'Ardel", "type": "Bureau de change", "coords": { "x": 60, "y": 35 } }
+    ],
+    "centres_recherche": [
+      { "name": "Académie du Draen", "type": "Recherche avancée", "coords": { "x": 45, "y": 55 } },
+      { "name": "Observatoire Atmosphérique de Velkar", "type": "Climatologie", "coords": { "x": 45, "y": 20 } },
+      { "name": "Station Polaire Internationale d'Ygral", "type": "Recherche polaire", "coords": { "x": 55, "y": 75 } },
+      { "name": "Observatoire Volcanique du Ghaarn", "type": "Sismologie", "coords": { "x": 80, "y": 75 } },
+      { "name": "Observatoire Climatique de Zhaïr", "type": "Recherche atmosphérique", "coords": { "x": 35, "y": 75 } }
+    ],
+    "ports_internationaux": [
+      { "name": "Port International de Nerr", "type": "Hub polaire", "coords": { "x": 25, "y": 15 } },
+      { "name": "Port International de Kaar", "type": "Hub continental", "coords": { "x": 85, "y": 40 } },
+      { "name": "Station de Transfert Solaire d'Asuren", "type": "Centrale énergétique", "coords": { "x": 15, "y": 35 } }
+    ]
+  },
+
+  "intercontinental_connections": {
+    "maritime": [
+      { "name": "Ligne Lirn-Nerr", "distance": "300 km", "points": [{ "x": 15, "y": 45 }, { "x": 25, "y": 15 }] },
+      { "name": "Ligne Lirn-Tarran", "distance": "400 km", "points": [{ "x": 15, "y": 45 }, { "x": 15, "y": 35 }] },
+      { "name": "Ligne Ardel-Kaar", "distance": "350 km", "points": [{ "x": 60, "y": 35 }, { "x": 85, "y": 40 }] }
+    ],
+    "terrestre": [
+      { "name": "Route des Cendres", "points": [{ "x": 60, "y": 35 }, { "x": 90, "y": 35 }] },
+      { "name": "Voie du Nord", "points": [{ "x": 45, "y": 55 }, { "x": 40, "y": 95 }] }
+    ],
+    "souterrain": [
+      { "name": "Canal du Drann", "points": [{ "x": 65, "y": 80 }, { "x": 50, "y": 60 }, { "x": 20, "y": 25 }] }
+    ]
+  }
+}

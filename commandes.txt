@@ -1,0 +1,151 @@
+=== SYSTÈME D'OBJETS ET INVENTAIRE ===
+
+• AJOUTER UN ITEM
+<<addItem "id_item">>                         // Ajoute 1 exemplaire
+<<addItem "id_item" quantité>>                // Ajoute plusieurs exemplaires
+
+• RETIRER UN ITEM
+<<removeItem "id_item">>                      // Retire 1 exemplaire
+<<removeItem "id_item" quantité>>             // Retire plusieurs exemplaires
+
+• ÉQUIPER/DÉSÉQUIPER
+(Automatique via clic droit dans l'inventaire)
+
+=== SYSTÈME PNJ/COMPAGNONS ===
+
+• SPAWNER UN PNJ
+<<spawn pnj "Nom">>                          // Fait apparaître le PNJ
+
+• GESTION COMPAGNONS
+<<pnj "Nom" "buddy">>                        // Devient compagnon
+<<pnj "Nom" "follow">>                       // Vous suit
+<<pnj "Nom" "fixed">>                        // Reste sur place
+<<pnj "Nom" "dead">>                         // Tue le PNJ
+<<pnj "Nom" "gone">>                         // Fait partir le PNJ
+<<pnj "Nom" "NomPassage">>                   // Déplace vers un passage
+
+• COMMANDES SPÉCIALISÉES COMPAGNONS
+<<pnjfollow "Nom">>                          // Vous suit (version améliorée)
+<<pnjfix "Nom">>                             // Reste sur place (version améliorée)
+<<pnjrecall "Nom">>                          // Rappelle un compagnon absent
+
+• DÉPLACEMENT PRÉCIS
+<<movePnj "Nom" "PassageCible">>              // Déplace vers un passage
+<<movePnj "Nom" "PassageCible" x y>>          // Déplace avec coordonnées précises
+<<pnjCoords "Nom" x y>>                       // Modifie seulement les coordonnées
+
+• SANTÉ COMPAGNONS
+<<pnjheal "Nom" quantité>>                   // Soigne le compagnon
+<<pnjdamage "Nom" quantité>>                 // Blesse le compagnon
+<<pnjkill "Nom">>                            // Tue le compagnon
+<<pnjresurrect "Nom">>                       // Ressuscite le compagnon
+
+• STATISTIQUES COMPAGNONS
+<<pnjsetstrength "Nom" valeur>>              // Modifie la force
+<<pnjsetdexterity "Nom" valeur>>             // Modifie la dextérité
+<<pnjsetlevel "Nom" valeur>>                 // Modifie le niveau
+
+• DON D'OBJETS AUX COMPAGNONS
+<<pnjgive "NomCompagnon" "id_item">>         // Donne 1 objet
+<<pnjgive "NomCompagnon" "id_item" quantité>> // Donne plusieurs objets
+
+• RELATIONS/HUMEUR
+<<setrelation "Nom" valeur>>                 // Définit relation (0-100)
+<<changerelation "Nom" delta>>               // Modifie relation
+<<setloyalty "Nom" valeur>>                  // Définit loyauté (0-100)
+<<changeloyalty "Nom" delta>>                // Modifie loyauté
+<<setmood "Nom" valeur>>                     // Définit humeur (-2 à 2)
+<<changemood "Nom" delta>>                   // Modifie humeur
+
+=== SYSTÈME DE QUÊTES ===
+
+• PROPOSITION DE QUÊTE
+<<quest "id" "Titre" "Description courte">>
+<<quest "id" "Titre" "Desc courte" "Desc longue">>
+<<quest "id" "Titre" "Desc courte" "Desc longue" "{gold:50, items:[]}">>
+
+• GESTION QUÊTES
+<<startquest "id">>                          // Démarre une quête proposée
+<<markquestready "id">>                      // Marque quête comme terminable
+<<markquestcompleted "id">>                  // Termine et donne récompense
+
+=== SYSTÈME DE COORDONNÉES ET CARTE ===
+
+• DÉFINIR COORDONNÉES
+<<setcoords x y>>                            // Définit coordonnées du passage
+<<setcoords x y "Continent">>                // Avec continent spécifique
+<<setcoords {x:1, y:2, continent: "Nom"}>>  // Format objet
+
+• AFFICHER POSITION
+<<displaylocation>>                          // Affiche la localisation actuelle
+
+=== SYSTÈME DE SANTÉ ET COMBAT ===
+
+• MODIFIER SANTÉ
+<<losehealth quantité>>                      // Perdre de la santé
+<<death>>                                    // Mort immédiate
+<<death "Message personnalisé">>             // Mort avec message
+
+• EXPÉRIENCE ET NIVEAU
+<<addExp quantité>>                          // Ajoute de l'expérience
+
+=== SYSTÈME D'ENVIRONNEMENT ===
+
+• CHANGER ENVIRONNEMENT
+<<setenv "nom_environnement">>               // Change fond et ambiance sonore
+
+• NOTIFICATIONS
+<<notify "Titre" "Message">>                 // Notification simple
+<<notify "Titre" "Message" durée>>           // Avec durée personnalisée
+<<notifydialogue "PNJ" "Message court">>     // Notification dialogue
+<<notifydialogue "PNJ" "Msg court" "Msg long">>
+
+=== INTERFACE ET INTERACTION ===
+
+• ICÔNES DE CHOIX
+<<choiceicon "move">>                        // Icône déplacement
+<<choiceicon "look">>                        // Icône observer
+<<choiceicon "interact">>                    // Icône interagir
+<<choiceicon "speak">>                       // Icône parler
+<<choiceicon "attack">>                      // Icône attaquer
+<<choiceicon "back">>                        // Icône retour
+
+=== COMMANDES DE DÉVELOPPEMENT ===
+
+• TESTS GÉOGRAPHIE
+<<testgeography>>                            // Affiche infos de débogage
+
+=== EXEMPLES PRATIQUES ===
+
+• DONNER UNE ÉPÉE AU JOUEUR
+<<addItem "epee_bois">>
+
+• FAIRE APPARAÎTRE ET RECRUTER CYNDRA
+<<spawn pnj "Cyndra">>
+<<pnj "Cyndra" "follow">>
+
+• DÉMARRER UNE QUÊTE AVEC RÉCOMPENSE
+<<quest "chasse_sanglier" "Chasse au sanglier" "Tuez 3 sangliers" "Allez dans la forêt et éliminez 3 sangliers dangereux" "{gold:100, items:['viande_salee']}">>
+
+• DÉPLACER UN PNJ VERS UNE POSITION
+<<movePnj "Cyndra" "Foret_Noire" 45 60>>
+
+• CHANGER L'ENVIRONNEMENT
+<<setenv "foret">>
+
+• PROVOQUER UN DIALOGUE
+<<notifydialogue "Cyndra" "Attention, je sens un danger..." "Je perçois une présence maléfique non loin d'ici. Nous devrions être prudents.">>
+
+=== FORMATS DE RÉCOMPENSES POUR QUÊTES ===
+
+• OR SEUL
+"{gold: 50}"
+
+• OBJETS SPÉCIFIQUES
+"{gold: 100, items: ['potion_soin', 'parchemin_sort']}"
+
+• OBJETS ALÉATOIRES
+"{gold: 75, items: ['random:weapon', 'random:health']}"
+
+• MIXTE
+"{gold: 150, items: ['epee_acier', 'random:food']}"

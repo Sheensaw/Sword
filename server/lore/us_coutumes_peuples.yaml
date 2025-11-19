@@ -1,0 +1,245 @@
+# us_coutumes_peuples.yaml
+modele: "hybride_ia_semantique"
+description: "Peuples, coutumes et cultes de Velkarum - Système complet des civilisations"
+
+# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+embedding_optimized:
+  themes: ["peuples", "coutumes", "cultes", "traditions", "divertissements", "rites", "societes"]
+  mots_cles: ["varnäliens", "eldariens", "helruniens", "iskari", "thaurgrims", "rites", "temples", "festivals", "traditions"]
+  description_semantique: "Système complet des peuples de Velkarum avec leurs coutumes, cultes et lieux de rassemblement, intégrant les coordonnées géographiques"
+
+# PEUPLES PRINCIPAUX ET LEURS CARACTÉRISTIQUES
+peuples_principaux:
+  - nom: "Varnäliens"
+    origine: "Forêts Primaires de Rhaal (35,75)"
+    territoire_principal: "Varnäl"
+    population_estimee: "18 millions"
+    description_physique: "Peau tannée par l'ombre des forêts, yeux perçants adaptés à la pénombre, cheveux souvent bruns ou roux"
+    mentalite: "Pragmatiques et spirituels, profondément connectés aux cycles biologiques"
+    valeurs: ["Harmonie écologique", "Patience", "Mémoire des forêts", "Respect des anciens"]
+    interdits: ["Couper un arbre ancestral", "Polluer les sources", "Déranger les temples biologiques"]
+
+  - nom: "Eldariens (Valnari)"
+    origine: "Royaume Central de Valnoria (45,55)"
+    territoire_principal: "Eldaron"
+    population_estimee: "25 millions"
+    description_physique: "Taille moyenne, traits réguliers, souvent blonds ou châtains, port digne"
+    mentalite: "Diplomatiques et commerçants, fiers de leur rôle central dans Velkarum"
+    valeurs: ["Honneur", "Commerce équitable", "Stabilité politique", "Éducation"]
+    interdits: ["Rompre un serment", "Trahir l'hospitalité", "Négliger les alliances"]
+
+  - nom: "Helruniens"
+    origine: "Territoire des Clans du Nerr (25,15)"
+    territoire_principal: "Helrün"
+    population_estimee: "3 millions"
+    description_physique: "Peau pâle adaptée au froid, corps robuste, cheveux blonds ou blancs"
+    mentalite: "Endurants et mystiques, respectueux des forces polaires"
+    valeurs: ["Résistance", "Sagesse du froid", "Mémoire glaciale", "Hospitalité limitée"]
+    interdits: ["Gaspiller la chaleur", "Insulter les vents", "Perturber les sanctuaires de glace"]
+
+  - nom: "Iskari"
+    origine: "Royaume Solaire du Zhaïr (35,75)"
+    territoire_principal: "Iskarion"
+    population_estimee: "15 millions"
+    description_physique: "Peau cuivrée, yeux adaptés à la lumière intense, stature élancée"
+    mentalite: "Spirituels et énergétiques, dévoués au culte solaire"
+    valeurs: ["Dévotion solaire", "Innovation énergétique", "Artisanat sacré", "Équilibre thermique"]
+    interdits: ["Obscurcir les miroirs sacrés", "Négliger les cycles solaires", "Profaner les temples pyramidaux"]
+
+  - nom: "Thaurgrims"
+    origine: "Royaume Volcanique du Vulkar (75,70)"
+    territoire_principal: "Thaurgrim"
+    population_estimee: "12 millions"
+    description_physique: "Peau marquée par les cendres, corps robuste, voix grave portant loin"
+    mentalite: "Pragmatiques et sacrés, vivant en symbiose avec le volcanisme"
+    valeurs: ["Force volcanique", "Loyauté clanique", "Artisanat du feu", "Endurance"]
+    interdits: ["Craindre le feu", "Trahir le clan", "Négliger les forges sacrées"]
+
+# PEUPLES MINORITAIRES ET SPÉCIALISÉS
+peuples_minoritaires:
+  - nom: "Nains Thaurgriens"
+    origine: "Massif Central de Velkar (45,20) et Principauté de Ferharn (75,55)"
+    specialisation: "Métallurgie et ingénierie souterraine"
+    population_estimee: "2.5 millions"
+    mentalite: "Traditionalistes et perfectionnistes, gardiens des secrets de la forge"
+    relations: ["Alliés avec Thaurgrims", "Respectés par les Eldariens", "Neutres avec Varnäliens"]
+
+  - nom: "Elfes Sylvarin"
+    origine: "Marches du Dalen (30,75) et Forêts Primaires de Rhaal"
+    specialisation: "Sylviculture et connaissances anciennes"
+    population_estimee: "1.2 millions"
+    mentalite: "Patients et contemplatifs, méfiants envers le progrès rapide"
+    relations: ["Proches des Varnäliens", "Neutres avec Eldariens", "Distanciels avec Thaurgrims"]
+
+  - nom: "Centaures Talren"
+    origine: "Savanes de Cenra (75,55) et Terres Tribales du Nord"
+    specialisation: "Nomadisme et élevage"
+    population_estimee: "0.8 million"
+    mentalite: "Libres et mobiles, respectueux des cycles migratoires"
+    relations: ["Commerce avec Cenriens", "Neutres avec tous", "Méfiants envers l'urbanisation"]
+
+  - nom: "Batraciens Grolka"
+    origine: "Delta du Draen (35,15) et Bassins Marécageux de Marael"
+    specialisation: "Alchimie des eaux et pêche"
+    population_estimee: "0.9 million"
+    mentalite: "Communautaires et adaptatifs, experts en écosystèmes humides"
+    relations: ["Respectés pour leur savoir", "Isolés volontaires", "Commercent avec Maréens"]
+
+  - nom: "Nautes du Draen"
+    origine: "Territoires des Nautes du Draen (10,50)"
+    specialisation: "Navigation et commerce maritime"
+    population_estimee: "0.3 million"
+    mentalite: "Libres et cosmopolites, maîtres des courants et des brumes"
+    relations: ["Essentiels au commerce", "Neutres et pragmatiques", "Respectés par tous"]
+
+# SYSTÈME DE CULTES ET RELIGIONS
+cultes_principaux:
+  - nom: "Culte du Souffle"
+    origine: "Forêts Primaires de Rhaal (35,72)"
+    divinites: ["Rhala, déesse de la respiration mondiale", "Mara, esprit des eaux filtrantes"]
+    lieux_sacres:
+      - { nom: "Temple du Souffle", coordonnees: {x: 35, y: 72}, ville: "Rhaal" }
+      - { nom: "Marais de la Voix", coordonnees: {x: 54, y: 44}, ville: "Marael" }
+    pratiques: ["Méditation respiratoire", "Plantations rituelles", "Cérémonies du cycle oxygène"]
+    influence: "Fortement suivi à Varnäl, respecté dans tout Velkarum"
+
+  - nom: "Voiles d'Ygral"
+    origine: "Sanctuaires des Ermites du Drann (55,75)"
+    divinites: ["Ygral, entité de la mémoire glaciale", "Drann, esprit des courants souterrains"]
+    lieux_sacres:
+      - { nom: "Sanctuaire d'Ygral", coordonnees: {x: 55, y: 75}, region: "Helrün" }
+      - { nom: "Sources du Drann", coordonnees: {x: 65, y: 80}, region: "Helrün" }
+    pratiques: ["Contemplation des glaces", "Étude des courants", "Rites de préservation"]
+    influence: "Culte élitiste suivi par les savants et ermites"
+
+  - nom: "Foi Solaire du Zhaïr"
+    origine: "Royaume Solaire du Zhaïr (35,75)"
+    divinites: ["Zhaïr, dieu du soleil bienveillant", "Shaar, esprit du feu terrestre"]
+    lieux_sacres:
+      - { nom: "Grand Autel du Zhaïr", coordonnees: {x: 35, y: 75}, ville: "Zhaïr" }
+      - { nom: "Sanctuaire du Shaar", coordonnees: {x: 56, y: 46}, ville: "Shaar-Keth" }
+    pratiques: ["Offrandes lumineuses", "Cérémonies des solstices", "Prière aux miroirs"]
+    influence: "Religion dominante à Iskarion, respectée pour son rôle énergétique"
+
+  - nom: "Culte du Feu Profond"
+    origine: "Royaume Volcanique du Vulkar (75,70)"
+    divinites: ["Ghaarn, dieu volcanique", "Valdrek, esprit des cendres fertilisantes"]
+    lieux_sacres:
+      - { nom: "Temples du Feu Profond", coordonnees: {x: 75, y: 70}, ville: "Vulkar" }
+      - { nom: "Forges sacrées du Ghaarn", coordonnees: {x: 80, y: 75}, region: "Thaurgrim" }
+    pratiques: ["Offrandes de minéraux", "Rites des éruptions", "Cérémonies de la forge"]
+    influence: "Religion officielle de Thaurgrim, crainte et respectée"
+
+  - nom: "Église des Quatre Saisons"
+    origine: "Royaume Central de Valnoria (45,55)"
+    divinites: ["Draen, dieu des rivières et du commerce", "Syl-Mara, déesse des marais"]
+    lieux_sacres:
+      - { nom: "Temple des Quatre Saisons", coordonnees: {x: 45, y: 55}, ville: "Lorn" }
+      - { nom: "Temple de Syl-Mara", coordonnees: {x: 30, y: 12}, region: "Delta du Draen" }
+    pratiques: ["Cérémonies saisonnières", "Bénédictions commerciales", "Rites fluviaux"]
+    influence: "Religion syncrétique dominante à Eldaron"
+
+# LIEUX DE DIVERTISSEMENT ET RASSEMBLEMENT
+divertissements_par_peuple:
+  - peuple: "Varnäliens"
+    lieux_type: ["Arbrenas (arènes suspendues)", "Marchés aux résines", "Jardins musicaux"]
+    exemples:
+      - { nom: "Arbrena de Rhaal", type: "Arène culturelle", coordonnees: {x: 35, y: 75}, activites: ["Concerts d'écorces", "Danses suspendues", "Compétitions d'agilité"] }
+      - { nom: "Marché aux Senteurs", type: "Marché expérientiel", coordonnees: {x: 55, y: 45}, activites: ["Dégustation de résines", "Jeux olfactifs", "Concours de culture"] }
+
+  - peuple: "Eldariens"
+    lieux_type: ["Théâtres royaux", "Jardins académiques", "Arènes de diplomatie"]
+    exemples:
+      - { nom: "Grand Théâtre de Lorn", type: "Théâtre royal", coordonnees: {x: 45, y: 55}, activites: ["Tragédies historiques", "Débats philosophiques", "Concerts de harpes"] }
+      - { nom: "Jardins du Draen", type: "Parc académique", coordonnees: {x: 50, y: 60}, activites: ["Poésie en plein air", "Jeux stratégiques", "Salons littéraires"] }
+
+  - peuple: "Helruniens"
+    lieux_type: ["Hall des Brumes", "Arènes de glace", "Marchés thermiques"]
+    exemples:
+      - { nom: "Hall des Brumes de Skarnheim", type: "Centre communautaire", coordonnees: {x: 75, y: 55}, activites: ["Récits des vents", "Concours de sculpture sur glace", "Festins tribaux"] }
+      - { nom: "Arène de Nerr", type: "Stade polaire", coordonnees: {x: 25, y: 15}, activites: ["Courses de traîneaux", "Luttes traditionnelles", "Jeux de pierres runiques"] }
+
+  - peuple: "Iskari"
+    lieux_type: ["Théâtres solaires", "Jardins pyramidaux", "Arènes de lumière"]
+    exemples:
+      - { nom: "Théâtre Solaire de Zhaïr", type: "Théâtre sacré", coordonnees: {x: 35, y: 75}, activites: ["Drames solaires", "Danses des miroirs", "Cérémonies lumineuses"] }
+      - { nom: "Jardin des Reflets", type: "Parc contemplatif", coordonnees: {x: 15, y: 35}, activites: ["Méditations solaires", "Jeux d'ombres", "Concours de poésie"] }
+
+  - peuple: "Thaurgrims"
+    lieux_type: ["Forges-spectacles", "Arènes de cendres", "Marchés minéraux"]
+    exemples:
+      - { nom: "Grande Forge de Vulkar", type: "Forge spectacle", coordonnees: {x: 75, y: 70}, activites: ["Démonstrations de maîtrise", "Concours de forge", "Spectacles d'étincelles"] }
+      - { nom: "Arène des Cendres", type: "Stade volcanique", coordonnees: {x: 55, y: 50}, activites: ["Luttes rituelles", "Courses de scories", "Jeux de force"] }
+
+# CALENDRIER DES FÊTES ET CÉRÉMONIES
+festivals_majeurs:
+  - nom: "Solstice du Souffle"
+    date: "Équinoxe de printemps"
+    lieu_principal: { nom: "Temple du Souffle", coordonnees: {x: 35, y: 75} }
+    participants: ["Varnäliens", "Elfes Sylvarin", "Maréens"]
+    description: "Célébration du renouveau de l'air planétaire et des cycles biologiques"
+
+  - nom: "Fête des Voiles"
+    date: "Solstice d'hiver"
+    lieu_principal: { nom: "Sanctuaire d'Ygral", coordonnees: {x: 55, y: 75} }
+    participants: ["Helruniens", "Ermites du Drann", "Nautes du Draen"]
+    description: "Cérémonie d'hommage aux vents et à la mémoire des glaces"
+
+  - nom: "Renaissance Solaire"
+    date: "Solstice d'été"
+    lieu_principal: { nom: "Grand Autel du Zhaïr", coordonnees: {x: 34, y: 76} }
+    participants: ["Iskari", "Shaari", "Asuriens"]
+    description: "Célébration du pouvoir solaire maximum et des récoltes énergétiques"
+
+  - nom: "Nuit des Forges"
+    date: "Équinoxe d'automne"
+    lieu_principal: { nom: "Temples du Feu Profond", coordonnees: {x: 75, y: 70} }
+    participants: ["Thaurgrims", "Nains Thaurgriens", "Vulkariens"]
+    description: "Rite de préparation aux longs mois d'activité volcanique intense"
+
+  - nom: "Marché des Alliances"
+    date: "Pleine lune du milieu de l'été"
+    lieu_principal: { nom: "Grand Théâtre de Lorn", coordonnees: {x: 45, y: 55} }
+    participants: ["Tous les peuples"]
+    description: "Rassemblement commercial et diplomatique sous l'égide du Conseil des Royaumes"
+
+# SYSTÈME DE VALEURS COMMUNES MALGRÉ LES DIFFÉRENCES
+valeurs_universelles:
+  - "Respect des équilibres naturels"
+  - "Honneur dans les accords commerciaux"
+  - "Mémoire des ancêtres et des traditions"
+  - "Survie collective avant profit individuel"
+  - "Préservation des connaissances anciennes"
+
+# CONFLITS CULTURELS PERSISTANTS
+tensions_culturelles:
+  - entre: "Varnäliens et Thaurgrims"
+    cause: "Opposition entre préservation biologique et exploitation volcanique"
+    manifestation: "Débats au Conseil des Royaumes, restrictions commerciales"
+    intensite: "Moyenne mais constante"
+
+  - entre: "Eldariens et Helruniens"
+    cause: "Différences d'approche du commerce et de la diplomatie"
+    manifestation: "Négociations difficiles, méfiance réciproque"
+    intensite: "Faible mais présente"
+
+  - entre: "Iskari et Nains Thaurgriens"
+    cause: "Concurrence sur les technologies énergétiques"
+    manifestation: "Rivalité technique, secrets industriels"
+    intensite: "Modérée et productive"
+
+# MÉTA-DONNÉES IA
+meta_ia:
+  date_creation: "2025-11-05"
+  version: 1.0
+  type_contenu: "peuples_coutumes_cultes_complet"
+  coherence_verifiee: ["origines_geographiques", "relations_peuples", "lieux_sacres", "traditions", "divertissements"]
+  points_entree_semantiques: [
+    "recherche_par_peuple",
+    "recherche_par_culte",
+    "recherche_par_lieu_sacre",
+    "recherche_par_festival",
+    "recherche_par_tradition",
+    "conflits_culturels",
+    "valeurs_culturelles"
+  ]

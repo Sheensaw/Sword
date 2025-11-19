@@ -1901,59 +1901,141 @@ body {
       window.setup.showDialogueNotification(npc, shortText, fullText, saveToMessages);
     }
   });
-  /* ---- MACRO : setcoords ---- */
-  Macro.add('setcoords', {
+
+ /* ---- MACRO : setcoords ---- */
+Macro.add('setcoords', {
     handler: function() {
-      let x, y, continent;
-      if (this.args.length === 1 && typeof this.args[0] === 'object') {
-        const coords = this.args[0];
-        x = Number(coords.x) || 0;
-        y = Number(coords.y) || 0;
-        continent = coords.continent || "Eldaron";
-      } else if (this.args.length >= 2) {
-        x = Number(this.args[0]) || 0;
-        y = Number(this.args[1]) || 0;
-        continent = this.args[2] || "Eldaron";
-      } else {
-        return this.error('Usage: <<setcoords x y [continent]>> ou <<setcoords {x:1, y:2, continent: "Eldaron"}>>');
-      }
+        let x, y, continent;
 
-      const v = State.variables;
+        if (this.args.length === 1 && typeof this.args[0] === 'object') {
+            const coords = this.args[0];
+            x = Number(coords.x) || 0;
+            y = Number(coords.y) || 0;
+            continent = coords.continent || "Eldaron";
+        } else if (this.args.length >= 2) {
+            x = Number(this.args[0]) || 0;
+            y = Number(this.args[1]) || 0;
+            continent = this.args[2] || "Eldaron";
+        } else {
+            return this.error('Usage: <<setcoords x y [continent]>> ou <<setcoords {x:1, y:2, continent: "Eldaron"}>>');
+        }
 
-      // CORRECTION CRITIQUE : Gestion robuste du passage actuel
-      const currentPassage = State.passage?.title || State.variables.currentPassage ||"PassageInconnu";
-      console.log(`🎯 SETCOORDS: Passage "${currentPassage}" -> (${x}, ${y}, ${continent})`);
+        const v = State.variables;
 
-      // Stocker les coordonnées du passage
-      v.passageCoords = v.passageCoords || {};
-      v.passageCoords[currentPassage] = {
-        x,
-        y,
-        continent
-      };
+        // SOURCE DE VÉRITÉ UNIQUE pour le passage actuel
+        const currentPassage = State.variables.currentPassage ||
+                              State.passage ||
+                              "Geole";
 
-      // Mettre à jour les coordonnées du joueur
-      v.playerCoordinates = v.playerCoordinates || {};
-      v.playerCoordinates.x = x;
-      v.playerCoordinates.y = y;
-      v.playerCoordinates.continent = continent;
-      v.playerCoordinates.passage = currentPassage;
+        if (!currentPassage) {
+            console.error("❌ Impossible de déterminer le passage actuel dans setcoords");
+            return;
+        }
 
-      console.log(`✅ Coordonnées définies pour "${currentPassage}": (${x}, ${y}, ${continent})`);
+        // Initialiser le stockage des coordonnées
+        v.passageCoords = v.passageCoords || {};
+        v.playerCoordinates = v.playerCoordinates || {};
 
-      // Mettre à jour les compagnons
-      window.setup.updateFollowersCoordinates();
+        // Stocker les coordonnées du passage
+        v.passageCoords[currentPassage] = {
+            x: Number(x),
+            y: Number(y),
+            continent: continent
+        };
 
-      // Rafraîchir l'interface
-      if (window.renderBuddiesPanel) window.renderBuddiesPanel();
-      window.setup.updateHUD();
+        // Mettre à jour les coordonnées du joueur
+        v.playerCoordinates = {
+            x: Number(x),
+            y: Number(y),
+            continent: continent,
+            passage: currentPassage
+        };
+
+        console.log(`✅ Coordonnées définies pour "${currentPassage}": (${x}, ${y}, ${continent})`);
+
+        // Mettre à jour les compagnons
+        window.setup.updateFollowersCoordinates();
+
+        // Rafraîchir l'interface
+        if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+        window.setup.updateHUD();
     }
-  });
+});
+
+// REMPLACER window.setup.ensurePassageCoords
+window.setup.ensurePassageCoords = function(passageName) {
+    const v = State.variables;
+    v.passageCoords = v.passageCoords || {};
+
+    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
+
+    // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
+    if (!v.passageCoords[actualPassageName] ||
+        typeof v.passageCoords[actualPassageName].x !== 'number') {
+
+        // Si le joueur a des coordonnées, les utiliser comme modèle
+        const playerCoords = v.playerCoordinates || { x: 45, y: 55, continent: "Eldaron" };
+
+        v.passageCoords[actualPassageName] = {
+            x: Number(playerCoords.x) || 45,
+            y: Number(playerCoords.y) || 55,
+            continent: playerCoords.continent || "Eldaron"
+        };
+
+        console.log(`🔧 Coordonnées créées pour "${actualPassageName}":`, v.passageCoords[actualPassageName]);
+    }
+
+    return v.passageCoords[actualPassageName];
+};
+
+// REMPLACER window.setup.updateFollowersCoordinates
+window.setup.updateFollowersCoordinates = function() {
+    const v = State.variables;
+
+    // SOURCE DE VÉRITÉ FIABLE pour le passage actuel
+    const currentPassage = State.variables.currentPassage ||
+                          State.passage ||
+                          'Geole';
+
+    console.log(`📍 updateFollowersCoordinates pour: "${currentPassage}"`);
+
+    if (!currentPassage) {
+        console.error("❌ ERREUR CRITIQUE: Impossible de déterminer le passage actuel");
+        return;
+    }
+
+    // S'assurer que le passage actuel a des coordonnées valides
+    const passageCoords = window.setup.ensurePassageCoords(currentPassage);
+
+    // Mettre à jour chaque PNJ suiveur avec CASTING EXPLICITE
+    Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
+        if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
+            npc.passage = currentPassage;
+            npc.coordinates = {
+                x: Number(passageCoords.x),
+                y: Number(passageCoords.y)
+            };
+            npc.continent = passageCoords.continent || "Eldaron";
+
+            console.log(`👥 ${npc.name} suit vers ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y})`);
+        }
+    });
+
+    // Mettre à jour les coordonnées du joueur
+    v.playerCoordinates = {
+        x: Number(passageCoords.x),
+        y: Number(passageCoords.y),
+        continent: passageCoords.continent || "Eldaron",
+        passage: currentPassage
+    };
+
+    console.log(`🎯 Coordonnées joueur: (${v.playerCoordinates.x}, ${v.playerCoordinates.y}, ${v.playerCoordinates.continent})`);
+};
   /* ---- MACRO : displaylocation ---- */
   Macro.add('displaylocation', {
     handler: function() {
       const v = V();
-      const currentPassage = State.passage.title;
+      const currentPassage = State.passage;
       // Récupérer les coordonnées du passage actuel
       const passageCoords = (v.passageCoords || {})[currentPassage];
       if (!passageCoords) {
@@ -2215,7 +2297,7 @@ body {
       npc.health = npc.maxHealth || 20;
 
       // CORRECTION CRITIQUE : Utiliser State.currentPassage si disponible
-      const currentPassage = State.passage?.title || State.variables.currentPassage ||'PassageInconnu';
+      const currentPassage = State.passage || State.variables.currentPassage ||'PassageInconnu';
       npc.passage = currentPassage;
 
       // CORRECTION : Utiliser les coordonnées du passage actuel
@@ -2274,7 +2356,7 @@ body {
         case 'fix':
         case 'fixed':
           npc.status = 'fixed';
-          npc.passage = State.passage.title;
+          npc.passage = State.passage;
           npc.isBuddy = true;
           moveType = 'fixed';
           break;
@@ -2305,59 +2387,62 @@ body {
     }
   });
 
-  /* ---- MACRO : pnjfollow ---- */
-  Macro.add('pnjfollow', {
+Macro.add('pnjfollow', {
     handler: function() {
-      const name = this.args[0];
-      if (!name) return this.error('Usage : <<pnjfollow "Nom">>');
+        const name = this.args[0];
+        if (!name) return this.error('Usage : <<pnjfollow "Nom">>');
 
-      console.group(`👥 PNJFOLLOW CORRIGÉ: ${name}`);
+        console.group(`👥 PNJFOLLOW CORRIGÉ: ${name}`);
 
-      const npc = npcEnsure(name);
-      npc.isBuddy = true;
-      npc.isAlive = true;
-      npc.isActive = true;
-      npc.isSpawned = true;
+        const npc = npcEnsure(name);
+        npc.isBuddy = true;
+        npc.isAlive = true;
+        npc.isActive = true;
+        npc.isSpawned = true;
 
-      // CORRECTION CRITIQUE : Passage actuel sécurisé
-      const currentPassage = State.passage?.title || State.variables.currentPassage ||'PassageInconnu';
-      console.log(`📍 Passage actuel: "${currentPassage}"`);
+        // SOURCE DE VÉRITÉ FIABLE
+        const currentPassage = State.variables.currentPassage ||
+                              State.passage ||
+                              'Geole';
 
-      const v = V();
+        console.log(`📍 Passage actuel: "${currentPassage}"`);
 
-      // VALIDER les coordonnées actuelles du PNJ
-      window.setup.validatePNJCoordinates(name);
+        const v = V();
 
-      // Obtenir les coordonnées de destination
-      const passageCoords = window.setup.ensurePassageCoords(currentPassage);
+        // VALIDER les coordonnées actuelles
+        window.setup.validatePNJCoordinates(name);
 
-      console.log(`📍 Coordonnées destination:`, passageCoords);
+        // Obtenir les coordonnées de destination
+        const passageCoords = window.setup.ensurePassageCoords(currentPassage);
 
-      // Démarrer le voyage
-      const success = window.setup.startPNJTravel(
-        name,
-        currentPassage,
-        passageCoords,
-        passageCoords.continent || "Eldaron",
-        'follow'
-      );
+        console.log(`📍 Coordonnées destination:`, passageCoords);
 
-      if (!success) {
-        console.warn(`❌ Échec voyage, rejoindre immédiatement`);
-        npc.status = 'follow';
-        npc.passage = currentPassage;
-        npc.coordinates = {
-          ...passageCoords
-        };
-        npc.continent = passageCoords.continent || "Eldaron";
-      }
+        // Démarrer le voyage
+        const success = window.setup.startPNJTravel(
+            name,
+            currentPassage,
+            passageCoords,
+            passageCoords.continent || "Eldaron",
+            'follow'
+        );
 
-      updateBuddyHUDVisibility();
-      if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+        if (!success) {
+            console.warn(`❌ Échec voyage, rejoindre immédiatement`);
+            npc.status = 'follow';
+            npc.passage = currentPassage;
+            npc.coordinates = {
+                x: Number(passageCoords.x),
+                y: Number(passageCoords.y)
+            };
+            npc.continent = passageCoords.continent || "Eldaron";
+        }
 
-      console.groupEnd();
+        updateBuddyHUDVisibility();
+        if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+
+        console.groupEnd();
     }
-  });
+});
 
   /* ---- MACRO : pnjfix ---- */
   Macro.add('pnjfix', {
@@ -2369,7 +2454,7 @@ body {
       npc.status = 'fixed';
 
       // CORRECTION : Utiliser State.currentPassage
-      const currentPassage = State.passage?.title || State.variables.currentPassage ||'PassageInconnu';
+      const currentPassage = State.passage || State.variables.currentPassage ||'PassageInconnu';
       npc.passage = currentPassage;
       npc.isAlive = true;
       npc.isActive = true;
@@ -2414,7 +2499,7 @@ body {
       window.setup.notifyPnjMove(pnjId, 'goto');
 
       // Mettre à jour l'affichage si le PNJ est dans le même passage
-      if (State.passage.title === targetPassage) {
+      if (State.passage === targetPassage) {
         window.renderBuddiesPanel && window.renderBuddiesPanel();
       }
     }
@@ -2571,7 +2656,7 @@ body {
       npc.isActive = true;
 
       const v = V();
-      const currentPassage = State.passage.title;
+      const currentPassage = State.passage;
       const passageCoords = (v.passageCoords || {})[currentPassage];
 
       if (!passageCoords) {
@@ -2734,11 +2819,11 @@ body {
     }
   };
 
-  // Chargement asynchrone de la géographie
-  async function loadGeography() {
+// REMPLACER loadGeography complètement
+async function loadGeography() {
     if (window.setup.geographyState.loading) {
-      console.log("⚠️ Chargement géographie déjà en cours");
-      return;
+        console.log("⚠️ Chargement géographie déjà en cours");
+        return;
     }
 
     window.setup.geographyState.loading = true;
@@ -2746,61 +2831,62 @@ body {
 
     console.log("🗺️ DÉBUT CHARGEMENT GÉOGRAPHIE...");
 
-    // Essayer plusieurs chemins possibles
+    // 🔴 CORRECTION : Chemins prioritaires pour Twine
     const possiblePaths = [
-      '/server/lore/velkarum.json',
-      './server/lore/velkarum.json',
-      'server/lore/velkarum.json',
-      '/lore/velkarum.json',
-      './lore/velkarum.json',
-      'velkarum.json'
+        './server/lore/velkarum.json',
+        'server/lore/velkarum.json',
+        './lore/velkarum.json',
+        'lore/velkarum.json',
+        'velkarum.json'
     ];
 
     let success = false;
 
     for (const path of possiblePaths) {
-      try {
-        console.log(`🔄 Tentative de chargement depuis: ${path}`);
-        const response = await fetch(path);
+        try {
+            console.log(`🔄 Tentative de chargement depuis: ${path}`);
+            const response = await fetch(path);
 
-        if (response.ok) {
-          const geographyData = await response.json();
-          window.setup.geographyState.data = geographyData;
-          window.setup.geographyState.ready = true;
-          success = true;
-          console.log(`✅ GÉOGRAPHIE CHARGÉE depuis: ${path}`, geographyData);
-          break;
-        } else {
-          console.warn(`❌ Échec HTTP ${response.status} pour: ${path}`);
+            if (response.ok) {
+                const geographyData = await response.json();
+                window.setup.geographyState.data = geographyData;
+                window.setup.geographyState.ready = true;
+                success = true;
+                console.log(`✅ GÉOGRAPHIE CHARGÉE depuis: ${path}`, geographyData);
+                break;
+            } else {
+                console.warn(`❌ Échec HTTP ${response.status} pour: ${path}`);
+            }
+        } catch (error) {
+            console.warn(`❌ Erreur fetch pour ${path}:`, error.message);
+            continue;
         }
-      } catch (error) {
-        console.warn(`❌ Erreur fetch pour ${path}:`, error.message);
-        continue;
-      }
     }
 
+    // 🔴 CORRECTION : Appliquer fallback IMMÉDIATEMENT si échec
     if (!success) {
-      console.warn("❌ ÉCHEC CHARGEMENT GÉOGRAPHIE sur tous les chemins");
-      // Utiliser le cache de fallback
-      window.setup.geographyState.data = window.setup.fallbackGeography;
-      window.setup.geographyState.ready = true;
-      console.warn("⚠️ Utilisation de la géographie de fallback");
+        console.warn("❌ ÉCHEC CHARGEMENT GÉOGRAPHIE sur tous les chemins");
+        console.warn("⚠️ Utilisation de la géographie de fallback");
+
+        // 🔴 CORRECTION : Créer une copie indépendante du fallback
+        window.setup.geographyState.data = JSON.parse(JSON.stringify(window.setup.fallbackGeography));
+        window.setup.geographyState.ready = true;
     }
 
     window.setup.geographyState.loading = false;
     console.log("✅ SYSTÈME GÉOGRAPHIE PRÊT");
-  }
+}
 
-  // Fonction pour obtenir les données géographiques de façon sécurisée
-  window.setup.getGeographyData = function() {
-    // Si le système de géographie n'est pas prêt, utiliser le cache de fallback
-    if (!window.setup.geographyState.ready) {
-      console.warn("⚠️ Géographie pas prêt, utilisation du fallback");
-      return window.setup.fallbackGeography;
+// REMPLACER window.setup.getGeographyData
+window.setup.getGeographyData = function() {
+    // 🔴 CORRECTION : Toujours retourner une copie sécurisée
+    if (!window.setup.geographyState.ready || !window.setup.geographyState.data) {
+        console.warn("⚠️ Géographie pas prêt, utilisation du fallback");
+        return JSON.parse(JSON.stringify(window.setup.fallbackGeography));
     }
 
-    return window.setup.geographyState.data || window.setup.fallbackGeography;
-  };
+    return window.setup.geographyState.data;
+};
 
   // Vérification périodique de l'état de la géographie
   window.setup.ensureGeographyReady = function(callback, maxAttempts = 10) {
@@ -2913,62 +2999,64 @@ body {
     return travelTime;
   };
 
-  window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoords, destinationContinent, travelType) {
+window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoords, destinationContinent, travelType) {
     console.group(`🧭 DÉMARRAGE VOYAGE PNJ: ${pnjId}`);
 
     const v = V();
     const npc = npcEnsure(pnjId);
 
-    // VALIDATION PRÉALABLE : Assurer les coordonnées du PNJ
+    // VALIDATION PRÉALABLE
     window.setup.validatePNJCoordinates(pnjId);
 
     // VALIDATION de la destination
-    if (!destinationPassage) {
-      console.error(`❌ Destination invalide pour ${pnjId}`);
-      console.groupEnd();
-      return false;
+    const safeDestinationPassage = destinationPassage ||
+                                  State.variables.currentPassage ||
+                                  State.passage ||
+                                  'Geole';
+
+    if (!safeDestinationPassage) {
+        console.error(`❌ Destination invalide pour ${pnjId}`);
+        console.groupEnd();
+        return false;
     }
 
     // S'assurer que la destination a des coordonnées
     let finalDestinationCoords = destinationCoords;
     if (!finalDestinationCoords || typeof finalDestinationCoords.x !== 'number') {
-      finalDestinationCoords = window.setup.ensurePassageCoords(destinationPassage);
+        finalDestinationCoords = window.setup.ensurePassageCoords(safeDestinationPassage);
     }
 
     // Vérifications de base
     if (!npc.isAlive || !npc.isActive) {
-      console.warn(`❌ ${pnjId} ne peut pas voyager (mort ou inactif)`);
-      console.groupEnd();
-      return false;
+        console.warn(`❌ ${pnjId} ne peut pas voyager (mort ou inactif)`);
+        console.groupEnd();
+        return false;
     }
 
     // Annuler tout voyage en cours
     if (npc.travelTimeout) {
-      clearTimeout(npc.travelTimeout);
+        clearTimeout(npc.travelTimeout);
     }
 
-    // CORRECTION : S'assurer que le PNJ a des coordonnées valides
-    const currentCoords = npc.coordinates || {
-      x: 0,
-      y: 0
-    };
+    // COORDONNÉES VALIDÉES
+    const currentCoords = npc.coordinates || { x: 0, y: 0 };
     const currentContinent = npc.continent || "Eldaron";
 
-    // Calcul de la distance avec les coordonnées VALIDÉES
+    // Calcul de la distance
     const distance = window.setup.calculateDistance(
-      currentCoords,
-      finalDestinationCoords,
-      currentContinent,
-      destinationContinent || finalDestinationCoords.continent
+        currentCoords,
+        finalDestinationCoords,
+        currentContinent,
+        destinationContinent || finalDestinationCoords.continent
     );
 
     const travelTime = window.setup.calculateTravelTime(distance);
 
     console.log(`📊 Détails du voyage:
-        • Distance: ${distance.toFixed(1)} unités
-        • Temps: ${travelTime/1000} secondes
         • De: (${currentCoords.x}, ${currentCoords.y}, ${currentContinent})
         • Vers: (${finalDestinationCoords.x}, ${finalDestinationCoords.y}, ${destinationContinent || finalDestinationCoords.continent})
+        • Distance: ${distance.toFixed(1)} unités
+        • Temps: ${travelTime/1000} secondes
         • Type: ${travelType}`);
 
     // Mise à jour du statut du PNJ
@@ -2976,25 +3064,25 @@ body {
     npc.travelStartTime = Date.now();
     npc.travelEndTime = Date.now() + travelTime;
     npc.travelDestination = {
-      passage: destinationPassage,
-      coordinates: finalDestinationCoords,
-      continent: destinationContinent || finalDestinationCoords.continent,
-      type: travelType
+        passage: safeDestinationPassage,
+        coordinates: finalDestinationCoords,
+        continent: destinationContinent || finalDestinationCoords.continent,
+        type: travelType
     };
 
-    // Notification de départ avec réactions JSON
+    // Notification de départ
     const pnjData = window.setup.loadPNJ(pnjId);
     const travelReactions = pnjData.pnj?.réaction_joueur?.pnjmove?.goto;
     const departureText = travelReactions && Array.isArray(travelReactions) && travelReactions.length > 0 ?
-      travelReactions[Math.floor(Math.random() * travelReactions.length)] :
-      `${npc.name} part en voyage...`;
+        travelReactions[Math.floor(Math.random() * travelReactions.length)] :
+        `${npc.name} part en voyage...`;
 
     window.setup.showDialogueNotificationShort(npc.name, departureText, departureText, false);
 
     // Planification de l'arrivée
     npc.travelTimeout = setTimeout(() => {
-      console.log(`⏰ TIMEOUT VOYAGE - Arrivée de ${pnjId}`);
-      window.setup.completePNJTravel(pnjId);
+        console.log(`⏰ TIMEOUT VOYAGE - Arrivée de ${pnjId}`);
+        window.setup.completePNJTravel(pnjId);
     }, travelTime);
 
     console.log(`✅ Voyage planifié pour ${pnjId}. Arrivée dans ${travelTime/1000}s`);
@@ -3004,7 +3092,7 @@ body {
     if (window.renderBuddiesPanel) window.renderBuddiesPanel();
 
     return true;
-  };
+};
 
   window.setup.completePNJTravel = function(pnjId) {
     const v = V();
@@ -3115,8 +3203,8 @@ body {
     });
 
     console.log("📍 Coordonnées joueur:", v.playerCoordinates);
-    console.log("📍 Passage actuel:", State.passage?.title);
-    console.log("📍 Coordonnées passage actuel:", v.passageCoords?.[State.passage?.title]);
+    console.log("📍 Passage actuel:", State.passage);
+    console.log("📍 Coordonnées passage actuel:", v.passageCoords?.[State.passage]);
     console.groupEnd();
   };
 
@@ -4835,73 +4923,76 @@ body {
   // ==========================================================
   // FONCTION DE CONVERSION COORDONNÉES → LOCALISATION (VERSION CORRIGÉE)
   // ==========================================================
-  window.setup.getLocationString = function(coords, continent) {
-    // Validation des paramètres
-    if (!coords || typeof coords !== 'object') {
-      return "Position inconnue";
-    }
+    window.setup.getLocationString = function(coords, continent) {
+        // VALIDATION STRICTE
+        if (!coords || typeof coords !== 'object') {
+            console.warn("❌ getLocationString: coords invalides", coords);
+            return "Position inconnue";
+        }
 
-    if (typeof coords.x !== 'number' || isNaN(coords.x) ||
-      typeof coords.y !== 'number' || isNaN(coords.y)) {
-      return "Position invalide";
-    }
+        // Vérifier que x et y sont des nombres valides
+        if (typeof coords.x !== 'number' || isNaN(coords.x) ||
+            typeof coords.y !== 'number' || isNaN(coords.y)) {
+            console.warn("❌ getLocationString: x ou y invalide", coords);
+            return "Position invalide";
+        }
 
-    const safeCoords = {
-      x: Math.max(0, Math.min(100, coords.x)), // Clamp entre 0-100
-      y: Math.max(0, Math.min(100, coords.y))
+        const safeCoords = {
+            x: Math.max(0, Math.min(100, Number(coords.x) || 0)),
+            y: Math.max(0, Math.min(100, Number(coords.y) || 0))
+        };
+
+        const safeContinent = continent || "Eldaron";
+
+        // Récupérer les données géographiques
+        const geo = window.setup.getGeographyData();
+
+        if (!geo.continents || !geo.continents[safeContinent]) {
+            return `${safeContinent} - Position hors carte`;
+        }
+
+        const continentData = geo.continents[safeContinent];
+        let regionName = "Zone sauvage";
+        let nearestCity = null;
+        let minDistance = Infinity;
+
+        // Trouver la région
+        if (continentData.regions && Array.isArray(continentData.regions)) {
+            for (const region of continentData.regions) {
+                const bounds = region.bounds;
+                if (safeCoords.x >= bounds.x_min && safeCoords.x <= bounds.x_max &&
+                    safeCoords.y >= bounds.y_min && safeCoords.y <= bounds.y_max) {
+                    regionName = region.name;
+                    break;
+                }
+            }
+        }
+
+        // Trouver la ville la plus proche
+        if (continentData.cities && Array.isArray(continentData.cities)) {
+            for (const city of continentData.cities) {
+                const distance = Math.sqrt(
+                    Math.pow(city.coords.x - safeCoords.x, 2) +
+                    Math.pow(city.coords.y - safeCoords.y, 2)
+                );
+                if (distance < minDistance && distance <= 15) {
+                    minDistance = distance;
+                    nearestCity = city.name;
+                }
+            }
+        }
+
+        // Construire la chaîne de localisation
+        if (nearestCity) {
+            if (minDistance <= 5) {
+                return `${safeContinent} - ${regionName} - ${nearestCity}`;
+            } else {
+                return `${safeContinent} - ${regionName} - Proche de ${nearestCity}`;
+            }
+        } else {
+            return `${safeContinent} - ${regionName}`;
+        }
     };
-
-    const safeContinent = continent || "Eldaron";
-
-    // Récupérer les données géographiques de façon sécurisée
-    const geo = window.setup.getGeographyData();
-
-    if (!geo.continents || !geo.continents[safeContinent]) {
-      return `${safeContinent} - Position inconnue`;
-    }
-
-    const continentData = geo.continents[safeContinent];
-    let regionName = "Zone sauvage";
-    let nearestCity = null;
-    let minDistance = Infinity;
-
-    // Trouver la région
-    if (continentData.regions && Array.isArray(continentData.regions)) {
-      for (const region of continentData.regions) {
-        const bounds = region.bounds;
-        if (safeCoords.x >= bounds.x_min && safeCoords.x <= bounds.x_max &&
-          safeCoords.y >= bounds.y_min && safeCoords.y <= bounds.y_max) {
-          regionName = region.name;
-          break;
-        }
-      }
-    }
-
-    // Trouver la ville la plus proche (dans un rayon de 15 unités)
-    if (continentData.cities && Array.isArray(continentData.cities)) {
-      for (const city of continentData.cities) {
-        const distance = Math.sqrt(
-          Math.pow(city.coords.x - safeCoords.x, 2) +
-          Math.pow(city.coords.y - safeCoords.y, 2)
-        );
-        if (distance < minDistance && distance <= 15) {
-          minDistance = distance;
-          nearestCity = city.name;
-        }
-      }
-    }
-
-    // Formater la localisation
-    if (nearestCity) {
-      if (minDistance <= 5) {
-        return `${safeContinent} - ${regionName} - ${nearestCity}`;
-      } else {
-        return `${safeContinent} - ${regionName} - Proche de ${nearestCity}`;
-      }
-    } else {
-      return `${safeContinent} - ${regionName}`;
-    }
-  };
   // ==========================================================
   // MACRO POUR AFFICHER LA LOCALISATION ACTUELLE
   // ==========================================================
@@ -5063,7 +5154,7 @@ body {
       const rewardLines = [];
       // --- Récompense en or ---
       if (reward.gold) {
-        v.gold = (v.gold || 0) + Number(reward.gold || 0);
+        v.gold = (v.gold || 0) + Number(reward.gold);
         rewardLines.push(`• ${Number(reward.gold || 0)} or`);
       }
       // --- Récompenses objets ---
@@ -5231,7 +5322,7 @@ body {
   })();
 
   /* ==========================================================
-  FONCTION : Notification de mouvement PNJ avec réactions JSON
+     Notification de mouvement PNJ avec réactions JSON
   ========================================================== */
 
   window.setup.notifyPnjMove = function(pnjId, moveType) {
@@ -5400,105 +5491,99 @@ body {
       window.setup?.showNotification?.('Compagnon', text, 3000);
     }
   }
-  window.setup.validatePNJCoordinates = function(pnjId) {
+window.setup.validatePNJCoordinates = function(pnjId) {
     const npc = npcEnsure(pnjId);
 
-    // Validation robuste des coordonnées
+    // VALIDATION ROBUSTE des coordonnées
     if (typeof npc.coordinates !== 'object' || npc.coordinates === null) {
-      npc.coordinates = {
-        x: 0,
-        y: 0
-      };
+        npc.coordinates = { x: 0, y: 0 };
     }
 
-    if (typeof npc.coordinates.x !== 'number' || isNaN(npc.coordinates.x)) {
-      npc.coordinates.x = 0;
-    }
-    if (typeof npc.coordinates.y !== 'number' || isNaN(npc.coordinates.y)) {
-      npc.coordinates.y = 0;
-    }
+    // CASTING EXPLICITE et validation
+    npc.coordinates.x = Number(npc.coordinates.x) || 0;
+    npc.coordinates.y = Number(npc.coordinates.y) || 0;
 
-    // AJOUT: Validation du continent
+    // Validation du continent
     if (!npc.continent || typeof npc.continent !== 'string') {
-      // Essayer de déterminer le continent par les coordonnées
-      const geoData = window.setup.getGeographyData();
-      let continentFound = false;
+        const geoData = window.setup.getGeographyData();
+        let continentFound = false;
 
-      if (geoData.continents) {
-        for (const [continentName, continentData] of Object.entries(geoData.continents)) {
-          if (continentData.regions && Array.isArray(continentData.regions)) {
-            for (const region of continentData.regions) {
-              const bounds = region.bounds;
-              if (npc.coordinates.x >= bounds.x_min && npc.coordinates.x <= bounds.x_max &&
-                npc.coordinates.y >= bounds.y_min && npc.coordinates.y <= bounds.y_max) {
-                npc.continent = continentName;
-                continentFound = true;
-                break;
-              }
+        if (geoData.continents) {
+            for (const [continentName, continentData] of Object.entries(geoData.continents)) {
+                if (continentData.regions && Array.isArray(continentData.regions)) {
+                    for (const region of continentData.regions) {
+                        const bounds = region.bounds;
+                        if (npc.coordinates.x >= bounds.x_min && npc.coordinates.x <= bounds.x_max &&
+                            npc.coordinates.y >= bounds.y_min && npc.coordinates.y <= bounds.y_max) {
+                            npc.continent = continentName;
+                            continentFound = true;
+                            break;
+                        }
+                    }
+                }
+                if (continentFound) break;
             }
-          }
-          if (continentFound) break;
         }
-      }
 
-      if (!continentFound) {
-        npc.continent = "Eldaron"; // Continent par défaut
-      }
+        if (!continentFound) {
+            npc.continent = "Eldaron";
+        }
     }
 
-    // Assurer la présence du passage
+    // Validation du passage
     if (!npc.passage && npc.isSpawned) {
-      npc.passage = State.passage?.title || 'PassageInconnu';
+        npc.passage = State.variables.currentPassage || State.passage || 'Geole';
     }
 
-    console.log(`📍 Coordonnées validées pour ${pnjId}: (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent})`);
+    console.log(`📍 Coordonnées validées pour ${pnjId}: (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent}) dans ${npc.passage}`);
 
     return npc.coordinates;
-  };
+};
   // ==========================================================
   // FONCTION : Mise à jour des coordonnées des PNJ suiveurs
   // ==========================================================
 
-  window.setup.updateFollowersCoordinates = function() {
-    const v = State.variables;
+    window.setup.updateFollowersCoordinates = function() {
+        const v = State.variables;
 
-    // CORRECTION : Gestion robuste du passage actuel
-    const currentPassage = State.passage?.title || State.variables.currentPassage ||'Geole';
+        // VERSION CORRIGÉE : Utiliser la source de vérité fiable
+        const currentPassage = State.passage || State.variables.currentPassage || 'Geole';
 
-    if (!currentPassage) {
-      console.warn("⚠️ Aucun passage actuel défini dans updateFollowersCoordinates");
-      return;
-    }
+        if (!currentPassage) {
+            console.error("❌ ERREUR CRITIQUE: Impossible de déterminer le passage actuel");
+            return;
+        }
 
-    // S'assurer que le passage actuel a des coordonnées
-    const passageCoords = window.setup.ensurePassageCoords(currentPassage);
+        // S'assurer que le passage actuel a des coordonnées
+        const passageCoords = window.setup.ensurePassageCoords(currentPassage);
 
-    console.log(`📍 Mise à jour followers pour: ${currentPassage} (${passageCoords.x}, ${passageCoords.y})`);
+        console.log(`📍 Mise à jour followers pour: ${currentPassage} (${passageCoords.x}, ${passageCoords.y})`);
 
-    // Mettre à jour chaque PNJ suiveur
-    Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
-      if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
-        // Mise à jour des coordonnées
-        npc.passage = currentPassage;
-        npc.coordinates = {
-          x: passageCoords.x,
-          y: passageCoords.y
+        // Mettre à jour chaque PNJ suiveur
+        Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
+            if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
+                // Mettre à jour les coordonnées en copiant les valeurs
+                npc.passage = currentPassage;
+                npc.coordinates = {
+                    x: Number(passageCoords.x) || 0,
+                    y: Number(passageCoords.y) || 0
+                };
+                npc.continent = passageCoords.continent || "Eldaron";
+
+                console.log(`👥 ${npc.name} suit le joueur vers ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent})`);
+            }
+        });
+
+        // Mettre à jour les coordonnées du joueur avec des valeurs par défaut sécurisées
+        v.playerCoordinates = {
+            x: Number(passageCoords.x) || 0,
+            y: Number(passageCoords.y) || 0,
+            continent: passageCoords.continent || "Eldaron",
+            passage: currentPassage
         };
-        npc.continent = passageCoords.continent;
 
-        console.log(`👥 ${npc.name} suit le joueur vers ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent})`);
-      }
-    });
-
-    // Mettre à jour les coordonnées du joueur
-    v.playerCoordinates = v.playerCoordinates || {};
-    v.playerCoordinates.x = passageCoords.x;
-    v.playerCoordinates.y = passageCoords.y;
-    v.playerCoordinates.continent = passageCoords.continent;
-    v.playerCoordinates.passage = currentPassage;
-
-    console.log(`🎯 Coordonnées joueur mises à jour: (${passageCoords.x}, ${passageCoords.y}, ${passageCoords.continent})`);
-  };
+        console.log(`🎯 Coordonnées joueur mises à jour: (${v.playerCoordinates.x}, ${v.playerCoordinates.y}, ${v.playerCoordinates.continent})`);
+    };
 
   // ------------------------------------------------------
   // FONCTION UTILITAIRE : VÉRIFIER SI UN PNJ EST UN COMPAGNON
@@ -5606,7 +5691,6 @@ body {
       window.setup.showNotification('Impossible', `${npc.name} ne peut pas recevoir d'objets`, 3000);
       return false;
     }
-    // Vérifier si l'item existe dans l'inventaire du joueur
     const playerInventory = v.inventory || [];
     const playerItem = playerInventory.find(item => item.id === itemId);
     if (!playerItem || playerItem.qty < quantity) {
@@ -5617,7 +5701,6 @@ body {
     // CORRECTION : RETIRER L'OBJET DE L'INVENTAIRE DU JOUEUR
     playerItem.qty -= quantity;
     if (playerItem.qty <= 0) {
-      // Supprimer l'objet si la quantité devient 0
       v.inventory = playerInventory.filter(item => item.id !== itemId);
       // Déséquiper l'objet si il était équipé
       const equipped = v.equipped || {};
@@ -5851,7 +5934,6 @@ body {
   window.renderBuddiesPanel = function() {
     const v = V();
     const $panel = $('#buddies-panel');
-    if (!$panel.length) return;
     // --- Sauvegarde du menu si ouvert ---
     const $existingMenu = $('#buddy-context-menu');
     const hasMenu = $existingMenu.length > 0;
@@ -6047,7 +6129,7 @@ body {
       } else if (!npc.isActive) {
         addOption('Rappeler', () => {
           npc.isActive = true;
-          npc.passage = State.passage.title;
+          npc.passage = State.passage;
           window.setup.notifyBuddy(`${npc.name} revient.`);
           window.renderBuddiesPanel();
         });
@@ -6055,10 +6137,10 @@ body {
         if (npc.status === 'follow') {
           addOption('Rester ici', () => {
             npc.status = 'fixed';
-            npc.passage = State.passage.title;
+            npc.passage = State.passage;
             // Mettre à jour les coordonnées avec le passage actuel
             const v = V();
-            const passageCoords = (v.passageCoords || {})[State.passage.title];
+            const passageCoords = (v.passageCoords || {})[State.passage];
             if (passageCoords) {
               npc.coordinates = {
                 x: passageCoords.x,
@@ -6079,7 +6161,7 @@ body {
             npc.status = 'follow';
 
             // Mise à jour IMMÉDIATE et sûre des coordonnées
-            const currentPassage = State.passage?.title;
+            const currentPassage = State.passage;
             const passageCoords = (v.passageCoords || {})[currentPassage];
 
             if (passageCoords) {
@@ -6475,7 +6557,7 @@ body {
     }
   };
 
-  // CHARGEMENT ASYNCRONE AVEC INDEX
+  // CHARGEMENT ASYNCHRONE AVEC INDEX
   async function loadAllPNJ() {
     if (window.setup.pnjState.loading) {
       console.log("⚠️ Chargement PNJ déjà en cours");
@@ -6563,84 +6645,85 @@ body {
     }
   }
 
-  // FONCTION POUR CHARGER L'INDEX DES PNJs
-  async function loadPNJIndex() {
+// REMPLACER loadPNJIndex
+async function loadPNJIndex() {
     try {
-      const indexPaths = [
-        './server/pnj/index.json',
-        'server/pnj/index.json',
-        './pnj/index.json'
-      ];
+        // 🔴 CORRECTION : Chemins prioritaires pour environnement Twine
+        const indexPaths = [
+            './server/pnj/index.json',
+            'server/pnj/index.json',
+            './pnj/index.json',
+            'pnj/index.json'
+        ];
 
-      for (const path of indexPaths) {
-        try {
-          console.log(`📂 Tentative de chargement de l'index: ${path}`);
-          const response = await fetch(path);
+        for (const path of indexPaths) {
+            try {
+                console.log(`📂 Tentative de chargement de l'index: ${path}`);
+                const response = await fetch(path);
 
-          if (response.ok) {
-            const indexData = await response.json();
-            console.log("✅ Index des PNJs chargé:", indexData);
+                if (response.ok) {
+                    const indexData = await response.json();
+                    console.log("✅ Index des PNJs chargé:", indexData);
 
-            // Retourner la liste des fichiers
-            return indexData.files || [];
-          }
-        } catch (error) {
-          console.log(`❌ Index non trouvé à: ${path}`);
-          continue;
+                    // 🔴 CORRECTION : Vérifier que files existe et est un tableau
+                    if (Array.isArray(indexData.files)) {
+                        return indexData.files;
+                    } else {
+                        console.warn("⚠️ Structure d'index invalide, files n'est pas un tableau");
+                        return null;
+                    }
+                }
+            } catch (error) {
+                console.log(`❌ Index non trouvé à: ${path}`);
+                continue;
+            }
         }
-      }
 
-      console.warn("❌ Aucun index des PNJs trouvé");
-      return null;
+        console.warn("❌ Aucun index des PNJs trouvé");
+        return null;
 
     } catch (error) {
-      console.error("❌ Erreur lors du chargement de l'index:", error);
-      return null;
+        console.error("❌ Erreur lors du chargement de l'index:", error);
+        return null;
     }
-  }
+}
 
-  // FONCTION DE FALLBACK - Détection manuelle
-  async function detectAvailablePNJs() {
+// REMPLACER detectAvailablePNJs
+async function detectAvailablePNJs() {
     console.log("🔍 Détection manuelle des PNJs disponibles...");
 
+    // 🔴 CORRECTION : Liste minimum garantie
     const knownPNJs = [
-      'Cyndra.json',
-      'Kaelen.json',
-      'Lyra.json',
-      'Brak.json',
-      'Garde.json',
-      'Marchand.json',
-      'Forgeron.json'
+        'Cyndra.json'
     ];
 
     const availablePNJs = [];
 
     // Tester chaque PNJ connu
     for (const pnjFile of knownPNJs) {
-      try {
-        const testPath = `./server/pnj/${pnjFile}`;
-        const response = await fetch(testPath, {
-          method: 'HEAD'
-        });
+        try {
+            const testPath = `./server/pnj/${pnjFile}`;
+            const response = await fetch(testPath, { method: 'HEAD' });
 
-        if (response.ok) {
-          availablePNJs.push(pnjFile);
-          console.log(`✅ PNJ détecté: ${pnjFile}`);
+            if (response.ok) {
+                availablePNJs.push(pnjFile);
+                console.log(`✅ PNJ détecté: ${pnjFile}`);
+            }
+        } catch (error) {
+            console.log(`❌ PNJ non trouvé: ${pnjFile}`);
         }
-      } catch (error) {
-        // Fichier n'existe pas, ignorer silencieusement
-      }
     }
 
-    // Fallback minimum
+    // 🔴 CORRECTION : Fallback ultime si rien n'est trouvé
     if (availablePNJs.length === 0) {
-      console.warn("⚠️ Aucun PNJ détecté, utilisation de Cyndra comme fallback");
-      availablePNJs.push('Cyndra.json');
+        console.warn("⚠️ Aucun PNJ détecté, création d'un PNJ de secours en mémoire");
+        window.pnjData['cyndra'] = window.setup.fallbackPNJs['cyndra'];
+        availablePNJs.push('Cyndra.json');
     }
 
     console.log(`📂 PNJs détectés manuellement: ${availablePNJs.join(', ')}`);
     return availablePNJs;
-  }
+}
 
   // FONCTION DE RECHERCHE PNJ CORRIGÉE POUR VOTRE STRUCTURE
   window.setup.loadPNJ = function(id) {
@@ -6687,7 +6770,7 @@ body {
 
         // Correspondance exacte
         if (searchString === searchId) {
-          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId} (${searchString})`);
           return pnjData;
         }
 
@@ -6739,22 +6822,52 @@ body {
     };
   }
 
-  // FONCTION POUR OBTENIR LES DONNÉES PNJ DE MANIERE SÉCURISÉE
-  window.setup.getPnjData = function(pnjId) {
+// REMPLACER window.setup.getPnjData
+window.setup.getPnjData = function(pnjId) {
     const pnjData = window.setup.loadPNJ(pnjId);
 
-    // Extraction SÉCURISÉE selon votre structure
-    return {
-      identite: pnjData.pnj?.identite || pnjData.identite || {},
-      description: pnjData.pnj?.description_narrative || pnjData.description_narrative || pnjData.description || "Description non disponible",
-      personnalite: pnjData.pnj?.personnalite || pnjData.personnalite || "Personnalité inconnue",
-      reactions: pnjData.pnj?.réaction_joueur || pnjData.réaction_joueur || {}
-    };
-  };
+    if (!pnjData) {
+        console.error(`❌ Données PNJ non trouvées pour: ${pnjId}`);
+        return createFallbackPNJ(pnjId).pnj;
+    }
 
-  /* ==========================================================
-     FONCTION DE RECHERCHE PNJ — VERSION AMÉLIORÉE POUR VOTRE STRUCTURE
-     ========================================================== */
+    // 🔴 CORRECTION : Gestion sécurisée de la structure imbriquée
+    const identite = pnjData.pnj?.identite || pnjData.identite || {};
+
+    return {
+        identite: {
+            nom: identite.nom || pnjId,
+            nom_complet: identite.nom_complet || identite.nom || pnjId,
+            peuple: identite.peuple || 'Inconnu',
+            metier_principal: identite.metier_principal || 'Voyageur'
+        },
+        description: pnjData.pnj?.description_narrative ||
+                    pnjData.description_narrative ||
+                    pnjData.description ||
+                    "Description non disponible",
+        personnalite: pnjData.pnj?.personnalite || "Personnalité inconnue",
+        contexte: pnjData.pnj?.contexte || "Origine inconnue",
+        // 🔴 CORRECTION : Gérer les réactions de manière sécurisée
+        réaction_joueur: pnjData.pnj?.réaction_joueur || pnjData.réaction_joueur || {
+            addItem: {
+                weapon: ["Merci pour cette arme.", "Je vais en prendre soin."],
+                health: ["Merci pour ces soins.", "Je me sens mieux."],
+                food: ["Merci pour la nourriture.", "J'avais faim."],
+                misc: ["Merci.", "Je garde ça."]
+            },
+            pnjmove: {
+                follow: ["Je vous suis.", "Je vous accompagne."],
+                fixed: ["Je reste ici.", "Je vous attends."],
+                goto: ["Je me déplace.", "Je vais là-bas."],
+                recall: ["Je reviens.", "Je vous rejoins."]
+            }
+        }
+    };
+};
+
+  // ==========================================================
+  // FONCTION DE RECHERCHE PNJ — VERSION AMÉLIORÉE POUR VOTRE STRUCTURE
+  // ==========================================================
   window.setup.loadPNJ = function(id) {
     if (!id || typeof id !== 'string') {
       console.warn("❌ ID PNJ manquant ou invalide:", id);
@@ -6804,7 +6917,7 @@ body {
 
         // Correspondance exacte
         if (searchString === searchId) {
-          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId} (${searchString})`);
           return pnjData;
         }
 
@@ -6813,13 +6926,13 @@ body {
         const normalizedString = searchString.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
         if (normalizedString === normalizedSearch) {
-          console.log(`✅ PNJ trouvé par correspondance normalisée: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance normalisée: ${pnjId} (${searchString})`);
           return pnjData;
         }
 
         // Correspondance partielle (contient le terme)
         if (normalizedString.includes(normalizedSearch) || normalizedSearch.includes(normalizedString)) {
-          console.log(`✅ PNJ trouvé par correspondance partielle: ${pnjId}`);
+          console.log(`✅ PNJ trouvé par correspondance partielle: ${pnjId} (${searchString})`);
           return pnjData;
         }
       }
@@ -6952,7 +7065,7 @@ body {
           body: JSON.stringify({
             pnj_id: pnjId,
             player_message: text,
-            history: history.slice(-12),
+            player_history: history.slice(-12),
             pnj_data: pnj
           })
         });
@@ -6990,6 +7103,9 @@ body {
     setTimeout(() => $input.focus(), 100);
   };
 
+  // ==========================================================
+  // DEBUG IMMÉDIAT
+  // ==========================================================
   // Remplacer TOUTES les références à v dans window.setup.debugImmediate
   window.setup.debugImmediate = function() {
     console.group("🚨 DIAGNOSTIC URGENT");
@@ -7022,48 +7138,76 @@ body {
     window.setup.debugImmediate();
   }, 1000);
 
-  // ------------------------------------------------------
-  // INITIALISATION SÉCURISÉE - À PLACER EN TÊTE
-  // ------------------------------------------------------
-  // REMPLACER complètement le gestionnaire :storyready
+  window.setup.debugLocationSystem = function() {
+    console.group("🔍 DIAGNOSTIC SYSTÈME LOCALISATION");
+
+    const v = State.variables;
+
+    console.log("📍 Passage actuel:");
+    console.log("  - State.passage:", State.passage);
+    console.log("  - State.passage.title:", State.passage?.title);
+    console.log("  - State.variables.currentPassage:", v.currentPassage);
+
+    console.log("🗺️ Coordonnées:");
+    console.log("  - v.playerCoordinates:", v.playerCoordinates);
+    console.log("  - v.passageCoords:", v.passageCoords);
+
+    console.log("👥 PNJs:");
+    Object.entries(v.npcs || {}).forEach(([id, npc]) => {
+        console.log(`  - ${id}:`, {
+            passage: npc.passage,
+            coordinates: npc.coordinates,
+            continent: npc.continent,
+            status: npc.status,
+            isBuddy: npc.isBuddy,
+            isSpawned: npc.isSpawned
+        });
+    });
+
+    console.groupEnd();
+};
+
+// À appeler dans la console : setup.debugLocationSystem()
+
   $(document).one(':storyready', function() {
     console.log("🎮 STORY READY - INITIALISATION SÉCURISÉE");
 
-    // CORRECTION CRITIQUE : S'assurer que le passage actuel est défini
-    State.variables.currentPassage = State.passage?.title || 'Geole';
-    console.log(`🔧 State.variables.currentPassage initialisé à: ${State.variables.currentPassage}`);
+    // 🔴 CORRECTION CRITIQUE : Synchroniser IMMÉDIATEMENT currentPassage
+    State.variables.currentPassage = State.passage || 'Geole';
+    console.log(`🔧 State.variables.currentPassage = "${State.variables.currentPassage}"`);
 
     // Initialiser les variables de base
     window.setup.ensureBaseStats();
 
-    // S'assurer que le passage actuel a des coordonnées IMMÉDIATEMENT
-    const currentPassage = State.passage?.title || State.variables.currentPassage ||'Geole';
-    window.setup.ensurePassageCoords(currentPassage);
+    // Initialiser les coordonnées du passage de départ
+    window.setup.ensurePassageCoords(State.variables.currentPassage);
 
-    // Démarrer le chargement dans l'ordre
-    Promise.resolve()
-      .then(() => {
-        console.log("🗺️ Démarrage chargement géographie...");
-        return loadGeography();
-      })
-      .then(() => {
-        console.log("📦 Démarrage chargement loot...");
-        return loadLootsSequentially();
-      })
-      .then(() => {
-        console.log("👥 Démarrage chargement PNJ...");
-        return loadAllPNJ();
-      })
-      .catch(error => {
-        console.error("❌ ERREUR D'INITIALISATION:", error);
-        // Fallbacks si les chargements échouent
-        initLootSystem();
-        window.setup.pnjState.ready = true;
-        window.setup.geographyState.ready = true;
-      });
-
-    // Initialisation des variables du jeu
+    // Initialiser les coordonnées du joueur si manquantes
     const v = State.variables;
+    if (!v.playerCoordinates) {
+        const initialCoords = window.setup.ensurePassageCoords(State.variables.currentPassage);
+        v.playerCoordinates = {
+            x: Number(initialCoords.x),
+            y: Number(initialCoords.y),
+            continent: initialCoords.continent,
+            passage: State.variables.currentPassage
+        };
+    }
+
+    // Démarrer les chargements asynchrones
+    Promise.resolve()
+        .then(() => loadGeography())
+        .then(() => loadLootsSequentially())
+        .then(() => loadAllPNJ())
+        .catch(error => {
+            console.error("❌ ERREUR D'INITIALISATION:", error);
+            // Fallbacks sécurisés
+            initLootSystem();
+            window.setup.pnjState.ready = true;
+            window.setup.geographyState.ready = true;
+        });
+
+    // Initialiser les variables du jeu
     v.inventory = v.inventory || [];
     v.equipped = v.equipped || {};
     v.current_player_health = v.current_player_health ?? 10;
@@ -7083,46 +7227,45 @@ body {
     v.pendingQuests = v.pendingQuests || {};
     v.npcs = v.npcs || {};
     v.passageCoords = v.passageCoords || {};
-    v.playerCoordinates = v.playerCoordinates || {};
 
-    // Initialiser les coordonnées du joueur si manquantes
-    if (!v.playerCoordinates.x) {
-      v.playerCoordinates = {
-        x: 45,
-        y: 55,
-        continent: "Eldaron",
-        passage: currentPassage
-      };
-    }
-
+    // Créer le HUD si nécessaire
     if (!document.getElementById('hud')) $('body').prepend('<div id="hud"></div>');
     if (!document.getElementById('notification-container')) $('body').append('<div id="notification-container"></div>');
 
+    // Mise à jour initiale du HUD
     window.setup.updateHUD();
 
     console.log("✅ Initialisation storyready terminée");
-  });
+});
+window.setup.ensurePassageCoords = function(passageName) {
+    const v = State.variables;
+    v.passageCoords = v.passageCoords || {};
 
-    window.setup.ensurePassageCoords = function(passageName) {
-        const v = State.variables;
-        v.passageCoords = v.passageCoords || {};
+    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
 
-        // Utilise le passage actuel si passageName est undefined
-        const actualPassageName = passageName || State.passage?.title || 'Geole';
+    // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
+    if (!v.passageCoords[actualPassageName] ||
+        typeof v.passageCoords[actualPassageName].x !== 'number') {
 
-        if (!v.passageCoords[actualPassageName]) {
-            // Crée des coordonnées par défaut basées sur le joueur
-            const playerCoords = v.playerCoordinates || { x: 45, y: 55, continent: "Eldaron" };
-            v.passageCoords[actualPassageName] = {
-                x: playerCoords.x,
-                y: playerCoords.y,
-                continent: playerCoords.continent || "Eldaron"
-            };
-            console.log(`🔧 Coordonnées créées pour "${actualPassageName}"`, v.passageCoords[actualPassageName]);
-        }
+        // Coordonnées par défaut sécurisées
+        const defaultCoords = {
+            x: 45,
+            y: 55,
+            continent: "Eldaron"
+        };
 
-        return v.passageCoords[actualPassageName];
-    };
+        v.passageCoords[actualPassageName] = {
+            x: Number(defaultCoords.x),
+            y: Number(defaultCoords.y),
+            continent: defaultCoords.continent
+        };
+
+        console.log(`🔧 Coordonnées créées pour "${actualPassageName}":`, v.passageCoords[actualPassageName]);
+    }
+
+    return v.passageCoords[actualPassageName];
+};
+
 
   /* ==========================================================
   INIT AUTO SUR STORYREADY
@@ -7138,17 +7281,20 @@ body {
     }, 200);
   });
 
-  $(document).on(':passagedisplay', function() {
-    State.variables.currentPassage = State.passage?.title;
+$(document).on(':passagedisplay', function() {
+    // 🔴 CORRECTION : S'assurer que currentPassage est à jour
+    State.variables.currentPassage = State.passage || 'Geole';
+
     $('#passages').stop(true, true).animate({
-      opacity: 1
+        opacity: 1
     }, 400);
+
     window.setup.updateHUD();
 
-    // CORRECTION : Valider les coordonnées du passage actuel
-    const currentPassage = State.passage?.title;
+    // Valider les coordonnées du passage actuel
+    const currentPassage = State.variables.currentPassage;
     if (currentPassage) {
-      window.setup.ensurePassageCoords(currentPassage);
+        window.setup.ensurePassageCoords(currentPassage);
     }
 
     // Le reste de votre code d'animation...
@@ -7163,47 +7309,46 @@ body {
     if ($divider.length) setTimeout(() => $divider.addClass('visible'), baseDelay);
 
     $choices.removeClass('visible').css({
-      'pointer-events': 'none',
-      opacity: 0,
-      filter: 'grayscale(80%)'
+        'pointer-events': 'none',
+        opacity: 0,
+        filter: 'grayscale(80%)'
     });
 
     $('.choiceicon-marker').each(function() {
-      const $marker = $(this);
-      const type = $marker.data('type');
-      const iconSrc = window.setup.choiceIcons[type];
-      if (!iconSrc) return;
-      const $link = $marker.nextAll('a').first();
-      if (!$link.length) return;
-      const $icon = $(`<img class="choice-icon" src="${iconSrc}" alt="${type}">`);
-      const $wrapper = $('<span class="has-choice-icon"></span>').append($icon, $link.contents());
-      $link.empty().append($wrapper);
-      $marker.remove();
+        const $marker = $(this);
+        const type = $marker.data('type');
+        const iconSrc = window.setup.choiceIcons[type];
+        if (!iconSrc) return;
+        const $link = $marker.nextAll('a').first();
+        if (!$link.length) return;
+        const $icon = $(`<img class="choice-icon" src="${iconSrc}" alt="${type}">`);
+        const $wrapper = $('<span class="has-choice-icon"></span>').append($icon, $link.contents());
+        $link.empty().append($wrapper);
+        $marker.remove();
     });
 
     const linkStart = baseDelay + 500;
     $choices.each((i, el) => setTimeout(() => $(el).addClass('visible').animate({
-      opacity: 1
+        opacity: 1
     }, 300), linkStart + i * 200));
 
     const totalDelay = linkStart + $choices.length * 200 + 300;
     setTimeout(() => {
-      $choices.css({
-        'pointer-events': 'auto',
-        filter: 'none'
-      });
-      const v = State.variables;
-      v.visitedPassages = v.visitedPassages || {};
-      v.visitedPassages[State.passage.title] = true;
+        $choices.css({
+            'pointer-events': 'auto',
+            filter: 'none'
+        });
+        const v = State.variables;
+        v.visitedPassages = v.visitedPassages || {};
+        v.visitedPassages[State.passage] = true;
 
-      // Rafraîchir l'affichage des compagnons après le déplacement
-      if (window.renderBuddiesPanel) {
-        window.renderBuddiesPanel();
-      }
+        // Rafraîchir l'affichage des compagnons après le déplacement
+        if (window.renderBuddiesPanel) {
+            window.renderBuddiesPanel();
+        }
     }, totalDelay);
-  });
-})();
-</script><tw-passagedata pid="1" name="Fenêtre" tags="" position="150,250" size="100,100">&lt;!-- Fenêtre --&gt;\
+});
+})();</script><tw-passagedata pid="1" name="Fenêtre" tags="" position="150,250" size="100,100">&lt;!-- Fenêtre --&gt;\
 &lt;&lt;markquestcompleted &quot;quête_forge&quot;&gt;&gt;\
 &lt;&lt;setcoords 45 55 &quot;Helrun&quot;&gt;&gt;\
 &lt;&lt;set $visitesFenetre to ($visitesFenetre or 0) + 1&gt;&gt;\
@@ -7226,8 +7371,8 @@ Par instants, un souffle d’air traverse les barreaux et vous effleure le visag
 &lt;&lt;addItem &quot;essence_phoenix&quot; 1&gt;&gt;\
 &lt;&lt;spawn pnj &quot;Cyndra&quot;&gt;&gt;\
 &lt;&lt;pnj &quot;Cyndra&quot; &quot;buddy&quot;&gt;&gt;\
-&lt;&lt;pnjCoords &quot;Cyndra&quot; 60 70 &quot;Eldaron&quot;&gt;&gt;
-&lt;&lt;pnjsetstrength &quot;Cyndra&quot; 10&gt;&gt;
+&lt;&lt;pnjCoords &quot;Cyndra&quot; 25 15 &quot;Helrün&quot;&gt;&gt;\
+&lt;&lt;pnjsetstrength &quot;Cyndra&quot; 10&gt;&gt;\
 &lt;&lt;pnjsetdexterity &quot;Cyndra&quot; 10&gt;&gt;\
 &lt;&lt;pnjsetlevel &quot;Cyndra&quot; 10&gt;&gt;\
 La cellule est étroite, taillée dans une pierre humide et froide. L’air sent le fer, la poussière et l’eau stagnante.

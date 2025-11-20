@@ -546,7 +546,64 @@ window.setup.ensurePassageCoords = function(passageName) {
     return v.passageCoords[actualPassageName];
 };
 
+// -------------------------------------------------------------------------
+// LA BONNE VERSION (QUI ÉTAIT ÉCRASÉE PAR UN DOUBLON PLUS BAS)
+// -------------------------------------------------------------------------
+window.setup.updateFollowersCoordinates = function() {
+    const v = State.variables;
 
+    // 1. Récupérer le passage actuel (Destination)
+    const currentPassage = State.variables.currentPassage ||
+                          (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
+                          'Geole';
+
+    if (!currentPassage) {
+        console.error("❌ ERREUR: Impossible de déterminer le passage actuel");
+        return;
+    }
+
+    // 2. Récupérer les coordonnées de destination
+    const destinationCoords = window.setup.ensurePassageCoords(currentPassage);
+
+    console.log(`📍 Mise à jour followers vers: ${currentPassage} (${destinationCoords.x}, ${destinationCoords.y})`);
+
+    // 3. Traiter chaque PNJ
+    Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
+        // On ne traite que les suiveurs actifs (Buddy + Status 'follow')
+        // On ignore ceux qui sont déjà en voyage ('traveling') pour ne pas resetter leur timer
+        if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
+
+            // Vérifier si le PNJ est déjà au bon endroit (évite les calculs inutiles)
+            const isAtDestination = npc.passage === currentPassage &&
+                                    npc.coordinates.x === destinationCoords.x &&
+                                    npc.coordinates.y === destinationCoords.y;
+
+            if (!isAtDestination) {
+                console.log(`🚀 Démarrage auto du voyage pour ${npc.name} (Follow)`);
+
+                // AU LIEU DE TÉLÉPORTER (npc.coordinates = ...), ON LANCE LE VOYAGE
+                // Le système calculera la distance entre l'ancienne position du PNJ et la nouvelle
+                window.setup.startPNJTravel(
+                    pnjId,
+                    currentPassage,         // Destination Passage
+                    destinationCoords,      // Destination Coords
+                    destinationCoords.continent || "Eldaron",
+                    'follow'                // Type de mouvement
+                );
+            }
+        }
+    });
+
+    // 4. Mettre à jour les coordonnées du JOUEUR (Lui se téléporte instantanément car c'est son point de vue)
+    v.playerCoordinates = {
+        x: Number(destinationCoords.x) || 0,
+        y: Number(destinationCoords.y) || 0,
+        continent: destinationCoords.continent || "Eldaron",
+        passage: currentPassage
+    };
+
+    console.log(`🎯 Coordonnées joueur mises à jour: (${v.playerCoordinates.x}, ${v.playerCoordinates.y})`);
+};
   /* ---- MACRO : displaylocation ---- */
   Macro.add('displaylocation', {
     handler: function() {
@@ -1457,207 +1514,185 @@ window.setup.getGeographyData = function() {
     window.setup.debugGeography();
   }, 2000);
 
-// =========================================================================
-// SYSTÈME DE DÉPLACEMENT PNJ - CORRECTIF FINAL (ANTI-TÉLÉPORTATION)
-// =========================================================================
+  // ------------------------------------------------------
+  // CALCUL DE DISTANCE - VERSION ROBUSTE
+  // ------------------------------------------------------
+window.setup.calculateDistance = function(coords1, coords2, continent1, continent2) {
+    // Protection contre les objets nuls
+    if (!coords1) coords1 = { x: 0, y: 0 };
+    if (!coords2) coords2 = { x: 0, y: 0 };
 
-// 1. MISE À JOUR DES SUIVEURS (Avec délai de sécurité critique)
-window.setup.updateFollowersCoordinates = function() {
-    // Le délai de 50ms est OBLIGATOIRE.
-    // Il laisse le temps à SugarCube d'exécuter <<setcoords>> dans le nouveau passage
-    // AVANT que l'on ne calcule la distance.
-    setTimeout(() => {
-        const v = State.variables;
-        const destinationPassage = State.passage; // Le passage où l'on vient d'arriver
+    // Parsing sécurisé des nombres (évite les erreurs si format string)
+    const x1 = Number(coords1.x) || 0;
+    const y1 = Number(coords1.y) || 0;
+    const x2 = Number(coords2.x) || 0;
+    const y2 = Number(coords2.y) || 0;
 
-        if (!destinationPassage) return;
+    // Clamp les coordonnées entre 0 et 100 (limites de la carte)
+    const safeX1 = Math.max(0, Math.min(100, x1));
+    const safeY1 = Math.max(0, Math.min(100, y1));
+    const safeX2 = Math.max(0, Math.min(100, x2));
+    const safeY2 = Math.max(0, Math.min(100, y2));
 
-        // Récupérer les VRAIES coordonnées de la destination
-        const destCoords = window.setup.ensurePassageCoords(destinationPassage);
+    let continentPenalty = 0;
+    // Si les continents sont définis et différents, on ajoute une pénalité de distance
+    if (continent1 && continent2 && continent1 !== continent2) {
+        continentPenalty = 50;
+    }
 
-        console.log(`📍 [CHECK] Arrivée à "${destinationPassage}" (${destCoords.x}, ${destCoords.y}). Vérification des suiveurs...`);
+    const dx = safeX2 - safeX1;
+    const dy = safeY2 - safeY1;
 
-        // Mettre à jour la position du JOUEUR (immédiat)
-        v.playerCoordinates = {
-            x: Number(destCoords.x),
-            y: Number(destCoords.y),
-            continent: destCoords.continent || "Eldaron",
-            passage: destinationPassage
-        };
-        v.currentPassage = destinationPassage;
+    // Théorème de Pythagore
+    const baseDistance = Math.sqrt(dx * dx + dy * dy);
+    const totalDistance = baseDistance + continentPenalty;
 
-        // Vérifier chaque PNJ
-        Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
-            // Si le PNJ doit suivre et est actif
-            if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
-
-                // Si le PNJ est déjà en voyage vers ici, on ne touche à rien
-                if (npc.travelDestination && npc.travelDestination.passage === destinationPassage) {
-                    return;
-                }
-
-                // --- CALCUL DE LA DISTANCE ---
-                // On compare la position ACTUELLE du PNJ (avant qu'il ne bouge)
-                // avec les coordonnées de la DESTINATION (là où est le joueur maintenant)
-                const dist = window.setup.calculateDistance(
-                    npc.coordinates,      // Départ (Là où est le PNJ)
-                    destCoords,           // Arrivée (Là où est le joueur)
-                    npc.continent,
-                    destCoords.continent || "Eldaron"
-                );
-
-                // Si la distance est significative (> 0), on lance le voyage
-                // Note : On force le voyage même pour une petite distance pour éviter la TP visuelle
-                if (dist > 0.1) {
-                    console.log(`🚀 [DÉPART] ${npc.name} est à ${dist.toFixed(1)}m (Ancienne pos: ${npc.passage}) -> Doit rejoindre ${destinationPassage}.`);
-
-                    window.setup.startPNJTravel(
-                        pnjId,
-                        destinationPassage,
-                        destCoords,
-                        destCoords.continent || "Eldaron",
-                        'follow'
-                    );
-                } else {
-                    // Si distance nulle (0m), on met à jour sans voyage
-                    npc.passage = destinationPassage;
-                    npc.coordinates = { ...destCoords };
-                }
-            }
-        });
-
-        // Mettre à jour le HUD
-        if (window.setup.updateHUD) window.setup.updateHUD();
-
-    }, 100); // Délai augmenté à 100ms pour être sûr
+    return totalDistance;
 };
 
-// 2. DÉMARRAGE DU VOYAGE (Gestionnaire de temps)
-window.setup.startPNJTravel = function(pnjId, destPassage, destCoords, destContinent, type) {
-    const v = State.variables;
-    const npc = v.npcs[pnjId];
-    if (!npc) return false;
+  window.setup.calculateTravelTime = function(distance) {
+    // CORRECTION : Temps de voyage plus réaliste
+    const baseTimePerUnit = 2000; // 2 secondes par unité de distance
+    const minTime = 3000; // Minimum 3 secondes
+    const maxTime = 60000; // Maximum 60 secondes
 
-    // Calcul de la distance pour déterminer le temps
-    const startCoords = npc.coordinates || { x: 0, y: 0 };
-    const dist = window.setup.calculateDistance(startCoords, destCoords, npc.continent, destContinent);
+    const baseTime = Math.max(minTime, Math.min(maxTime, distance * baseTimePerUnit));
 
-    // Calcul du temps de trajet (Minimum 5 secondes pour voir "En voyage")
-    const duration = window.setup.calculateTravelTime(dist);
+    // Ajouter un peu d'aléatoire pour le réalisme (±30%)
+    const randomFactor = 0.7 + (Math.random() * 0.6);
 
-    console.log(`⏳ [VOYAGE] ${npc.name} : Trajet de ${dist.toFixed(1)}m en ${(duration/1000).toFixed(1)}s`);
+    const travelTime = Math.floor(baseTime * randomFactor);
 
-    // Mise à jour du statut PNJ
-    npc.status = 'traveling';
-    npc.travelStartTime = Date.now();
-    npc.travelEndTime = Date.now() + duration;
+    console.log(`⏱️  Calcul temps: 
+        Distance: ${distance.toFixed(1)}
+        Base: ${baseTime}ms
+        Facteur: ${randomFactor.toFixed(2)}
+        Final: ${travelTime}ms (${(travelTime/1000).toFixed(1)}s)`);
 
-    // On stocke la destination future
+    return travelTime;
+  };
+
+window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoords, destinationContinent, travelType) {
+    console.group(`🧭 DÉMARRAGE VOYAGE PNJ: ${pnjId}`);
+
+    const v = State.variables; // Utilisation directe de State.variables
+    const npc = v.npcs[pnjId]; // Accès direct sans npcEnsure pour éviter réinitialisation accidentelle
+
+    if (!npc) {
+        console.error("PNJ introuvable");
+        console.groupEnd();
+        return false;
+    }
+
+    // Sauvegarde des coordonnées ACTUELLES avant calcul
+    const currentCoords = npc.coordinates || { x: 0, y: 0 };
+    const currentContinent = npc.continent || "Eldaron";
+
+    // Calcul de la distance
+    const distance = window.setup.calculateDistance(
+        currentCoords,
+        destinationCoords,
+        currentContinent,
+        destinationContinent
+    );
+
+    // Préparation de la destination
     npc.travelDestination = {
-        passage: destPassage,
-        coordinates: { ...destCoords },
-        continent: destContinent,
-        type: type
+        passage: destinationPassage,
+        coordinates: destinationCoords,
+        continent: destinationContinent,
+        type: travelType
     };
 
-    // Gestion du Timer
+    // Si distance nulle ou très faible (< 1), arrivée immédiate
+    if (distance < 1) {
+        console.log(`✅ Distance négligeable (${distance.toFixed(1)}) - Arrivée immédiate`);
+        window.setup.completePNJTravel(pnjId);
+        console.groupEnd();
+        return true;
+    }
+
+    // Calcul du temps
+    const travelTime = window.setup.calculateTravelTime(distance);
+
+    // Mise à jour du statut
+    npc.status = 'traveling';
+    npc.travelStartTime = Date.now();
+    npc.travelEndTime = Date.now() + travelTime;
+
+    console.log(`📊 Voyage: Distance ${distance.toFixed(1)} | Temps ${(travelTime/1000).toFixed(1)}s`);
+
+    // Notification de départ (optionnelle, peut être commentée si trop de spam)
+    // window.setup.showDialogueNotificationShort(npc.name, `${npc.name} se met en route...`, "Voyage", false);
+
+    // Lancement du timer
     if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
 
     npc.travelTimeout = setTimeout(() => {
         window.setup.completePNJTravel(pnjId);
-    }, duration);
+    }, travelTime);
 
-    // Rafraîchir le panneau immédiatement pour afficher "En voyage"
+    console.groupEnd();
+
+    // Rafraichir le panneau compagnon pour afficher le statut "En voyage"
     if (window.renderBuddiesPanel) window.renderBuddiesPanel();
 
     return true;
 };
 
-// 3. CALCUL DU TEMPS (Ajusté pour être réaliste mais jouable)
-window.setup.calculateTravelTime = function(distance) {
-    const msPerUnit = 1500; // 1.5 secondes par mètre/unité
-    const minMs = 5000;     // Minimum 5 secondes (pour éviter la TP)
-    const maxMs = 120000;   // Maximum 2 minutes
+  window.setup.completePNJTravel = function(pnjId) {
+    const v = V();
+    const npc = npcEnsure(pnjId);
 
-    let time = distance * msPerUnit;
+    if (!npc.travelDestination) {
+      console.warn(`❌ Aucune destination de voyage pour ${pnjId}`);
+      return;
+    }
 
-    // On borne le temps
-    time = Math.max(minMs, Math.min(maxMs, time));
+    const destination = npc.travelDestination;
 
-    // Petite variation aléatoire (+/- 10%)
-    time = time * (0.9 + Math.random() * 0.2);
+    // Mettre à jour la position du PNJ
+    npc.passage = destination.passage;
+    npc.coordinates = {
+      ...destination.coordinates
+    };
+    npc.continent = destination.continent;
 
-    return Math.floor(time);
-};
+    // Mettre à jour le statut selon le type de voyage
+    if (destination.type === 'follow' || destination.type === 'recall') {
+      npc.status = 'follow';
+    } else {
+      npc.status = 'fixed';
+    }
 
-// 4. FIN DU VOYAGE
-window.setup.completePNJTravel = function(pnjId) {
-    const v = State.variables;
-    const npc = v.npcs[pnjId];
-    if (!npc || !npc.travelDestination) return;
-
-    const dest = npc.travelDestination;
-
-    // Application de la nouvelle position
-    npc.passage = dest.passage;
-    npc.coordinates = { ...dest.coordinates };
-    npc.continent = dest.continent;
-
-    // Restauration du statut
-    npc.status = (dest.type === 'follow') ? 'follow' : 'fixed';
-
-    // Nettoyage
-    delete npc.travelDestination;
+    // Nettoyer les données de voyage
     delete npc.travelStartTime;
     delete npc.travelEndTime;
-    if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
+    delete npc.travelDestination;
+    delete npc.travelTimeout;
 
-    console.log(`✅ [ARRIVÉE] ${npc.name} vous a rejoint à ${npc.passage}.`);
+    // Notification d'arrivée avec les réactions JSON
+    const pnjData = window.setup.loadPNJ(pnjId);
+    const joinReactions = pnjData.pnj?.réaction_joueur?.has_join_player;
 
-    // Notification (Optionnelle)
-    // window.setup.showDialogueNotificationShort(npc.name, "Je vous ai rattrapé.", "Le compagnon vous rejoint.", false);
-
-    // Mise à jour UI
-    if (window.renderBuddiesPanel) window.renderBuddiesPanel();
-};
-
-// 5. UTILITAIRE DE DISTANCE
-window.setup.calculateDistance = function(c1, c2, cont1, cont2) {
-    if (!c1 || !c2) return 0;
-    const dx = (Number(c1.x) || 0) - (Number(c2.x) || 0);
-    const dy = (Number(c1.y) || 0) - (Number(c2.y) || 0);
-    let d = Math.sqrt(dx*dx + dy*dy);
-
-    // Pénalité énorme si changement de continent (bateau/magie nécessaire)
-    if (cont1 && cont2 && cont1 !== cont2) d += 500;
-
-    return d;
-};
-
-
-// 6. SÉCURITÉ COORDONNÉES
-window.setup.ensurePassageCoords = function(passageName) {
-    const v = State.variables;
-    v.passageCoords = v.passageCoords || {};
-
-    if (!v.passageCoords[passageName]) {
-        // Si le passage n'a pas de coords (pas de <<setcoords>>), on crée un point par défaut
-        // Pour éviter les bugs, on utilise une position neutre ou celle du joueur,
-        // mais marquée comme "défaut".
-        const defX = v.playerCoordinates ? v.playerCoordinates.x : 0;
-        const defY = v.playerCoordinates ? v.playerCoordinates.y : 0;
-
-        v.passageCoords[passageName] = {
-            x: defX,
-            y: defY,
-            continent: "Eldaron",
-            isDefault: true
-        };
+    let arrivalText = `${npc.name} est arrivé.`;
+    if (joinReactions && Array.isArray(joinReactions) && joinReactions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * joinReactions.length);
+      arrivalText = joinReactions[randomIndex];
     }
-    return v.passageCoords[passageName];
-};
 
+    window.setup.showDialogueNotificationShort(npc.name, arrivalText, arrivalText, false);
 
+    console.log(`✅ ${pnjId} est arrivé à ${npc.passage} (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent})`);
+
+    // Mettre à jour l'affichage
+    if (window.renderBuddiesPanel) {
+      window.renderBuddiesPanel();
+    }
+
+    // Mettre à jour le HUD
+    window.setup.updateHUD();
+  };
 
   window.setup.cancelPNJTravel = function(pnjId) {
     const npc = npcEnsure(pnjId);
@@ -4399,42 +4434,45 @@ window.setup.validatePNJCoordinates = function(pnjId) {
   // PANNEAU COMPAGNONS + MENU CONTEXTUEL (corrigé)
   // — version stable : le menu reste ouvert même avec filtres / interactions UI
   // ==========================================================
-window.renderBuddiesPanel = function() {
-    const v = State.variables;
+  window.renderBuddiesPanel = function() {
+    const v = V();
     const $panel = $('#buddies-panel');
-
-    // Sauvegarde du menu si ouvert pour ne pas le fermer brutalement
+    // --- Sauvegarde du menu si ouvert ---
     const $existingMenu = $('#buddy-context-menu');
     const hasMenu = $existingMenu.length > 0;
     const savedMenu = hasMenu ? $existingMenu.detach() : null;
-
+    // On vide le contenu sans supprimer le panel
     $panel.empty();
-
-    // --- FILTRAGE ET TRI ---
     const all = Object.values(v.npcs || {});
-    const filters = [
-        { id: 'all', label: 'Tous' },
-        { id: 'follow', label: 'Suiveurs' },
-        { id: 'fixed', label: 'Sur place' },
-        { id: 'dead', label: 'Morts' },
-        { id: 'gone', label: 'Absents' }
-    ];
-
+    const filters = [{
+      id: 'all',
+      label: 'Tous'
+    }, {
+      id: 'follow',
+      label: 'Suiveurs'
+    }, {
+      id: 'fixed',
+      label: 'Sur place'
+    }, {
+      id: 'dead',
+      label: 'Morts'
+    }, {
+      id: 'gone',
+      label: 'Absents'
+    }];
     let currentFilter = v._buddyFilter || 'all';
     let currentIndex = filters.findIndex(f => f.id === currentFilter);
     if (currentIndex === -1) currentIndex = 0;
     v._buddyFilter = filters[currentIndex].id;
-
     const list = all.filter(n =>
-        n.isSpawned && n.isBuddy &&
-        (v._buddyFilter === 'all' ||
-         (v._buddyFilter === 'follow' && n.status === 'follow') ||
-         (v._buddyFilter === 'fixed' && n.status === 'fixed' && n.isAlive && n.isActive) ||
-         (v._buddyFilter === 'dead' && !n.isAlive) ||
-         (v._buddyFilter === 'gone' && !n.isActive && n.isAlive))
+      n.isSpawned && n.isBuddy &&
+      (v._buddyFilter === 'all' ||
+        v._buddyFilter === 'follow' && n.status === 'follow' ||
+        v._buddyFilter === 'fixed' && n.status === 'fixed' && n.isAlive && n.isActive ||
+        v._buddyFilter === 'dead' && !n.isAlive ||
+        v._buddyFilter === 'gone' && !n.isActive && n.isAlive)
     );
-
-    // --- BARRE DE FILTRES ---
+    // Barre de filtres avec flèches
     const $bar = $('<div class="buddy-filter-bar"></div>').appendTo($panel);
     const $left = $('<button class="buddy-filter-arrow prev" title="Précédent">◄</button>').appendTo($bar);
     const $center = $('<div class="buddy-filter-label"></div>').appendTo($bar);
@@ -4442,141 +4480,230 @@ window.renderBuddiesPanel = function() {
     $center.text(filters[currentIndex].label);
 
     function cycleFilter(dir) {
-        window.ignoreNextBuddyMenuClose = true;
-        setTimeout(() => { window.ignoreNextBuddyMenuClose = false; }, 200);
-        currentIndex = (currentIndex + dir + filters.length) % filters.length;
-        v._buddyFilter = filters[currentIndex].id;
-        window.renderBuddiesPanel();
+      // Bloque temporairement la fermeture du menu compagnon
+      window.ignoreNextBuddyMenuClose = true;
+      setTimeout(() => {
+        window.ignoreNextBuddyMenuClose = false;
+      }, 200);
+      currentIndex = (currentIndex + dir + filters.length) % filters.length;
+      v._buddyFilter = filters[currentIndex].id;
+      window.renderBuddiesPanel();
     }
-    $left.on('click', () => cycleFilter(-1));
-    $right.on('click', () => cycleFilter(1));
-
+    $left.off('click.buddycycle').on('click.buddycycle', () => cycleFilter(-1));
+    $right.off('click.buddycycle').on('click.buddycycle', () => cycleFilter(1));
     if (!list.length) {
-        $panel.append('<em style="opacity:.6;">Aucun compagnon dans cette catégorie.</em>');
-        if (savedMenu) $('body').append(savedMenu);
-        return;
+      $panel.append('<em style="opacity:.6;">Aucun compagnon dans cette catégorie.</em>');
+      if (savedMenu) $('body').append(savedMenu);
+      return;
     }
-
-    // --- RENDU DE LA LISTE ---
+    // Liste des compagnons
     list.forEach(b => {
-        // Calculs d'affichage (santé, badges...)
-        const health = Number(b.health ?? 0);
-        const maxHealth = Math.max(1, Number(b.maxHealth ?? 1));
-        const healthRatio = Math.max(0, Math.min(1, health / maxHealth));
-
-        // Statut spécial "En voyage"
-        let badgeType = !b.isAlive ? 'dead' : (!b.isActive ? 'gone' : b.status);
-        if (b.status === 'traveling') badgeType = 'traveling';
-
-        const labels = { follow: 'Suit', fixed: 'Attend', dead: 'Mort', gone: 'Parti', traveling: 'Voyage' };
-        const classes = { follow: 'buddy-follow', fixed: 'buddy-fixed', dead: 'buddy-dead', gone: 'buddy-gone', traveling: 'buddy-traveling' };
-
-        const badgeHTML = `<span class="item-badge ${classes[badgeType] || ''}">${labels[badgeType] || badgeType}</span>`;
-        const healthClass = !b.isAlive ? 'h-dead' : (healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low');
-
-        // Construction HTML
-        const $entry = $(`
-            <div class="buddy-entry" data-name="${b.name}">
-                <div class="msg-header">
-                    <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
-                    <strong>${window.setup.escapeHtml(b.name)}</strong>
-                    ${badgeHTML}
-                </div>
-                <div class="buddy-healthbar">
-                    <div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div>
-                </div>
-                <div class="buddy-location">
-                    ${window.setup.getLocationString(b.coordinates, b.continent)}
-                </div>
-            </div>
-        `);
-        $panel.append($entry);
+      const health = Number(b.health ?? 0);
+      const maxHealth = Math.max(1, Number(b.maxHealth ?? 1));
+      const safeHealth = isNaN(health) ? 0 : health;
+      const safeMax = isNaN(maxHealth) ? 1 : maxHealth;
+      const healthRatio = Math.max(0, Math.min(1, safeHealth / safeMax));
+      const badgeType = !b.isAlive ? 'dead' :
+        (!b.isActive ? 'gone' :
+          (b.status === 'follow' ? 'follow' : 'fixed'));
+      const badgeLabel = {
+        follow: 'Vous suit',
+        fixed: 'Sur place',
+        dead: 'Mort',
+        gone: 'Absent',
+        raveling: 'Vous rejoint...'
+      } [badgeType];
+      const badgeClass = {
+        follow: 'item-badge buddy-follow',
+        fixed: 'item-badge buddy-fixed',
+        dead: 'item-badge buddy-dead',
+        gone: 'item-badge buddy-gone',
+        traveling: 'item-badge buddy-traveling'
+      } [badgeType];
+      const healthClass = !b.isAlive ? 'h-dead' :
+        !b.isActive ? 'h-gone' :
+        (healthRatio > 0.6 ? 'h-good' :
+          healthRatio > 0.3 ? 'h-mid' : 'h-low');
+      const healthWidth = Math.max(2, Math.min(100, healthRatio * 100));
+      const healthText = b.isAlive ? `${safeHealth}/${safeMax}` : 'Mort';
+      const badgeHTML = `<span class="${badgeClass}">${badgeLabel}</span>`;
+      // Récupérer l'arme équipée si elle existe
+      let weaponHTML = '';
+      if (b.equipment.weapon) {
+        const weaponId = b.equipment.weapon;
+        const weaponData = window.setup.itemCache && window.setup.itemCache[weaponId];
+        if (weaponData) {
+          weaponHTML = `
+                            <div class="buddy-weapon">
+                                <strong>Arme équipée :</strong>
+                                <div class="inventory-item" data-id="${weaponId}" data-type="weapon">
+                                    <div>${window.setup.escapeHtml(weaponData.label)}</div>
+                                    <span class="inventory-type">Arme</span>
+                                    ${window.setup.renderItemEncarts(weaponData)}
+                                </div>
+                            </div>
+                        `;
+        } else {
+          weaponHTML = `<div class="buddy-weapon"><strong>Arme :</strong> ${weaponId}</div>`;
+        }
+      } else {
+        weaponHTML = '<div class="buddy-weapon"><strong>Arme :</strong> Aucune</div>';
+      }
+      // Affichage des stats du PNJ
+      const strength = b.stats.strength || 0;
+      const dexterity = b.stats.dexterity || 0;
+      const resistance = b.stats.resistance || 0;
+      const level = b.stats.level || 1;
+      const statsHTML = `
+                    <div class="buddy-stats">
+                        <span class="bonus-tag">
+                            <img class="icon-08em" src="${ICONS.strength}" alt="Force">
+                            ${strength}
+                        </span>
+                        <span class="bonus-tag">
+                            <img class="icon-08em" src="images/icons/dexterity.png" alt="Dextérité">
+                            ${dexterity}
+                        </span>
+                        <span class="bonus-tag">
+                            <img class="icon-08em" src="${ICONS.defense}" alt="Résistance">
+                            ${resistance}
+                        </span>
+                        <span class="bonus-tag">
+                            Niv ${level}
+                        </span>
+                    </div>
+                `;
+      const $entry = $(`
+                    <div class="buddy-entry" data-name="${b.name}">
+                        <div class="msg-header">
+                            <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnon">
+                            <strong>${window.setup.escapeHtml(b.name)}</strong>
+                            ${badgeHTML}
+                            ${statsHTML}
+                        </div>
+                        <div class="buddy-healthbar">
+                            <div class="buddy-healthfill ${healthClass}" style="width:${healthWidth}%;"></div>
+                        </div>
+                        <div class="buddy-healthtext">${healthText}</div>
+                        ${weaponHTML}
+                        <!-- Affichage localisation -->
+                        <div class="buddy-location">
+                        <strong>Position :</strong>
+                        ${window.setup.getLocationString(b.coordinates, b.continent || "Eldaron")}
+                        </div>
+                    </div>
+                `);
+      $panel.append($entry);
     });
 
-    // --- GESTION DU CLIC DROIT (MENU CONTEXTUEL) ---
-    $panel.find('.buddy-entry').on('contextmenu', function(e) {
+    $(document).on('click', '.buddy-entry', function(e) {
+      // Ne déclencher que sur clic gauche (pas droit) et pas sur les éléments interactifs
+      if (e.button === 0 && !$(e.target).closest('.buddy-stats, .buddy-healthbar, .buddy-weapon').length) {
         e.preventDefault();
         e.stopPropagation();
-        $('#buddy-context-menu').remove();
-
         const name = $(this).data('name');
-        const npc = v.npcs[name];
-        const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
+        window.setup.showPnjModal(name);
+      }
+    });
+    // Interaction : clic droit → menu contextuel
+    $panel.find('.buddy-entry').off('contextmenu.buddymenu').on('contextmenu.buddymenu', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $('#buddy-context-menu, #give-buddy-menu').remove();
+      const name = $(this).data('name');
+      const npc = (V().npcs || {})[name];
+      const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
 
-        function addOption(text, fn, disabled = false) {
-            const $opt = $('<div class="context-option"></div>').text(text);
-            if (disabled) $opt.addClass('disabled');
-            else $opt.on('click', ev => { ev.stopPropagation(); fn(); $menu.remove(); });
-            $menu.append($opt);
-        }
-
-        if (!npc.isAlive) {
-            addOption('Mort', () => {}, true);
-        } else if (!npc.isActive) {
-            addOption('Rappeler (Magie)', () => {
-                npc.isActive = true;
-                npc.passage = State.passage;
-                window.renderBuddiesPanel();
-            });
-        } else if (npc.status === 'traveling') {
-             addOption('En voyage...', () => {}, true);
+      function addOption(text, fn, disabled = false) {
+        const $opt = $('<div class="context-option"></div>').text(text);
+        if (disabled) {
+          $opt.addClass('disabled');
         } else {
-            // OPTIONS STANDARDS
-            if (npc.status === 'follow') {
-                addOption('Attendre ici', () => {
-                    npc.status = 'fixed';
-                    // Met à jour la position "fixe" à l'endroit actuel
-                    npc.passage = State.passage;
-                    const pCoords = window.setup.ensurePassageCoords(State.passage);
-                    npc.coordinates = { ...pCoords };
-                    npc.continent = pCoords.continent;
-
-                    window.setup.showDialogueNotificationShort(npc.name, "Je vous attends ici.", "Ordre reçu.");
-                    window.renderBuddiesPanel();
-                });
-            } else {
-                // ============================================================
-                // C'EST ICI QUE LA CORRECTION S'APPLIQUE
-                // ============================================================
-                addOption('Me suivre', () => {
-                    // 1. Où est le joueur ?
-                    const destPassage = State.passage;
-                    const destCoords = window.setup.ensurePassageCoords(destPassage);
-                    const destContinent = destCoords.continent || "Eldaron";
-
-                    // 2. Calculer la distance réelle
-                    const dist = window.setup.calculateDistance(
-                        npc.coordinates,
-                        destCoords,
-                        npc.continent,
-                        destContinent
-                    );
-
-                    console.log(`🖱️ [MENU] Ordre de suivre pour ${npc.name}. Distance: ${dist.toFixed(1)}m`);
-
-                    if (dist > 1) {
-                        // 3a. Si loin -> Lancer le voyage (TEMPS DE TRAJET)
-                        window.setup.startPNJTravel(
-                            name,
-                            destPassage,
-                            destCoords,
-                            destContinent,
-                            'follow'
-                        );
-                        window.setup.showDialogueNotificationShort(npc.name, "J'arrive !", "Je me mets en route.");
-                    } else {
-                        // 3b. Si juste à côté -> Changement de statut immédiat
-                        npc.status = 'follow';
-                        npc.passage = destPassage;
-                        npc.coordinates = { ...destCoords };
-                        npc.continent = destContinent;
-                        window.setup.showDialogueNotificationShort(npc.name, "Je vous suis.", "Ordre reçu.");
-                    }
-
-                    window.renderBuddiesPanel();
-                    window.setup.updateHUD();
-                });
+          $opt.on('click', ev => {
+            ev.stopPropagation();
+            fn();
+            $menu.remove();
+          });
+        }
+        $menu.append($opt);
+      }
+      if (!npc.isAlive) {
+        addOption('Impossible — mort', () => {}, true);
+      } else if (!npc.isActive) {
+        addOption('Rappeler', () => {
+          npc.isActive = true;
+          npc.passage = State.passage;
+          window.setup.notifyBuddy(`${npc.name} revient.`);
+          window.renderBuddiesPanel();
+        });
+      } else {
+        if (npc.status === 'follow') {
+          addOption('Rester ici', () => {
+            npc.status = 'fixed';
+            npc.passage = State.passage;
+            // Mettre à jour les coordonnées avec le passage actuel
+            const v = V();
+            const passageCoords = (v.passageCoords || {})[State.passage];
+            if (passageCoords) {
+              npc.coordinates = {
+                x: passageCoords.x,
+                y: passageCoords.y
+              };
+              if (passageCoords.continent) {
+                npc.continent = passageCoords.continent;
+              }
             }
+            // REMPLACEMENT : Utilisation de la notification de dialogue avec réaction JSON
+            window.setup.notifyPnjMove(name, 'fixed');
+            window.renderBuddiesPanel();
+          });
+        } else {
+          addOption('Vous suivre', () => {
+            $('#buddy-context-menu').remove();
+
+            npc.status = 'follow';
+
+            // Mise à jour IMMÉDIATE et sûre des coordonnées
+            const currentPassage = State.passage;
+            const passageCoords = (v.passageCoords || {})[currentPassage];
+
+            if (passageCoords) {
+              npc.coordinates = {
+                x: passageCoords.x,
+                y: passageCoords.y
+              };
+              npc.continent = passageCoords.continent || "Eldaron";
+            } else {
+              // Fallback sur les coordonnées du joueur
+              const playerCoords = v.playerCoordinates;
+              if (playerCoords) {
+                npc.coordinates = {
+                  x: playerCoords.x || 0,
+                  y: playerCoords.y || 0
+                };
+                npc.continent = playerCoords.continent || "Eldaron";
+              } else {
+                npc.coordinates = {
+                  x: 0,
+                  y: 0
+                };
+                npc.continent = "Eldaron";
+              }
+            }
+            npc.passage = currentPassage;
+            console.log(`👥 ${npc.name} commence à suivre le joueur dans ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y})`);
+
+            // REMPLACEMENT : Utilisation de la notification de dialogue avec réaction JSON
+            window.setup.notifyPnjMove(name, 'follow');
+            window.renderBuddiesPanel();
+            updateBuddyHUDVisibility();
+            window.renderBuddiesPanel();
+
+            // Notification de succès
+            window.setup.showNotification('Compagnon', `${npc.name} vous suit maintenant`, 3000);
+
+          });
+        }
         // === Parler ===
         addOption('Parler', () => {
           window.setup.openChatModal(name);
@@ -5613,143 +5740,115 @@ window.setup.getPnjData = function(pnjId) {
 
     console.log("✅ Initialisation storyready terminée");
 });
+window.setup.ensurePassageCoords = function(passageName) {
+    const v = State.variables;
+    v.passageCoords = v.passageCoords || {};
 
-    // ------------------------------------------------------
-    // 5. SÉCURISATION DES COORDONNÉES
-    // ------------------------------------------------------
-    window.setup.ensurePassageCoords = function(passageName) {
-        const v = State.variables;
-        v.passageCoords = v.passageCoords || {};
+    const actualPassageName = passageName || State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
 
-        // Si pas de coords, on en crée (mais on ne les utilise pas pour téléporter le joueur)
-        if (!v.passageCoords[passageName]) {
-            // On utilise les coords du joueur comme "fallback" temporaire
-            // MAIS c'est ce qui causait le bug.
-            // Le setTimeout dans updateFollowersCoordinates permet d'attendre que le vrai <<setcoords>> écrase ça.
-            const playerPos = v.playerCoordinates || {x:0, y:0};
+    // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
+    if (!v.passageCoords[actualPassageName] ||
+        typeof v.passageCoords[actualPassageName].x !== 'number') {
 
-            v.passageCoords[passageName] = {
-                x: playerPos.x,
-                y: playerPos.y,
-                continent: playerPos.continent || "Eldaron",
-                isDefault: true // Marqueur pour dire "ce n'est pas précis"
-            };
-        }
-        return v.passageCoords[passageName];
-    };
+        // Coordonnées par défaut sécurisées
+        const defaultCoords = {
+            x: 45,
+            y: 55,
+            continent: "Eldaron"
+        };
 
-/* ==========================================================
-   GESTIONNAIRES D'ÉVÉNEMENTS ET INITIALISATION (INIT)
-   Ce bloc doit être placé TOUT À LA FIN du fichier JavaScript
-   ========================================================== */
+        v.passageCoords[actualPassageName] = {
+            x: Number(defaultCoords.x),
+            y: Number(defaultCoords.y),
+            continent: defaultCoords.continent
+        };
 
-    // 1. INITIALISATION AU CHARGEMENT DE L'HISTOIRE
-    $(document).one(':storyready', function() {
-        console.log("🎮 [INIT] Story Ready : Chargement initial...");
-        // Charger les données externes (PNJ, Loot, Géo)
-        if (typeof loadAllPNJ === 'function') loadAllPNJ();
-        if (window.setup.ensureLootReady) window.setup.ensureLootReady(() => console.log("📦 Loot prêt"));
-        if (window.setup.ensureGeographyReady) window.setup.ensureGeographyReady(() => console.log("🗺️ Géo prête"));
-    });
+        console.log(`🔧 Coordonnées créées pour "${actualPassageName}":`, v.passageCoords[actualPassageName]);
+    }
 
-    // 2. DÉBUT DU PASSAGE (S'exécute AVANT l'affichage)
-    // Nettoyage préventif pour éviter les doublons lors des rechargements
-    $(document).off(':passagestart');
+    return v.passageCoords[actualPassageName];
+};
+
+
+  /* ==========================================================
+  INIT AUTO SUR STORYREADY
+  ========================================================== */
+  $(document).one(':storyready', () => loadAllPNJ());
+
     $(document).on(':passagestart', function() {
-        // Animation de sortie (Fade Out)
-        $('#passages').stop(true, true).animate({ opacity: 0 }, 200);
+    window.setup.updateFollowersCoordinates();
+    $('#passages').stop(true, true).animate({ opacity: 0 }, 200);
 
-        // ⚠️ CRITIQUE : NE JAMAIS LANCER DE CALCULS PNJ ICI.
-        // Les coordonnées du nouveau passage (<<setcoords>>) ne sont pas encore lues.
+    $('#passages').stop(true, true).animate({
+      opacity: 0
+    }, 200);
+  });
+
+$(document).on(':passagedisplay', function() {
+    // 🔴 CORRECTION : S'assurer que currentPassage est à jour
+    State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
+
+    $('#passages').stop(true, true).animate({
+        opacity: 1
+    }, 400);
+
+    window.setup.updateHUD();
+
+    // Valider les coordonnées du passage actuel
+    const currentPassage = State.variables.currentPassage;
+    if (currentPassage) {
+        window.setup.ensurePassageCoords(currentPassage);
+    }
+
+    // Le reste de votre code d'animation...
+    const $choices = $('#choices-container a, #passages a.link-internal, #passages a');
+    const $paragraphs = $('.fade-paragraph');
+    const $divider = $('#choices-divider');
+
+    $paragraphs.removeClass('visible').css('opacity', 0);
+    $paragraphs.each((i, el) => setTimeout(() => $(el).addClass('visible'), i * 300));
+
+    const baseDelay = $paragraphs.length * 180 + 300;
+    if ($divider.length) setTimeout(() => $divider.addClass('visible'), baseDelay);
+
+    $choices.removeClass('visible').css({
+        'pointer-events': 'none',
+        opacity: 0,
+        filter: 'grayscale(80%)'
     });
 
-    // 3. AFFICHAGE DU PASSAGE (S'exécute UNE FOIS le passage rendu)
-    $(document).off(':passagedisplay');
-    $(document).on(':passagedisplay', function() {
-        console.log("🎬 [EVENT] Passage Display : Démarrage logique...");
-
-        // A. Mise à jour de la variable de référence du passage actuel
-        // On sécurise la valeur pour être sûr d'avoir le bon titre
-        State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
-
-        // B. GESTION DU DÉPLACEMENT PNJ
-        // C'est le moment précis pour lancer les calculs car le DOM est prêt et les macros du passage (<<setcoords>>) ont été exécutées.
-        if (window.setup.updateFollowersCoordinates) {
-            console.log("👣 [EVENT] Lancement updateFollowersCoordinates...");
-            window.setup.updateFollowersCoordinates();
-        }
-
-        // C. Animation d'entrée (Fade In)
-        $('#passages').stop(true, true).animate({ opacity: 1 }, 400);
-
-        // D. Mise à jour de l'interface (HUD)
-        if (window.setup.updateHUD) window.setup.updateHUD();
-
-        // E. Initialisation de secours des coordonnées (si oubli de <<setcoords>>)
-        const currentPassage = State.variables.currentPassage;
-        if (currentPassage && window.setup.ensurePassageCoords) {
-            window.setup.ensurePassageCoords(currentPassage);
-        }
-
-        // F. Animations d'interface (Choix, Paragraphes progressifs)
-        const $choices = $('#choices-container a, #passages a.link-internal, #passages a');
-        const $paragraphs = $('.fade-paragraph');
-        const $divider = $('#choices-divider');
-
-        // Masquer initialement pour l'effet d'apparition
-        $paragraphs.removeClass('visible').css('opacity', 0);
-
-        // Apparition en cascade des paragraphes
-        $paragraphs.each((i, el) => setTimeout(() => $(el).addClass('visible'), i * 300));
-
-        // Apparition du séparateur
-        const baseDelay = $paragraphs.length * 180 + 300;
-        if ($divider.length) setTimeout(() => $divider.addClass('visible'), baseDelay);
-
-        // Masquer les choix initialement
-        $choices.removeClass('visible').css({
-            'pointer-events': 'none',
-            opacity: 0,
-            filter: 'grayscale(80%)'
-        });
-
-        // Gestion des icônes devant les choix (Macro <<choiceicon>>)
-        $('.choiceicon-marker').each(function() {
-            const $marker = $(this);
-            const type = $marker.data('type');
-            const iconSrc = window.setup.choiceIcons ? window.setup.choiceIcons[type] : null;
-
-            if (!iconSrc) return;
-
-            const $link = $marker.nextAll('a').first();
-            if (!$link.length) return;
-
-            // Injection de l'icône
-            const $icon = $(`<img class="choice-icon" src="${iconSrc}" alt="${type}">`);
-            const $wrapper = $('<span class="has-choice-icon"></span>').append($icon, $link.contents());
-            $link.empty().append($wrapper);
-            $marker.remove();
-        });
-
-        // Apparition en cascade des choix
-        const linkStart = baseDelay + 500;
-        $choices.each((i, el) => setTimeout(() => $(el).addClass('visible').animate({
-            opacity: 1
-        }, 300), linkStart + i * 200));
-
-        // Finalisation (réactivation des clics)
-        const totalDelay = linkStart + $choices.length * 200 + 300;
-        setTimeout(() => {
-            $choices.css({ 'pointer-events': 'auto', filter: 'none' });
-
-            // Marquer le passage comme visité
-            const v = State.variables;
-            v.visitedPassages = v.visitedPassages || {};
-            v.visitedPassages[State.passage] = true;
-
-            // Rafraîchir panneau compagnons une dernière fois pour être sûr
-            if (window.renderBuddiesPanel) window.renderBuddiesPanel();
-
-        }, totalDelay);
+    $('.choiceicon-marker').each(function() {
+        const $marker = $(this);
+        const type = $marker.data('type');
+        const iconSrc = window.setup.choiceIcons[type];
+        if (!iconSrc) return;
+        const $link = $marker.nextAll('a').first();
+        if (!$link.length) return;
+        const $icon = $(`<img class="choice-icon" src="${iconSrc}" alt="${type}">`);
+        const $wrapper = $('<span class="has-choice-icon"></span>').append($icon, $link.contents());
+        $link.empty().append($wrapper);
+        $marker.remove();
     });
+
+    const linkStart = baseDelay + 500;
+    $choices.each((i, el) => setTimeout(() => $(el).addClass('visible').animate({
+        opacity: 1
+    }, 300), linkStart + i * 200));
+
+    const totalDelay = linkStart + $choices.length * 200 + 300;
+    setTimeout(() => {
+        $choices.css({
+            'pointer-events': 'auto',
+            filter: 'none'
+        });
+        const v = State.variables;
+        v.visitedPassages = v.visitedPassages || {};
+        v.visitedPassages[State.passage] = true;
+
+        // Rafraîchir l'affichage des compagnons après le déplacement
+        if (window.renderBuddiesPanel) {
+            window.renderBuddiesPanel();
+        }
+    }, totalDelay);
+});
 })();

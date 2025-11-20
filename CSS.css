@@ -1190,6 +1190,69 @@ body {
 }
 
 /* =========================================
+   STYLES POUR LE TIMER DE VOYAGE PNJ
+   À ajouter à la fin de votre fichier CSS
+   ========================================= */
+
+/* Conteneur du timer dans la carte du compagnon */
+.buddy-travel-wrapper {
+    margin-top: 6px;
+    margin-bottom: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 4px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Ligne contenant l'icône et le texte du temps */
+.travel-info-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+    font-size: 0.85em;
+}
+
+.travel-icon {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* Le texte du timer (ex: 1:30) */
+.travel-timer-text {
+    font-family: 'Consolas', 'Monaco', monospace; /* Police monospace pour éviter que les chiffres ne bougent */
+    color: #f2d675; /* Couleur Or/Jaune pour se distinguer */
+    font-weight: bold;
+    text-shadow: 0 0 2px rgba(0,0,0,0.8);
+}
+
+/* Fond de la barre de progression de voyage */
+.travel-progress-bg {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Remplissage de la barre (Violet mystique) */
+.travel-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #9b59b6, #8e44ad); /* Violet D&D */
+    width: 0%;
+    transition: width 1s linear; /* Transition fluide seconde par seconde */
+    box-shadow: 0 0 4px rgba(155, 89, 182, 0.4);
+}
+
+/* Assurer que la localisation ne colle pas trop au timer */
+.buddy-location {
+    margin-top: 4px;
+    font-size: 0.82em;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* =========================================
    ANIMATIONS NIVEAU & EXP - STYLE BLANC
 ========================================= */
 @keyframes levelUpGlow {

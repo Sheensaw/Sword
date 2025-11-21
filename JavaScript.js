@@ -13,7 +13,8 @@
     equipment: 'images/icons/equipment.png',
     speak: 'images/icons/speak.png',
     quest: 'images/icons/quest.png',
-    buddy: 'images/icons/buddy.png'
+    buddy: 'images/icons/buddy.png',
+    map: 'images/icons/map.png' // AJOUT DE L'ICÔNE DE CARTE
   };
   window.ICONS = ICONS;
 
@@ -465,89 +466,116 @@
     handler: function() {
       let x, y, continent;
 
+      // 1. Parsing flexible des arguments
       if (this.args.length === 1 && typeof this.args[0] === 'object') {
         const coords = this.args[0];
-        x = Number(coords.x) || 0;
-        y = Number(coords.y) || 0;
-        continent = coords.continent || "Eldaron";
+        x = Number(coords.x);
+        y = Number(coords.y);
+        continent = coords.continent;
       } else if (this.args.length >= 2) {
-        x = Number(this.args[0]) || 0;
-        y = Number(this.args[1]) || 0;
-        continent = this.args[2] || "Eldaron";
+        x = Number(this.args[0]);
+        y = Number(this.args[1]);
+        continent = this.args[2];
       } else {
         return this.error('Usage: <<setcoords x y [continent]>> ou <<setcoords {x:1, y:2, continent: "Eldaron"}>>');
       }
 
+      // 2. Sécurisation des valeurs
       const v = State.variables;
+      // Si le continent n'est pas fourni, on essaie de garder l'actuel, sinon fallback Eldaron
+      const currentContinent = v.playerCoordinates?.continent || "Eldaron";
 
-      // SOURCE DE VÉRITÉ UNIQUE pour le passage actuel
-      const currentPassage = State.variables.currentPassage ||
-        (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
-        "Geole";
+      // Mise à jour immédiate de la "Vérité Terrain" du passage actuel
+      // On utilise State.passage directement pour éviter les désynchronisations
+      const currentPassage = State.passage;
 
-      if (!currentPassage) {
-        console.error("❌ Impossible de déterminer le passage actuel dans setcoords");
-        return;
-      }
-
-      // Initialiser le stockage des coordonnées
       v.passageCoords = v.passageCoords || {};
-      v.playerCoordinates = v.playerCoordinates || {};
-
-      // Stocker les coordonnées du passage
       v.passageCoords[currentPassage] = {
-        x: Number(x),
-        y: Number(y),
-        continent: continent
+        x: x,
+        y: y,
+        continent: continent || currentContinent,
+        source: 'macro' // Marqueur pour le debug
       };
 
-      // Mettre à jour les coordonnées du joueur
-      v.playerCoordinates = {
-        x: Number(x),
-        y: Number(y),
-        continent: continent,
-        passage: currentPassage
-      };
-
-      console.log(`✅ Coordonnées définies pour "${currentPassage}": (${x}, ${y}, ${continent})`);
-
-      // Mettre à jour les compagnons
-      window.setup.updateFollowersCoordinates();
-
-      // Rafraîchir l'interface
-      if (window.renderBuddiesPanel) window.renderBuddiesPanel();
-      window.setup.updateHUD();
+      // 3. Force la synchronisation immédiate du joueur
+      window.setup.syncPlayerPosition();
     }
   });
 
-  // REMPLACER window.setup.ensurePassageCoords
-  window.setup.ensurePassageCoords = function(passageName) {
+  window.setup.syncPlayerPosition = function() {
     const v = State.variables;
+    const currentPassage = State.passage; // Source de vérité absolue
+
+    // 1. Initialisation des structures si manquantes
     v.passageCoords = v.passageCoords || {};
+    v.playerCoordinates = v.playerCoordinates || { x: 45, y: 55, continent: "Eldaron" }; // Valeurs par défaut (Lorn)
 
-    const actualPassageName = passageName || State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
+    // 2. Tentative de récupération des coordonnées pour ce passage
+    let coords = v.passageCoords[currentPassage];
 
-    // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
-    if (!v.passageCoords[actualPassageName] ||
-      typeof v.passageCoords[actualPassageName].x !== 'number') {
+    // 3. STRATÉGIE DE FALLBACK INTELLIGENT (Auto-Detection via Velkarum)
+    if (!coords) {
+        const geo = window.setup.getGeographyData();
 
-      // Si le joueur a des coordonnées, les utiliser comme modèle
-      const playerCoords = v.playerCoordinates || {
-        x: 45,
-        y: 55,
-        continent: "Eldaron"
-      };
-
-      v.passageCoords[actualPassageName] = {
-        x: Number(playerCoords.x) || 45,
-        y: Number(playerCoords.y) || 55,
-        continent: playerCoords.continent || "Eldaron"
-      };
-
-      console.log(`🔧 Coordonnées créées pour "${actualPassageName}":`, v.passageCoords[actualPassageName]);
+        // Si le nom du passage correspond exactement à un noeud (ex: "Lorn", "Taverne_Dragon_Borgne")
+        if (geo && geo.nodes && geo.nodes[currentPassage]) {
+            const node = geo.nodes[currentPassage];
+            coords = {
+                x: node.x,
+                y: node.y,
+                continent: node.continent || "Eldaron",
+                source: 'velkarum_auto'
+            };
+            console.log(`🗺️ [AUTO-GEO] Passage "${currentPassage}" reconnu dans Velkarum. Coords appliquées.`);
+        }
     }
 
-    return v.passageCoords[actualPassageName];
+    // 4. STRATÉGIE DE PERSISTANCE (Si toujours rien, on garde la dernière position connue)
+    if (!coords) {
+        // On suppose que le joueur est toujours au même endroit géographique
+        // (ex: il entre dans une sous-pièce non cartographiée d'un bâtiment)
+        coords = {
+            x: v.playerCoordinates.x,
+            y: v.playerCoordinates.y,
+            continent: v.playerCoordinates.continent,
+            source: 'persistence'
+        };
+        // On ne log pas trop pour éviter le spam, mais c'est une info utile
+        // console.log(`⚓ [PERSIST] Pas de coords pour "${currentPassage}", maintien de la position précédente.`);
+    }
+
+    // 5. Sauvegarde et Mise à jour
+    // On stocke le résultat pour ne pas recalculer à chaque milliseconde
+    v.passageCoords[currentPassage] = coords;
+
+    // Mise à jour officielle de la position du joueur
+    v.playerCoordinates = {
+        x: Number(coords.x),
+        y: Number(coords.y),
+        continent: coords.continent,
+        passage: currentPassage,
+        lastUpdate: Date.now() // Utile pour le debug
+    };
+
+    v.currentPassage = currentPassage; // Redondant mais sécurisant pour les scripts tiers
+
+    return v.playerCoordinates;
+  };
+
+  // REMPLACER window.setup.ensurePassageCoords
+  window.setup.ensurePassageCoords = function(passageName) {
+    // Cette fonction est maintenant un wrapper pour garantir la rétrocompatibilité
+    // mais elle force une synchronisation propre.
+    if (passageName === State.passage) {
+        return window.setup.syncPlayerPosition();
+    }
+
+    // Si on demande des coords d'un autre passage que l'actuel (rare)
+    const v = State.variables;
+    if (v.passageCoords && v.passageCoords[passageName]) {
+        return v.passageCoords[passageName];
+    }
+    return { x: 0, y: 0, continent: "Eldaron", isDefault: true };
   };
 
   /* ---- MACRO : displaylocation ---- */
@@ -1927,41 +1955,65 @@
 
   // Mise à jour des suiveurs
   window.setup.updateFollowersCoordinates = function() {
+    // On attend un tout petit peu que le moteur Twine ait fini de rendre le passage
     setTimeout(() => {
       const v = State.variables;
-      const destinationPassage = State.passage;
-      if (!destinationPassage) return;
-      const destCoords = window.setup.ensurePassageCoords(destinationPassage);
 
-      v.playerCoordinates = {
-        x: Number(destCoords.x),
-        y: Number(destCoords.y),
-        continent: destCoords.continent || "Eldaron",
-        passage: destinationPassage
-      };
-      v.currentPassage = destinationPassage;
+      // 1. On s'assure que le joueur est bien localisé avant de bouger les PNJ
+      const playerPos = window.setup.syncPlayerPosition();
+      const destinationPassage = playerPos.passage;
+      const destCoords = { x: playerPos.x, y: playerPos.y };
+      const destContinent = playerPos.continent;
+
+      // Debug optionnel
+      // console.log(`👥 [FOLLOW] Update followers vers (${destCoords.x}, ${destCoords.y}) sur ${destContinent}`);
 
       Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
+        // Vérifications de base : doit être un compagnon, vivant, actif, spawned
         if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
-          if (npc.travelDestination && npc.travelDestination.passage === destinationPassage) return;
 
-          // Reroutage si nécessaire
+          // Si le PNJ est déjà au bon endroit (même passage), on ne fait rien
+          if (npc.passage === destinationPassage && !npc.travelDestination) return;
+
+          // Reroutage si le PNJ était déjà en voyage vers une autre destination
           if (npc.status === 'traveling') {
+            // On met à jour sa position virtuelle actuelle avant de changer de cap
             window.setup.updatePNJPositionDuringTravel(npc);
             if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
           }
 
-          const distDirect = Math.sqrt(Math.pow(npc.coordinates.x - destCoords.x, 2) + Math.pow(npc.coordinates.y - destCoords.y, 2)) * window.setup.GEO_SCALE;
-          if (distDirect > 5) {
-            window.setup.startPNJTravel(pnjId, destinationPassage, destCoords, destCoords.continent || "Eldaron", 'follow');
+          // Calcul de distance
+          const distDirect = window.setup.calculateDistance(
+              npc.coordinates,
+              destCoords,
+              npc.continent,
+              destContinent
+          );
+
+          // LOGIQUE DE DÉPLACEMENT
+          // Si distance > 0.5km (pour éviter les micro-mouvements dans une pièce)
+          // ET que c'est sur le même continent (ou géré par le pathfinding complexe)
+          if (distDirect > 0.5) {
+             // Le PNJ voyage vers le joueur
+             window.setup.startPNJTravel(
+                 pnjId,
+                 destinationPassage,
+                 destCoords,
+                 destContinent,
+                 'follow'
+             );
           } else {
-            window.setup.stopPNJTravelAndTeleport(npc, destinationPassage, destCoords);
+             // Trop proche : Téléportation discrète (ex: entrer dans une auberge depuis la rue devant)
+             window.setup.stopPNJTravelAndTeleport(npc, destinationPassage, destCoords);
+             npc.continent = destContinent; // Important : sync le continent
           }
         }
       });
+
       if (window.setup.updateHUD) window.setup.updateHUD();
-    }, 100);
+    }, 50); // Délai court (50ms)
   };
+
 
   window.setup.stopPNJTravelAndTeleport = function(npc, passage, coords) {
     npc.status = 'follow';
@@ -1975,12 +2027,16 @@
     if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
   };
 
-  window.setup.calculateDistance = function(c1, c2, cont1, cont2) {
-    if (!c1 || !c2) return 0;
-    const dx = (Number(c1.x) || 0) - (Number(c2.x) || 0);
-    const dy = (Number(c1.y) || 0) - (Number(c2.y) || 0);
-    return Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
-  };
+    window.setup.calculateDistance = function(c1, c2, cont1, cont2) {
+        if (!c1 || !c2) return 0;
+        // Si les continents sont différents, on ne peut pas calculer à vol d'oiseau simplement
+        // On retourne une distance immense pour forcer l'usage du pathfinding réseau (bateau/dirigeable)
+        if (cont1 && cont2 && cont1 !== cont2) return 99999;
+
+        const dx = (Number(c1.x) || 0) - (Number(c2.x) || 0);
+        const dy = (Number(c1.y) || 0) - (Number(c2.y) || 0);
+        return Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
+    };
 
   // 6. SÉCURITÉ COORDONNÉES
   window.setup.ensurePassageCoords = function(passageName) {
@@ -3058,60 +3114,97 @@
     let timeout;
 
     function icon(img) {
-      return `<img class="icon-1em" src="${img}" alt="">`;
+      const src = img || 'images/icons/map.png';
+      return `<img class="icon-1em" src="${src}" alt="" onerror="this.style.display='none';">`;
     }
+
     return function() {
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         const $hud = $('#hud');
         if (!$hud.length) return;
+
         const v = V();
         const health = v.current_player_health ?? 10;
         const maxHealth = v.max_player_health ?? 10;
         const strength = v.strength || 0;
-        const dexterity = v.dexterity || 0; // ← DEXTÉRITÉ
+        const dexterity = v.dexterity || 0;
         const resistance = v.resistance || 0;
         const magic = v.magic || 0;
         const gold = v.gold || 0;
-        const level = v.level || 1; // ← NIVEAU
-        const exp = v.exp || 0; // ← EXP
+        const level = v.level || 1;
+        const exp = v.exp || 0;
         const expToNextLevel = v.expToNextLevel || 100;
-        const expPercent = Math.min(100, (exp / expToNextLevel) * 100); // ← POURCENTAGE XP
+        const expPercent = Math.min(100, (exp / expToNextLevel) * 100);
+
+        // --- CALCUL DE LA LOCALISATION JOUEUR ---
+        let locationString = "Position inconnue";
+        if (v.playerCoordinates) {
+             locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
+        } else {
+             const currentPassage = State.variables.currentPassage || State.passage;
+             const pCoords = window.setup.ensurePassageCoords(currentPassage);
+             locationString = window.setup.getLocationString(pCoords, pCoords.continent);
+        }
+
         if (!$hud.find('.hud-inner').length) {
           $hud.html(`
-                            <div class="hud-inner">
-                                <div class="hud-stats">
-                                    <div class="hud-block hud-health">${icon(ICONS.health)} ${health}/${maxHealth}</div>
-                                    <div class="hud-block hud-strength">${icon(ICONS.strength)} ${strength}</div>
-                                    <div class="hud-block hud-dexterity">${icon('images/icons/dexterity.png')} ${dexterity}</div>
-                                    <div class="hud-block hud-resistance">${icon(ICONS.defense)} ${resistance}</div>
-                                    <div class="hud-block hud-magic">${icon(ICONS.magic)} ${magic}</div>
-                                    <div class="hud-block hud-gold">${icon(ICONS.gold)} ${gold}</div>
-                                </div>
-                                <div class="hud-exp-bar">
-                                    <span class="hud-level">${level}</span>
-                                    <div class="hud-exp-container">
-                                        <div class="hud-exp-fill" style="width: ${expPercent}%;"></div>
-                                    </div>
-                                    <span class="hud-level">${level + 1}</span>
-                                </div>
-                                <div class="hud-toggles"></div>
-                            </div>
-                            <div id="inventory-panel" class="side-panel"></div>
-                            <div id="equipment-panel" class="side-panel"></div>
-                            <div id="messages-panel" class="side-panel"></div>
-                            <div id="quest-panel" class="side-panel"></div>
-                            <div id="buddies-panel" class="side-panel"></div>
-                        `);
+            <div class="hud-inner">
+                <!-- BARRE PRINCIPALE : STATS + XP + TOGGLES (Grid Layout) -->
+                <div class="hud-row-top">
+                    
+                    <!-- GAUCHE : Stats -->
+                    <div class="hud-stats">
+                        <div class="hud-block hud-health">${icon(ICONS.health)} ${health}/${maxHealth}</div>
+                        <div class="hud-block hud-strength">${icon(ICONS.strength)} ${strength}</div>
+                        <div class="hud-block hud-dexterity">${icon('images/icons/dexterity.png')} ${dexterity}</div>
+                        <div class="hud-block hud-resistance">${icon(ICONS.defense)} ${resistance}</div>
+                        <div class="hud-block hud-magic">${icon(ICONS.magic)} ${magic}</div>
+                        <div class="hud-block hud-gold">${icon(ICONS.gold)} ${gold}</div>
+                    </div>
+
+                    <!-- CENTRE : XP Bar -->
+                    <div class="hud-exp-bar">
+                        <span class="hud-level">${level}</span>
+                        <div class="hud-exp-container">
+                            <div class="hud-exp-fill" style="width: ${expPercent}%;"></div>
+                        </div>
+                        <span class="hud-level">${level + 1}</span>
+                    </div>
+
+                    <!-- DROITE : Toggles -->
+                    <div class="hud-toggles"></div>
+                </div>
+
+                <!-- L'ENCART PENDANT (Hors du flux de la barre, positionné en absolu) -->
+                <div class="hud-location" title="${window.setup.escapeHtml(locationString)}">
+                    ${icon(ICONS.map)} <span class="location-text">${locationString}</span>
+                </div>
+            </div>
+            
+            <!-- Panneaux latéraux -->
+            <div id="inventory-panel" class="side-panel"></div>
+            <div id="equipment-panel" class="side-panel"></div>
+            <div id="messages-panel" class="side-panel"></div>
+            <div id="quest-panel" class="side-panel"></div>
+            <div id="buddies-panel" class="side-panel"></div>
+          `);
           $(document).trigger('hudready');
         } else {
+          // MISE À JOUR DYNAMIQUE
+          // Localisation
+          $('.hud-location .location-text').text(locationString);
+          $('.hud-location').attr('title', locationString);
+
+          // Stats
           $('.hud-health').html(`${icon(ICONS.health)} ${health}/${maxHealth}`);
           $('.hud-strength').html(`${icon(ICONS.strength)} ${strength}`);
           $('.hud-dexterity').html(`${icon('images/icons/dexterity.png')} ${dexterity}`);
           $('.hud-resistance').html(`${icon(ICONS.defense)} ${resistance}`);
           $('.hud-magic').html(`${icon(ICONS.magic)} ${magic}`);
           $('.hud-gold').html(`${icon(ICONS.gold)} ${gold}`);
-          // Mise à jour barre XP
+
+          // XP
           const $firstLevel = $('.hud-exp-bar .hud-level:first');
           const $lastLevel = $('.hud-exp-bar .hud-level:last');
           const $expFill = $('.hud-exp-fill');
@@ -3119,39 +3212,37 @@
           if ($lastLevel.length) $lastLevel.text(`Niv. ${level + 1}`);
           if ($expFill.length) $expFill.css('width', `${expPercent}%`);
         }
-        // ... le reste du code HUD existant (toggles, panneaux, etc.) ...
+
+        // Gestion des boutons (toggles)
         const $toggles = $('#hud .hud-toggles');
-        // INVENTAIRE
         if (!document.getElementById('inventory-toggle')) {
           $toggles.append(`
-                            <div id="inventory-toggle" title="Inventaire">
-                                ${icon(ICONS.inventory)}
-                                <span id="inventory-counter" class="counter">0</span>
-                            </div>
-                        `);
+            <div id="inventory-toggle" title="Inventaire">
+                ${icon(ICONS.inventory)}
+                <span id="inventory-counter" class="counter">0</span>
+            </div>
+          `);
         }
         if (!document.getElementById('equipment-toggle')) {
           $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(ICONS.equipment)}</div>`);
         }
-        // BUDDIES — icône visible seulement s’il existe ≥ 1 compagnon
+        // BUDDIES
         const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned).length;
         if (!document.getElementById('buddy-toggle')) {
-          // placé à gauche des messages
           $toggles.prepend(`
-                            <div id="buddy-toggle" title="Compagnons" style="display:none;">
-                                <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnons">
-                                <span id="buddy-counter" class="counter">0</span>
-                            </div>
-                        `);
+            <div id="buddy-toggle" title="Compagnons" style="display:none;">
+                <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnons">
+                <span id="buddy-counter" class="counter">0</span>
+            </div>
+          `);
         }
         $('#buddy-toggle').toggle(buddiesCount > 0);
         const $buddyCounter = $('#buddy-counter');
         if ($buddyCounter.length) {
           $buddyCounter.text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
         }
-        // ------------------------------------------------------
-        // Gestion centralisée des panneaux (stable)
-        // ------------------------------------------------------
+
+        // Gestionnaire panneaux
         window.setup.togglePanel = function(panelSelector) {
           const $panel = $(panelSelector);
           if (!$panel.length) return;
@@ -3159,7 +3250,8 @@
           $('.side-panel').removeClass('show');
           if (!isVisible) $panel.addClass('show');
         };
-        // Événements des toggles
+
+        // Evénements
         $('#inventory-toggle').off('click').on('click', (e) => {
           e.stopPropagation();
           window.setup.togglePanel('#inventory-panel');
@@ -3172,205 +3264,63 @@
           window.setup.togglePanel('#equipment-panel');
           renderEquipment();
         });
-        // ⚠️ IMPORTANT : utiliser la version GLOBALE qui gère le menu contextuel
         $('#buddy-toggle').off('click').on('click', (e) => {
           e.stopPropagation();
           window.setup.togglePanel('#buddies-panel');
           window.renderBuddiesPanel();
         });
-        // fermeture des panneaux si clic hors zone — whitelist étendue (context menus & modales)
+
+        // Fermeture panels
         $(document).off('click.hudpanels').on('click.hudpanels', e => {
-          const $target = $(e.target);
-          const isInsidePanel = $target.closest('.side-panel').length > 0;
-          const isToggle = $target.closest('#hud .hud-toggles > div').length > 0;
-          const isContextMenu = $target.closest('#inventory-context-menu, #delete-confirm, #buddy-context-menu, #give-buddy-menu, .context-menu').length > 0;
-          const isModal = $target.closest('#confirm-alert, #modal-overlay, #modal-overlay-msg, #dialogue-modal, #quest-modal, #modal-overlay-quest, #quest-proposal-modal, #modal-overlay-quest-proposal, #item-modal, #modal-overlay-item').length > 0;
-          const isBuddyMenuOpen = $('#buddy-context-menu, #give-buddy-menu').length > 0;
-          const isBuddyFilterArrow = $target.closest('.buddy-filter-arrow, .buddy-filter-arrow *').length > 0;
-          // Ne ferme pas le panneau si clic sur la barre de filtre des compagnons
-          if (!isInsidePanel && !isToggle && !isContextMenu && !isModal && !isBuddyMenuOpen && !isBuddyFilterArrow) {
-            $('.side-panel').removeClass('show');
-          }
+             const $target = $(e.target);
+             const isInsidePanel = $target.closest('.side-panel').length > 0;
+             const isToggle = $target.closest('#hud .hud-toggles > div').length > 0;
+             const isContextMenu = $target.closest('.context-menu, #inventory-context-menu, #delete-confirm').length > 0;
+             const isModal = $target.closest('.modal-content').length > 0;
+
+             if (!isInsidePanel && !isToggle && !isContextMenu && !isModal) {
+               $('.side-panel').removeClass('show');
+             }
         });
 
         function renderInventory() {
-          const $panel = $('#inventory-panel').empty();
-          const inventory = v.inventory || [];
-          const equipped = v.equipped || {};
-          const typeLabels = {
-            usable: "Objet",
-            health: "Soin",
-            food: "Nourriture",
-            weapon: "Arme",
-            shield: "Bouclier",
-            head: "Casque",
-            torso: "Armure",
-            arms: "Gants",
-            legs: "Jambes",
-            feet: "Pieds",
-            material: "Matériau",
-            key: "Clé",
-            misc: "Objet"
-          };
-
-          if (inventory.length) {
-            inventory.sort((a, b) =>
-              (typeLabels[a.type] || "Objet").localeCompare(typeLabels[b.type] || "Objet")
-            );
-            const frag = document.createDocumentFragment();
-            inventory.forEach(it => {
-              const typeLabel = typeLabels[it.type] || "Objet";
-              const qtyBadge = it.qty > 1 ? `<span class="inventory-qty">${it.qty}</span>` : '';
-              const isEquipped = Object.values(equipped).includes(it.id);
-              const eqBadge = isEquipped ? `<span class="inventory-equipped">ÉQUIPÉ</span>` : '';
-              const isNew = v.inventoryNewItems?.includes(it.id);
-              const newBadge = isNew ? `<span class="item-new">Nouveau</span>` : '';
-
-              // CORRECTION : Appel sécurisé avec vérification
-              const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(it) : '';
-
-              const $item = $(`
-                                    <div class="inventory-item${isNew ? ' new' : ''}" data-id="${it.id}" data-type="${it.type}">
-                                        <div class="inventory-badges">
-                                            ${qtyBadge}${eqBadge}${newBadge}
-                                        </div>
-                                        <div>${window.setup.escapeHtml(it.label)}</div>
-                                        <span class="inventory-type">${typeLabel}</span>
-                                        ${encartsHTML}
-                                    </div>
-                                `);
-
-              $item.on('mouseenter', function() {
-                if ($(this).hasClass('new')) {
-                  const id = $(this).data('id');
-                  v.inventoryNewItems = v.inventoryNewItems.filter(i => i !== id);
-                  $(this).removeClass('new').find('.item-new').remove();
-                  window.setup.updateInventoryCounter();
-                  window.setup.updateHUD();
-                }
-              });
-
-              $item.on('contextmenu', function(e) {
-                e.preventDefault();
-                const id = $(this).data('id');
-                const label = $(this).find('div').first().text().trim();
-                const type = $(this).data('type');
-                window.setup.showItemMenu(e.pageX, e.pageY, id, label, type, $(this));
-              });
-
-              frag.appendChild($item[0]);
-            });
-            $panel[0].appendChild(frag);
-          } else {
-            $panel.append('<em style="opacity:.6;">Aucun objet.</em>');
-          }
+            const $panel = $('#inventory-panel').empty();
+            const inventory = v.inventory || [];
+            const equipped = v.equipped || {};
+            if (inventory.length) {
+                 const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
+                 const frag = document.createDocumentFragment();
+                 inventory.forEach(it => {
+                     const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(it) : '';
+                     const isNew = v.inventoryNewItems?.includes(it.id);
+                     const $item = $(`<div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}"><div>${window.setup.escapeHtml(it.label)}</div><span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>${encartsHTML}</div>`);
+                     $item.on('contextmenu', function(e) { e.preventDefault(); window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this)); });
+                     $item.on('mouseenter', function() { if($(this).hasClass('new')){ window.setup.updateInventoryCounter(); window.setup.updateHUD(); }});
+                     frag.appendChild($item[0]);
+                 });
+                 $panel[0].appendChild(frag);
+            } else {
+                 $panel.append('<em style="opacity:.6;">Aucun objet.</em>');
+            }
         }
-        // Vérifie si le pNJ peut équipper l'arme
-        window.setup.canPnjEquipItem = function(pnjId, itemId) {
-          const npc = npcEnsure(pnjId);
-          const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
-          if (!itemData || !itemData.requirements) {
-            return true; // Pas de requirements, équipable
-          }
-          const req = itemData.requirements;
-          const missing = [];
-          // Vérifier les requirements
-          if (req.forceMin && (npc.stats.strength || 0) < req.forceMin) {
-            missing.push(`Force ${npc.stats.strength || 0}/${req.forceMin}`);
-          }
-          if (req.dexMin && (npc.stats.dexterity || 0) < req.dexMin) {
-            missing.push(`Dextérité ${npc.stats.dexterity || 0}/${req.dexMin}`);
-          }
-          if (req.levelMin && (npc.stats.level || 1) < req.levelMin) {
-            missing.push(`Niveau ${npc.stats.level || 1}/${req.levelMin}`);
-          }
-          if (missing.length > 0) {
-            console.warn(`PNJ ${pnjId} ne remplit pas les requirements pour ${itemId}: ${missing.join(', ')}`);
-            return false;
-          }
-          return true;
-        };
 
         function renderEquipment() {
-          const $panel = $('#equipment-panel').empty();
-          const inventory = v.inventory || [];
-          const equipped = v.equipped || {};
-          const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
-          const slotLabels = {
-            head: 'Tête',
-            torso: 'Torse',
-            arms: 'Mains',
-            legs: 'Jambes',
-            feet: 'Pieds',
-            weapon: 'Arme',
-            shield: 'Bouclier'
-          };
-          const typeLabels = {
-            weapon: "Arme",
-            shield: "Bouclier",
-            head: "Casque",
-            torso: "Armure",
-            arms: "Gants",
-            legs: "Jambes",
-            feet: "Pieds"
-          };
-
-          slots.forEach(slot => {
-            const eqId = equipped[slot];
-            const eqItem = eqId ? inventory.find(it => it.id === eqId) : null;
-
-            let eqHTML = '';
-            if (eqItem) {
-              // CORRECTION : Appel DIRECT de la fonction avec vérification
-              let encartsHTML = '';
-              if (window.setup.renderItemEncarts && typeof window.setup.renderItemEncarts === 'function') {
-                encartsHTML = window.setup.renderItemEncarts(eqItem);
-              }
-
-              eqHTML = `
-                                    <div class="inventory-item equipped-item" data-id="${eqItem.id}" data-type="${eqItem.type}">
-                                        <div>${window.setup.escapeHtml(eqItem.label)}</div>
-                                        <span class="inventory-type">${typeLabels[eqItem.type] || "Objet"}</span>
-                                        ${encartsHTML}
-                                    </div>
-                                `;
-            } else {
-              eqHTML = '<em class="equipment-empty" style="opacity:.6; cursor:pointer;">Rien équipé</em>';
-            }
-
-            $panel.append(`
-                                <div class="equipment-slot" data-slot="${slot}">
-                                    <strong>${slotLabels[slot]} :</strong>
-                                    ${eqHTML}
-                                </div>
-                            `);
-          });
-
-          // Clic sur un slot vide → sélection d’objet dans l’inventaire
-          $panel.find('.equipment-slot').off('click.equipSlot').on('click.equipSlot', function() {
-            const $slotEl = $(this);
-            const slot = $slotEl.data('slot');
-            const hasEquipped = !!$slotEl.find('.inventory-item').length;
-            const vLocal = V();
-
-            if (!hasEquipped) {
-              vLocal._pendingEquipSlot = slot;
-              $('.side-panel').removeClass('show');
-              $('#inventory-panel').addClass('show');
-              vLocal.inventoryViewed = true;
-              window.setup.updateInventoryCounter();
-              renderInventory();
-              window.setup.showNotification('Équipement', `Choisissez un objet de type "${slot}" à équiper.`, 2800);
-            }
-          });
+             const $panel = $('#equipment-panel').empty();
+             const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+             slots.forEach(slot => {
+                $panel.append(`<div class="equipment-slot" data-slot="${slot}"><strong>${slot}:</strong>${v.equipped[slot] ? ' (Objet)' : ' <em style="opacity:.6">Vide</em>'}</div>`);
+             });
         }
-        // rafraîchissements conditionnels
+
+        // Rafraîchissement final
         if ($('#inventory-panel').hasClass('show')) renderInventory();
         if ($('#equipment-panel').hasClass('show')) renderEquipment();
         if ($('#buddies-panel').hasClass('show')) window.renderBuddiesPanel();
+
         window.setup.updateMessageCounter();
         window.setup.updateQuestCounter();
         window.setup.updateInventoryCounter();
+
       }, 40);
     };
   })();
@@ -4726,249 +4676,248 @@
   // — version stable : le menu reste ouvert même avec filtres / interactions UI
   // ==========================================================
   window.renderBuddiesPanel = function() {
-    const v = State.variables;
-    const $panel = $('#buddies-panel');
+  const v = State.variables;
+  const $panel = $('#buddies-panel');
 
-    // Nettoyage timer
-    if (window.setup.buddiesPanelInterval) {
-      clearInterval(window.setup.buddiesPanelInterval);
-      window.setup.buddiesPanelInterval = null;
-    }
+  // Nettoyage timer
+  if (window.setup.buddiesPanelInterval) {
+    clearInterval(window.setup.buddiesPanelInterval);
+    window.setup.buddiesPanelInterval = null;
+  }
 
-    const $existingMenu = $('#buddy-context-menu');
-    const savedMenu = $existingMenu.length > 0 ? $existingMenu.detach() : null;
+  const $existingMenu = $('#buddy-context-menu');
+  const savedMenu = $existingMenu.length > 0 ? $existingMenu.detach() : null;
 
-    $panel.empty();
+  $panel.empty();
 
-    // Filtrage
-    const all = Object.values(v.npcs || {});
-    const list = all.filter(n => n.isSpawned && n.isBuddy);
+  // Filtrage
+  const all = Object.values(v.npcs || {});
+  const list = all.filter(n => n.isSpawned && n.isBuddy);
 
-    if (!list.length) {
-      $panel.append('<em style="opacity:.6;">Aucun compagnon.</em>');
-      if (savedMenu) $('body').append(savedMenu);
-      return;
-    }
-
-    list.forEach(b => {
-      const healthRatio = (b.health || 0) / (b.maxHealth || 1);
-      const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
-
-      let statusHTML = '';
-      let locationText = window.setup.getLocationString(b.coordinates, b.continent);
-
-      // --- BLOC VOYAGE ---
-      if (b.status === 'traveling' && b.travelCurrentStep) {
-        const step = b.travelCurrentStep;
-        const isResting = step.type === 'rest';
-
-        const endTime = step.endTime;
-        const totalDuration = step.duration;
-        const distSection = Number(step.dist) || 0;
-
-        // Définition de la couleur selon l'état
-        const stateColor = isResting ? '#4fc3f7' : '#66bb6a';
-
-        let actionText = "";
-        let subText = "";
-
-        if (isResting) {
-          actionText = `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`;
-          subText = "Pause nécessaire";
-          locationText = `📍 ${step.locationName}`;
-        } else {
-          actionText = `<span style="color:#eee;">${step.desc}</span>`;
-          subText = "En mouvement";
-          locationText = `🚀 En déplacement`;
-        }
-
-        statusHTML = `
-            <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
-                 data-name="${b.name}"
-                 data-end="${endTime}" 
-                 data-total="${totalDuration}"
-                 data-type="${step.type}"
-                 data-dist="${distSection}">
-                
-                <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    ${actionText}
-                </div>
-                
-                <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
-                    <span><span class="travel-timer-text">...</span></span>
-                    ${!isResting ? '<span class="travel-dist-text">... km</span>' : ''}
-                </div>
-                
-                <div class="travel-progress-bg">
-                <div class="travel-progress-fill" 
-                     style="width: 0%; background-color: ${stateColor || '#66bb6a'}; box-shadow: 0 0 5px ${stateColor || '#66bb6a'};">
-                </div>
-                </div>
-    
-                <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
-                     Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
-                </div>
-            </div>
-        `;
-      }
-
-      const $entry = $(`
-            <div class="buddy-entry" data-name="${b.name}">
-                <div class="msg-header">
-                    <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
-                    <strong>${window.setup.escapeHtml(b.name)}</strong>
-                    <span class="item-badge buddy-${b.status}">${b.status}</span>
-                </div>
-                <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
-                ${statusHTML}
-                <div class="buddy-location">${locationText}</div>
-            </div>
-        `);
-      $panel.append($entry);
-    });
-
-    // --- TIMER DYNAMIQUE ---
-    if ($panel.find('.buddy-travel-wrapper').length > 0) {
-      const updateTimers = () => {
-        const now = Date.now();
-        let active = false;
-
-        $panel.find('.buddy-travel-wrapper').each(function() {
-          const $wrapper = $(this);
-          const name = $wrapper.data('name');
-          const endTime = Number($wrapper.data('end'));
-          const totalTime = Number($wrapper.data('total'));
-          const type = $wrapper.data('type');
-          const distSection = Number($wrapper.data('dist'));
-
-          // Recalculer l'état pour la mise à jour visuelle
-          const isResting = type === 'rest';
-          const currentColor = isResting ? '#4fc3f7' : '#66bb6a';
-
-          const remaining = endTime - now;
-          let percent = 0;
-
-          if (remaining <= 0) {
-            percent = 100;
-            $wrapper.find('.travel-timer-text').text("Fin étape");
-          } else {
-            active = true;
-            percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
-            const secs = Math.ceil(remaining / 1000);
-            const timeStr = `${Math.floor(secs/60)}:${(secs%60).toString().padStart(2,'0')}`;
-            $wrapper.find('.travel-timer-text').text(timeStr);
-          }
-
-          // MISE À JOUR CSS COMPLÈTE (Largeur + Couleur + Ombre)
-          $wrapper.find('.travel-progress-fill').css({
-            'width': `${percent}%`,
-            'background-color': currentColor,
-            'box-shadow': `0 0 5px ${currentColor}`
-          });
-
-          $wrapper.find('.travel-progress-fill').css('width', `${percent}%`);
-
-          // --- CALCUL DES KM RESTANTS (GLOBAL) ---
-          const npc = v.npcs[name];
-          if (npc && npc.travelItinerary) {
-            let totalKmLeft = 0;
-
-            // 1. Reste de l'étape en cours
-            if (type === 'travel' && remaining > 0) {
-              const kmLeftSection = distSection * (remaining / totalTime);
-              totalKmLeft += kmLeftSection;
-              $wrapper.find('.travel-dist-text').text(`${kmLeftSection.toFixed(1)} km`);
-            } else {
-              $wrapper.find('.travel-dist-text').text('');
-            }
-
-            // 2. Somme des étapes futures
-            if (npc.travelStepIndex < npc.travelItinerary.length - 1) {
-              for (let i = npc.travelStepIndex + 1; i < npc.travelItinerary.length; i++) {
-                totalKmLeft += (npc.travelItinerary[i].dist || 0);
-              }
-            }
-
-            $wrapper.find('.travel-total-km').text(`${totalKmLeft.toFixed(1)} km`);
-          }
-        });
-
-        if (!active && window.setup.buddiesPanelInterval) {
-          clearInterval(window.setup.buddiesPanelInterval);
-          window.setup.buddiesPanelInterval = null;
-        }
-      };
-      updateTimers();
-      window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
-    }
-
+  if (!list.length) {
+    $panel.append('<em style="opacity:.6; font-style:italic;">Aucun compagnon.</em>');
     if (savedMenu) $('body').append(savedMenu);
+    return;
+  }
 
-    // Gestion du clic droit
-    $panel.find('.buddy-entry').on('contextmenu', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      $('#buddy-context-menu').remove();
-      const name = $(this).data('name');
-      const npc = v.npcs[name];
-      const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
+  list.forEach(b => {
+    const healthRatio = (b.health || 0) / (b.maxHealth || 1);
+    const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
 
-      function addOption(text, fn, disabled = false) {
-        const $opt = $('<div class="context-option"></div>').text(text);
-        if (disabled) $opt.addClass('disabled');
-        else $opt.on('click', ev => {
-          ev.stopPropagation();
-          fn();
-          $menu.remove();
-        });
-        $menu.append($opt);
-      }
+    let statusHTML = '';
+    let locationText = window.setup.getLocationString(b.coordinates, b.continent);
 
-      if (npc.status === 'traveling') {
-        addOption('Annuler voyage', () => window.setup.cancelPNJTravel(name));
+    // --- BLOC VOYAGE ---
+    if (b.status === 'traveling' && b.travelCurrentStep) {
+      const step = b.travelCurrentStep;
+      const isResting = step.type === 'rest';
+
+      const endTime = step.endTime;
+      const totalDuration = step.duration;
+      const distSection = Number(step.dist) || 0;
+
+      // 🛠️ CORRECTION ICI : On définit la couleur finale AVANT le HTML
+      // Cela évite l'erreur "Mismatched property value" dans l'éditeur
+      const baseColor = isResting ? '#4fc3f7' : '#66bb6a';
+      const finalColor = baseColor || '#66bb6a';
+
+      let actionText = "";
+      let subText = "";
+
+      if (isResting) {
+        actionText = `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`;
+        subText = "Pause nécessaire";
+        locationText = `S'arrête à ${step.locationName}`;
       } else {
-        addOption('Me suivre', () => {
-          const destPassage = State.passage;
-          const destCoords = window.setup.ensurePassageCoords(destPassage);
-          const destCont = destCoords.continent || "Eldaron";
-          window.setup.startPNJTravel(name, destPassage, destCoords, destCont, 'follow');
-        });
-        addOption('Attendre ici', () => {
-          npc.status = 'fixed';
-          npc.passage = State.passage;
-          npc.coordinates = {
-            ...window.setup.ensurePassageCoords(State.passage)
-          };
-          window.renderBuddiesPanel();
-        });
-        addOption('Parler', () => window.setup.openChatModal(name));
-
-        const currentHP = Number(npc.health) || 0;
-        const maxHP = Number(npc.maxHealth) || 1;
-        if (currentHP < maxHP) {
-          addOption('Soigner (+5 PV)', () => window.setup.healBuddy(name, 5));
-        }
-        addOption('Faire partir', () => {
-          npc.isActive = false;
-          window.renderBuddiesPanel();
-        });
+        actionText = `<span style="color:#eee;">${step.desc}</span>`;
+        subText = "En mouvement";
+        locationText = `Se déplace`;
       }
 
-      const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
-      const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
-      $menu.css({
-        top: `${posY}px`,
-        left: `${posX}px`
-      });
+      // On utilise ${finalColor} qui est une variable simple, ce qui ne casse pas le linter CSS
+      statusHTML = `
+          <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
+               data-name="${b.name}"
+               data-end="${endTime}" 
+               data-total="${totalDuration}"
+               data-type="${step.type}"
+               data-dist="${distSection}">
+              
+              <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  ${actionText}
+              </div>
+              
+              <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
+                  <span><span class="travel-timer-text">...</span></span>
+                  ${!isResting ? '<span class="travel-dist-text">... km</span>' : ''}
+              </div>
+              
+              <div class="travel-progress-bg">
+                <div class="travel-progress-fill" style="width: 0%;">
+                </div>
+              </div>
 
-      $(document).off('mousedown.buddymenuclose').on('mousedown.buddymenuclose', ev => {
-        if (!$(ev.target).closest('#buddy-context-menu').length) {
-          $('#buddy-context-menu').remove();
-          $(document).off('mousedown.buddymenuclose');
+              <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
+                   Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
+              </div>
+          </div>
+      `;
+    }
+
+    const $entry = $(`
+          <div class="buddy-entry" data-name="${b.name}">
+              <div class="msg-header">
+                  <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
+                  <strong>${window.setup.escapeHtml(b.name)}</strong>
+                  <span class="item-badge buddy-${b.status}">${b.status}</span>
+              </div>
+              <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
+              ${statusHTML}
+              <div class="buddy-location">${locationText}</div>
+          </div>
+      `);
+    $panel.append($entry);
+  });
+
+  // --- TIMER DYNAMIQUE ---
+  if ($panel.find('.buddy-travel-wrapper').length > 0) {
+    const updateTimers = () => {
+      const now = Date.now();
+      let active = false;
+
+      $panel.find('.buddy-travel-wrapper').each(function() {
+        const $wrapper = $(this);
+        const name = $wrapper.data('name');
+        const endTime = Number($wrapper.data('end'));
+        const totalTime = Number($wrapper.data('total'));
+        const type = $wrapper.data('type');
+        const distSection = Number($wrapper.data('dist'));
+
+        // Recalculer l'état pour la mise à jour visuelle
+        const isResting = type === 'rest';
+        const currentColor = isResting ? '#4fc3f7' : '#66bb6a';
+
+        const remaining = endTime - now;
+        let percent = 0;
+
+        if (remaining <= 0) {
+          percent = 100;
+          $wrapper.find('.travel-timer-text').text("Fin étape");
+        } else {
+          active = true;
+          percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
+          const secs = Math.ceil(remaining / 1000);
+          const timeStr = `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
+          $wrapper.find('.travel-timer-text').text(timeStr);
+        }
+
+        // MISE À JOUR CSS COMPLÈTE
+        $wrapper.find('.travel-progress-fill').css({
+          'width': `${percent}%`,
+          'background-color': currentColor,
+          'box-shadow': `0 0 5px ${currentColor}`
+        });
+
+        // --- CALCUL DES KM RESTANTS (GLOBAL) ---
+        const npc = v.npcs[name];
+        if (npc && npc.travelItinerary) {
+          let totalKmLeft = 0;
+
+          // 1. Reste de l'étape en cours
+          if (type === 'travel' && remaining > 0) {
+            const kmLeftSection = distSection * (remaining / totalTime);
+            totalKmLeft += kmLeftSection;
+            $wrapper.find('.travel-dist-text').text(`${kmLeftSection.toFixed(1)} km`);
+          } else {
+            $wrapper.find('.travel-dist-text').text('');
+          }
+
+          // 2. Somme des étapes futures
+          if (npc.travelStepIndex < npc.travelItinerary.length - 1) {
+            for (let i = npc.travelStepIndex + 1; i < npc.travelItinerary.length; i++) {
+              totalKmLeft += (npc.travelItinerary[i].dist || 0);
+            }
+          }
+
+          $wrapper.find('.travel-total-km').text(`${totalKmLeft.toFixed(1)} km`);
         }
       });
+
+      if (!active && window.setup.buddiesPanelInterval) {
+        clearInterval(window.setup.buddiesPanelInterval);
+        window.setup.buddiesPanelInterval = null;
+      }
+    };
+    updateTimers();
+    window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
+  }
+
+  if (savedMenu) $('body').append(savedMenu);
+
+  // Gestion du clic droit
+  $panel.find('.buddy-entry').on('contextmenu', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#buddy-context-menu').remove();
+    const name = $(this).data('name');
+    const npc = v.npcs[name];
+    const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
+
+    function addOption(text, fn, disabled = false) {
+      const $opt = $('<div class="context-option"></div>').text(text);
+      if (disabled) $opt.addClass('disabled');
+      else $opt.on('click', ev => {
+        ev.stopPropagation();
+        fn();
+        $menu.remove();
+      });
+      $menu.append($opt);
+    }
+
+    if (npc.status === 'traveling') {
+      addOption('Annuler voyage', () => window.setup.cancelPNJTravel(name));
+    } else {
+      addOption('Me suivre', () => {
+        const destPassage = State.passage;
+        const destCoords = window.setup.ensurePassageCoords(destPassage);
+        const destCont = destCoords.continent || "Eldaron";
+        window.setup.startPNJTravel(name, destPassage, destCoords, destCont, 'follow');
+      });
+      addOption('Attendre ici', () => {
+        npc.status = 'fixed';
+        npc.passage = State.passage;
+        npc.coordinates = { ...window.setup.ensurePassageCoords(State.passage)
+        };
+        window.renderBuddiesPanel();
+      });
+      addOption('Parler', () => window.setup.openChatModal(name));
+
+      const currentHP = Number(npc.health) || 0;
+      const maxHP = Number(npc.maxHealth) || 1;
+      if (currentHP < maxHP) {
+        addOption('Soigner (+5 PV)', () => window.setup.healBuddy(name, 5));
+      }
+      addOption('Faire partir', () => {
+        npc.isActive = false;
+        window.renderBuddiesPanel();
+      });
+    }
+
+    const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
+    const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
+    $menu.css({
+      top: `${posY}px`,
+      left: `${posX}px`
     });
-  };
+
+    $(document).off('mousedown.buddymenuclose').on('mousedown.buddymenuclose', ev => {
+      if (!$(ev.target).closest('#buddy-context-menu').length) {
+        $('#buddy-context-menu').remove();
+        $(document).off('mousedown.buddymenuclose');
+      }
+    });
+  });
+};
   // ------------------------------------------------------
   // MENU "DONNER À UN COMPAGNON" — VERSION AMÉLIORÉE ET UNIFIÉE
   // ------------------------------------------------------
@@ -5931,30 +5880,34 @@
   $(document).on(':passagedisplay', function() {
     console.log("🎬 [EVENT] Passage Display : Démarrage logique...");
 
-    // A. Mise à jour de la variable de référence du passage actuel
-    // On sécurise la valeur pour être sûr d'avoir le bon titre
+    // A. SÉCURISATION DU PASSAGE ACTUEL
+    // On met à jour la variable de référence immédiatement
     State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
 
-    // B. GESTION DU DÉPLACEMENT PNJ
-    // C'est le moment précis pour lancer les calculs car le DOM est prêt et les macros du passage (<<setcoords>>) ont été exécutées.
+    // B. SYNCHRONISATION CRITIQUE DU JOUEUR (NOUVEAU)
+    // C'est ici que la magie opère : on verrouille la position du joueur (Macro ou Auto-détection)
+    // Cela garantit que v.playerCoordinates est correct AVANT de bouger les PNJ.
+    if (window.setup.syncPlayerPosition) {
+        window.setup.syncPlayerPosition();
+    } else {
+        // Fallback de sécurité si la fonction n'est pas encore chargée
+        window.setup.ensurePassageCoords(State.variables.currentPassage);
+    }
+
+    // C. GESTION DU DÉPLACEMENT PNJ
+    // Les PNJ réagissent maintenant à la position VALIDÉE du joueur
     if (window.setup.updateFollowersCoordinates) {
       console.log("👣 [EVENT] Lancement updateFollowersCoordinates...");
       window.setup.updateFollowersCoordinates();
     }
 
-    // C. Animation d'entrée (Fade In)
+    // D. Animation d'entrée (Fade In)
     $('#passages').stop(true, true).animate({
       opacity: 1
     }, 400);
 
-    // D. Mise à jour de l'interface (HUD)
+    // E. Mise à jour de l'interface (HUD)
     if (window.setup.updateHUD) window.setup.updateHUD();
-
-    // E. Initialisation de secours des coordonnées (si oubli de <<setcoords>>)
-    const currentPassage = State.variables.currentPassage;
-    if (currentPassage && window.setup.ensurePassageCoords) {
-      window.setup.ensurePassageCoords(currentPassage);
-    }
 
     // F. Animations d'interface (Choix, Paragraphes progressifs)
     const $choices = $('#choices-container a, #passages a.link-internal, #passages a');

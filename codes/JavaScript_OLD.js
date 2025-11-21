@@ -482,7 +482,7 @@ Macro.add('setcoords', {
 
         // SOURCE DE VÉRITÉ UNIQUE pour le passage actuel
         const currentPassage = State.variables.currentPassage ||
-                              State.passage ||
+                              (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
                               "Geole";
 
         if (!currentPassage) {
@@ -525,7 +525,7 @@ window.setup.ensurePassageCoords = function(passageName) {
     const v = State.variables;
     v.passageCoords = v.passageCoords || {};
 
-    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
+    const actualPassageName = passageName || State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
 
     // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
     if (!v.passageCoords[actualPassageName] ||
@@ -546,49 +546,7 @@ window.setup.ensurePassageCoords = function(passageName) {
     return v.passageCoords[actualPassageName];
 };
 
-// REMPLACER window.setup.updateFollowersCoordinates
-window.setup.updateFollowersCoordinates = function() {
-    const v = State.variables;
 
-    // SOURCE DE VÉRITÉ FIABLE pour le passage actuel
-    const currentPassage = State.variables.currentPassage ||
-                          State.passage ||
-                          'Geole';
-
-    console.log(`📍 updateFollowersCoordinates pour: "${currentPassage}"`);
-
-    if (!currentPassage) {
-        console.error("❌ ERREUR CRITIQUE: Impossible de déterminer le passage actuel");
-        return;
-    }
-
-    // S'assurer que le passage actuel a des coordonnées valides
-    const passageCoords = window.setup.ensurePassageCoords(currentPassage);
-
-    // Mettre à jour chaque PNJ suiveur avec CASTING EXPLICITE
-    Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
-        if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
-            npc.passage = currentPassage;
-            npc.coordinates = {
-                x: Number(passageCoords.x),
-                y: Number(passageCoords.y)
-            };
-            npc.continent = passageCoords.continent || "Eldaron";
-
-            console.log(`👥 ${npc.name} suit vers ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y})`);
-        }
-    });
-
-    // Mettre à jour les coordonnées du joueur
-    v.playerCoordinates = {
-        x: Number(passageCoords.x),
-        y: Number(passageCoords.y),
-        continent: passageCoords.continent || "Eldaron",
-        passage: currentPassage
-    };
-
-    console.log(`🎯 Coordonnées joueur: (${v.playerCoordinates.x}, ${v.playerCoordinates.y}, ${v.playerCoordinates.continent})`);
-};
   /* ---- MACRO : displaylocation ---- */
   Macro.add('displaylocation', {
     handler: function() {
@@ -960,7 +918,7 @@ Macro.add('pnjfollow', {
 
         // SOURCE DE VÉRITÉ FIABLE
         const currentPassage = State.variables.currentPassage ||
-                              State.passage ||
+                              (typeof State.passage === 'string' ? State.passage : State.passage?.title) ||
                               'Geole';
 
         console.log(`📍 Passage actuel: "${currentPassage}"`);
@@ -993,6 +951,16 @@ Macro.add('pnjfollow', {
                 y: Number(passageCoords.y)
             };
             npc.continent = passageCoords.continent || "Eldaron";
+
+            // Ajouter notification d'arrivée immédiate
+            const pnjData = window.setup.loadPNJ(name);
+            const joinReactions = pnjData.pnj?.réaction_joueur?.has_join_player;
+            let arrivalText = `${npc.name} vous suit.`;
+            if (joinReactions && Array.isArray(joinReactions) && joinReactions.length > 0) {
+              const randomIndex = Math.floor(Math.random() * joinReactions.length);
+              arrivalText = joinReactions[randomIndex];
+            }
+            window.setup.showDialogueNotificationShort(npc.name, arrivalText, arrivalText, false);
         }
 
         updateBuddyHUDVisibility();
@@ -1065,25 +1033,29 @@ Macro.add('pnjfollow', {
   /* ---- MACRO : pnjCoords ---- */
   Macro.add('pnjCoords', {
     handler: function() {
-      const pnjId = this.args[0];
-      const x = parseInt(this.args[1]) || 0;
-      const y = parseInt(this.args[2]) || 0;
-      const continent = this.args[3] || "Eldaron"; // Nouveau paramètre continent avec valeur par défaut
+        const pnjId = this.args[0];
+        const x = parseInt(this.args[1]) || 0;
+        const y = parseInt(this.args[2]) || 0;
+        const continent = this.args[3] || "Eldaron";
 
-      if (!pnjId) {
-        return this.error('Usage: <<pnjCoords "pnj_id" x y [continent]>>');
-      }
+        if (!pnjId) return this.error('Usage: <<pnjCoords "ID" x y "Continent">>');
 
-      const npc = npcEnsure(pnjId);
-      npc.coordinates = {
-        x,
-        y
-      };
-      npc.continent = continent; // Stockage du continent
+        // Mise à jour des données
+        // On utilise la fonction utilitaire si elle existe, sinon accès direct
+        let npc = null;
+        if (window.npcEnsure) npc = window.npcEnsure(pnjId);
+        else if (State.variables.npcs) npc = State.variables.npcs[pnjId];
 
-      console.log(`Coordonnées de ${pnjId} mises à jour: (${x}, ${y}, ${continent})`);
+        if (npc) {
+            npc.coordinates = { x, y };
+            npc.continent = continent;
+            console.log(`📍 [GEO] ${pnjId} placé à (${x}, ${y}) sur ${continent}`);
+
+            // Force le rafraîchissement du panneau compagnons pour voir le changement de lieu
+            if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+        }
     }
-  });
+})
   /* ---- MACRO : pnjgive ---- */
   /* ---- MACRO : pnjgive ---- */
   Macro.add('pnjgive', {
@@ -1489,222 +1461,536 @@ window.setup.getGeographyData = function() {
     window.setup.debugGeography();
   }, 2000);
 
-  // ------------------------------------------------------
-  // CALCUL DE DISTANCE - VERSION ROBUSTE
-  // ------------------------------------------------------
-  window.setup.calculateDistance = function(coords1, coords2, continent1, continent2) {
-    // VALIDATION CRITIQUE des coordonnées
-    if (!coords1 || typeof coords1 !== 'object' || typeof coords1.x !== 'number' || typeof coords1.y !== 'number') {
-      console.error(`❌ Coordonnées 1 invalides:`, coords1);
-      return 999; // Distance maximale pour signaler une erreur
-    }
+// =========================================================================
+  // SYSTÈME DE DÉPLACEMENT PNJ - COMPLET & VISUEL (MODIFIÉ)
+  // =========================================================================
 
-    if (!coords2 || typeof coords2 !== 'object' || typeof coords2.x !== 'number' || typeof coords2.y !== 'number') {
-      console.error(`❌ Coordonnées 2 invalides:`, coords2);
-      return 999;
-    }
+  // Constantes de Géographie et de Temps
+  window.setup.GEO_SCALE = 10; // 1 unité de coordonnée = 10 km
+  window.setup.TRAVEL_SPEED_KMH = 5; // Vitesse de marche moyenne 5 km/h
+  window.setup.MS_PER_KM = 200; // 200ms de temps réel = 1 km parcouru (Ajustez pour accélérer/ralentir le jeu)
+  window.setup.REST_DURATION = 30000; // 10 secondes de pause par auberge/relais
 
-    // Clamp les coordonnées entre 0 et 100
-    const safeCoords1 = {
-      x: Math.max(0, Math.min(100, coords1.x)),
-      y: Math.max(0, Math.min(100, coords1.y))
-    };
+  // Exemple : 300km = 60 secondes d'attente réelle avec ce réglage.
 
-    const safeCoords2 = {
-      x: Math.max(0, Math.min(100, coords2.x)),
-      y: Math.max(0, Math.min(100, coords2.y))
-    };
+  // Cache pour le graphe de navigation
+  window.setup.navGraph = null;
 
-    let continentPenalty = 0;
-    if (continent1 && continent2 && continent1 !== continent2) {
-      continentPenalty = 50;
-      console.log(`🌍 Pénalité continent: ${continent1} → ${continent2} = +${continentPenalty}`);
-    }
+  // -------------------------------------------------------------------------
+  // 1. CONSTRUCTION DU GRAPHE DE NAVIGATION
+  // -------------------------------------------------------------------------
+  window.setup.buildNavigationGraph = function() {
+    const geo = window.setup.getGeographyData();
+    if (!geo || !geo.nodes || !geo.routes) return null;
 
-    const dx = safeCoords2.x - safeCoords1.x;
-    const dy = safeCoords2.y - safeCoords1.y;
-    const baseDistance = Math.sqrt(dx * dx + dy * dy);
-    const totalDistance = baseDistance + continentPenalty;
+    const graph = {};
+    Object.keys(geo.nodes).forEach(nodeKey => {
+      graph[nodeKey] = {
+        data: geo.nodes[nodeKey],
+        connections: []
+      };
+    });
 
-    console.log(`📐 Calcul distance: 
-        De: (${coords1.x}, ${coords1.y}, ${continent1})
-        Vers: (${coords2.x}, ${coords2.y}, ${continent2})
-        Base: ${baseDistance.toFixed(1)}
-        Total: ${totalDistance.toFixed(1)}`);
+    geo.routes.forEach(route => {
+      const from = route.start;
+      const to = route.end;
 
-    return totalDistance;
+      if (!graph[from] || !graph[to]) return;
+
+      let dist = route.distance_km;
+      // Calcul de distance à vol d'oiseau si non spécifiée
+      if (!dist) {
+        const n1 = geo.nodes[from];
+        const n2 = geo.nodes[to];
+        const dx = n1.x - n2.x;
+        const dy = n1.y - n2.y;
+        dist = Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
+      }
+      const cost = dist * (route.cost_multiplier || 1.0);
+
+      // Connexions bidirectionnelles
+      graph[from].connections.push({
+        target: to,
+        cost: cost,
+        dist: dist,
+        routeData: route
+      });
+      graph[to].connections.push({
+        target: from,
+        cost: cost,
+        dist: dist,
+        routeData: route
+      });
+    });
+
+    window.setup.navGraph = graph;
+    console.log("🗺️ Graphe de navigation construit : " + Object.keys(graph).length + " nœuds.");
+    return graph;
   };
 
-  window.setup.calculateTravelTime = function(distance) {
-    // CORRECTION : Temps de voyage plus réaliste
-    const baseTimePerUnit = 2000; // 2 secondes par unité de distance
-    const minTime = 3000; // Minimum 3 secondes
-    const maxTime = 60000; // Maximum 60 secondes
+  // -------------------------------------------------------------------------
+  // 2. ALGORITHME DE DIJKSTRA (Calcul du chemin le plus court)
+  // -------------------------------------------------------------------------
+  window.setup.findPathInGraph = function(startNodeId, endNodeId) {
+    if (!window.setup.navGraph) window.setup.buildNavigationGraph();
+    const graph = window.setup.navGraph;
+    if (!graph[startNodeId] || !graph[endNodeId]) return null;
 
-    const baseTime = Math.max(minTime, Math.min(maxTime, distance * baseTimePerUnit));
+    const distances = {};
+    const previous = {};
+    const pq = new Set(); // File de priorité simplifiée
 
-    // Ajouter un peu d'aléatoire pour le réalisme (±30%)
-    const randomFactor = 0.7 + (Math.random() * 0.6);
+    Object.keys(graph).forEach(node => {
+      distances[node] = Infinity;
+      pq.add(node);
+    });
+    distances[startNodeId] = 0;
 
-    const travelTime = Math.floor(baseTime * randomFactor);
+    while (pq.size > 0) {
+      let minNode = null;
+      let minDist = Infinity;
+      for (const node of pq) {
+        if (distances[node] < minDist) {
+          minDist = distances[node];
+          minNode = node;
+        }
+      }
 
-    console.log(`⏱️  Calcul temps: 
-        Distance: ${distance.toFixed(1)}
-        Base: ${baseTime}ms
-        Facteur: ${randomFactor.toFixed(2)}
-        Final: ${travelTime}ms (${(travelTime/1000).toFixed(1)}s)`);
+      if (minNode === null || minNode === endNodeId) break;
+      pq.delete(minNode);
 
-    return travelTime;
+      for (const neighbor of graph[minNode].connections) {
+        const alt = distances[minNode] + neighbor.cost;
+        if (alt < distances[neighbor.target]) {
+          distances[neighbor.target] = alt;
+          previous[neighbor.target] = {
+            prevNode: minNode,
+            routeInfo: neighbor
+          };
+        }
+      }
+    }
+
+    // Reconstruction du chemin
+    const path = [];
+    let current = endNodeId;
+    if (distances[current] === Infinity) return null;
+
+    while (current !== startNodeId) {
+      const step = previous[current];
+      if (!step) break;
+
+      path.unshift({
+        nodeId: current,
+        coords: graph[current].data,
+        route: step.routeInfo.routeData,
+        segmentDist: step.routeInfo.dist
+      });
+      current = step.prevNode;
+    }
+    // Ajouter le point de départ
+    path.unshift({
+      nodeId: startNodeId,
+      coords: graph[startNodeId].data,
+      route: null,
+      segmentDist: 0
+    });
+    return path;
   };
 
-window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoords, destinationContinent, travelType) {
-    console.group(`🧭 DÉMARRAGE VOYAGE PNJ: ${pnjId}`);
-
-    const v = V();
-    const npc = npcEnsure(pnjId);
-
-    // VALIDATION PRÉALABLE
-    window.setup.validatePNJCoordinates(pnjId);
-
-    // VALIDATION de la destination
-    const safeDestinationPassage = destinationPassage ||
-                                  State.variables.currentPassage ||
-                                  State.passage ||
-                                  'Geole';
-
-    if (!safeDestinationPassage) {
-        console.error(`❌ Destination invalide pour ${pnjId}`);
-        console.groupEnd();
-        return false;
+  // -------------------------------------------------------------------------
+  // 3. GÉNÉRATEUR D'ITINÉRAIRE NARRATIF (Travel & Rest)
+  // -------------------------------------------------------------------------
+  window.setup.generateItinerary = function(pathResult, destPassage) {
+    // Cas 1 : Trajet direct hors réseau (vol d'oiseau)
+    if (pathResult.type !== 'network' || !pathResult.pathNodes) {
+      return [{
+        type: 'travel',
+        desc: "Voyage à travers les terres sauvages...",
+        startCoords: pathResult.path[0],
+        endCoords: pathResult.path[1],
+        dist: pathResult.totalDistance,
+        duration: window.setup.calculateTravelTime(pathResult.totalDistance),
+        locationName: "Terres Sauvages"
+      }];
     }
 
-    // S'assurer que la destination a des coordonnées
-    let finalDestinationCoords = destinationCoords;
-    if (!finalDestinationCoords || typeof finalDestinationCoords.x !== 'number') {
-        finalDestinationCoords = window.setup.ensurePassageCoords(safeDestinationPassage);
+    const steps = [];
+    const nodes = pathResult.pathNodes;
+
+    // Liste exhaustive des types de lieux permettant le repos (Basé sur velkarum.json)
+    const validRestTypes = [
+      'Auberge', 'Taverne', 'Relais', 'Bivouac', 'Oasis',
+      'Refuge', 'Caravanserail', 'Station', 'Cantine',
+      'Ville', 'Village', 'Port', 'Capitale', 'Forteresse', 'Sanctuaire'
+    ];
+
+    // On parcourt chaque segment du chemin (de noeud i à i+1)
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const currentNode = nodes[i];
+      const nextNode = nodes[i + 1];
+      const routeInfo = nextNode.route;
+      const dist = nextNode.segmentDist;
+
+      // --- A. ÉTAPE DE VOYAGE (De A vers B) ---
+      const travelStep = {
+        type: 'travel',
+        startCoords: {
+          x: currentNode.coords.x,
+          y: currentNode.coords.y
+        },
+        endCoords: {
+          x: nextNode.coords.x,
+          y: nextNode.coords.y
+        },
+        dist: dist,
+        duration: window.setup.calculateTravelTime(dist),
+        routeType: routeInfo ? routeInfo.type : 'road',
+        routeName: routeInfo ? routeInfo.name : 'Piste inconnue',
+        targetName: nextNode.coords.name || nextNode.nodeId,
+        locationName: "En route"
+      };
+
+      // Calcul de la direction cardinale
+      const dx = nextNode.coords.x - currentNode.coords.x;
+      const dy = nextNode.coords.y - currentNode.coords.y;
+      let dir = "";
+      if (Math.abs(dy) > Math.abs(dx)) dir = dy > 0 ? "le Sud" : "le Nord";
+      else dir = dx > 0 ? "l'Est" : "l'Ouest";
+
+      // Verbe narratif selon le terrain
+      let verb = "Marche vers";
+      if (['sea', 'river'].includes(travelStep.routeType)) verb = "Navigue vers";
+      if (['air'].includes(travelStep.routeType)) verb = "Vole vers";
+      if (['mountain_path'].includes(travelStep.routeType)) verb = "Grimpe vers";
+      if (['tunnel'].includes(travelStep.routeType)) verb = "S'enfonce vers";
+      if (['ice_road'].includes(travelStep.routeType)) verb = "Glisse vers";
+
+      travelStep.desc = `${verb} ${dir} via ${travelStep.routeName}`;
+      steps.push(travelStep);
+
+      // --- B. ÉTAPE DE REPOS (Arrivé à B) ---
+      // On ne se repose que si :
+      // 1. Le nœud d'arrivée est un type valide (Auberge, Relais...).
+      // 2. Ce n'est PAS la destination finale du voyage entier (car à la fin, le PNJ redevient 'fixed').
+      const nodeType = nextNode.coords.type;
+      const isFinalDestination = (i === nodes.length - 2);
+
+      if (!isFinalDestination && validRestTypes.includes(nodeType)) {
+        let restVerb = "Se repose";
+        // Ambiance selon le lieu
+        if (['Taverne', 'Cantine'].includes(nodeType)) restVerb = "Boit un verre";
+        if (['Bivouac', 'Refuge'].includes(nodeType)) restVerb = "Monte le camp";
+        if (['Ville', 'Capitale', 'Village'].includes(nodeType)) restVerb = "Fait une halte";
+        if (nodeType === 'Sanctuaire') restVerb = "Prie";
+        if (nodeType === 'Caravanserail') restVerb = "Ravitaille";
+
+        steps.push({
+          type: 'rest',
+          desc: `${restVerb} à ${nextNode.coords.name}`,
+          locationName: nextNode.coords.name,
+          duration: window.setup.REST_DURATION, // Durée fixe pour le repos
+          coords: {
+            x: nextNode.coords.x,
+            y: nextNode.coords.y
+          },
+          dist: 0 // Le repos n'avance pas les km
+        });
+      }
     }
 
-    // Vérifications de base
-    if (!npc.isAlive || !npc.isActive) {
-        console.warn(`❌ ${pnjId} ne peut pas voyager (mort ou inactif)`);
-        console.groupEnd();
-        return false;
-    }
+    return steps;
+  };
 
-    // Annuler tout voyage en cours
-    if (npc.travelTimeout) {
-        clearTimeout(npc.travelTimeout);
-    }
+  // -------------------------------------------------------------------------
+  // 4. DÉMARRAGE DU VOYAGE SÉQUENTIEL
+  // -------------------------------------------------------------------------
+  window.setup.startPNJTravel = function(pnjId, destPassage, destCoords, destContinent, type) {
+    const v = State.variables;
+    const npc = v.npcs[pnjId];
+    if (!npc) return false;
 
-    // COORDONNÉES VALIDÉES
-    const currentCoords = npc.coordinates || { x: 0, y: 0 };
-    const currentContinent = npc.continent || "Eldaron";
+    const startCoords = npc.coordinates || {
+      x: 0,
+      y: 0
+    };
 
-    // Calcul de la distance
-    const distance = window.setup.calculateDistance(
-        currentCoords,
-        finalDestinationCoords,
-        currentContinent,
-        destinationContinent || finalDestinationCoords.continent
-    );
+    // 1. Calcul de la route complexe (Graph)
+    const pathData = window.setup.calculateComplexRoute(startCoords, destCoords);
+    // 2. Génération des étapes (Voyage -> Repos -> Voyage)
+    const itinerary = window.setup.generateItinerary(pathData, destPassage);
 
-    const travelTime = window.setup.calculateTravelTime(distance);
-
-    console.log(`📊 Détails du voyage:
-        • De: (${currentCoords.x}, ${currentCoords.y}, ${currentContinent})
-        • Vers: (${finalDestinationCoords.x}, ${finalDestinationCoords.y}, ${destinationContinent || finalDestinationCoords.continent})
-        • Distance: ${distance.toFixed(1)} unités
-        • Temps: ${travelTime/1000} secondes
-        • Type: ${travelType}`);
-
-    // Mise à jour du statut du PNJ
+    // 3. Initialisation
     npc.status = 'traveling';
-    npc.travelStartTime = Date.now();
-    npc.travelEndTime = Date.now() + travelTime;
+    npc.travelItinerary = itinerary;
+    npc.travelStepIndex = 0;
+
+    // Calcul des totaux pour l'UI
+    let totalItineraryDist = 0;
+    let totalItineraryTime = 0;
+
+    // --- NOUVEAU : LOG DÉTAILLÉ DES ÉTAPES ---
+    console.group(`✈️ [VOYAGE] DÉTAILS : ${npc.name} part pour ${destPassage}`);
+    console.log(`📍 Départ : (${startCoords.x}, ${startCoords.y}) -> Arrivée : (${destCoords.x}, ${destCoords.y})`);
+
+    itinerary.forEach((step, index) => {
+      totalItineraryDist += (step.dist || 0);
+      totalItineraryTime += (step.duration || 0);
+
+      // Log de chaque étape
+      const durationSec = (step.duration / 1000).toFixed(1);
+      const icon = step.type === 'rest' ? '💤' : '🚶';
+      console.log(`   [Étape ${index + 1}] ${icon} ${step.type.toUpperCase()} | Durée: ${durationSec}s | Dist: ${step.dist ? step.dist.toFixed(1) : 0}km | Desc: "${step.desc}"`);
+    });
+
+    console.log(`🏁 TOTAL : ${itinerary.length} étapes | ${(totalItineraryTime/1000).toFixed(1)}s | ${totalItineraryDist.toFixed(1)} km`);
+    console.groupEnd();
+    // -----------------------------------------
+
+    npc.travelTotalDistance = totalItineraryDist;
+
     npc.travelDestination = {
-        passage: safeDestinationPassage,
-        coordinates: finalDestinationCoords,
-        continent: destinationContinent || finalDestinationCoords.continent,
-        type: travelType
+      passage: destPassage,
+      coordinates: { ...destCoords
+      },
+      continent: destContinent,
+      type: type
     };
 
-    // Notification de départ
-    const pnjData = window.setup.loadPNJ(pnjId);
-    const travelReactions = pnjData.pnj?.réaction_joueur?.pnjmove?.goto;
-    const departureText = travelReactions && Array.isArray(travelReactions) && travelReactions.length > 0 ?
-        travelReactions[Math.floor(Math.random() * travelReactions.length)] :
-        `${npc.name} part en voyage...`;
+    // 4. Lancer la première étape
+    window.setup.executeTravelStep(npc);
 
-    window.setup.showDialogueNotificationShort(npc.name, departureText, departureText, false);
-
-    // Planification de l'arrivée
-    npc.travelTimeout = setTimeout(() => {
-        console.log(`⏰ TIMEOUT VOYAGE - Arrivée de ${pnjId}`);
-        window.setup.completePNJTravel(pnjId);
-    }, travelTime);
-
-    console.log(`✅ Voyage planifié pour ${pnjId}. Arrivée dans ${travelTime/1000}s`);
-    console.groupEnd();
-
-    // Mettre à jour l'affichage
     if (window.renderBuddiesPanel) window.renderBuddiesPanel();
 
     return true;
-};
+  };
 
-  window.setup.completePNJTravel = function(pnjId) {
-    const v = V();
-    const npc = npcEnsure(pnjId);
-
-    if (!npc.travelDestination) {
-      console.warn(`❌ Aucune destination de voyage pour ${pnjId}`);
+  // -------------------------------------------------------------------------
+  // 5. EXÉCUTION D'UNE ÉTAPE (Récursive via Timeout)
+  // -------------------------------------------------------------------------
+  window.setup.executeTravelStep = function(npc) {
+    // Vérification : Voyage terminé ?
+    if (!npc.travelItinerary || npc.travelStepIndex >= npc.travelItinerary.length) {
+      window.setup.completePNJTravel(npc.name);
       return;
     }
 
-    const destination = npc.travelDestination;
+    const step = npc.travelItinerary[npc.travelStepIndex];
+    const now = Date.now();
 
-    // Mettre à jour la position du PNJ
-    npc.passage = destination.passage;
-    npc.coordinates = {
-      ...destination.coordinates
+    // Configuration de l'étape actuelle
+    npc.travelCurrentStep = {
+      ...step,
+      startTime: now,
+      endTime: now + step.duration
     };
-    npc.continent = destination.continent;
 
-    // Mettre à jour le statut selon le type de voyage
-    if (destination.type === 'follow' || destination.type === 'recall') {
-      npc.status = 'follow';
-    } else {
-      npc.status = 'fixed';
+    // Mise à jour immédiate des coordonnées "logiques" (pour save)
+    // (L'interpolation visuelle se fait dans updatePNJPositionDuringTravel)
+    if (step.type === 'rest') {
+      npc.coordinates = { ...step.coords
+      };
+    } else if (step.type === 'travel') {
+      npc.coordinates = { ...step.startCoords
+      };
     }
 
-    // Nettoyer les données de voyage
-    delete npc.travelStartTime;
-    delete npc.travelEndTime;
-    delete npc.travelDestination;
-    delete npc.travelTimeout;
+    // Planification de la prochaine étape
+    if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
 
-    // Notification d'arrivée avec les réactions JSON
-    const pnjData = window.setup.loadPNJ(pnjId);
-    const joinReactions = pnjData.pnj?.réaction_joueur?.has_join_player;
+    npc.travelTimeout = setTimeout(() => {
+      npc.travelStepIndex++;
+      window.setup.executeTravelStep(npc); // Appel récursif
+    }, step.duration);
 
-    let arrivalText = `${npc.name} est arrivé.`;
-    if (joinReactions && Array.isArray(joinReactions) && joinReactions.length > 0) {
-      const randomIndex = Math.floor(Math.random() * joinReactions.length);
-      arrivalText = joinReactions[randomIndex];
-    }
-
-    window.setup.showDialogueNotificationShort(npc.name, arrivalText, arrivalText, false);
-
-    console.log(`✅ ${pnjId} est arrivé à ${npc.passage} (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent})`);
-
-    // Mettre à jour l'affichage
-    if (window.renderBuddiesPanel) {
-      window.renderBuddiesPanel();
-    }
-
-    // Mettre à jour le HUD
-    window.setup.updateHUD();
+    // Rafraîchir le panneau pour afficher la description actuelle (ex: "Se repose à...")
+    if (window.renderBuddiesPanel) window.renderBuddiesPanel();
   };
+
+  // -------------------------------------------------------------------------
+  // 6. INTERPOLATION FLUIDE (Appelé par la boucle de rendu UI)
+  // -------------------------------------------------------------------------
+  window.setup.updatePNJPositionDuringTravel = function(npc) {
+    if (npc.status !== 'traveling' || !npc.travelCurrentStep) return;
+
+    const step = npc.travelCurrentStep;
+
+    // Pendant un repos, on ne bouge pas
+    if (step.type === 'rest') return;
+
+    // Pendant un voyage, on interpole entre start et end
+    if (step.type === 'travel') {
+      const now = Date.now();
+      const elapsed = now - step.startTime;
+      const duration = step.endTime - step.startTime;
+      // Clamp entre 0 et 1 pour éviter de dépasser
+      const progress = Math.min(1, Math.max(0, elapsed / duration));
+
+      npc.coordinates.x = step.startCoords.x + (step.endCoords.x - step.startCoords.x) * progress;
+      npc.coordinates.y = step.startCoords.y + (step.endCoords.y - step.startCoords.y) * progress;
+    }
+  };
+
+  // -------------------------------------------------------------------------
+  // 7. UTILITAIRES DE ROUTAGE
+  // -------------------------------------------------------------------------
+  window.setup.calculateComplexRoute = function(startCoords, endCoords) {
+    if (!window.setup.navGraph) window.setup.buildNavigationGraph();
+    const graph = window.setup.navGraph;
+
+    // Trouver les nœuds les plus proches du départ et de l'arrivée
+    let startNode = null,
+      endNode = null;
+    let minStartDist = Infinity,
+      minEndDist = Infinity;
+
+    Object.keys(graph).forEach(key => {
+      const node = graph[key].data;
+      const dStart = Math.sqrt(Math.pow(node.x - startCoords.x, 2) + Math.pow(node.y - startCoords.y, 2));
+      if (dStart < minStartDist) {
+        minStartDist = dStart;
+        startNode = key;
+      }
+
+      const dEnd = Math.sqrt(Math.pow(node.x - endCoords.x, 2) + Math.pow(node.y - endCoords.y, 2));
+      if (dEnd < minEndDist) {
+        minEndDist = dEnd;
+        endNode = key;
+      }
+    });
+
+    const graphPath = window.setup.findPathInGraph(startNode, endNode);
+
+    // Si pas de chemin réseau, retour direct
+    if (!graphPath) {
+      const dist = Math.sqrt(Math.pow(endCoords.x - startCoords.x, 2) + Math.pow(endCoords.y - startCoords.y, 2)) * window.setup.GEO_SCALE;
+      return {
+        type: 'direct',
+        path: [startCoords, endCoords],
+        totalDistance: dist + 50
+      };
+    }
+
+    let totalDist = 0;
+    graphPath.forEach(p => totalDist += (p.segmentDist || 0));
+    // Ajout des distances d'approche (Départ -> Noeud1 et NoeudFin -> Arrivée)
+    totalDist += (minStartDist + minEndDist) * window.setup.GEO_SCALE;
+
+    return {
+      type: 'network',
+      pathNodes: graphPath,
+      totalDistance: totalDist
+    };
+  };
+
+  window.setup.calculateTravelTime = function(distanceKm) {
+    // Minimum 2 secondes pour éviter les glitches sur courtes distances
+    return Math.floor(Math.max(2000, distanceKm * window.setup.MS_PER_KM));
+  };
+
+  window.setup.completePNJTravel = function(pnjId) {
+    const v = State.variables;
+    const npc = v.npcs[pnjId];
+    if (!npc) return;
+
+    const dest = npc.travelDestination;
+    if (dest) {
+      npc.passage = dest.passage;
+      npc.coordinates = { ...dest.coordinates
+      };
+      npc.continent = dest.continent;
+      npc.status = (dest.type === 'follow') ? 'follow' : 'fixed';
+    }
+
+    // Nettoyage
+    delete npc.travelItinerary;
+    delete npc.travelStepIndex;
+    delete npc.travelCurrentStep;
+    delete npc.travelDestination;
+    if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
+
+    // Notification d'arrivée discrète
+    window.setup.showDialogueNotificationShort(npc.name, "Je suis arrivé.", "Arrivée à destination", false);
+
+    if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+  };
+
+// Mise à jour des suiveurs
+window.setup.updateFollowersCoordinates = function() {
+    setTimeout(() => {
+        const v = State.variables;
+        const destinationPassage = State.passage;
+        if (!destinationPassage) return;
+        const destCoords = window.setup.ensurePassageCoords(destinationPassage);
+
+        v.playerCoordinates = {
+            x: Number(destCoords.x), y: Number(destCoords.y),
+            continent: destCoords.continent || "Eldaron", passage: destinationPassage
+        };
+        v.currentPassage = destinationPassage;
+
+        Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
+            if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
+                if (npc.travelDestination && npc.travelDestination.passage === destinationPassage) return;
+
+                // Reroutage si nécessaire
+                if (npc.status === 'traveling') {
+                    window.setup.updatePNJPositionDuringTravel(npc);
+                    if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
+                }
+
+                const distDirect = Math.sqrt(Math.pow(npc.coordinates.x - destCoords.x, 2) + Math.pow(npc.coordinates.y - destCoords.y, 2)) * window.setup.GEO_SCALE;
+                if (distDirect > 5) {
+                    window.setup.startPNJTravel(pnjId, destinationPassage, destCoords, destCoords.continent || "Eldaron", 'follow');
+                } else {
+                    window.setup.stopPNJTravelAndTeleport(npc, destinationPassage, destCoords);
+                }
+            }
+        });
+        if (window.setup.updateHUD) window.setup.updateHUD();
+    }, 100);
+};
+
+window.setup.stopPNJTravelAndTeleport = function(npc, passage, coords) {
+    npc.status = 'follow';
+    npc.passage = passage;
+    npc.coordinates = { ...coords };
+    delete npc.travelDestination;
+    delete npc.travelItinerary;
+    delete npc.travelCurrentStep;
+    if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
+};
+
+window.setup.calculateDistance = function(c1, c2, cont1, cont2) {
+    if (!c1 || !c2) return 0;
+    const dx = (Number(c1.x) || 0) - (Number(c2.x) || 0);
+    const dy = (Number(c1.y) || 0) - (Number(c2.y) || 0);
+    return Math.sqrt(dx*dx + dy*dy) * window.setup.GEO_SCALE;
+};
+
+// 6. SÉCURITÉ COORDONNÉES
+window.setup.ensurePassageCoords = function(passageName) {
+    const v = State.variables;
+    v.passageCoords = v.passageCoords || {};
+
+    if (!v.passageCoords[passageName]) {
+        // Si le passage n'a pas de coords (pas de <<setcoords>>), on crée un point par défaut
+        // Pour éviter les bugs, on utilise une position neutre ou celle du joueur,
+        // mais marquée comme "défaut".
+        const defX = v.playerCoordinates ? v.playerCoordinates.x : 0;
+        const defY = v.playerCoordinates ? v.playerCoordinates.y : 0;
+
+        v.passageCoords[passageName] = {
+            x: defX,
+            y: defY,
+            continent: "Eldaron",
+            isDefault: true
+        };
+    }
+    return v.passageCoords[passageName];
+};
+
+
 
   window.setup.cancelPNJTravel = function(pnjId) {
     const npc = npcEnsure(pnjId);
@@ -2231,7 +2517,9 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
     // Son de notification (optionnel)
     try {
       new Wikifier(null, '<<audio "notif_dialogue" play volume 0.8>>');
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Audio notification failed:', e);
+    }
   };
 
   // ------------------------------------------------------
@@ -3482,85 +3770,63 @@ window.setup.startPNJTravel = function(pnjId, destinationPassage, destinationCoo
   // FONCTION DE CONVERSION COORDONNÉES → LOCALISATION (VERSION CORRIGÉE)
   // ==========================================================
     window.setup.getLocationString = function(coords, continent) {
-        // VALIDATION STRICTE
-        if (!coords || typeof coords !== 'object') {
-            console.warn("❌ getLocationString: coords invalides", coords);
-            return "Position inconnue";
-        }
+    // 1. Validation des entrées
+    if (!coords || typeof coords !== 'object') return "Position inconnue";
+    const x = Number(coords.x);
+    const y = Number(coords.y);
+    if (isNaN(x) || isNaN(y)) return "Coordonnées invalides";
 
-        // Vérifier que x et y sont des nombres valides
-        if (typeof coords.x !== 'number' || isNaN(coords.x) ||
-            typeof coords.y !== 'number' || isNaN(coords.y)) {
-            console.warn("❌ getLocationString: x ou y invalide", coords);
-            return "Position invalide";
-        }
+    const safeContinent = continent || "Eldaron";
 
-        const safeCoords = {
-            x: Math.max(0, Math.min(100, Number(coords.x) || 0)),
-            y: Math.max(0, Math.min(100, Number(coords.y) || 0))
-        };
+    // 2. Récupération des données géographiques
+    const geo = window.setup.getGeographyData();
 
-        const safeContinent = continent || "Eldaron";
+    // Si les données ne sont pas encore chargées
+    if (!geo || (!geo.continents && !geo.nodes)) return `${safeContinent}`;
 
-        // Récupérer les données géographiques
-        const geo = window.setup.getGeographyData();
+    // 3. Recherche du LIEU (NODE) le plus proche dans la liste globale 'nodes'
+    let nearestNode = null;
+    let minDistance = Infinity;
 
-        if (!geo.continents || !geo.continents[safeContinent]) {
-            return `${safeContinent} - Position hors carte`;
-        }
+    if (geo.nodes) {
+        Object.values(geo.nodes).forEach(node => {
+            // On vérifie que le lieu est sur le même continent
+            // Normalisation pour éviter les bugs d'accents (Helrün vs Helrun)
+            const nodeCont = (node.continent || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const targetCont = safeContinent.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-        const continentData = geo.continents[safeContinent];
-        let regionName = "Zone sauvage";
-        let nearestCity = null;
-        let minDistance = Infinity;
-
-        // Trouver la région
-        if (continentData.regions && Array.isArray(continentData.regions)) {
-            for (const region of continentData.regions) {
-                const bounds = region.bounds;
-                if (safeCoords.x >= bounds.x_min && safeCoords.x <= bounds.x_max &&
-                    safeCoords.y >= bounds.y_min && safeCoords.y <= bounds.y_max) {
-                    regionName = region.name;
-                    break;
+            if (nodeCont === targetCont) {
+                const dist = Math.sqrt(Math.pow(node.x - x, 2) + Math.pow(node.y - y, 2));
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    nearestNode = node;
                 }
             }
-        }
+        });
+    }
 
-        // Trouver la ville la plus proche
-        if (continentData.cities && Array.isArray(continentData.cities)) {
-            for (const city of continentData.cities) {
-                const distance = Math.sqrt(
-                    Math.pow(city.coords.x - safeCoords.x, 2) +
-                    Math.pow(city.coords.y - safeCoords.y, 2)
-                );
-                if (distance < minDistance && distance <= 15) {
-                    minDistance = distance;
-                    nearestCity = city.name;
-                }
-            }
-        }
+    // 4. Construction du texte
+    let detail = "";
 
-        // Construire la chaîne de localisation
-        if (nearestCity) {
-            if (minDistance <= 5) {
-                return `${safeContinent} - ${regionName} - ${nearestCity}`;
-            } else {
-                return `${safeContinent} - ${regionName} - Proche de ${nearestCity}`;
-            }
+    if (nearestNode) {
+        // Echelle : 1 unité = 10 km
+        // Distance critique pour être "sur place" (0.5 unité = 5km, suffisant pour les micro-déplacements taverne->ville)
+        if (minDistance <= 0.5) {
+            detail = ` - À ${nearestNode.name}`;
+        } else if (minDistance < 8) {
+            // < 80 km : On est "Proche de"
+            detail = ` - Proche de ${nearestNode.name} (${(minDistance * 10).toFixed(0)} km)`;
         } else {
-            return `${safeContinent} - ${regionName}`;
+            // > 80 km : Zone sauvage
+            detail = " - Zone sauvage";
         }
-    };
-  // ==========================================================
-  // MACRO POUR AFFICHER LA LOCALISATION ACTUELLE
-  // ==========================================================
-  /* ------------------------------------------------------
-     MACRO ADDITEM — VERSION SIMPLIFIÉE (ID + QTY)
-     Tous les champs viennent de window.setup.itemCache[id]
-  ------------------------------------------------------ */
-  // ------------------------------------------------------
-  // SANTÉ / MORT
-  // ------------------------------------------------------
+    } else {
+        detail = " - Terres inexplorées";
+    }
+
+    return `${safeContinent}${detail}`;
+};
+
   // ==========================================================
   // SYSTÈME DE QUÊTES — "EN COURS" (GRIS) / "TERMINÉ" (BLANC)
   // ==========================================================
@@ -4090,58 +4356,13 @@ window.setup.validatePNJCoordinates = function(pnjId) {
 
     // Validation du passage
     if (!npc.passage && npc.isSpawned) {
-        npc.passage = State.variables.currentPassage || State.passage || 'Geole';
+        npc.passage = State.variables.currentPassage || (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
     }
 
     console.log(`📍 Coordonnées validées pour ${pnjId}: (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent}) dans ${npc.passage}`);
 
     return npc.coordinates;
 };
-  // ==========================================================
-  // FONCTION : Mise à jour des coordonnées des PNJ suiveurs
-  // ==========================================================
-
-    window.setup.updateFollowersCoordinates = function() {
-        const v = State.variables;
-
-        // VERSION CORRIGÉE : Utiliser la source de vérité fiable
-        const currentPassage = State.passage || State.variables.currentPassage || 'Geole';
-
-        if (!currentPassage) {
-            console.error("❌ ERREUR CRITIQUE: Impossible de déterminer le passage actuel");
-            return;
-        }
-
-        // S'assurer que le passage actuel a des coordonnées
-        const passageCoords = window.setup.ensurePassageCoords(currentPassage);
-
-        console.log(`📍 Mise à jour followers pour: ${currentPassage} (${passageCoords.x}, ${passageCoords.y})`);
-
-        // Mettre à jour chaque PNJ suiveur
-        Object.entries(v.npcs || {}).forEach(([pnjId, npc]) => {
-            if (npc.status === 'follow' && npc.isBuddy && npc.isAlive && npc.isActive && npc.isSpawned) {
-                // Mettre à jour les coordonnées en copiant les valeurs
-                npc.passage = currentPassage;
-                npc.coordinates = {
-                    x: Number(passageCoords.x) || 0,
-                    y: Number(passageCoords.y) || 0
-                };
-                npc.continent = passageCoords.continent || "Eldaron";
-
-                console.log(`👥 ${npc.name} suit le joueur vers ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y}, ${npc.continent})`);
-            }
-        });
-
-        // Mettre à jour les coordonnées du joueur avec des valeurs par défaut sécurisées
-        v.playerCoordinates = {
-            x: Number(passageCoords.x) || 0,
-            y: Number(passageCoords.y) || 0,
-            continent: passageCoords.continent || "Eldaron",
-            passage: currentPassage
-        };
-
-        console.log(`🎯 Coordonnées joueur mises à jour: (${v.playerCoordinates.x}, ${v.playerCoordinates.y}, ${v.playerCoordinates.continent})`);
-    };
 
   // ------------------------------------------------------
   // FONCTION UTILITAIRE : VÉRIFIER SI UN PNJ EST UN COMPAGNON
@@ -4489,415 +4710,241 @@ window.setup.validatePNJCoordinates = function(pnjId) {
   // PANNEAU COMPAGNONS + MENU CONTEXTUEL (corrigé)
   // — version stable : le menu reste ouvert même avec filtres / interactions UI
   // ==========================================================
-  window.renderBuddiesPanel = function() {
-    const v = V();
+window.renderBuddiesPanel = function() {
+    const v = State.variables;
     const $panel = $('#buddies-panel');
-    // --- Sauvegarde du menu si ouvert ---
-    const $existingMenu = $('#buddy-context-menu');
-    const hasMenu = $existingMenu.length > 0;
-    const savedMenu = hasMenu ? $existingMenu.detach() : null;
-    // On vide le contenu sans supprimer le panel
-    $panel.empty();
-    const all = Object.values(v.npcs || {});
-    const filters = [{
-      id: 'all',
-      label: 'Tous'
-    }, {
-      id: 'follow',
-      label: 'Suiveurs'
-    }, {
-      id: 'fixed',
-      label: 'Sur place'
-    }, {
-      id: 'dead',
-      label: 'Morts'
-    }, {
-      id: 'gone',
-      label: 'Absents'
-    }];
-    let currentFilter = v._buddyFilter || 'all';
-    let currentIndex = filters.findIndex(f => f.id === currentFilter);
-    if (currentIndex === -1) currentIndex = 0;
-    v._buddyFilter = filters[currentIndex].id;
-    const list = all.filter(n =>
-      n.isSpawned && n.isBuddy &&
-      (v._buddyFilter === 'all' ||
-        v._buddyFilter === 'follow' && n.status === 'follow' ||
-        v._buddyFilter === 'fixed' && n.status === 'fixed' && n.isAlive && n.isActive ||
-        v._buddyFilter === 'dead' && !n.isAlive ||
-        v._buddyFilter === 'gone' && !n.isActive && n.isAlive)
-    );
-    // Barre de filtres avec flèches
-    const $bar = $('<div class="buddy-filter-bar"></div>').appendTo($panel);
-    const $left = $('<button class="buddy-filter-arrow prev" title="Précédent">◄</button>').appendTo($bar);
-    const $center = $('<div class="buddy-filter-label"></div>').appendTo($bar);
-    const $right = $('<button class="buddy-filter-arrow next" title="Suivant">►</button>').appendTo($bar);
-    $center.text(filters[currentIndex].label);
 
-    function cycleFilter(dir) {
-      // Bloque temporairement la fermeture du menu compagnon
-      window.ignoreNextBuddyMenuClose = true;
-      setTimeout(() => {
-        window.ignoreNextBuddyMenuClose = false;
-      }, 200);
-      currentIndex = (currentIndex + dir + filters.length) % filters.length;
-      v._buddyFilter = filters[currentIndex].id;
-      window.renderBuddiesPanel();
+    // Nettoyage timer
+    if (window.setup.buddiesPanelInterval) {
+        clearInterval(window.setup.buddiesPanelInterval);
+        window.setup.buddiesPanelInterval = null;
     }
-    $left.off('click.buddycycle').on('click.buddycycle', () => cycleFilter(-1));
-    $right.off('click.buddycycle').on('click.buddycycle', () => cycleFilter(1));
+
+    const $existingMenu = $('#buddy-context-menu');
+    const savedMenu = $existingMenu.length > 0 ? $existingMenu.detach() : null;
+
+    $panel.empty();
+
+    // Filtrage
+    const all = Object.values(v.npcs || {});
+    const list = all.filter(n => n.isSpawned && n.isBuddy);
+
     if (!list.length) {
-      $panel.append('<em style="opacity:.6;">Aucun compagnon dans cette catégorie.</em>');
-      if (savedMenu) $('body').append(savedMenu);
-      return;
+        $panel.append('<em style="opacity:.6;">Aucun compagnon.</em>');
+        if (savedMenu) $('body').append(savedMenu);
+        return;
     }
-    // Liste des compagnons
+
     list.forEach(b => {
-      const health = Number(b.health ?? 0);
-      const maxHealth = Math.max(1, Number(b.maxHealth ?? 1));
-      const safeHealth = isNaN(health) ? 0 : health;
-      const safeMax = isNaN(maxHealth) ? 1 : maxHealth;
-      const healthRatio = Math.max(0, Math.min(1, safeHealth / safeMax));
-      const badgeType = !b.isAlive ? 'dead' :
-        (!b.isActive ? 'gone' :
-          (b.status === 'follow' ? 'follow' : 'fixed'));
-      const badgeLabel = {
-        follow: 'Vous suit',
-        fixed: 'Sur place',
-        dead: 'Mort',
-        gone: 'Absent',
-        raveling: 'Vous rejoint...'
-      } [badgeType];
-      const badgeClass = {
-        follow: 'item-badge buddy-follow',
-        fixed: 'item-badge buddy-fixed',
-        dead: 'item-badge buddy-dead',
-        gone: 'item-badge buddy-gone',
-        traveling: 'item-badge buddy-traveling'
-      } [badgeType];
-      const healthClass = !b.isAlive ? 'h-dead' :
-        !b.isActive ? 'h-gone' :
-        (healthRatio > 0.6 ? 'h-good' :
-          healthRatio > 0.3 ? 'h-mid' : 'h-low');
-      const healthWidth = Math.max(2, Math.min(100, healthRatio * 100));
-      const healthText = b.isAlive ? `${safeHealth}/${safeMax}` : 'Mort';
-      const badgeHTML = `<span class="${badgeClass}">${badgeLabel}</span>`;
-      // Récupérer l'arme équipée si elle existe
-      let weaponHTML = '';
-      if (b.equipment.weapon) {
-        const weaponId = b.equipment.weapon;
-        const weaponData = window.setup.itemCache && window.setup.itemCache[weaponId];
-        if (weaponData) {
-          weaponHTML = `
-                            <div class="buddy-weapon">
-                                <strong>Arme équipée :</strong>
-                                <div class="inventory-item" data-id="${weaponId}" data-type="weapon">
-                                    <div>${window.setup.escapeHtml(weaponData.label)}</div>
-                                    <span class="inventory-type">Arme</span>
-                                    ${window.setup.renderItemEncarts(weaponData)}
-                                </div>
-                            </div>
-                        `;
+        const healthRatio = (b.health || 0) / (b.maxHealth || 1);
+        const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
+
+        let statusHTML = '';
+        let locationText = window.setup.getLocationString(b.coordinates, b.continent);
+
+    // --- BLOC VOYAGE ---
+    if (b.status === 'traveling' && b.travelCurrentStep) {
+        const step = b.travelCurrentStep;
+        const isResting = step.type === 'rest';
+
+        const endTime = step.endTime;
+        const totalDuration = step.duration;
+        const distSection = Number(step.dist) || 0;
+
+        // Définition de la couleur selon l'état
+        const stateColor = isResting ? '#4fc3f7' : '#66bb6a';
+
+        let actionText = "";
+        let subText = "";
+
+        if (isResting) {
+            actionText = `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`;
+            subText = "Pause nécessaire";
+            locationText = `📍 ${step.locationName}`;
         } else {
-          weaponHTML = `<div class="buddy-weapon"><strong>Arme :</strong> ${weaponId}</div>`;
+            actionText = `<span style="color:#eee;">${step.desc}</span>`;
+            subText = "En mouvement";
+            locationText = `🚀 En déplacement`;
         }
-      } else {
-        weaponHTML = '<div class="buddy-weapon"><strong>Arme :</strong> Aucune</div>';
-      }
-      // Affichage des stats du PNJ
-      const strength = b.stats.strength || 0;
-      const dexterity = b.stats.dexterity || 0;
-      const resistance = b.stats.resistance || 0;
-      const level = b.stats.level || 1;
-      const statsHTML = `
-                    <div class="buddy-stats">
-                        <span class="bonus-tag">
-                            <img class="icon-08em" src="${ICONS.strength}" alt="Force">
-                            ${strength}
-                        </span>
-                        <span class="bonus-tag">
-                            <img class="icon-08em" src="images/icons/dexterity.png" alt="Dextérité">
-                            ${dexterity}
-                        </span>
-                        <span class="bonus-tag">
-                            <img class="icon-08em" src="${ICONS.defense}" alt="Résistance">
-                            ${resistance}
-                        </span>
-                        <span class="bonus-tag">
-                            Niv ${level}
-                        </span>
-                    </div>
-                `;
-      const $entry = $(`
-                    <div class="buddy-entry" data-name="${b.name}">
-                        <div class="msg-header">
-                            <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnon">
-                            <strong>${window.setup.escapeHtml(b.name)}</strong>
-                            ${badgeHTML}
-                            ${statsHTML}
-                        </div>
-                        <div class="buddy-healthbar">
-                            <div class="buddy-healthfill ${healthClass}" style="width:${healthWidth}%;"></div>
-                        </div>
-                        <div class="buddy-healthtext">${healthText}</div>
-                        ${weaponHTML}
-                        <!-- Affichage localisation -->
-                        <div class="buddy-location">
-                        <strong>Position :</strong>
-                        ${window.setup.getLocationString(b.coordinates, b.continent || "Eldaron")}
-                        </div>
-                    </div>
-                `);
-      $panel.append($entry);
+
+        statusHTML = `
+            <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
+                 data-name="${b.name}"
+                 data-end="${endTime}" 
+                 data-total="${totalDuration}"
+                 data-type="${step.type}"
+                 data-dist="${distSection}">
+                
+                <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    ${actionText}
+                </div>
+                
+                <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
+                    <span><span class="travel-timer-text">...</span></span>
+                    ${!isResting ? '<span class="travel-dist-text">... km</span>' : ''}
+                </div>
+                
+                <div class="travel-progress-bg">
+                <div class="travel-progress-fill" 
+                     style="width: 0%; background-color: ${stateColor || '#66bb6a'}; box-shadow: 0 0 5px ${stateColor || '#66bb6a'};">
+                </div>
+                </div>
+    
+                <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
+                     Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
+                </div>
+            </div>
+        `;
+    }
+
+        const $entry = $(`
+            <div class="buddy-entry" data-name="${b.name}">
+                <div class="msg-header">
+                    <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
+                    <strong>${window.setup.escapeHtml(b.name)}</strong>
+                    <span class="item-badge buddy-${b.status}">${b.status}</span>
+                </div>
+                <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
+                ${statusHTML}
+                <div class="buddy-location">${locationText}</div>
+            </div>
+        `);
+        $panel.append($entry);
     });
 
-    $(document).on('click', '.buddy-entry', function(e) {
-      // Ne déclencher que sur clic gauche (pas droit) et pas sur les éléments interactifs
-      if (e.button === 0 && !$(e.target).closest('.buddy-stats, .buddy-healthbar, .buddy-weapon').length) {
+    // --- TIMER DYNAMIQUE ---
+    if ($panel.find('.buddy-travel-wrapper').length > 0) {
+        const updateTimers = () => {
+            const now = Date.now();
+            let active = false;
+
+            $panel.find('.buddy-travel-wrapper').each(function() {
+                const $wrapper = $(this);
+                const name = $wrapper.data('name');
+                const endTime = Number($wrapper.data('end'));
+                const totalTime = Number($wrapper.data('total'));
+                const type = $wrapper.data('type');
+                const distSection = Number($wrapper.data('dist'));
+
+                // Recalculer l'état pour la mise à jour visuelle
+                const isResting = type === 'rest';
+                const currentColor = isResting ? '#4fc3f7' : '#66bb6a';
+
+                const remaining = endTime - now;
+                let percent = 0;
+
+                if (remaining <= 0) {
+                    percent = 100;
+                    $wrapper.find('.travel-timer-text').text("Fin étape");
+                } else {
+                    active = true;
+                    percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
+                    const secs = Math.ceil(remaining / 1000);
+                    const timeStr = `${Math.floor(secs/60)}:${(secs%60).toString().padStart(2,'0')}`;
+                    $wrapper.find('.travel-timer-text').text(timeStr);
+                }
+
+                // MISE À JOUR CSS COMPLÈTE (Largeur + Couleur + Ombre)
+                $wrapper.find('.travel-progress-fill').css({
+                    'width': `${percent}%`,
+                    'background-color': currentColor,
+                    'box-shadow': `0 0 5px ${currentColor}`
+                });
+
+                $wrapper.find('.travel-progress-fill').css('width', `${percent}%`);
+
+                // --- CALCUL DES KM RESTANTS (GLOBAL) ---
+                const npc = v.npcs[name];
+                if (npc && npc.travelItinerary) {
+                    let totalKmLeft = 0;
+
+                    // 1. Reste de l'étape en cours
+                    if (type === 'travel' && remaining > 0) {
+                        const kmLeftSection = distSection * (remaining / totalTime);
+                        totalKmLeft += kmLeftSection;
+                        $wrapper.find('.travel-dist-text').text(`${kmLeftSection.toFixed(1)} km`);
+                    } else {
+                        $wrapper.find('.travel-dist-text').text('');
+                    }
+
+                    // 2. Somme des étapes futures
+                    if (npc.travelStepIndex < npc.travelItinerary.length - 1) {
+                        for (let i = npc.travelStepIndex + 1; i < npc.travelItinerary.length; i++) {
+                            totalKmLeft += (npc.travelItinerary[i].dist || 0);
+                        }
+                    }
+
+                    $wrapper.find('.travel-total-km').text(`${totalKmLeft.toFixed(1)} km`);
+                }
+            });
+
+            if (!active && window.setup.buddiesPanelInterval) {
+                clearInterval(window.setup.buddiesPanelInterval);
+                window.setup.buddiesPanelInterval = null;
+            }
+        };
+        updateTimers();
+        window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
+    }
+
+    if (savedMenu) $('body').append(savedMenu);
+
+    // Gestion du clic droit
+    $panel.find('.buddy-entry').on('contextmenu', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        $('#buddy-context-menu').remove();
         const name = $(this).data('name');
-        window.setup.showPnjModal(name);
-      }
-    });
-    // Interaction : clic droit → menu contextuel
-    $panel.find('.buddy-entry').off('contextmenu.buddymenu').on('contextmenu.buddymenu', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      $('#buddy-context-menu, #give-buddy-menu').remove();
-      const name = $(this).data('name');
-      const npc = (V().npcs || {})[name];
-      const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
+        const npc = v.npcs[name];
+        const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
 
-      function addOption(text, fn, disabled = false) {
-        const $opt = $('<div class="context-option"></div>').text(text);
-        if (disabled) {
-          $opt.addClass('disabled');
+        function addOption(text, fn, disabled = false) {
+            const $opt = $('<div class="context-option"></div>').text(text);
+            if (disabled) $opt.addClass('disabled');
+            else $opt.on('click', ev => { ev.stopPropagation(); fn(); $menu.remove(); });
+            $menu.append($opt);
+        }
+
+        if (npc.status === 'traveling') {
+             addOption('Annuler voyage', () => window.setup.cancelPNJTravel(name));
         } else {
-          $opt.on('click', ev => {
-            ev.stopPropagation();
-            fn();
-            $menu.remove();
-          });
+             addOption('Me suivre', () => {
+                const destPassage = State.passage;
+                const destCoords = window.setup.ensurePassageCoords(destPassage);
+                const destCont = destCoords.continent || "Eldaron";
+                window.setup.startPNJTravel(name, destPassage, destCoords, destCont, 'follow');
+             });
+             addOption('Attendre ici', () => {
+                 npc.status = 'fixed';
+                 npc.passage = State.passage;
+                 npc.coordinates = { ...window.setup.ensurePassageCoords(State.passage) };
+                 window.renderBuddiesPanel();
+             });
+             addOption('Parler', () => window.setup.openChatModal(name));
+
+             const currentHP = Number(npc.health) || 0;
+             const maxHP = Number(npc.maxHealth) || 1;
+             if (currentHP < maxHP) {
+                addOption('Soigner (+5 PV)', () => window.setup.healBuddy(name, 5));
+             }
+             addOption('Faire partir', () => {
+                 npc.isActive = false;
+                 window.renderBuddiesPanel();
+             });
         }
-        $menu.append($opt);
-      }
-      if (!npc.isAlive) {
-        addOption('Impossible — mort', () => {}, true);
-      } else if (!npc.isActive) {
-        addOption('Rappeler', () => {
-          npc.isActive = true;
-          npc.passage = State.passage;
-          window.setup.notifyBuddy(`${npc.name} revient.`);
-          window.renderBuddiesPanel();
+
+        const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
+        const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
+        $menu.css({ top: `${posY}px`, left: `${posX}px` });
+
+        $(document).off('mousedown.buddymenuclose').on('mousedown.buddymenuclose', ev => {
+             if (!$(ev.target).closest('#buddy-context-menu').length) {
+                 $('#buddy-context-menu').remove();
+                 $(document).off('mousedown.buddymenuclose');
+             }
         });
-      } else {
-        if (npc.status === 'follow') {
-          addOption('Rester ici', () => {
-            npc.status = 'fixed';
-            npc.passage = State.passage;
-            // Mettre à jour les coordonnées avec le passage actuel
-            const v = V();
-            const passageCoords = (v.passageCoords || {})[State.passage];
-            if (passageCoords) {
-              npc.coordinates = {
-                x: passageCoords.x,
-                y: passageCoords.y
-              };
-              if (passageCoords.continent) {
-                npc.continent = passageCoords.continent;
-              }
-            }
-            // REMPLACEMENT : Utilisation de la notification de dialogue avec réaction JSON
-            window.setup.notifyPnjMove(name, 'fixed');
-            window.renderBuddiesPanel();
-          });
-        } else {
-          addOption('Vous suivre', () => {
-            $('#buddy-context-menu').remove();
-
-            npc.status = 'follow';
-
-            // Mise à jour IMMÉDIATE et sûre des coordonnées
-            const currentPassage = State.passage;
-            const passageCoords = (v.passageCoords || {})[currentPassage];
-
-            if (passageCoords) {
-              npc.coordinates = {
-                x: passageCoords.x,
-                y: passageCoords.y
-              };
-              npc.continent = passageCoords.continent || "Eldaron";
-            } else {
-              // Fallback sur les coordonnées du joueur
-              const playerCoords = v.playerCoordinates;
-              if (playerCoords) {
-                npc.coordinates = {
-                  x: playerCoords.x || 0,
-                  y: playerCoords.y || 0
-                };
-                npc.continent = playerCoords.continent || "Eldaron";
-              } else {
-                npc.coordinates = {
-                  x: 0,
-                  y: 0
-                };
-                npc.continent = "Eldaron";
-              }
-            }
-            npc.passage = currentPassage;
-            console.log(`👥 ${npc.name} commence à suivre le joueur dans ${currentPassage} (${npc.coordinates.x}, ${npc.coordinates.y})`);
-
-            // REMPLACEMENT : Utilisation de la notification de dialogue avec réaction JSON
-            window.setup.notifyPnjMove(name, 'follow');
-            window.renderBuddiesPanel();
-            updateBuddyHUDVisibility();
-            window.renderBuddiesPanel();
-
-            // Notification de succès
-            window.setup.showNotification('Compagnon', `${npc.name} vous suit maintenant`, 3000);
-
-          });
-        }
-        // === Parler ===
-        addOption('Parler', () => {
-          window.setup.openChatModal(name);
-        }, !npc || !npc.isAlive || !npc.isActive);
-        // === Soigner (+5 PV) ===
-        {
-          const healAmount = 5;
-          const currentHP = Number(npc.health) || 0;
-          const maxHP = Number(npc.maxHealth) || 1;
-          if (npc.isAlive && npc.isActive && currentHP < maxHP) {
-            addOption(`Soigner (+${healAmount} PV)`, () => {
-              npc.health = Math.min(maxHP, currentHP + healAmount);
-              window.setup.notifyBuddy(`${npc.name} est soigné (${npc.health}/${npc.maxHealth})`);
-              window.renderBuddiesPanel();
-            });
-          }
-        }
-        // === Soigner (objet) ===
-        {
-          const inv = v.inventory || [];
-          const healItems = inv.filter(it => ['health', 'food'].includes(it.type));
-          const currentHP = Number(npc.health) || 0;
-          const maxHP = Number(npc.maxHealth) || 1;
-          if (npc.isAlive && npc.isActive && currentHP < maxHP && healItems.length > 0) {
-            addOption('Soigner (objet)', () => {
-              $('#buddy-context-menu').remove();
-              const $menu2 = $('<div id="give-buddy-menu" class="context-menu give-buddy-menu"></div>').appendTo('body');
-              $menu2.append(`<div class="context-title">Choisir un objet à donner :</div>`);
-              healItems.forEach(it => {
-                const $slot = $(`
-                                        <div class="inventory-item" data-id="${it.id}" data-type="${it.type}">
-                                            ${it.qty > 1 ? `<span class="inventory-qty">${it.qty}</span>` : ''}
-                                            <div>${window.setup.escapeHtml(it.label)}</div>
-                                            <span class="inventory-type">${window.setup.escapeHtml(it.type)}</span>
-                                            ${window.setup.renderItemEncarts(it)}
-                                        </div>
-                                    `);
-                $slot.on('click', ev => {
-                  ev.stopPropagation();
-                  $('#give-item-context-menu').remove();
-                  const posX3 = Math.min(ev.pageX + 10, window.innerWidth - 200);
-                  const posY3 = Math.min(ev.pageY + 10, window.innerHeight - 150);
-                  const $sub = $(`<div id="give-item-context-menu" class="context-menu"></div>`).appendTo('body');
-
-                  function addSubOption(txt, fn) {
-                    const $opt2 = $('<div class="context-option"></div>').text(txt);
-                    $opt2.on('click', e2 => {
-                      e2.stopPropagation();
-                      fn();
-                      $sub.remove();
-                      $menu2.remove();
-                    });
-                    $sub.append($opt2);
-                  }
-                  addSubOption('Donner 1', () => {
-                    window.setup.useItem(it.id, it.label, it.type, ev.pageX, ev.pageY, name);
-                  });
-                  if ((it.qty || 1) > 1) {
-                    addSubOption('Tout donner', () => {
-                      for (let i = 0; i < it.qty; i++) {
-                        window.setup.useItem(it.id, it.label, it.type, ev.pageX, ev.pageY, name);
-                      }
-                    });
-                  }
-                  $sub.css({
-                    top: `${posY3}px`,
-                    left: `${posX3}px`
-                  });
-                  $(document).one('mousedown.subgivemenu', e2 => {
-                    if (!$(e2.target).closest('#give-item-context-menu').length) {
-                      $sub.remove();
-                    }
-                  });
-                });
-                const $wrapper = $('<div class="give-item-entry"></div>').append($slot);
-                $menu2.append($wrapper);
-              });
-              const posX2 = Math.min(e.pageX + 20, window.innerWidth - 300);
-              const posY2 = Math.min(e.pageY + 20, window.innerHeight - 300);
-              $menu2.css({
-                top: `${posY2}px`,
-                left: `${posX2}px`
-              });
-              $(document).one('mousedown.givemenu', ev2 => {
-                if (!$(ev2.target).closest('#give-buddy-menu').length) $menu2.remove();
-              });
-            });
-          }
-        }
-        addOption('Blesser (-5 PV)', () => {
-          npc.health = Math.max(0, (Number(npc.health) || 0) - 5);
-          if (npc.health <= 0) {
-            npc.isAlive = false;
-            npc.isActive = false;
-            window.setup.notifyBuddy(`${npc.name} est mort.`);
-          } else {
-            window.setup.notifyBuddy(`${npc.name} blessé (${npc.health}/${npc.maxHealth})`);
-          }
-          window.renderBuddiesPanel();
-        });
-        addOption('Faire partir', () => {
-          npc.isActive = false;
-          window.setup.notifyBuddy(`${npc.name} s'éloigne…`);
-          window.renderBuddiesPanel();
-        });
-        // === Reprendre l'arme ===
-        if (npc.equipment.weapon) {
-          addOption('Reprendre l\'arme', () => {
-            const success = window.setup.unequipItemForPnj(name, 'weapon');
-            if (success) {
-              window.setup.notifyBuddy(`Vous récupérez l'arme de ${npc.name}`);
-            }
-            window.renderBuddiesPanel();
-          });
-        }
-      }
-      const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
-      const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
-      $menu.css({
-        top: `${posY}px`,
-        left: `${posX}px`
-      });
-      // Fermeture intelligente
-      $(document).off('mousedown.buddymenuclose').on('mousedown.buddymenuclose', ev => {
-        setTimeout(() => {
-          const $t = $(ev.target);
-          const isInsideMenu = $t.closest('#buddy-context-menu').length > 0;
-          const isInsidePanel = $t.closest('#buddies-panel').length > 0;
-          const isFilterArrow = $t.closest('.buddy-filter-arrow, .buddy-filter-arrow *').length > 0;
-          if (!isInsideMenu && !isInsidePanel && !isFilterArrow && !window.ignoreNextBuddyMenuClose) {
-            $('#buddy-context-menu').remove();
-            $(document).off('mousedown.buddymenuclose');
-          }
-        }, 10);
-      });
     });
-    // Réattache le menu existant si présent
-    if (savedMenu) $('body').append(savedMenu);
-  };
+};
   // ------------------------------------------------------
   // MENU "DONNER À UN COMPAGNON" — VERSION AMÉLIORÉE ET UNIFIÉE
   // ------------------------------------------------------
@@ -5371,7 +5418,7 @@ async function detectAvailablePNJs() {
         réaction_joueur: {
           addItem: {
             weapon: ["Merci pour cette arme.", "Je vais en prendre soin.", "Utile."],
-            health: ["Merci pour ces soins.", "Je me sens mieux.", "Bien utile."],
+            health: ["Merci pour ces soins.", "Je me sens mieux.", "Bonne idée."],
             food: ["Merci pour la nourriture.", "J'avais faim.", "Bon repas."],
             misc: ["Merci.", "Je garde ça.", "Utile."]
           }
@@ -5675,6 +5722,7 @@ window.setup.getPnjData = function(pnjId) {
 
     // Passage actuel - CORRECTION CRITIQUE
     console.log("📍 State.passage:", State.passage);
+    console.log("📍 State.passage.title:", State.passage?.title);
 
     // Variables - CORRECTION : Utiliser State.variables directement
     const variables = State.variables;
@@ -5702,6 +5750,7 @@ window.setup.getPnjData = function(pnjId) {
 
     console.log("📍 Passage actuel:");
     console.log("  - State.passage:", State.passage);
+    console.log("  - State.passage.title:", State.passage?.title);
     console.log("  - State.variables.currentPassage:", v.currentPassage);
 
     console.log("🗺️ Coordonnées:");
@@ -5729,7 +5778,7 @@ window.setup.getPnjData = function(pnjId) {
     console.log("🎮 STORY READY - INITIALISATION SÉCURISÉE");
 
     // 🔴 CORRECTION CRITIQUE : Synchroniser IMMÉDIATEMENT currentPassage
-    State.variables.currentPassage = State.passage || 'Geole';
+    State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
     console.log(`🔧 State.variables.currentPassage = "${State.variables.currentPassage}"`);
 
     // Initialiser les variables de base
@@ -5793,115 +5842,146 @@ window.setup.getPnjData = function(pnjId) {
 
     console.log("✅ Initialisation storyready terminée");
 });
-window.setup.ensurePassageCoords = function(passageName) {
-    const v = State.variables;
-    v.passageCoords = v.passageCoords || {};
 
-    const actualPassageName = passageName || State.variables.currentPassage || State.passage || 'Geole';
-
-    // 🔴 CORRECTION : Toujours créer des coordonnées par défaut sécurisées
-    if (!v.passageCoords[actualPassageName] ||
-        typeof v.passageCoords[actualPassageName].x !== 'number') {
-
-        // Coordonnées par défaut sécurisées
-        const defaultCoords = {
-            x: 45,
-            y: 55,
-            continent: "Eldaron"
-        };
-
-        v.passageCoords[actualPassageName] = {
-            x: Number(defaultCoords.x),
-            y: Number(defaultCoords.y),
-            continent: defaultCoords.continent
-        };
-
-        console.log(`🔧 Coordonnées créées pour "${actualPassageName}":`, v.passageCoords[actualPassageName]);
-    }
-
-    return v.passageCoords[actualPassageName];
-};
-
-
-  /* ==========================================================
-  INIT AUTO SUR STORYREADY
-  ========================================================== */
-  $(document).one(':storyready', () => loadAllPNJ());
-
-    $(document).on(':passagestart', function() {
-    window.setup.updateFollowersCoordinates();
-    $('#passages').stop(true, true).animate({ opacity: 0 }, 200);
-
-    $('#passages').stop(true, true).animate({
-      opacity: 0
-    }, 200);
-  });
-
-$(document).on(':passagedisplay', function() {
-    // 🔴 CORRECTION : S'assurer que currentPassage est à jour
-    State.variables.currentPassage = State.passage || 'Geole';
-
-    $('#passages').stop(true, true).animate({
-        opacity: 1
-    }, 400);
-
-    window.setup.updateHUD();
-
-    // Valider les coordonnées du passage actuel
-    const currentPassage = State.variables.currentPassage;
-    if (currentPassage) {
-        window.setup.ensurePassageCoords(currentPassage);
-    }
-
-    // Le reste de votre code d'animation...
-    const $choices = $('#choices-container a, #passages a.link-internal, #passages a');
-    const $paragraphs = $('.fade-paragraph');
-    const $divider = $('#choices-divider');
-
-    $paragraphs.removeClass('visible').css('opacity', 0);
-    $paragraphs.each((i, el) => setTimeout(() => $(el).addClass('visible'), i * 300));
-
-    const baseDelay = $paragraphs.length * 180 + 300;
-    if ($divider.length) setTimeout(() => $divider.addClass('visible'), baseDelay);
-
-    $choices.removeClass('visible').css({
-        'pointer-events': 'none',
-        opacity: 0,
-        filter: 'grayscale(80%)'
-    });
-
-    $('.choiceicon-marker').each(function() {
-        const $marker = $(this);
-        const type = $marker.data('type');
-        const iconSrc = window.setup.choiceIcons[type];
-        if (!iconSrc) return;
-        const $link = $marker.nextAll('a').first();
-        if (!$link.length) return;
-        const $icon = $(`<img class="choice-icon" src="${iconSrc}" alt="${type}">`);
-        const $wrapper = $('<span class="has-choice-icon"></span>').append($icon, $link.contents());
-        $link.empty().append($wrapper);
-        $marker.remove();
-    });
-
-    const linkStart = baseDelay + 500;
-    $choices.each((i, el) => setTimeout(() => $(el).addClass('visible').animate({
-        opacity: 1
-    }, 300), linkStart + i * 200));
-
-    const totalDelay = linkStart + $choices.length * 200 + 300;
-    setTimeout(() => {
-        $choices.css({
-            'pointer-events': 'auto',
-            filter: 'none'
-        });
+    // ------------------------------------------------------
+    // 5. SÉCURISATION DES COORDONNÉES
+    // ------------------------------------------------------
+    window.setup.ensurePassageCoords = function(passageName) {
         const v = State.variables;
-        v.visitedPassages = v.visitedPassages || {};
-        v.visitedPassages[State.passage] = true;
+        v.passageCoords = v.passageCoords || {};
 
-        // Rafraîchir l'affichage des compagnons après le déplacement
-        if (window.renderBuddiesPanel) {
-            window.renderBuddiesPanel();
+        // Si pas de coords, on en crée (mais on ne les utilise pas pour téléporter le joueur)
+        if (!v.passageCoords[passageName]) {
+            // On utilise les coords du joueur comme "fallback" temporaire
+            // MAIS c'est ce qui causait le bug.
+            // Le setTimeout dans updateFollowersCoordinates permet d'attendre que le vrai <<setcoords>> écrase ça.
+            const playerPos = v.playerCoordinates || {x:0, y:0};
+
+            v.passageCoords[passageName] = {
+                x: playerPos.x,
+                y: playerPos.y,
+                continent: playerPos.continent || "Eldaron",
+                isDefault: true // Marqueur pour dire "ce n'est pas précis"
+            };
         }
-    }, totalDelay);
-});
+        return v.passageCoords[passageName];
+    };
+
+/* ==========================================================
+   GESTIONNAIRES D'ÉVÉNEMENTS ET INITIALISATION (INIT)
+   Ce bloc doit être placé TOUT À LA FIN du fichier JavaScript
+   ========================================================== */
+
+    // 1. INITIALISATION AU CHARGEMENT DE L'HISTOIRE
+    $(document).one(':storyready', function() {
+        console.log("🎮 [INIT] Story Ready : Chargement initial...");
+        // Charger les données externes (PNJ, Loot, Géo)
+        if (typeof loadAllPNJ === 'function') loadAllPNJ();
+        if (window.setup.ensureLootReady) window.setup.ensureLootReady(() => console.log("📦 Loot prêt"));
+        if (window.setup.ensureGeographyReady) window.setup.ensureGeographyReady(() => console.log("🗺️ Géo prête"));
+        setTimeout(() => {
+            window.setup.buildNavigationGraph();
+      }, 1000); // Attendre que le JSON soit chargé
+    });
+
+    // 2. DÉBUT DU PASSAGE (S'exécute AVANT l'affichage)
+    // Nettoyage préventif pour éviter les doublons lors des rechargements
+    $(document).off(':passagestart');
+    $(document).on(':passagestart', function() {
+        // Animation de sortie (Fade Out)
+        $('#passages').stop(true, true).animate({ opacity: 0 }, 200);
+
+        // ⚠️ CRITIQUE : NE JAMAIS LANCER DE CALCULS PNJ ICI.
+        // Les coordonnées du nouveau passage (<<setcoords>>) ne sont pas encore lues.
+    });
+
+    // 3. AFFICHAGE DU PASSAGE (S'exécute UNE FOIS le passage rendu)
+    $(document).off(':passagedisplay');
+    $(document).on(':passagedisplay', function() {
+        console.log("🎬 [EVENT] Passage Display : Démarrage logique...");
+
+        // A. Mise à jour de la variable de référence du passage actuel
+        // On sécurise la valeur pour être sûr d'avoir le bon titre
+        State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
+
+        // B. GESTION DU DÉPLACEMENT PNJ
+        // C'est le moment précis pour lancer les calculs car le DOM est prêt et les macros du passage (<<setcoords>>) ont été exécutées.
+        if (window.setup.updateFollowersCoordinates) {
+            console.log("👣 [EVENT] Lancement updateFollowersCoordinates...");
+            window.setup.updateFollowersCoordinates();
+        }
+
+        // C. Animation d'entrée (Fade In)
+        $('#passages').stop(true, true).animate({ opacity: 1 }, 400);
+
+        // D. Mise à jour de l'interface (HUD)
+        if (window.setup.updateHUD) window.setup.updateHUD();
+
+        // E. Initialisation de secours des coordonnées (si oubli de <<setcoords>>)
+        const currentPassage = State.variables.currentPassage;
+        if (currentPassage && window.setup.ensurePassageCoords) {
+            window.setup.ensurePassageCoords(currentPassage);
+        }
+
+        // F. Animations d'interface (Choix, Paragraphes progressifs)
+        const $choices = $('#choices-container a, #passages a.link-internal, #passages a');
+        const $paragraphs = $('.fade-paragraph');
+        const $divider = $('#choices-divider');
+
+        // Masquer initialement pour l'effet d'apparition
+        $paragraphs.removeClass('visible').css('opacity', 0);
+
+        // Apparition en cascade des paragraphes
+        $paragraphs.each((i, el) => setTimeout(() => $(el).addClass('visible'), i * 300));
+
+        // Apparition du séparateur
+        const baseDelay = $paragraphs.length * 180 + 300;
+        if ($divider.length) setTimeout(() => $divider.addClass('visible'), baseDelay);
+
+        // Masquer les choix initialement
+        $choices.removeClass('visible').css({
+            'pointer-events': 'none',
+            opacity: 0,
+            filter: 'grayscale(80%)'
+        });
+
+        // Gestion des icônes devant les choix (Macro <<choiceicon>>)
+        $('.choiceicon-marker').each(function() {
+            const $marker = $(this);
+            const type = $marker.data('type');
+            const iconSrc = window.setup.choiceIcons ? window.setup.choiceIcons[type] : null;
+
+            if (!iconSrc) return;
+
+            const $link = $marker.nextAll('a').first();
+            if (!$link.length) return;
+
+            // Injection de l'icône
+            const $icon = $(`<img class="choice-icon" src="${iconSrc}" alt="${type}">`);
+            const $wrapper = $('<span class="has-choice-icon"></span>').append($icon, $link.contents());
+            $link.empty().append($wrapper);
+            $marker.remove();
+        });
+
+        // Apparition en cascade des choix
+        const linkStart = baseDelay + 500;
+        $choices.each((i, el) => setTimeout(() => $(el).addClass('visible').animate({
+            opacity: 1
+        }, 300), linkStart + i * 200));
+
+        // Finalisation (réactivation des clics)
+        const totalDelay = linkStart + $choices.length * 200 + 300;
+        setTimeout(() => {
+            $choices.css({ 'pointer-events': 'auto', filter: 'none' });
+
+            // Marquer le passage comme visité
+            const v = State.variables;
+            v.visitedPassages = v.visitedPassages || {};
+            v.visitedPassages[State.passage] = true;
+
+            // Rafraîchir panneau compagnons une dernière fois pour être sûr
+            if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+
+        }, totalDelay);
+    });
 })();

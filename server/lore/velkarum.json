@@ -1,353 +1,383 @@
 {
-  "continent_bounds": {
-  "Helrün": {
-    "x_min": 10,
-    "x_max": 60,
-    "y_min": 0,
-    "y_max": 25
-  },
-  "Eldaron": {
-    "x_min": 5,
-    "x_max": 70,
-    "y_min": 25,
-    "y_max": 50
-  },
-  "Varnäl": {
-    "x_min": 10,
-    "x_max": 75,
-    "y_min": 50,
-    "y_max": 70
-  },
-  "Thaurgrim": {
-    "x_min": 25,
-    "x_max": 85,
-    "y_min": 70,
-    "y_max": 100
-  },
-  "Iskarion": {
-    "x_min": 60,
-    "x_max": 100,
-    "y_min": 55,
-    "y_max": 100
-  }
-},
-  "continents": {
-    "Eldaron": {
-      "regions": [
-        {
-          "name": "Royaume Central de Valnoria",
-          "bounds": { "x_min": 30, "x_max": 60, "y_min": 40, "y_max": 70 },
-          "capital": "Lorn"
-        },
-        {
-          "name": "Marches du Dalen",
-          "bounds": { "x_min": 15, "x_max": 45, "y_min": 65, "y_max": 85 },
-          "capital": "Dalen"
-        },
-        {
-          "name": "Confédération Méridionale d'Ardel",
-          "bounds": { "x_min": 45, "x_max": 80, "y_min": 20, "y_max": 45 },
-          "capital": "Ardel"
-        },
-        {
-          "name": "Principauté de Ferharn",
-          "bounds": { "x_min": 65, "x_max": 90, "y_min": 45, "y_max": 70 },
-          "capital": "Ferharn"
-        },
-        {
-          "name": "Ligues Côtières de Lirn",
-          "bounds": { "x_min": 5, "x_max": 30, "y_min": 30, "y_max": 60 },
-          "capital": "Lirn"
-        },
-        {
-          "name": "Terres Tribales du Nord",
-          "bounds": { "x_min": 20, "x_max": 50, "y_min": 80, "y_max": 95 },
-          "capital": "Aucune (nomadisme)"
-        },
-        {
-          "name": "Marches Orientales",
-          "bounds": { "x_min": 75, "x_max": 95, "y_min": 70, "y_max": 90 },
-          "capital": "Khar-Ghul"
-        },
-        {
-          "name": "Delta du Draen",
-          "bounds": { "x_min": 25, "x_max": 45, "y_min": 10, "y_max": 25 },
-          "capital": "Draenport"
-        }
-      ],
-      "cities": [
-        { "name": "Lorn", "coords": { "x": 45, "y": 55 } },
-        { "name": "Ardel", "coords": { "x": 60, "y": 35 } },
-        { "name": "Dorr", "coords": { "x": 50, "y": 60 } },
-        { "name": "Lirn", "coords": { "x": 15, "y": 45 } },
-        { "name": "Ferharn", "coords": { "x": 75, "y": 55 } },
-        { "name": "Dalen", "coords": { "x": 30, "y": 75 } },
-        { "name": "Khar-Ghul", "coords": { "x": 85, "y": 80 } },
-        { "name": "Draenport", "coords": { "x": 35, "y": 15 } }
-      ],
-      "points_of_interest": [
-        { "name": "Académie du Draen", "type": "Centre de recherche", "coords": { "x": 45, "y": 55 } },
-        { "name": "Conseil des Royaumes de Lorn", "type": "Gouvernement continental", "coords": { "x": 45, "y": 55 } },
-        { "name": "Bourse Maritime de Lirn", "type": "Marché financier international", "coords": { "x": 15, "y": 45 } },
-        { "name": "Trésor Royal de Lorn", "type": "Banque centrale", "coords": { "x": 45, "y": 55 } },
-        { "name": "Guilde des Changeurs d'Ardel", "type": "Bureau de change international", "coords": { "x": 60, "y": 35 } },
-        { "name": "Brigade Anti-Crime d'Ardel", "type": "Forces de l'ordre", "coords": { "x": 60, "y": 35 } },
-        { "name": "Maison des Plaisirs Ombragés", "type": "Établissement clandestin", "coords": { "x": 45, "y": 55 } },
-        { "name": "Les Cendres Rouges", "type": "Établissement clandestin", "coords": { "x": 60, "y": 35 } },
-        { "name": "Forge des Ombres", "type": "Atelier clandestin", "coords": { "x": 62, "y": 32 } },
-        { "name": "Marché de Khar-Ghul", "type": "Marché noir", "coords": { "x": 85, "y": 80 } },
-        { "name": "Caravansérail des Ombres", "type": "Réseau criminel", "coords": { "x": 45, "y": 20 } },
-        { "name": "Guilde des Talents", "type": "Réseau criminel", "coords": { "x": 75, "y": 55 } },
-        { "name": "Marché des Compétences", "type": "Réseau criminel", "coords": { "x": 55, "y": 45 } }
-      ]
-    },
-
-    "Varnäl": {
-      "regions": [
-        {
-          "name": "Forêts Primaires de Rhaal",
-          "bounds": { "x_min": 20, "x_max": 50, "y_min": 60, "y_max": 85 },
-          "capital": "Rhaal"
-        },
-        {
-          "name": "Bassins Marécageux de Marael",
-          "bounds": { "x_min": 40, "x_max": 70, "y_min": 30, "y_max": 60 },
-          "capital": "Marael"
-        },
-        {
-          "name": "Savanes de Cenra",
-          "bounds": { "x_min": 60, "x_max": 90, "y_min": 40, "y_max": 70 },
-          "capital": "Cenra"
-        },
-        {
-          "name": "Massif Central de Velkar",
-          "bounds": { "x_min": 30, "x_max": 65, "y_min": 10, "y_max": 35 },
-          "capital": "Velkar"
-        },
-        {
-          "name": "Côtes Océaniques de Tarran",
-          "bounds": { "x_min": 5, "x_max": 25, "y_min": 20, "y_max": 50 },
-          "capital": "Tarran"
-        }
-      ],
-      "cities": [
-        { "name": "Rhaal", "coords": { "x": 35, "y": 72 } },
-        { "name": "Marael", "coords": { "x": 55, "y": 45 } },
-        { "name": "Velkar", "coords": { "x": 45, "y": 20 } },
-        { "name": "Tarran", "coords": { "x": 15, "y": 35 } },
-        { "name": "Falaar", "coords": { "x": 25, "y": 25 } },
-        { "name": "Cenra", "coords": { "x": 75, "y": 55 } }
-      ],
-      "points_of_interest": [
-        { "name": "Observatoire Atmosphérique de Velkar", "type": "Centre climatologique", "coords": { "x": 45, "y": 20 } },
-        { "name": "Laboratoires Alchimiques de Marael", "type": "Centre de recherche", "coords": { "x": 55, "y": 45 } },
-        { "name": "Banque Génétique de Rhaal", "type": "Réserve biodiversité", "coords": { "x": 35, "y": 75 } },
-        { "name": "Temple du Souffle", "type": "Lieu sacré", "coords": { "x": 35, "y": 72 } },
-        { "name": "Marais de la Voix", "type": "Lieu sacré", "coords": { "x": 54, "y": 44 } },
-        { "name": "Arbrena de Rhaal", "type": "Lieu de divertissement", "coords": { "x": 35, "y": 75 } },
-        { "name": "Marché aux Senteurs", "type": "Marché expérientiel", "coords": { "x": 55, "y": 45 } },
-        { "name": "Refuge des Brumes", "type": "Laboratoire clandestin", "coords": { "x": 54, "y": 44 } }
-      ]
-    },
-
-    "Thaurgrim": {
-      "regions": [
-        {
-          "name": "Royaume Volcanique du Vulkar",
-          "bounds": { "x_min": 60, "x_max": 90, "y_min": 60, "y_max": 85 },
-          "capital": "Vulkar"
-        },
-        {
-          "name": "Plaines Fertiles du Drav",
-          "bounds": { "x_min": 40, "x_max": 70, "y_min": 40, "y_max": 60 },
-          "capital": "Drav"
-        },
-        {
-          "name": "Hauts Plateaux de Derna",
-          "bounds": { "x_min": 20, "x_max": 50, "y_min": 50, "y_max": 75 },
-          "capital": "Derna"
-        },
-        {
-          "name": "Côtes Géothermiques du Thun'ar",
-          "bounds": { "x_min": 30, "x_max": 60, "y_min": 20, "y_max": 40 },
-          "capital": "Thun'ar"
-        },
-        {
-          "name": "Domaine Maritime d'Ashraal",
-          "bounds": { "x_min": 50, "x_max": 80, "y_min": 10, "y_max": 30 },
-          "capital": "Ashraal"
-        }
-      ],
-      "cities": [
-        { "name": "Vulkar", "coords": { "x": 75, "y": 70 } },
-        { "name": "Derna", "coords": { "x": 35, "y": 60 } },
-        { "name": "Kaar", "coords": { "x": 85, "y": 40 } },
-        { "name": "Thun'ar", "coords": { "x": 45, "y": 30 } },
-        { "name": "Drav", "coords": { "x": 55, "y": 50 } }
-      ],
-      "points_of_interest": [
-        { "name": "Complexe Industriel de Thun'ar", "type": "Centre énergétique", "coords": { "x": 45, "y": 30 } },
-        { "name": "Observatoire Volcanique du Ghaarn", "type": "Centre sismique", "coords": { "x": 80, "y": 75 } },
-        { "name": "Port International de Kaar", "type": "Hub commercial", "coords": { "x": 85, "y": 40 } },
-        { "name": "Temples du Feu Profond", "type": "Lieu sacré", "coords": { "x": 75, "y": 70 } },
-        { "name": "Forges sacrées du Ghaarn", "type": "Lieu sacré", "coords": { "x": 80, "y": 75 } },
-        { "name": "Grande Forge de Vulkar", "type": "Forge spectacle", "coords": { "x": 75, "y": 70 } },
-        { "name": "Arène des Cendres", "type": "Stade volcanique", "coords": { "x": 55, "y": 50 } },
-        { "name": "Champs de Soufre", "type": "Zone d'extraction", "coords": { "x": 50, "y": 25 } },
-        { "name": "Caverne Acide", "type": "Laboratoire clandestin", "coords": { "x": 58, "y": 42 } }
-      ]
-    },
-
-    "Helrün": {
-      "regions": [
-        {
-          "name": "Territoire des Clans du Nerr",
-          "bounds": { "x_min": 10, "x_max": 40, "y_min": 5, "y_max": 30 },
-          "capital": "Nerr"
-        },
-        {
-          "name": "Domaine des Tribus du Nar",
-          "bounds": { "x_min": 35, "x_max": 75, "y_min": 15, "y_max": 45 },
-          "capital": "Narvik"
-        },
-        {
-          "name": "Royaume Montagnard du Skarnheim",
-          "bounds": { "x_min": 60, "x_max": 95, "y_min": 40, "y_max": 70 },
-          "capital": "Skarnheim"
-        },
-        {
-          "name": "Territoires des Nautes du Draen",
-          "bounds": { "x_min": 5, "x_max": 25, "y_min": 40, "y_max": 60 },
-          "capital": "Aucune (nomadisme maritime)"
-        },
-        {
-          "name": "Sanctuaires des Ermites du Drann",
-          "bounds": { "x_min": 45, "x_max": 65, "y_min": 65, "y_max": 85 },
-          "capital": "Ygral"
-        }
-      ],
-      "cities": [
-        { "name": "Skarnheim", "coords": { "x": 75, "y": 55 } },
-        { "name": "Nerr", "coords": { "x": 25, "y": 15 } },
-        { "name": "Narvik", "coords": { "x": 55, "y": 30 } },
-        { "name": "Ygral", "coords": { "x": 55, "y": 75 } }
-      ],
-      "points_of_interest": [
-        { "name": "Station Polaire Internationale d'Ygral", "type": "Centre de recherche", "coords": { "x": 55, "y": 75 } },
-        { "name": "Port International de Nerr", "type": "Hub commercial polaire", "coords": { "x": 25, "y": 15 } },
-        { "name": "Sanctuaire d'Ygral", "type": "Lieu sacré", "coords": { "x": 55, "y": 75 } },
-        { "name": "Sources du Drann", "type": "Lieu sacré", "coords": { "x": 65, "y": 80 } },
-        { "name": "Hall des Brumes de Skarnheim", "type": "Centre communautaire", "coords": { "x": 75, "y": 55 } },
-        { "name": "Arène de Nerr", "type": "Stade polaire", "coords": { "x": 25, "y": 15 } },
-        { "name": "Grottes du Drann", "type": "Stockage illégal", "coords": { "x": 50, "y": 60 } },
-        { "name": "Caverne du Silence", "type": "Mine clandestine", "coords": { "x": 48, "y": 62 } }
-      ]
-    },
-
-    "Iskarion": {
-      "regions": [
-        {
-          "name": "Royaume Solaire du Zhaïr",
-          "bounds": { "x_min": 20, "x_max": 50, "y_min": 60, "y_max": 85 },
-          "capital": "Zhaïr"
-        },
-        {
-          "name": "Territoires du Rift Shaar",
-          "bounds": { "x_min": 40, "x_max": 70, "y_min": 30, "y_max": 60 },
-          "capital": "Shaar-Keth"
-        },
-        {
-          "name": "Confédération des Plateaux de Surn",
-          "bounds": { "x_min": 60, "x_max": 90, "y_min": 40, "y_max": 70 },
-          "capital": "Vethar"
-        },
-        {
-          "name": "Sultanat du Désert de Korra",
-          "bounds": { "x_min": 30, "x_max": 65, "y_min": 10, "y_max": 35 },
-          "capital": "Korra"
-        },
-        {
-          "name": "Ligue Maritimes d'Asuren",
-          "bounds": { "x_min": 5, "x_max": 25, "y_min": 20, "y_max": 50 },
-          "capital": "Asuren"
-        }
-      ],
-      "cities": [
-        { "name": "Zhaïr", "coords": { "x": 35, "y": 75 } },
-        { "name": "Asuren", "coords": { "x": 15, "y": 35 } },
-        { "name": "Shaar-Keth", "coords": { "x": 55, "y": 45 } },
-        { "name": "Vethar", "coords": { "x": 75, "y": 55 } },
-        { "name": "Korra", "coords": { "x": 45, "y": 20 } }
-      ],
-      "points_of_interest": [
-        { "name": "Station de Transfert Solaire d'Asuren", "type": "Centrale énergétique", "coords": { "x": 15, "y": 35 } },
-        { "name": "Observatoire Climatique de Zhaïr", "type": "Centre de recherche", "coords": { "x": 35, "y": 75 } },
-        { "name": "Grand Autel du Zhaïr", "type": "Lieu sacré", "coords": { "x": 35, "y": 75 } },
-        { "name": "Sanctuaire du Shaar", "type": "Lieu sacré", "coords": { "x": 56, "y": 46 } },
-        { "name": "Théâtre Solaire de Zhaïr", "type": "Théâtre sacré", "coords": { "x": 35, "y": 75 } },
-        { "name": "Jardin des Reflets", "type": "Parc contemplatif", "coords": { "x": 15, "y": 35 } },
-        { "name": "Jardins de Zhaïr Cachés", "type": "Établissement clandestin", "coords": { "x": 35, "y": 75 } },
-        { "name": "Geyser Principal", "type": "Site de recherche", "coords": { "x": 60, "y": 40 } },
-        { "name": "Source Acide", "type": "Laboratoire naturel", "coords": { "x": 65, "y": 35 } }
-      ]
+  "meta": {
+    "version": "9.0-Restructuration-Repos",
+    "description": "Cartographie avec Relais et Auberges intégrés au graphe de déplacement pour Pathfinding natif.",
+    "generated_from": ["correction_user_request"],
+    "scale": {
+      "units_to_km": 10,
+      "grid_size": "100x100"
     }
   },
-
-  "strategic_locations": {
-    "mines_clandestines": [
-      { "name": "Mine de l'Ombre", "coords": { "x": 88, "y": 78 }, "region": "Marches Orientales" },
-      { "name": "Puits des Perdus", "coords": { "x": 52, "y": 22 }, "region": "Désert de Korra" },
-      { "name": "Caverne du Silence", "coords": { "x": 48, "y": 62 }, "region": "Grottes du Drann" }
-    ],
-    "ateliers_clandestins": [
-      { "name": "Forge des Ombres", "coords": { "x": 62, "y": 32 }, "region": "Ardel" },
-      { "name": "Enclume Noire", "coords": { "x": 78, "y": 68 }, "region": "Vulkar" }
-    ],
-    "sites_production_stupefiants": [
-      { "name": "Bassins Marécageux de Marael", "produit": "Poudre de Brume", "coords": { "x": 55, "y": 45 } },
-      { "name": "Forêts Primaires de Rhaal", "produit": "Sève de Rhaal Corrompue", "coords": { "x": 35, "y": 75 } },
-      { "name": "Sanctuaires des Ermites du Drann", "produit": "Larmes d'Ygral", "coords": { "x": 55, "y": 75 } },
-      { "name": "Territoires du Rift Shaar", "produit": "Sang Volcanique", "coords": { "x": 55, "y": 45 } }
-    ],
-    "repaires_pirates": [
-      { "name": "Embouchure du Drann", "type": "Repaire caché", "coords": { "x": 20, "y": 25 } },
-      { "name": "Confluence Surn-Brumes", "type": "Zone d'embuscades", "coords": { "x": 25, "y": 20 } },
-      { "name": "Golfe de Thun'ar", "type": "Trafic maritime", "coords": { "x": 70, "y": 25 } }
-    ]
+  "continents": {
+    "Eldaron": {
+      "id": "eldaron",
+      "name": "Eldaron",
+      "type": "Continent Central",
+      "description": "Le Cœur des Terres, centre politique et commercial.",
+      "bounds": { "x_min": 5, "x_max": 95, "y_min": 10, "y_max": 95 }
+    },
+    "Varnäl": {
+      "id": "varnal",
+      "name": "Varnäl",
+      "type": "Continent Équatorial",
+      "description": "Le Poumon du Monde, forêts primaires et marais alchimiques.",
+      "bounds": { "x_min": 5, "x_max": 90, "y_min": 10, "y_max": 85 }
+    },
+    "Thaurgrim": {
+      "id": "thaurgrim",
+      "name": "Thaurgrim",
+      "type": "Continent Volcanique",
+      "description": "Le Cœur de Feu, terres de cendres et de forges.",
+      "bounds": { "x_min": 20, "x_max": 90, "y_min": 10, "y_max": 85 }
+    },
+    "Iskarion": {
+      "id": "iskarion",
+      "name": "Iskarion",
+      "type": "Continent Tropical",
+      "description": "Le Four Solaire, déserts de verre et pyramides.",
+      "bounds": { "x_min": 5, "x_max": 90, "y_min": 10, "y_max": 85 }
+    },
+    "Helrün": {
+      "id": "helrun",
+      "name": "Helrün",
+      "type": "Continent Polaire",
+      "description": "Le Royaume du Froid, glaciers et vents mystiques.",
+      "bounds": { "x_min": 5, "x_max": 95, "y_min": 5, "y_max": 85 }
+    }
   },
+  "nodes": {
+    "Lorn": { "x": 45, "y": 55, "continent": "Eldaron", "type": "Capitale", "name": "Lorn (Centre)", "description": "Cœur de l'Empire.", "population": "4.2M", "danger": 1 },
+    "Lorn_Port": { "x": 44, "y": 54, "continent": "Eldaron", "type": "Faubourg", "name": "Lorn - Port Fluvial", "description": "Zone portuaire.", "danger": 2 },
+    "Lorn_Haute_Ville": { "x": 46, "y": 56, "continent": "Eldaron", "type": "Faubourg", "name": "Lorn - Haute Ville", "description": "Quartier noble.", "danger": 1 },
+    "Taverne_Dragon_Borgne": { "x": 45.1, "y": 55.1, "continent": "Eldaron", "type": "Taverne", "name": "Taverne du Dragon Borgne", "description": "Le repaire des aventuriers.", "faction": "Guilde" },
 
-  "critical_infrastructure": {
-    "centres_financiers": [
-      { "name": "Trésor Royal de Lorn", "type": "Banque centrale", "coords": { "x": 45, "y": 55 } },
-      { "name": "Bourse Maritime de Lirn", "type": "Marché financier", "coords": { "x": 15, "y": 45 } },
-      { "name": "Guilde des Changeurs d'Ardel", "type": "Bureau de change", "coords": { "x": 60, "y": 35 } }
-    ],
-    "centres_recherche": [
-      { "name": "Académie du Draen", "type": "Recherche avancée", "coords": { "x": 45, "y": 55 } },
-      { "name": "Observatoire Atmosphérique de Velkar", "type": "Climatologie", "coords": { "x": 45, "y": 20 } },
-      { "name": "Station Polaire Internationale d'Ygral", "type": "Recherche polaire", "coords": { "x": 55, "y": 75 } },
-      { "name": "Observatoire Volcanique du Ghaarn", "type": "Sismologie", "coords": { "x": 80, "y": 75 } },
-      { "name": "Observatoire Climatique de Zhaïr", "type": "Recherche atmosphérique", "coords": { "x": 35, "y": 75 } }
-    ],
-    "ports_internationaux": [
-      { "name": "Port International de Nerr", "type": "Hub polaire", "coords": { "x": 25, "y": 15 } },
-      { "name": "Port International de Kaar", "type": "Hub continental", "coords": { "x": 85, "y": 40 } },
-      { "name": "Station de Transfert Solaire d'Asuren", "type": "Centrale énergétique", "coords": { "x": 15, "y": 35 } }
-    ]
+    "Relais_Royal_Nord": { "x": 47.5, "y": 57.5, "continent": "Eldaron", "type": "Relais", "name": "Relais Royal Nord", "description": "Halte fortifiée sur la route de Dorr." },
+
+    "Ardel": { "x": 60, "y": 35, "continent": "Eldaron", "type": "Ville", "name": "Ardel (Centre)", "description": "Carrefour marchand.", "population": "2.1M", "danger": 3 },
+    "Ardel_Marche": { "x": 61, "y": 34, "continent": "Eldaron", "type": "Faubourg", "name": "Ardel - Grand Marché", "description": "Étalages immenses.", "danger": 2 },
+    "Auberge_Cendres_Rouges": { "x": 60.1, "y": 35.1, "continent": "Eldaron", "type": "Auberge", "name": "Auberge des Cendres Rouges", "description": "Discrète et sûre.", "faction": "Confrérie" },
+    "Forge_Ombres": { "x": 62, "y": 32, "continent": "Eldaron", "type": "Repaire", "name": "Forge des Ombres", "description": "Atelier clandestin.", "danger": 5 },
+
+    "Relais_Sud_Ardel": { "x": 56, "y": 40, "continent": "Eldaron", "type": "Relais", "name": "Relais des Collines", "description": "Dernière halte avant Ardel." },
+
+    "Dorr": { "x": 50, "y": 60, "continent": "Eldaron", "type": "Ville", "name": "Dorr", "description": "Cité artisanale.", "population": "1.2M", "danger": 1 },
+    "Auberge_Marteau": { "x": 50.1, "y": 60.1, "continent": "Eldaron", "type": "Auberge", "name": "Au Marteau Doré", "description": "Auberge robuste." },
+
+    "Lirn": { "x": 15, "y": 45, "continent": "Eldaron", "type": "Port", "name": "Lirn (Docks)", "description": "Port principal.", "population": "1.4M", "danger": 2 },
+    "Taverne_La_Nasse": { "x": 15.1, "y": 45.1, "continent": "Eldaron", "type": "Taverne", "name": "La Nasse", "description": "Repaire de marins.", "faction": "Nautes" },
+    "Auberge_Lirn_Centre": { "x": 15.2, "y": 45.2, "continent": "Eldaron", "type": "Auberge", "name": "L'Ancre Rouillée", "description": "Auberge pour voyageurs à Lirn." },
+
+    "Ferharn": { "x": 75, "y": 55, "continent": "Eldaron", "type": "Ville", "name": "Ferharn", "description": "Bastion minier.", "population": "600k", "danger": 2 },
+    "Cantine_Mineurs": { "x": 75.1, "y": 55.1, "continent": "Eldaron", "type": "Taverne", "name": "Cantine des Mineurs", "description": "Repas copieux." },
+
+    "Relais_Fer": { "x": 62.5, "y": 57.5, "continent": "Eldaron", "type": "Relais", "name": "Relais de la Route du Fer", "description": "Halte entre Dorr et Ferharn." },
+
+    "Dalen": { "x": 30, "y": 75, "continent": "Eldaron", "type": "Ville", "name": "Dalen", "description": "Cité forestière.", "population": "800k", "danger": 1 },
+    "Auberge_Druide": { "x": 30.1, "y": 75.1, "continent": "Eldaron", "type": "Auberge", "name": "Le Repos du Druide", "description": "Hamacs de vigne." },
+
+    "Khar_Ghul": { "x": 85, "y": 80, "continent": "Eldaron", "type": "Forteresse", "name": "Khar-Ghul", "description": "Forteresse frontalière.", "population": "180k", "danger": 4 },
+    "Mess_Officiers": { "x": 85.1, "y": 80.1, "continent": "Eldaron", "type": "Taverne", "name": "Mess de la Garnison", "description": "Ambiance militaire." },
+    "Mine_Ombre": { "x": 88, "y": 78, "continent": "Eldaron", "type": "Mine", "name": "Mine de l'Ombre", "description": "Mine clandestine.", "danger": 6 },
+
+    "Draenport": { "x": 35, "y": 15, "continent": "Eldaron", "type": "Ville", "name": "Draenport", "description": "Cité du delta.", "population": "90k", "danger": 3 },
+    "Taverne_Grenouille": { "x": 35.1, "y": 15.1, "continent": "Eldaron", "type": "Taverne", "name": "La Grenouille Assoiffée", "description": "Spécialité d'algues." },
+    "Bivouac_Delta": { "x": 41, "y": 32, "continent": "Eldaron", "type": "Bivouac", "name": "Bivouac du Haut-Delta", "description": "Terre ferme au milieu des marais." },
+
+    "Relais_Pont_Vieux": { "x": 52, "y": 45, "continent": "Eldaron", "type": "Relais", "name": "Relais du Pont-Vieux", "description": "Halte sûre sur la route royale." },
+    "Village_Riviere_Claire": { "x": 30, "y": 50, "continent": "Eldaron", "type": "Village", "name": "Rivière-Claire", "description": "Village de pêcheurs." },
+    "Auberge_Riviere": { "x": 30.1, "y": 50.1, "continent": "Eldaron", "type": "Auberge", "name": "Auberge du Fil de l'Eau", "description": "Truite excellente." },
+    "Relais_Cotiere_Nord": { "x": 22.5, "y": 47.5, "continent": "Eldaron", "type": "Relais", "name": "Relais des Falaises", "description": "Sur la route côtière nord." },
+
+    "Auberge_Chasseur": { "x": 37, "y": 65, "continent": "Eldaron", "type": "Auberge", "name": "Le Chasseur Ivre", "description": "Halte forestière." },
+    "Relais_Frontiere": { "x": 80, "y": 70, "continent": "Eldaron", "type": "Relais", "name": "Poste de Garde Est", "description": "Dernier arrêt civilisé." },
+    "Bivouac_Plaines": { "x": 40, "y": 70, "continent": "Eldaron", "type": "Bivouac", "name": "Campement Centaure", "description": "Zone nomade." },
+
+    "Cercles_Lunaires": { "x": 25, "y": 80, "continent": "Eldaron", "type": "Sanctuaire", "name": "Cercles Lunaires", "description": "Site elfique." },
+    "Arbre_Monde": { "x": 35, "y": 85, "continent": "Eldaron", "type": "Sanctuaire", "name": "Arbre-Monde", "description": "Site druidique." },
+    "Temple_Syl_Mara": { "x": 30, "y": 12, "continent": "Eldaron", "type": "Sanctuaire", "name": "Temple de Syl-Mara", "description": "Déesse des marais." },
+    "Marais_Perles": { "x": 40, "y": 18, "continent": "Eldaron", "type": "Lieu", "name": "Marais aux Perles", "description": "Zone dangereuse." },
+    "Plaines_Nord": { "x": 35, "y": 85, "continent": "Eldaron", "type": "Bivouac", "name": "Plaines Nord" },
+    "Vallee_Centrale": { "x": 40, "y": 65, "continent": "Eldaron", "type": "Bivouac", "name": "Vallée Centrale" },
+    "Collines_Sud": { "x": 50, "y": 45, "continent": "Eldaron", "type": "Bivouac", "name": "Collines Sud" },
+    "Carrefour_Draen": { "x": 48, "y": 50, "continent": "Eldaron", "type": "Intersection", "name": "Croisée du Draen" },
+
+    "Rhaal": { "x": 35, "y": 72, "continent": "Varnäl", "type": "Capitale", "name": "Rhaal", "description": "Cité-forêt organique.", "population": "3.2M", "danger": 2 },
+    "Auberge_Racine": { "x": 35.1, "y": 72.1, "continent": "Varnäl", "type": "Auberge", "name": "Auberge de la Racine Mère", "description": "Dans un arbre géant." },
+
+    "Marael": { "x": 55, "y": 45, "continent": "Varnäl", "type": "Ville", "name": "Marael", "description": "Ville-marais.", "population": "2.1M", "danger": 3 },
+    "Auberge_Nenuphar": { "x": 55.1, "y": 45.1, "continent": "Varnäl", "type": "Auberge", "name": "Le Nénuphar Flottant", "description": "Dérivant." },
+    "Refuge_Brumes": { "x": 54, "y": 44, "continent": "Varnäl", "type": "Laboratoire", "name": "Refuge des Brumes", "description": "Laboratoire illégal.", "danger": 5 },
+
+    "Velkar": { "x": 45, "y": 20, "continent": "Varnäl", "type": "Ville", "name": "Velkar", "description": "Cité montagneuse.", "population": "1.8M", "danger": 1 },
+    "Refuge_Observatoire": { "x": 45.1, "y": 20.1, "continent": "Varnäl", "type": "Refuge", "name": "Refuge de l'Observatoire", "description": "Hébergement austère." },
+
+    "Tarran": { "x": 15, "y": 35, "continent": "Varnäl", "type": "Port", "name": "Tarran", "description": "Port biologique.", "population": "2.7M", "danger": 2 },
+    "Taverne_Maree": { "x": 15.1, "y": 35.1, "continent": "Varnäl", "type": "Taverne", "name": "Taverne de la Marée Haute", "description": "Rencontre marins." },
+
+    "Falaar": { "x": 25, "y": 25, "continent": "Varnäl", "type": "Cité", "name": "Falaar", "description": "Cité suspendue.", "population": "1.4M", "danger": 3 },
+    "Auberge_Nuages": { "x": 25.1, "y": 25.1, "continent": "Varnäl", "type": "Auberge", "name": "Au Lit des Nuages", "description": "Vue vertigineuse." },
+    "Auberge_Cimes": { "x": 45, "y": 58, "continent": "Varnäl", "type": "Auberge", "name": "Repos des Cimes", "description": "Relais suspendu." },
+    "Relais_Brume": { "x": 30, "y": 30, "continent": "Varnäl", "type": "Relais", "name": "Halte des Brumes", "description": "Ravitaillement aérien." },
+
+    "Relais_Souffle_Nord": { "x": 40, "y": 65, "continent": "Varnäl", "type": "Relais", "name": "Relais du Souffle Nord", "description": "Passage venteux." },
+    "Relais_Souffle_Sud": { "x": 50, "y": 51, "continent": "Varnäl", "type": "Relais", "name": "Relais du Souffle Sud", "description": "Passage humide." },
+
+    "Cenra": { "x": 75, "y": 55, "continent": "Varnäl", "type": "Ville", "name": "Cenra", "description": "Cité agricole nomade." },
+    "Condenseurs_Brume": { "x": 30, "y": 30, "continent": "Varnäl", "type": "Lieu", "name": "Condenseurs de Brume" },
+    "Plaines_Migration": { "x": 65, "y": 50, "continent": "Varnäl", "type": "Bivouac", "name": "Plaines de Migration" },
+    "Forets_Transition": { "x": 50, "y": 60, "continent": "Varnäl", "type": "Lieu", "name": "Forêts de Transition" },
+
+    "Vulkar": { "x": 75, "y": 70, "continent": "Thaurgrim", "type": "Capitale", "name": "Vulkar", "description": "Capitale religieuse.", "population": "1.9M", "danger": 3 },
+    "Taverne_Magma": { "x": 75.1, "y": 70.1, "continent": "Thaurgrim", "type": "Taverne", "name": "Le Gobelet de Magma", "description": "Boissons épicées." },
+    "Enclume_Noire": { "x": 78, "y": 68, "continent": "Thaurgrim", "type": "Repaire", "name": "L'Enclume Noire", "description": "Forge illégale.", "danger": 5 },
+
+    "Derna": { "x": 35, "y": 60, "continent": "Thaurgrim", "type": "Ville", "name": "Derna", "description": "Cité forestière.", "population": "1.2M", "danger": 2 },
+    "Relais_Obsidienne_Ville": { "x": 35.1, "y": 60.1, "continent": "Thaurgrim", "type": "Auberge", "name": "Auberge de l'Obsidienne", "description": "Murs noirs." },
+
+    "Kaar": { "x": 85, "y": 40, "continent": "Thaurgrim", "type": "Port", "name": "Kaar", "description": "Port des cendres.", "population": "1M", "danger": 3 },
+    "Taverne_Cendres": { "x": 85.1, "y": 40.1, "continent": "Thaurgrim", "type": "Taverne", "name": "Taverne des Cendres", "description": "Lieu sombre." },
+
+    "Thun_ar": { "x": 45, "y": 30, "continent": "Thaurgrim", "type": "Ville", "name": "Thun'ar", "description": "Cité géothermique.", "population": "900k", "danger": 3 },
+    "Cantine_Vapeur": { "x": 45.1, "y": 30.1, "continent": "Thaurgrim", "type": "Taverne", "name": "Cantine à Vapeur", "description": "Cuisson vapeur." },
+
+    "Drav": { "x": 55, "y": 50, "continent": "Thaurgrim", "type": "Ville", "name": "Drav", "description": "Cité agricole.", "population": "800k", "danger": 2 },
+    "Auberge_Fermier": { "x": 55.1, "y": 50.1, "continent": "Thaurgrim", "type": "Auberge", "name": "Le Repos du Fermier", "description": "Simple et rustique." },
+    "Relais_Volcan": { "x": 65, "y": 60, "continent": "Thaurgrim", "type": "Relais", "name": "Halte du Volcan", "description": "Poste fortifié." },
+    "Relais_Magma": { "x": 65, "y": 60, "continent": "Thaurgrim", "type": "Relais", "name": "Halte du Magma", "description": "Abri fortifié." },
+
+    "Bivouac_Ghaarn": { "x": 50, "y": 40, "continent": "Thaurgrim", "type": "Bivouac", "name": "Bivouac du Ghaarn", "description": "Au pied du volcan." },
+
+    "Sanctuaires_Drakens": { "x": 30, "y": 65, "continent": "Thaurgrim", "type": "Sanctuaire", "name": "Sanctuaires des Drakens" },
+    "Forets_Mineralisees": { "x": 25, "y": 70, "continent": "Thaurgrim", "type": "Lieu", "name": "Forêts Minéralisées" },
+    "Champs_Soufre": { "x": 50, "y": 25, "continent": "Thaurgrim", "type": "Mine", "name": "Champs de Soufre" },
+    "Mer_Ashraal": { "x": 55, "y": 20, "continent": "Thaurgrim", "type": "Lieu", "name": "Mer d'Ashraal" },
+    "Frontiere_Eldaron_Thaur": { "x": 90, "y": 35, "continent": "Thaurgrim", "type": "Frontiere", "name": "Poste Frontière (Cendres)" },
+    "Bivouac_Cendres": { "x": 87, "y": 37, "continent": "Thaurgrim", "type": "Bivouac", "name": "Camp des Cendres", "description": "Zone neutre." },
+
+    "Zhair": { "x": 35, "y": 75, "continent": "Iskarion", "type": "Capitale", "name": "Zhaïr", "description": "Capitale spirituelle.", "population": "2.4M", "danger": 1 },
+    "Palais_Solaire_Repos": { "x": 35.1, "y": 75.1, "continent": "Iskarion", "type": "Caravanserail", "name": "Jardins de Repos Solaires", "description": "Luxe et sérénité." },
+    "Jardins_Caches": { "x": 36, "y": 76, "continent": "Iskarion", "type": "Lieu_Dit", "name": "Jardins Cachés de Zhaïr", "description": "Plaisirs illicites.", "danger": 3 },
+
+    "Shaar_Keth": { "x": 55, "y": 45, "continent": "Iskarion", "type": "Ville", "name": "Shaar-Keth", "description": "Cité scientifique.", "population": "1.1M", "danger": 3 },
+    "Auberge_Vapeur": { "x": 55.1, "y": 45.1, "continent": "Iskarion", "type": "Auberge", "name": "Auberge de la Vapeur", "description": "Bains thermaux." },
+    "Caverne_Acide": { "x": 58, "y": 42, "continent": "Iskarion", "type": "Laboratoire", "name": "Caverne Acide", "description": "Laboratoire dangereux.", "danger": 5 },
+
+    "Korra": { "x": 45, "y": 20, "continent": "Iskarion", "type": "Ville", "name": "Korra", "description": "Oasis fortifiée.", "population": "600k", "danger": 2 },
+    "Caravanserail_Korra": { "x": 45.1, "y": 20.1, "continent": "Iskarion", "type": "Caravanserail", "name": "Grand Caravansérail de Korra", "description": "Rencontre des caravanes." },
+
+    "Asuren": { "x": 15, "y": 35, "continent": "Iskarion", "type": "Port", "name": "Asuren", "description": "Port de pierre rouge.", "population": "1.8M", "danger": 2 },
+    "Taverne_Sel": { "x": 15.1, "y": 35.1, "continent": "Iskarion", "type": "Taverne", "name": "La Route du Sel", "description": "Marchands et capitaines." },
+
+    "Relais_Sel": { "x": 30, "y": 27, "continent": "Iskarion", "type": "Relais", "name": "Relais du Sel", "description": "Halte désertique." },
+
+    "Vethar": { "x": 75, "y": 55, "continent": "Iskarion", "type": "Ville", "name": "Vethar", "description": "Cité minière." },
+    "Caravanserail_Dunes": { "x": 45, "y": 60, "continent": "Iskarion", "type": "Caravanserail", "name": "Caravansérail des Dunes", "description": "Point d'eau vital." },
+    "Oasis_Secrete": { "x": 60, "y": 25, "continent": "Iskarion", "type": "Oasis", "name": "Oasis Secrète", "description": "Source cachée." },
+    "Dunes_Sable_Rouge": { "x": 50, "y": 15, "continent": "Iskarion", "type": "Lieu", "name": "Dunes de Sable-Rouge" },
+    "Puits_Perdus": { "x": 52, "y": 22, "continent": "Iskarion", "type": "Mine", "name": "Puits des Perdus", "description": "Mine esclavagiste.", "danger": 6 },
+    "Geyser_Principal": { "x": 60, "y": 40, "continent": "Iskarion", "type": "Lieu", "name": "Geyser Principal" },
+    "Source_Acide": { "x": 65, "y": 35, "continent": "Iskarion", "type": "Lieu", "name": "Source Acide" },
+
+    "Skarnheim": { "x": 75, "y": 55, "continent": "Helrün", "type": "Capitale", "name": "Skarnheim", "description": "Cité montagneuse sacrée.", "population": "320k", "danger": 3 },
+    "Hall_Hydromel": { "x": 75.1, "y": 55.1, "continent": "Helrün", "type": "Taverne", "name": "Grand Hall d'Hydromel", "description": "Immense salle commune." },
+
+    "Nerr": { "x": 25, "y": 15, "continent": "Helrün", "type": "Port", "name": "Nerr", "description": "Port polaire.", "population": "210k", "danger": 2 },
+    "Taverne_Glace": { "x": 25.1, "y": 15.1, "continent": "Helrün", "type": "Taverne", "name": "La Glace Noire", "description": "Marchands de glace." },
+
+    "Narvik": { "x": 55, "y": 30, "continent": "Helrün", "type": "Ville", "name": "Narvik", "description": "Colonie côtière.", "population": "95k", "danger": 2 },
+    "Refuge_Tribal": { "x": 55.1, "y": 30.1, "continent": "Helrün", "type": "Refuge", "name": "Longère Tribale", "description": "Hébergement communautaire." },
+
+    "Ygral": { "x": 55, "y": 75, "continent": "Helrün", "type": "Station", "name": "Ygral", "description": "Station scientifique.", "population": "1.5k", "danger": 4 },
+    "Dortoir_Ermites": { "x": 55.1, "y": 75.1, "continent": "Helrün", "type": "Refuge", "name": "Dortoir des Ermites", "description": "Cellules de pierre." },
+
+    "Relais_Glaciaire": { "x": 30, "y": 12, "continent": "Helrün", "type": "Relais", "name": "Refuge Glaciaire", "description": "Abri de survie." },
+    "Abri_Pecheur": { "x": 40, "y": 22, "continent": "Helrün", "type": "Bivouac", "name": "Hameau du Pêcheur", "description": "Igloos et feu." },
+    "Embouchure_Drann": { "x": 20, "y": 25, "continent": "Helrün", "type": "Lieu", "name": "Embouchure du Drann" },
+    "Repaire_Naufrageurs": { "x": 20, "y": 25, "continent": "Helrün", "type": "Repaire", "name": "Grotte des Naufrageurs", "description": "Base pirate.", "danger": 5 },
+    "Plaines_Nar": { "x": 50, "y": 40, "continent": "Helrün", "type": "Lieu", "name": "Plaines de Nar" },
+    "Sources_Drann": { "x": 65, "y": 80, "continent": "Helrün", "type": "Lieu", "name": "Sources du Drann" },
+    "Grottes_Drann": { "x": 50, "y": 60, "continent": "Helrün", "type": "Lieu", "name": "Grottes du Drann" },
+    "Caverne_Silence": { "x": 48, "y": 62, "continent": "Helrün", "type": "Mine", "name": "Caverne du Silence", "description": "Zone maudite.", "danger": 6 },
+    "Bivouac_Toundra": { "x": 52, "y": 35, "continent": "Helrün", "type": "Bivouac", "name": "Bivouac de la Toundra", "description": "Halte gelée." },
+
+    "Confluence_Fer_Bleu": { "x": 20, "y": 20, "continent": "Ocean", "type": "Balise", "name": "Confluence Fer-Bleu" },
+    "Cotes_Fer_Bleu": { "x": 10, "y": 50, "continent": "Ocean", "type": "Balise", "name": "Côtes du Fer-Bleu" },
+    "Confluence_Draen": { "x": 15, "y": 10, "continent": "Ocean", "type": "Balise", "name": "Confluence Draen" },
+    "Confluence_Surn": { "x": 25, "y": 20, "continent": "Ocean", "type": "Balise", "name": "Confluence Surn-Brumes" },
+    "Golfe_Thun_ar": { "x": 70, "y": 25, "continent": "Ocean", "type": "Balise", "name": "Golfe de Thun'ar" },
+    "Cotes_Thaurgrim_Sud": { "x": 40, "y": 10, "continent": "Ocean", "type": "Balise", "name": "Côtes de Thaurgrim (Sud)" },
+    "Point_Zero_Mer": { "x": 50, "y": 50, "continent": "Ocean", "type": "Balise", "name": "Point Zéro (Mer)" }
   },
+  "routes": [
+    { "id": "eld_lorn_taverne", "name": "Rue des Aubergistes", "type": "road", "start": "Lorn", "end": "Taverne_Dragon_Borgne", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_lorn_port", "name": "Avenue du Port", "type": "road", "start": "Lorn", "end": "Lorn_Port", "distance_km": 1.0, "cost_multiplier": 1.0 },
+    { "id": "eld_lorn_haute", "name": "Montée Royale", "type": "road", "start": "Lorn", "end": "Lorn_Haute_Ville", "distance_km": 1.0, "cost_multiplier": 1.0 },
 
-  "intercontinental_connections": {
-    "maritime": [
-      { "name": "Ligne Lirn-Nerr", "distance": "300 km", "points": [{ "x": 15, "y": 45 }, { "x": 25, "y": 15 }] },
-      { "name": "Ligne Lirn-Tarran", "distance": "400 km", "points": [{ "x": 15, "y": 45 }, { "x": 15, "y": 35 }] },
-      { "name": "Ligne Ardel-Kaar", "distance": "350 km", "points": [{ "x": 60, "y": 35 }, { "x": 85, "y": 40 }] }
-    ],
-    "terrestre": [
-      { "name": "Route des Cendres", "points": [{ "x": 60, "y": 35 }, { "x": 90, "y": 35 }] },
-      { "name": "Voie du Nord", "points": [{ "x": 45, "y": 55 }, { "x": 40, "y": 95 }] }
-    ],
-    "souterrain": [
-      { "name": "Canal du Drann", "points": [{ "x": 65, "y": 80 }, { "x": 50, "y": 60 }, { "x": 20, "y": 25 }] }
-    ]
-  }
+    { "id": "eld_ardel_auberge", "name": "Place du Marché", "type": "road", "start": "Ardel", "end": "Auberge_Cendres_Rouges", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_ardel_marche", "name": "Allée des Épices", "type": "road", "start": "Ardel", "end": "Ardel_Marche", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_ardel_forge", "name": "Ruelle Sombre", "type": "path", "start": "Ardel", "end": "Forge_Ombres", "distance_km": 5.0, "cost_multiplier": 1.5, "danger": 3 },
+
+    { "id": "eld_dorr_auberge", "name": "Rue des Forges", "type": "road", "start": "Dorr", "end": "Auberge_Marteau", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_lirn_taverne", "name": "Quai des Brumes", "type": "road", "start": "Lirn", "end": "Taverne_La_Nasse", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_lirn_auberge", "name": "Rue du Quai", "type": "road", "start": "Lirn", "end": "Auberge_Lirn_Centre", "distance_km": 0.2, "cost_multiplier": 1.0 },
+
+    { "id": "eld_dalen_auberge", "name": "Sentier Sacré", "type": "path", "start": "Dalen", "end": "Auberge_Druide", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_ferharn_cantine", "name": "Tunnel Sud", "type": "tunnel", "start": "Ferharn", "end": "Cantine_Mineurs", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_kharghul_mess", "name": "Cour Intérieure", "type": "road", "start": "Khar_Ghul", "end": "Mess_Officiers", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_draenport_taverne", "name": "Ponton Ouest", "type": "road", "start": "Draenport", "end": "Taverne_Grenouille", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "eld_riviere_auberge", "name": "Berge Sud", "type": "road", "start": "Village_Riviere_Claire", "end": "Auberge_Riviere", "distance_km": 0.5, "cost_multiplier": 1.0 },
+
+    { "id": "eld_royale_1_a", "name": "Voie Royale (Sortie Lorn)", "type": "road", "start": "Lorn", "end": "Relais_Royal_Nord", "distance_km": 35.0, "cost_multiplier": 1.0, "danger": 1 },
+    { "id": "eld_royale_1_b", "name": "Voie Royale (Approche Dorr)", "type": "road", "start": "Relais_Royal_Nord", "end": "Dorr", "distance_km": 36.0, "cost_multiplier": 1.0, "danger": 1 },
+
+    { "id": "eld_royale_2a", "name": "Voie Royale (Sud 1)", "type": "road", "start": "Dorr", "end": "Relais_Pont_Vieux", "distance_km": 150.0, "cost_multiplier": 1.0, "danger": 1 },
+
+    { "id": "eld_royale_2b_1", "name": "Voie Royale (Sud 2-A)", "type": "road", "start": "Relais_Pont_Vieux", "end": "Relais_Sud_Ardel", "distance_km": 65.0, "cost_multiplier": 1.0, "danger": 1 },
+    { "id": "eld_royale_2b_2", "name": "Voie Royale (Sud 2-B)", "type": "road", "start": "Relais_Sud_Ardel", "end": "Ardel", "distance_km": 65.0, "cost_multiplier": 1.0, "danger": 1 },
+
+    { "id": "eld_royale_3", "name": "Voie Royale (Centre)", "type": "road", "start": "Lorn", "end": "Carrefour_Draen", "distance_km": 58.0, "cost_multiplier": 1.0, "danger": 1 },
+
+    { "id": "eld_sud", "name": "Route du Sud", "type": "road", "start": "Carrefour_Draen", "end": "Collines_Sud", "distance_km": 96.0, "cost_multiplier": 1.1, "danger": 2 },
+    { "id": "eld_sud_2", "name": "Route du Sud (Bas)", "type": "road", "start": "Collines_Sud", "end": "Ardel", "distance_km": 96.0, "cost_multiplier": 1.1, "danger": 2 },
+
+    { "id": "eld_cotiere_1a_1", "name": "Route Côtière (Nord 1-A)", "type": "road", "start": "Lirn", "end": "Relais_Cotiere_Nord", "distance_km": 80.0, "cost_multiplier": 1.2, "danger": 2 },
+    { "id": "eld_cotiere_1a_2", "name": "Route Côtière (Nord 1-B)", "type": "road", "start": "Relais_Cotiere_Nord", "end": "Village_Riviere_Claire", "distance_km": 80.0, "cost_multiplier": 1.2, "danger": 2 },
+
+    { "id": "eld_cotiere_1b", "name": "Route Côtière (Nord 2)", "type": "road", "start": "Village_Riviere_Claire", "end": "Lorn", "distance_km": 160.0, "cost_multiplier": 1.2, "danger": 2 },
+
+    { "id": "eld_cotiere_2_1", "name": "Route Côtière (Sud-A)", "type": "road", "start": "Lorn", "end": "Carrefour_Draen", "distance_km": 100.0, "cost_multiplier": 1.2, "danger": 2 },
+    { "id": "eld_cotiere_2_2", "name": "Route Côtière (Sud-B)", "type": "road", "start": "Carrefour_Draen", "end": "Draenport", "distance_km": 312.0, "cost_multiplier": 1.2, "danger": 2 },
+
+    { "id": "eld_foret_1a", "name": "Chemin des Forêts (Sud 1)", "type": "forest_path", "start": "Lorn", "end": "Auberge_Chasseur", "distance_km": 130.0, "cost_multiplier": 1.8, "danger": 2 },
+    { "id": "eld_foret_1b", "name": "Chemin des Forêts (Sud 2)", "type": "forest_path", "start": "Auberge_Chasseur", "end": "Dalen", "distance_km": 120.0, "cost_multiplier": 1.8, "danger": 3 },
+    { "id": "eld_foret_2", "name": "Chemin des Forêts (Nord)", "type": "forest_path", "start": "Dalen", "end": "Cercles_Lunaires", "distance_km": 71.0, "cost_multiplier": 1.5, "danger": 3 },
+    { "id": "eld_foret_3", "name": "Chemin des Forêts (Arbre)", "type": "forest_path", "start": "Cercles_Lunaires", "end": "Arbre_Monde", "distance_km": 112.0, "cost_multiplier": 1.5, "danger": 3 },
+
+    { "id": "eld_mines_1", "name": "Route des Mines (Haut)", "type": "road", "start": "Dorr", "end": "Relais_Fer", "distance_km": 127.0, "cost_multiplier": 1.5, "danger": 3 },
+    { "id": "eld_mines_2", "name": "Route des Mines (Bas)", "type": "road", "start": "Relais_Fer", "end": "Ferharn", "distance_km": 128.0, "cost_multiplier": 1.5, "danger": 3 },
+
+    { "id": "eld_mines_est", "name": "Piste Frontalière", "type": "road", "start": "Ferharn", "end": "Relais_Frontiere", "distance_km": 130.0, "cost_multiplier": 1.3, "danger": 4 },
+    { "id": "eld_mines_est_2", "name": "Piste Frontalière (Fin)", "type": "road", "start": "Relais_Frontiere", "end": "Khar_Ghul", "distance_km": 139.0, "cost_multiplier": 1.3, "danger": 5 },
+    { "id": "eld_mine_clandestine", "name": "Sentier des Contrebandiers", "type": "path", "start": "Khar_Ghul", "end": "Mine_Ombre", "distance_km": 30.0, "cost_multiplier": 2.0, "danger": 6 },
+
+    { "id": "eld_delta_1", "name": "Voie du Delta (Nord)", "type": "swamp_path", "start": "Carrefour_Draen", "end": "Bivouac_Delta", "distance_km": 186.0, "cost_multiplier": 2.0, "danger": 4 },
+    { "id": "eld_delta_2", "name": "Voie du Delta (Sud)", "type": "swamp_path", "start": "Bivouac_Delta", "end": "Draenport", "distance_km": 187.0, "cost_multiplier": 2.0, "danger": 4 },
+
+    { "id": "eld_delta_temple", "name": "Voie du Delta (Ouest)", "type": "swamp_path", "start": "Draenport", "end": "Temple_Syl_Mara", "distance_km": 100.0, "cost_multiplier": 2.0, "danger": 3 },
+    { "id": "eld_delta_marais", "name": "Voie du Delta (Est)", "type": "swamp_path", "start": "Draenport", "end": "Marais_Perles", "distance_km": 150.0, "cost_multiplier": 2.0, "danger": 4 },
+
+    { "id": "eld_nomade", "name": "Piste Nomade (Nord)", "type": "plain_path", "start": "Plaines_Nord", "end": "Vallee_Centrale", "distance_km": 206.0, "cost_multiplier": 1.2, "danger": 3 },
+    { "id": "eld_nomade_2", "name": "Piste Nomade (Sud)", "type": "plain_path", "start": "Vallee_Centrale", "end": "Collines_Sud", "distance_km": 223.0, "cost_multiplier": 1.2, "danger": 3 },
+    { "id": "eld_nomade_camp", "name": "Accès Bivouac", "type": "plain_path", "start": "Vallee_Centrale", "end": "Bivouac_Plaines", "distance_km": 50.0, "cost_multiplier": 1.0 },
+
+    { "id": "eld_thaur_link", "name": "Pont des Titans", "type": "road", "start": "Ardel", "end": "Frontiere_Eldaron_Thaur", "distance_km": 300.0, "cost_multiplier": 1.2, "danger": 2 },
+
+    { "id": "varn_rhaal_auberge", "name": "Racine Sud", "type": "forest_path", "start": "Rhaal", "end": "Auberge_Racine", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "varn_marael_auberge", "name": "Ponton Central", "type": "swamp_path", "start": "Marael", "end": "Auberge_Nenuphar", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "varn_marael_refuge", "name": "Sentier des Vapeurs", "type": "swamp_path", "start": "Marael", "end": "Refuge_Brumes", "distance_km": 10.0, "cost_multiplier": 2.5, "danger": 4 },
+
+    { "id": "varn_velkar_refuge", "name": "Sentier des Nuages", "type": "mountain_path", "start": "Velkar", "end": "Refuge_Observatoire", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "varn_tarran_taverne", "name": "Quai d'Ambre", "type": "road", "start": "Tarran", "end": "Taverne_Maree", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "varn_falaar_auberge", "name": "Pont Suspendu", "type": "road", "start": "Falaar", "end": "Auberge_Nuages", "distance_km": 0.5, "cost_multiplier": 1.0 },
+
+    { "id": "varn_souffle_1a_1", "name": "Voie du Souffle (Nord-A)", "type": "forest_path", "start": "Rhaal", "end": "Relais_Souffle_Nord", "distance_km": 85.0, "cost_multiplier": 1.6, "danger": 3 },
+    { "id": "varn_souffle_1a_2", "name": "Voie du Souffle (Nord-B)", "type": "forest_path", "start": "Relais_Souffle_Nord", "end": "Auberge_Cimes", "distance_km": 85.0, "cost_multiplier": 1.6, "danger": 3 },
+
+    { "id": "varn_souffle_1b", "name": "Voie du Souffle (Sud)", "type": "forest_path", "start": "Auberge_Cimes", "end": "Marael", "distance_km": 166.0, "cost_multiplier": 1.6, "danger": 3 },
+
+    { "id": "varn_souffle_2_1", "name": "Voie du Souffle (Bas-A)", "type": "forest_path", "start": "Marael", "end": "Relais_Souffle_Sud", "distance_km": 134.0, "cost_multiplier": 1.8, "danger": 3 },
+    { "id": "varn_souffle_2_2", "name": "Voie du Souffle (Bas-B)", "type": "forest_path", "start": "Relais_Souffle_Sud", "end": "Velkar", "distance_km": 135.0, "cost_multiplier": 1.8, "danger": 3 },
+
+    { "id": "varn_marees_1", "name": "Route des Marées (Nord)", "type": "road", "start": "Tarran", "end": "Falaar", "distance_km": 141.0, "cost_multiplier": 1.2, "danger": 2 },
+    { "id": "varn_marees_2", "name": "Route des Marées (Sud)", "type": "road", "start": "Falaar", "end": "Marael", "distance_km": 361.0, "cost_multiplier": 1.4, "danger": 3 },
+
+    { "id": "varn_brumes_1", "name": "Piste des Brumes (A)", "type": "air", "start": "Falaar", "end": "Relais_Brume", "distance_km": 80.0, "cost_multiplier": 0.8, "danger": 4 },
+    { "id": "varn_brumes_2", "name": "Piste des Brumes (B)", "type": "air", "start": "Relais_Brume", "end": "Velkar", "distance_km": 170.0, "cost_multiplier": 0.8, "danger": 4 },
+    { "id": "varn_brumes_condenseur", "name": "Accès Condenseurs", "type": "air", "start": "Relais_Brume", "end": "Condenseurs_Brume", "distance_km": 20.0, "cost_multiplier": 0.8 },
+
+    { "id": "varn_graines_1", "name": "Chemin des Graines (Plaines)", "type": "road", "start": "Cenra", "end": "Plaines_Migration", "distance_km": 112.0, "cost_multiplier": 1.1, "danger": 2 },
+    { "id": "varn_graines_2", "name": "Chemin des Graines (Foret)", "type": "forest_path", "start": "Plaines_Migration", "end": "Forets_Transition", "distance_km": 180.0, "cost_multiplier": 1.3, "danger": 3 },
+
+    { "id": "thaur_vulkar_taverne", "name": "Allée du Feu", "type": "road", "start": "Vulkar", "end": "Taverne_Magma", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "thaur_vulkar_enclume", "name": "Chemin Interdit", "type": "path", "start": "Vulkar", "end": "Enclume_Noire", "distance_km": 5.0, "cost_multiplier": 2.0, "danger": 5 },
+    { "id": "thaur_derna_relais", "name": "Sentier Noir", "type": "road", "start": "Derna", "end": "Relais_Obsidienne_Ville", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "thaur_kaar_taverne", "name": "Quai des Cendres", "type": "road", "start": "Kaar", "end": "Taverne_Cendres", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "thaur_thunar_cantine", "name": "Zone Industrielle", "type": "road", "start": "Thun'ar", "end": "Cantine_Vapeur", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "thaur_drav_auberge", "name": "Place du Marché", "type": "road", "start": "Drav", "end": "Auberge_Fermier", "distance_km": 0.5, "cost_multiplier": 1.0 },
+
+    { "id": "thaur_ghaarn_1a", "name": "Voie du Ghaarn (Nord)", "type": "road", "start": "Vulkar", "end": "Relais_Volcan", "distance_km": 140.0, "cost_multiplier": 1.3, "danger": 3 },
+    { "id": "thaur_ghaarn_1b", "name": "Voie du Ghaarn (Sud)", "type": "road", "start": "Relais_Volcan", "end": "Drav", "distance_km": 143.0, "cost_multiplier": 1.3, "danger": 3 },
+    { "id": "thaur_ghaarn_2_1", "name": "Voie du Ghaarn (Bas-A)", "type": "road", "start": "Drav", "end": "Bivouac_Ghaarn", "distance_km": 112.0, "cost_multiplier": 1.3, "danger": 3 },
+    { "id": "thaur_ghaarn_2_2", "name": "Voie du Ghaarn (Bas-B)", "type": "road", "start": "Bivouac_Ghaarn", "end": "Thun'ar", "distance_km": 112.0, "cost_multiplier": 1.3, "danger": 3 },
+
+    { "id": "thaur_cendres_1", "name": "Route des Cendres (Interne)", "type": "road", "start": "Drav", "end": "Kaar", "distance_km": 316.0, "cost_multiplier": 1.2, "danger": 3 },
+    { "id": "thaur_cendres_2_1", "name": "Route des Cendres (Frontière-A)", "type": "road", "start": "Kaar", "end": "Bivouac_Cendres", "distance_km": 35.0, "cost_multiplier": 1.2, "danger": 4 },
+    { "id": "thaur_cendres_2_2", "name": "Route des Cendres (Frontière-B)", "type": "road", "start": "Bivouac_Cendres", "end": "Frontiere_Eldaron_Thaur", "distance_km": 36.0, "cost_multiplier": 1.2, "danger": 4 },
+
+    { "id": "thaur_forets", "name": "Chemin des Forêts", "type": "forest_path", "start": "Derna", "end": "Sanctuaires_Drakens", "distance_km": 71.0, "cost_multiplier": 1.5, "danger": 3 },
+    { "id": "thaur_forets_min", "name": "Sentier Minéral", "type": "forest_path", "start": "Sanctuaires_Drakens", "end": "Forets_Mineralisees", "distance_km": 50.0, "cost_multiplier": 1.5 },
+    { "id": "thaur_derna_link", "name": "Liaison Derna-Drav", "type": "road", "start": "Derna", "end": "Drav", "distance_km": 224.0, "cost_multiplier": 1.2, "danger": 2 },
+
+    { "id": "thaur_soufre", "name": "Piste du Soufre", "type": "badlands", "start": "Thun'ar", "end": "Champs_Soufre", "distance_km": 71.0, "cost_multiplier": 2.0, "danger": 5 },
+    { "id": "thaur_mer_acide", "name": "Accès Mer Acide", "type": "badlands", "start": "Champs_Soufre", "end": "Mer_Ashraal", "distance_km": 50.0, "cost_multiplier": 2.5, "danger": 5 },
+
+    { "id": "isk_zhair_jardins", "name": "Allée Solaire", "type": "road", "start": "Zhair", "end": "Palais_Solaire_Repos", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "isk_zhair_jardins_caches", "name": "Passage Dérobé", "type": "path", "start": "Zhair", "end": "Jardins_Caches", "distance_km": 2.0, "cost_multiplier": 1.0, "danger": 1 },
+    { "id": "isk_shaar_auberge", "name": "Rue de la Vapeur", "type": "road", "start": "Shaar_Keth", "end": "Auberge_Vapeur", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "isk_shaar_labo", "name": "Tunnel Acide", "type": "tunnel", "start": "Shaar_Keth", "end": "Caverne_Acide", "distance_km": 5.0, "cost_multiplier": 2.0, "danger": 5 },
+    { "id": "isk_korra_caravan", "name": "Entrée Ouest", "type": "road", "start": "Korra", "end": "Caravanserail_Korra", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "isk_asuren_taverne", "name": "Quai du Sel", "type": "road", "start": "Asuren", "end": "Taverne_Sel", "distance_km": 0.5, "cost_multiplier": 1.0 },
+
+    { "id": "isk_solaire_1a", "name": "Voie Solaire (Nord)", "type": "road", "start": "Zhair", "end": "Caravanserail_Dunes", "distance_km": 180.0, "cost_multiplier": 1.0, "danger": 2 },
+    { "id": "isk_solaire_1b", "name": "Voie Solaire (Sud)", "type": "road", "start": "Caravanserail_Dunes", "end": "Shaar_Keth", "distance_km": 180.0, "cost_multiplier": 1.0, "danger": 2 },
+    { "id": "isk_solaire_2", "name": "Voie Solaire (Bas)", "type": "road", "start": "Shaar_Keth", "end": "Korra", "distance_km": 269.0, "cost_multiplier": 1.0, "danger": 2 },
+
+    { "id": "isk_plateaux", "name": "Route des Plateaux", "type": "mountain_path", "start": "Vethar", "end": "Shaar_Keth", "distance_km": 224.0, "cost_multiplier": 1.4, "danger": 3 },
+    { "id": "isk_asur_link_1", "name": "Route du Sel (Nord)", "type": "road", "start": "Asuren", "end": "Relais_Sel", "distance_km": 167.0, "cost_multiplier": 1.2, "danger": 2 },
+    { "id": "isk_asur_link_2", "name": "Route du Sel (Sud)", "type": "road", "start": "Relais_Sel", "end": "Korra", "distance_km": 168.0, "cost_multiplier": 1.2, "danger": 2 },
+
+    { "id": "isk_vents_1", "name": "Piste des Vents (Nord)", "type": "desert_path", "start": "Korra", "end": "Dunes_Sable_Rouge", "distance_km": 71.0, "cost_multiplier": 2.0, "danger": 5 },
+    { "id": "isk_vents_2", "name": "Piste des Vents (Oasis)", "type": "desert_path", "start": "Dunes_Sable_Rouge", "end": "Oasis_Secrete", "distance_km": 130.0, "cost_multiplier": 2.0, "danger": 5 },
+    { "id": "isk_puits_perdus", "name": "Piste des Esclaves", "type": "desert_path", "start": "Dunes_Sable_Rouge", "end": "Puits_Perdus", "distance_km": 20.0, "cost_multiplier": 2.0, "danger": 5 },
+
+    { "id": "isk_rift", "name": "Chemin du Rift", "type": "badlands", "start": "Shaar_Keth", "end": "Geyser_Principal", "distance_km": 71.0, "cost_multiplier": 2.5, "danger": 6 },
+    { "id": "isk_rift_source", "name": "Chemin du Rift (Source)", "type": "badlands", "start": "Geyser_Principal", "end": "Source_Acide", "distance_km": 50.0, "cost_multiplier": 2.5 },
+
+    { "id": "hel_skarnheim_hall", "name": "Place des Runes", "type": "road", "start": "Skarnheim", "end": "Hall_Hydromel", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "hel_nerr_taverne", "name": "Quai Gelé", "type": "road", "start": "Nerr", "end": "Taverne_Glace", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "hel_narvik_refuge", "name": "Centre du Village", "type": "road", "start": "Narvik", "end": "Refuge_Tribal", "distance_km": 0.5, "cost_multiplier": 1.0 },
+    { "id": "hel_ygral_dortoir", "name": "Couloir Sud", "type": "tunnel", "start": "Ygral", "end": "Dortoir_Ermites", "distance_km": 0.5, "cost_multiplier": 1.0 },
+
+    { "id": "hel_fjord_1", "name": "Voie des Fjords (Ouest)", "type": "ice_road", "start": "Nerr", "end": "Abri_Pecheur", "distance_km": 160.0, "cost_multiplier": 1.5, "danger": 3 },
+    { "id": "hel_fjord_2", "name": "Voie des Fjords (Est)", "type": "ice_road", "start": "Abri_Pecheur", "end": "Narvik", "distance_km": 170.0, "cost_multiplier": 1.5, "danger": 3 },
+    { "id": "hel_relais_nerr", "name": "Piste du Refuge", "type": "snow_path", "start": "Nerr", "end": "Relais_Glaciaire", "distance_km": 58.0, "cost_multiplier": 2.0, "danger": 4 },
+
+    { "id": "hel_embouchure", "name": "Accès Embouchure", "type": "ice_road", "start": "Nerr", "end": "Embouchure_Drann", "distance_km": 112.0, "cost_multiplier": 1.5, "danger": 3 },
+    { "id": "hel_naufrageurs", "name": "Crique des Pirates", "type": "sea", "start": "Embouchure_Drann", "end": "Repaire_Naufrageurs", "distance_km": 5.0, "cost_multiplier": 1.0, "danger": 4 },
+
+    { "id": "hel_toundra_1", "name": "Piste de la Toundra (Bas)", "type": "snow_path", "start": "Narvik", "end": "Plaines_Nar", "distance_km": 150.0, "cost_multiplier": 1.8, "danger": 4 },
+    { "id": "hel_toundra_2_1", "name": "Piste de la Toundra (Haut-A)", "type": "snow_path", "start": "Plaines_Nar", "end": "Bivouac_Toundra", "distance_km": 85.0, "cost_multiplier": 1.8, "danger": 4 },
+    { "id": "hel_toundra_2_2", "name": "Piste de la Toundra (Haut-B)", "type": "snow_path", "start": "Bivouac_Toundra", "end": "Skarnheim", "distance_km": 85.0, "cost_multiplier": 1.8, "danger": 4 },
+
+    { "id": "hel_montagne", "name": "Chemin des Montagnes", "type": "mountain_path", "start": "Skarnheim", "end": "Ygral", "distance_km": 283.0, "cost_multiplier": 2.5, "danger": 5 },
+    { "id": "hel_sources", "name": "Piste des Sources", "type": "mountain_path", "start": "Ygral", "end": "Sources_Drann", "distance_km": 112.0, "cost_multiplier": 3.0, "danger": 6 },
+
+    { "id": "tunnel_drann_1", "name": "Canal Drann (Haut)", "type": "tunnel", "start": "Sources_Drann", "end": "Grottes_Drann", "distance_km": 250.0, "cost_multiplier": 0.9, "danger": 5 },
+    { "id": "hel_caverne_interdite", "name": "Chemin Interdit", "type": "tunnel", "start": "Grottes_Drann", "end": "Caverne_Silence", "distance_km": 5.0, "cost_multiplier": 1.5, "danger": 6 },
+    { "id": "tunnel_drann_2", "name": "Canal Drann (Bas)", "type": "tunnel", "start": "Grottes_Drann", "end": "Embouchure_Drann", "distance_km": 460.0, "cost_multiplier": 0.9, "danger": 5 },
+
+    { "id": "sea_fer_bleu_1", "name": "Route Fer-Bleu (Nord)", "type": "sea", "start": "Nerr", "end": "Cotes_Fer_Bleu", "distance_km": 380.0, "cost_multiplier": 0.6, "danger": 3 },
+    { "id": "sea_fer_bleu_2", "name": "Route Fer-Bleu (Sud)", "type": "sea", "start": "Cotes_Fer_Bleu", "end": "Confluence_Draen", "distance_km": 403.0, "cost_multiplier": 0.6, "danger": 3 },
+    { "id": "sea_fer_bleu_3", "name": "Route Fer-Bleu (Eldaron)", "type": "sea", "start": "Confluence_Draen", "end": "Lirn", "distance_km": 350.0, "cost_multiplier": 0.5, "danger": 2 },
+    { "id": "sea_fer_bleu_4", "name": "Route Fer-Bleu (Varnal)", "type": "sea", "start": "Lirn", "end": "Tarran", "distance_km": 100.0, "cost_multiplier": 0.5, "danger": 2 },
+    { "id": "sea_fer_bleu_5", "name": "Route Fer-Bleu (Large)", "type": "sea", "start": "Tarran", "end": "Confluence_Fer_Bleu", "distance_km": 158.0, "cost_multiplier": 0.6, "danger": 3 },
+
+    { "id": "sea_surn_1", "name": "Route Maritime Surn (Asuren)", "type": "sea", "start": "Asuren", "end": "Confluence_Surn", "distance_km": 180.0, "cost_multiplier": 0.5, "danger": 2 },
+    { "id": "sea_surn_2", "name": "Route Maritime Surn (Large)", "type": "sea", "start": "Confluence_Surn", "end": "Cotes_Thaurgrim_Sud", "distance_km": 180.0, "cost_multiplier": 0.7, "danger": 4 },
+    { "id": "sea_surn_3", "name": "Route Maritime Surn (Kaar)", "type": "sea", "start": "Cotes_Thaurgrim_Sud", "end": "Kaar", "distance_km": 540.0, "cost_multiplier": 0.6, "danger": 3 },
+    { "id": "sea_surn_varnal", "name": "Connexion Surn-Varnäl", "type": "sea", "start": "Confluence_Surn", "end": "Tarran", "distance_km": 180.0, "cost_multiplier": 0.8, "danger": 4 },
+    { "id": "sea_thun", "name": "Cabotage Volcanique", "type": "sea", "start": "Cotes_Thaurgrim_Sud", "end": "Thun'ar", "distance_km": 206.0, "cost_multiplier": 0.8, "danger": 4 },
+
+    { "id": "air_brumes", "name": "Piste des Brumes (Inter)", "type": "air", "start": "Velkar", "end": "Lorn", "distance_km": 350.0, "cost_multiplier": 0.4, "danger": 3, "description": "Ligne aérienne par dirigeables." }
+  ]
 }

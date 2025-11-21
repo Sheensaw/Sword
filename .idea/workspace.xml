@@ -5,25 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9346811d-2528-42e9-8c44-1b49d7d36b23" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/JSGEmini.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/arms_mythique.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/arms_simple.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/feet_mythique.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/feet_simple.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/head_mythique.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/head_simple.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/legs_mythique.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/legs_simple.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/shield_mythique.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/shield_simple.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/torso_mythique.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/loot/torso_simple.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSS.css" beforeDir="false" afterPath="$PROJECT_DIR$/CSS.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.html" beforeDir="false" afterPath="$PROJECT_DIR$/Game.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JSGROK.js" beforeDir="false" afterPath="$PROJECT_DIR$/JSGROK.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JavaScript.js" beforeDir="false" afterPath="$PROJECT_DIR$/JavaScript.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codes/JavaScript_OLD_2.js" beforeDir="false" afterPath="$PROJECT_DIR$/codes/JavaScript_OLD_2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codes/JavaScript_OLD.js" beforeDir="false" afterPath="$PROJECT_DIR$/codes/JavaScript_OLD.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codes/JavaScript_OLD_2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/codes/launcher_OLD.py" beforeDir="false" afterPath="$PROJECT_DIR$/codes/launcher_OLD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/game-state.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/inventory-system.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/loot-system.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/main.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/pnj-system.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/quest-system.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/launcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/lore/velkarum.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/velkarum.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,27 +49,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.Beatifier.executor": "Run",
-    "Python.launcher.executor": "Run",
-    "Python.macro_extractor.executor": "Run",
-    "Python.pnj_server.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/garwi/Documents/Twine/Stories/Sword/loot",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.Beatifier.executor&quot;: &quot;Run&quot;,
+    &quot;Python.launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Python.macro_extractor.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pnj_server.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/garwi/Documents/Twine/Stories/Sword/loot&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\garwi\Documents\Twine\Stories\Sword\loot" />
@@ -102,7 +97,8 @@
       <workItem from="1763460950052" duration="24515000" />
       <workItem from="1763541155308" duration="18280000" />
       <workItem from="1763561621599" duration="12407000" />
-      <workItem from="1763634016478" duration="11631000" />
+      <workItem from="1763634016478" duration="16325000" />
+      <workItem from="1763717745676" duration="13030000" />
     </task>
     <servers />
   </component>
@@ -111,8 +107,8 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sword$macro_extractor.coverage" NAME="macro_extractor Coverage Results" MODIFIED="1763397309870" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Sword$launcher.coverage" NAME="launcher Coverage Results" MODIFIED="1763661296407" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sword$launcher.coverage" NAME="launcher Coverage Results" MODIFIED="1763732115450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sword$pnj_server.coverage" NAME="pnj_server Coverage Results" MODIFIED="1763546232771" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/server" />
-    <SUITE FILE_PATH="coverage/Sword$Beatifier.coverage" NAME="Beatifier Coverage Results" MODIFIED="1763564825126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sword$Beatifier.coverage" NAME="Beatifier Coverage Results" MODIFIED="1763731352457" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

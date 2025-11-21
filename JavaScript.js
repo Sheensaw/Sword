@@ -1,8 +1,9 @@
 (function() {
   'use strict';
 
-  //#region Initialisation
+  //#region 1. INITIALISATION & CONSTANTES
   window.setup = window.setup || {};
+
   const ICONS = {
     health: 'images/icons/health.png',
     strength: 'images/icons/strength.png',
@@ -14,22 +15,20 @@
     speak: 'images/icons/speak.png',
     quest: 'images/icons/quest.png',
     buddy: 'images/icons/buddy.png',
-    map: 'images/icons/map.png' // AJOUT DE L'ICÔNE DE CARTE
+    map: 'images/icons/map.png',
+    weapon: 'images/icons/weapon.png'
   };
   window.ICONS = ICONS;
 
-  // État du chargement PNJ
-  window.setup.pnjState = {
-    ready: false,
-    loading: false,
-    attempted: false,
-    fallbackCache: {}
-  };
+  // États de chargement
+  window.setup.pnjState = { ready: false, loading: false, attempted: false, fallbackCache: {} };
+  window.setup.lootState = { ready: false, loading: false, attempted: false, fallbackCache: {} };
+  window.setup.geographyState = { ready: false, loading: false, attempted: false, data: null };
 
-  function V() {
-    return State.variables;
-  }
+  // Raccourci State
+  function V() { return State.variables; }
 
+  // Initialisation Stats Joueur
   window.setup.ensureBaseStats = function() {
     const v = V();
     v.strength = Number(v.strength || 0);
@@ -42,6 +41,7 @@
     v.expToNextLevel = Number(v.expToNextLevel || 100);
     v.current_player_health = Number(v.current_player_health || 10);
     v.max_player_health = Number(v.max_player_health || 10);
+    v.gold = Number(v.gold || 0);
   };
   //#endregion
 
@@ -58,215 +58,76 @@
 
   // Cache d'objets par défaut pour les objets manquants
   window.setup.fallbackItems = {
-    'viande_salee': {
-      id: 'viande_salee',
-      label: 'Viande Salée',
-      type: 'food',
-      bonus: {
-        health: 5
-      },
-      description: 'De la viande séchée et salée pour survivre en voyage.',
-      isQuestItem: false
-    },
-    'essence_phoenix': {
-      id: 'essence_phoenix',
-      label: 'Essence de Phénix',
-      type: 'usable',
-      bonus: {
-        health: 20
-      },
-      description: 'Une essence rare aux propriétés régénératives.',
-      isQuestItem: false
-    }
+    'viande_salee': { id: 'viande_salee', label: 'Viande Salée', type: 'food', bonus: { health: 5 }, description: 'De la viande séchée.', isQuestItem: false },
+    'essence_phoenix': { id: 'essence_phoenix', label: 'Essence de Phénix', type: 'usable', bonus: { health: 20 }, description: 'Essence rare.', isQuestItem: false }
   };
 
-  // Chargement séquentiel robuste avec fallback
+  // Chargement Séquentiel
   async function loadLootsSequentially() {
-    if (window.setup.lootState.loading) {
-      console.log("⚠️ Chargement loot déjà en cours");
-      return;
-    }
-
+    if (window.setup.lootState.loading) return;
     window.setup.lootState.loading = true;
     window.setup.lootState.attempted = true;
 
-    console.log("📦 DÉBUT CHARGEMENT LOOTS...");
-
-    const lootFiles = [
-      "loot/health.js",
-      "loot/food.js",
-      "loot/weapon_simple.js",
-      "loot/weapon_mythique.js"
-    ];
-
-    let loadedCount = 0;
-    let failedCount = 0;
+    const lootFiles = ["loot/health.js", "loot/food.js", "loot/weapon_simple.js", "loot/weapon_mythique.js"];
 
     for (const path of lootFiles) {
       try {
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve) => {
           const script = document.createElement("script");
-
-          // CORRECTION : Chemins alternatifs
-          const possiblePaths = [
-            path,
-            `./${path}`,
-            `/server/${path}`,
-            `./server/${path}`
-          ];
-
-          let currentPathIndex = 0;
-
-          function tryNextPath() {
-            if (currentPathIndex >= possiblePaths.length) {
-              console.warn(`❌ Tous les chemins échoués pour: ${path}`);
-              loadedCount++;
-              resolve();
-              return;
-            }
-
-            const currentPath = possiblePaths[currentPathIndex];
-            script.src = currentPath;
-            script.async = false;
-
-            script.onload = () => {
-              console.log(`✅ LOOT CHARGÉ: ${currentPath}`);
-              loadedCount++;
-              resolve();
-            };
-
-            script.onerror = () => {
-              console.warn(`⚠️ Échec: ${currentPath}`);
-              currentPathIndex++;
-              tryNextPath();
-            };
-
-            document.head.appendChild(script);
+          const possiblePaths = [path, `./${path}`, `/server/${path}`, `./server/${path}`];
+          let idx = 0;
+          function tryNext() {
+             if(idx >= possiblePaths.length) { resolve(); return; }
+             script.src = possiblePaths[idx];
+             script.onload = resolve;
+             script.onerror = () => { idx++; tryNext(); };
+             document.head.appendChild(script);
           }
-
-          tryNextPath();
+          tryNext();
         });
-
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-      } catch (error) {
-        console.warn("Erreur lors du chargement:", path, error);
-        failedCount++;
-      }
+      } catch (e) { console.warn(e); }
     }
-
-    console.log(`📊 ${loadedCount}/${lootFiles.length} fichiers traités, ${failedCount} échecs`);
-
-    // INITIALISATION MALGRÉ LES ÉCHECS
     initLootSystem();
   }
 
-  // Initialisation robuste du système de loot
   function initLootSystem() {
-    console.log("🔄 INITIALISATION CACHE LOOT...");
-
     const categories = window.lootCategories || {};
     window.setup.itemCache = window.setup.itemCache || {};
     window.setup.randomLoot = window.setup.randomLoot || {};
-
-    // Fusion avec les objets de fallback
     Object.assign(window.setup.itemCache, window.setup.fallbackItems);
 
-    let totalItems = 0;
-    let categoryCount = 0;
-
-    // Parcours sécurisé des catégories
     Object.keys(categories).forEach(cat => {
       if (Array.isArray(categories[cat])) {
-        categoryCount++;
         categories[cat].forEach(item => {
-          if (item && item.id && item.label) {
-            window.setup.itemCache[item.id] = item;
-            totalItems++;
-            console.log(`📝 Item chargé: ${item.id} (${cat})`);
-          }
+          if (item && item.id) window.setup.itemCache[item.id] = item;
         });
+        if(categories[cat].length > 0) {
+            window.setup.randomLoot[cat] = categories[cat][Math.floor(Math.random() * categories[cat].length)].id;
+        }
       }
     });
-
-    // Génération des loots aléatoires
-    Object.keys(categories).forEach(type => {
-      const arr = categories[type];
-      if (Array.isArray(arr) && arr.length > 0) {
-        const randomItem = arr[Math.floor(Math.random() * arr.length)];
-        window.setup.randomLoot[type] = randomItem.id;
-        console.log(`🎲 Random ${type}: ${randomItem.id}`);
-      }
-    });
-
     window.setup.lootState.ready = true;
     window.setup.lootState.loading = false;
-
-    console.log(`✅ SYSTÈME LOOT PRÊT: ${totalItems} objets, ${categoryCount} catégories`);
-    console.log("📋 Cache complet:", Object.keys(window.setup.itemCache));
+    console.log("📦 Loot System Ready");
   }
 
-  // Fonction pour obtenir un item de façon sécurisée
   window.setup.getItemFromCache = function(itemId) {
-    if (!itemId) {
-      console.warn("❌ Item ID manquant");
-      return null;
-    }
-
-    // Si le système de loot n'est pas prêt, utiliser le cache de fallback
-    if (!window.setup.lootState.ready) {
-      console.warn("⚠️ Loot system pas prêt, utilisation du fallback pour:", itemId);
-      return window.setup.fallbackItems[itemId] || null;
-    }
-
+    if (!itemId) return null;
+    if (!window.setup.lootState.ready) return window.setup.fallbackItems[itemId] || null;
     const item = window.setup.itemCache[itemId];
-
-    if (!item) {
-      console.warn(`❌ Item non trouvé: ${itemId}`);
-      console.log("📋 Cache disponible:", Object.keys(window.setup.itemCache));
-
-      // Créer un item de fallback dynamique
-      return {
-        id: itemId,
-        label: itemId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        type: 'misc',
-        description: `Objet ${itemId} - chargement en cours...`,
-        bonus: {},
-        isQuestItem: false
-      };
-    }
-
+    if (!item) return { id: itemId, label: itemId, type: 'misc', description: `Objet ${itemId}`, bonus: {}, isQuestItem: false };
     return item;
   };
 
-  // Vérification périodique de l'état du loot
-  window.setup.ensureLootReady = function(callback, maxAttempts = 10) {
-    let attempts = 0;
-
-    function check() {
-      attempts++;
-
-      if (window.setup.lootState.ready) {
-        callback(true);
-        return;
+  window.setup.ensureLootReady = function(callback) {
+      if(window.setup.lootState.ready) callback(true);
+      else {
+          if(!window.setup.lootState.attempted) loadLootsSequentially();
+          setTimeout(() => window.setup.ensureLootReady(callback), 200);
       }
-
-      if (attempts >= maxAttempts) {
-        console.warn("❌ Timeout attente système loot");
-        callback(false);
-        return;
-      }
-
-      if (!window.setup.lootState.attempted) {
-        loadLootsSequentially();
-      }
-
-      setTimeout(check, 200);
-    }
-
-    check();
   };
   //#endregion
+
 
   //#region MACROS SUGARCUBE
 
@@ -1385,99 +1246,41 @@
 
   // REMPLACER loadGeography complètement
   async function loadGeography() {
-    if (window.setup.geographyState.loading) {
-      console.log("⚠️ Chargement géographie déjà en cours");
-      return;
-    }
+      if (window.setup.geographyState.loading) return;
+      window.setup.geographyState.loading = true;
+      window.setup.geographyState.attempted = true;
 
-    window.setup.geographyState.loading = true;
-    window.setup.geographyState.attempted = true;
+      const paths = ['./server/lore/velkarum.json', 'server/lore/velkarum.json', 'lore/velkarum.json', 'velkarum.json'];
+      let success = false;
 
-    console.log("🗺️ DÉBUT CHARGEMENT GÉOGRAPHIE...");
-
-    // 🔴 CORRECTION : Chemins prioritaires pour Twine
-    const possiblePaths = [
-      './server/lore/velkarum.json',
-      'server/lore/velkarum.json',
-      './lore/velkarum.json',
-      'lore/velkarum.json',
-      'velkarum.json'
-    ];
-
-    let success = false;
-
-    for (const path of possiblePaths) {
-      try {
-        console.log(`🔄 Tentative de chargement depuis: ${path}`);
-        const response = await fetch(path);
-
-        if (response.ok) {
-          const geographyData = await response.json();
-          window.setup.geographyState.data = geographyData;
-          window.setup.geographyState.ready = true;
-          success = true;
-          console.log(`✅ GÉOGRAPHIE CHARGÉE depuis: ${path}`, geographyData);
-          break;
-        } else {
-          console.warn(`❌ Échec HTTP ${response.status} pour: ${path}`);
-        }
-      } catch (error) {
-        console.warn(`❌ Erreur fetch pour ${path}:`, error.message);
-        continue;
+      for(const p of paths) {
+          try {
+              const res = await fetch(p);
+              if(res.ok) {
+                  window.setup.geographyState.data = await res.json();
+                  success = true;
+                  break;
+              }
+          } catch(e){}
       }
-    }
 
-    // 🔴 CORRECTION : Appliquer fallback IMMÉDIATEMENT si échec
-    if (!success) {
-      console.warn("❌ ÉCHEC CHARGEMENT GÉOGRAPHIE sur tous les chemins");
-      console.warn("⚠️ Utilisation de la géographie de fallback");
-
-      // 🔴 CORRECTION : Créer une copie indépendante du fallback
-      window.setup.geographyState.data = JSON.parse(JSON.stringify(window.setup.fallbackGeography));
+      if(!success) window.setup.geographyState.data = JSON.parse(JSON.stringify(window.setup.fallbackGeography));
       window.setup.geographyState.ready = true;
-    }
-
-    window.setup.geographyState.loading = false;
-    console.log("✅ SYSTÈME GÉOGRAPHIE PRÊT");
+      window.setup.geographyState.loading = false;
+      console.log("🗺️ Geography Ready");
   }
 
-  // REMPLACER window.setup.getGeographyData
   window.setup.getGeographyData = function() {
-    // 🔴 CORRECTION : Toujours retourner une copie sécurisée
-    if (!window.setup.geographyState.ready || !window.setup.geographyState.data) {
-      console.warn("⚠️ Géographie pas prêt, utilisation du fallback");
-      return JSON.parse(JSON.stringify(window.setup.fallbackGeography));
-    }
-
-    return window.setup.geographyState.data;
+      if (!window.setup.geographyState.ready) return window.setup.fallbackGeography;
+      return window.setup.geographyState.data;
   };
 
-  // Vérification périodique de l'état de la géographie
-  window.setup.ensureGeographyReady = function(callback, maxAttempts = 10) {
-    let attempts = 0;
-
-    function check() {
-      attempts++;
-
-      if (window.setup.geographyState.ready) {
-        callback(true);
-        return;
+  window.setup.ensureGeographyReady = function(callback) {
+      if(window.setup.geographyState.ready) callback(true);
+      else {
+          if(!window.setup.geographyState.attempted) loadGeography();
+          setTimeout(() => window.setup.ensureGeographyReady(callback), 200);
       }
-
-      if (attempts >= maxAttempts) {
-        console.warn("❌ Timeout attente système géographie");
-        callback(false);
-        return;
-      }
-
-      if (!window.setup.geographyState.attempted) {
-        loadGeography();
-      }
-
-      setTimeout(check, 200);
-    }
-
-    check();
   };
 
   // Fonction de diagnostic
@@ -2674,14 +2477,7 @@
      FONCTION UNIFIÉE — CONSTRUCTION MODALE STANDARD
      ========================================================================= */
   window.setup.buildModalHTML = function(options) {
-    const {
-      title,
-      icon = ICONS.misc,
-      content,
-      footer = '',
-      className = ''
-    } = options;
-
+    const { title, icon = ICONS.misc, content, footer = '', className = '' } = options;
     const safeTitle = window.setup.escapeHtml(title || '');
     const iconHTML = icon ? `<img class="icon-1em" src="${icon}" alt="">` : '';
 
@@ -2694,11 +2490,7 @@
             <div class="modal-body">
                 ${content}
             </div>
-            ${footer ? `
-            <div class="modal-footer">
-                ${footer}
-            </div>
-            ` : ''}
+            ${footer ? `<div class="modal-footer">${footer}</div>` : ''}
         </div>
     `;
   };
@@ -2887,232 +2679,187 @@
   window.setup.showPnjModal = function(pnjId) {
     console.log(`🖼️ [showPnjModal] Ouverture modale pour: "${pnjId}"`);
 
-    // Nettoyage préalable
     $('#pnj-modal, #modal-overlay-pnj').remove();
-
-    // Création overlay
     const $overlay = $('<div id="modal-overlay-pnj"></div>').appendTo('body');
     const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
 
-    const v = V();
-    const npc = npcEnsure(pnjId);
+    const v = State.variables;
+    const npc = v.npcs && v.npcs[pnjId] ? v.npcs[pnjId] : null;
 
-    // Fonction de traitement
-    const processPnjModal = (pnjReady) => {
-      // CHARGEMENT CORRIGÉ : utiliser la nouvelle fonction sécurisée
-      const pnjData = window.setup.getPnjData(pnjId);
-      const identite = pnjData.identite;
+    if (!npc) {
+        console.error("PNJ introuvable:", pnjId);
+        $modal.remove(); $overlay.remove();
+        return;
+    }
 
-      console.log("📦 [showPnjModal] Données PNJ chargées:", pnjData);
+    // Chargement des données narratives (JSON)
+    const pnjData = window.setup.getPnjData ? window.setup.getPnjData(pnjId) : { identite: {}, description: "" };
+    const identite = pnjData.identite || {};
 
-      // EXTRACTION SÉCURISÉE selon VOTRE JSON
-      const displayName = identite.nom_complet || identite.nom || pnjId;
-      const safeName = window.setup.escapeHtml(displayName);
+    // --- A. IDENTITÉ ---
+    const displayName = identite.nom_complet || identite.nom || npc.name || pnjId;
+    const safeName = window.setup.escapeHtml(displayName);
 
-      // EXTRACTION RACE/METIER selon VOTRE JSON (peuple et metier_principal)
-      const race = identite.peuple || null;
-      const metier = identite.metier_principal || null;
+    const race = identite.peuple || null;
+    const metier = identite.metier_principal || null;
 
-      // Construction de la ligne race/métier
-      let raceJobHTML = '';
-      if (race && metier) {
-        raceJobHTML = `<div class="pnj-race-job">${race} - ${metier}</div>`;
-      } else if (race) {
-        raceJobHTML = `<div class="pnj-race-job">${race}</div>`;
-      } else if (metier) {
-        raceJobHTML = `<div class="pnj-race-job">${metier}</div>`;
-      }
+    let raceJobHTML = '';
+    if (race && metier) {
+        raceJobHTML = `<div class="pnj-race-job">${window.setup.escapeHtml(race)} - ${window.setup.escapeHtml(metier)}</div>`;
+    } else if (race || metier) {
+        raceJobHTML = `<div class="pnj-race-job">${window.setup.escapeHtml(race || metier)}</div>`;
+    }
 
-      // DESCRIPTION selon VOTRE JSON
-      const safeDescription = window.setup.escapeHtml(pnjData.description);
+    // --- B. DESCRIPTION ---
+    const safeDescription = window.setup.escapeHtml(pnjData.description || "");
 
-      // Récupération des stats du PNJ
-      const strength = npc.stats?.strength || 0;
-      const dexterity = npc.stats?.dexterity || 0;
-      const resistance = npc.stats?.resistance || 0;
-      const level = npc.stats?.level || 1;
+    // --- C. STATISTIQUES ---
+    const strength = npc.stats?.strength || 0;
+    const dexterity = npc.stats?.dexterity || 0;
+    const resistance = npc.stats?.resistance || 0;
+    const level = npc.stats?.level || 1;
+    const currentHealth = npc.health || 0;
+    const maxHealth = npc.maxHealth || 20;
 
-      // Construction de l'inventaire du PNJ
-      let inventoryHTML = '';
-      const inventory = npc.inventory || {};
-      const hasItems = Object.keys(inventory).length > 0;
-
-      if (hasItems) {
-        inventoryHTML = `
-                        <div class="pnj-inventory-section">
-                            <div class="weapon-section-title">Inventaire :</div>
-                            <div class="pnj-inventory-grid">
-                    `;
-
-        Object.entries(inventory).forEach(([itemId, quantity]) => {
-          const itemData = window.setup.getItemFromCache(itemId);
-          if (itemData) {
-            const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
-            const itemType = window.setup.escapeHtml(itemData.type || 'misc');
-            const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(itemData) : '';
-
-            inventoryHTML += `
-                                <div class="pnj-inventory-item" data-id="${itemId}">
-                                    <div class="pnj-item-header">
-                                        <strong>${itemLabel}</strong>
-                                        <span class="pnj-item-qty">x${quantity}</span>
-                                    </div>
-                                    <div class="pnj-item-type">${itemType}</div>
-                                    ${encartsHTML}
-                                </div>
-                            `;
-          } else {
-            // Fallback pour les items non trouvés
-            inventoryHTML += `
-                                <div class="pnj-inventory-item">
-                                    <div class="pnj-item-header">
-                                        <strong>${itemId}</strong>
-                                        <span class="pnj-item-qty">x${quantity}</span>
-                                    </div>
-                                    <div class="pnj-item-type">Objet inconnu</div>
-                                </div>
-                            `;
-          }
-        });
-
-        inventoryHTML += `
-                            </div>
-                        </div>
-                    `;
-      } else {
-        inventoryHTML = `
-                        <div class="pnj-inventory-section">
-                            <div class="weapon-section-title">Inventaire :</div>
-                            <em style="opacity:0.75;">Aucun objet</em>
-                        </div>
-                    `;
-      }
-
-      // Construction de l'équipement du PNJ
-      let equipmentHTML = '';
-      const equipment = npc.equipment || {};
-      const slots = {
+    // --- D. ÉQUIPEMENT (Construction HTML) ---
+    let equipmentHTML = '';
+    const equipment = npc.equipment || {};
+    const slots = {
         weapon: 'Arme',
-        armor: 'Armure',
+        shield: 'Bouclier',
         head: 'Tête',
         torso: 'Torse',
         arms: 'Bras',
         legs: 'Jambes',
-        feet: 'Pieds',
-        shield: 'Bouclier'
-      };
-
-      let hasEquipment = false;
-      Object.entries(slots).forEach(([slot, label]) => {
-        const itemId = equipment[slot];
-        if (itemId) {
-          hasEquipment = true;
-          const itemData = window.setup.getItemFromCache(itemId);
-          if (itemData) {
-            const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
-            equipmentHTML += `
-                                <div class="pnj-equipment-slot">
-                                    <strong>${label} :</strong>
-                                    <span class="pnj-equipped-item">${itemLabel}</span>
-                                </div>
-                            `;
-          } else {
-            equipmentHTML += `
-                                <div class="pnj-equipment-slot">
-                                    <strong>${label} :</strong>
-                                    <span class="pnj-equipped-item">${itemId}</span>
-                                </div>
-                            `;
-          }
-        }
-      });
-
-      if (!hasEquipment) {
-        equipmentHTML = '<em style="opacity:0.75;">Aucun équipement</em>';
-      }
-
-      // Construction du contenu modal
-      const modalContent = window.setup.buildModalHTML({
-        title: `Compagnon - ${safeName}`,
-        icon: ICONS.buddy,
-        content: `
-                        <!-- Informations de base -->
-                        ${raceJobHTML}
-                        
-                        <!-- Description narrative -->
-                        <div class="pnj-description-section">
-                            <p>${safeDescription}</p>
-                        </div>
-                        
-                        <div class="item-stats-divider"></div>
-                        
-                        <!-- Statistiques -->
-                        <div class="pnj-stats-section">
-                            <div class="weapon-section-title">Statistiques :</div>
-                            <div class="pnj-stats-grid">
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="${ICONS.strength}" alt="Force">
-                                    <span class="pnj-stat-label">Force :</span>
-                                    <span class="pnj-stat-value">${strength}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="images/icons/dexterity.png" alt="Dextérité">
-                                    <span class="pnj-stat-label">Dextérité :</span>
-                                    <span class="pnj-stat-value">${dexterity}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="${ICONS.defense}" alt="Résistance">
-                                    <span class="pnj-stat-label">Résistance :</span>
-                                    <span class="pnj-stat-value">${resistance}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <span class="pnj-stat-label">Niveau :</span>
-                                    <span class="pnj-stat-value">${level}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Le reste de votre code pour l'équipement et l'inventaire -->
-                        ${/* VOTRE CODE EXISTANT POUR L'ÉQUIPEMENT ET L'INVENTAIRE */ ''}
-                    `,
-        footer: '<button type="button" class="modal-close">Fermer</button>',
-        className: 'pnj-modal'
-      });
-
-      $modal.append(modalContent);
-      $('body').addClass('modal-open');
-
-      // Gestion de la fermeture
-      $modal.find('.modal-close').on('click', () => {
-        $modal.remove();
-        $overlay.remove();
-        $('body').removeClass('modal-open');
-      });
-
-      // Fermeture en cliquant hors de la modale
-      $(document).one('mousedown.pnjmodal', function(e) {
-        if (!$(e.target).closest('#pnj-modal').length) {
-          $modal.remove();
-          $overlay.remove();
-          $('body').removeClass('modal-open');
-        }
-      });
+        feet: 'Pieds'
     };
 
-    // Vérifier que le système PNJ est prêt
-    if (!window.setup.pnjState.ready) {
-      console.warn("⏳ showPnjModal en attente du système PNJ");
-      window.setup.ensurePNJReady(processPnjModal);
+    let hasEquipment = false;
+    let equipmentListHTML = '';
+
+    Object.entries(slots).forEach(([slot, label]) => {
+        const itemId = equipment[slot];
+        if (itemId) {
+            hasEquipment = true;
+            const itemData = window.setup.getItemFromCache(itemId);
+            const itemLabel = itemData ? window.setup.escapeHtml(itemData.label) : itemId;
+            const iconHtml = `<img class="icon-08em" src="${window.ICONS.equipment}" alt="">`;
+
+            equipmentListHTML += `
+                <div class="pnj-equipment-slot">
+                    <span class="slot-label">${label}</span>
+                    <span class="slot-value">${iconHtml} ${itemLabel}</span>
+                </div>
+            `;
+        }
+    });
+
+    if (hasEquipment) {
+        equipmentHTML = `
+            <div class="pnj-section-divider"></div>
+            <div class="pnj-section-title">Équipement actuel</div>
+            <div class="pnj-equipment-grid">
+                ${equipmentListHTML}
+            </div>
+        `;
     } else {
-      processPnjModal(true);
+        equipmentHTML = `
+            <div class="pnj-section-divider"></div>
+            <div class="pnj-section-title">Équipement</div>
+            <em style="opacity:0.6; font-size:0.9em; display:block; margin-bottom:0.5em;">Aucun équipement visible.</em>
+        `;
     }
+
+    // --- E. INVENTAIRE (Construction HTML) ---
+    let inventoryHTML = '';
+    const inventory = npc.inventory || {};
+    const hasItems = Object.keys(inventory).length > 0;
+
+    if (hasItems) {
+        let itemsListHTML = '';
+
+        Object.entries(inventory).forEach(([itemId, quantity]) => {
+            if(quantity > 0) {
+                const itemData = window.setup.getItemFromCache(itemId) || { id: itemId, label: itemId, type: 'misc' };
+                const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
+                const itemType = window.setup.escapeHtml(itemData.type || 'misc');
+                const encartsHTML = (window.setup.renderItemEncarts) ? window.setup.renderItemEncarts(itemData) : '';
+
+                itemsListHTML += `
+                    <div class="pnj-inventory-item" data-id="${itemId}">
+                        <div class="pnj-item-top">
+                            <strong class="item-name">${itemLabel}</strong>
+                            <span class="item-qty">x${quantity}</span>
+                        </div>
+                        <div class="pnj-item-type">${itemType}</div>
+                        ${encartsHTML}
+                    </div>
+                `;
+            }
+        });
+
+        inventoryHTML = `
+            <div class="pnj-section-divider"></div>
+            <div class="pnj-section-title">Inventaire</div>
+            <div class="pnj-inventory-grid">
+                ${itemsListHTML}
+            </div>
+        `;
+    } else {
+        inventoryHTML = `
+            <div class="pnj-section-divider"></div>
+            <div class="pnj-section-title">Inventaire</div>
+            <em style="opacity:0.6; font-size:0.9em;">Sacoche vide.</em>
+        `;
+    }
+
+    // --- F. ASSEMBLAGE FINAL ---
+    const iconBuddy = window.ICONS.buddy;
+    const iconStr = window.ICONS.strength;
+    const iconDef = window.ICONS.defense;
+    const iconDex = 'images/icons/dexterity.png';
+
+    const modalContent = window.setup.buildModalHTML({
+        title: `Compagnon — ${safeName}`,
+        icon: iconBuddy,
+        className: 'pnj-modal',
+        content: `
+            ${raceJobHTML}
+            <div class="pnj-description-section"><p>${safeDescription}</p></div>
+            <div class="item-stats-divider"></div>
+            
+            <div class="pnj-section-title">Attributs</div>
+            <div class="pnj-stats-grid">
+                <div class="pnj-stat" title="Santé"><img class="icon-08em" src="${window.ICONS.health}"> <span>${currentHealth}/${maxHealth} PV</span></div>
+                <div class="pnj-stat" title="Force"><img class="icon-08em" src="${iconStr}"> <span>Force: ${strength}</span></div>
+                <div class="pnj-stat" title="Dextérité"><img class="icon-08em" src="${iconDex}"> <span>Dext.: ${dexterity}</span></div>
+                <div class="pnj-stat" title="Résistance"><img class="icon-08em" src="${iconDef}"> <span>Res.: ${resistance}</span></div>
+                <div class="pnj-stat" title="Niveau"><span>Niveau ${level}</span></div>
+            </div>
+
+            ${equipmentHTML}
+            ${inventoryHTML}
+        `,
+        footer: '<button type="button" class="modal-close">Fermer</button>'
+    });
+
+    $modal.append(modalContent);
+    $('body').addClass('modal-open');
+
+    $modal.find('.modal-close').on('click', () => {
+        $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open');
+    });
+    $(document).one('mousedown.pnjmodal', function(e) {
+        if (!$(e.target).closest('#pnj-modal').length) {
+            $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open');
+        }
+    });
   };
   // ------------------------------------------------------
   // HUD + INVENTAIRE + ÉQUIPEMENT + (BUDDIES) - VERSION CORRIGÉE
   // ------------------------------------------------------
   window.setup.updateHUD = (function() {
     let timeout;
-
     function icon(img) {
       const src = img || 'images/icons/map.png';
       return `<img class="icon-1em" src="${src}" alt="" onerror="this.style.display='none';">`;
@@ -3125,6 +2872,7 @@
         if (!$hud.length) return;
 
         const v = V();
+        // Valeurs sécurisées
         const health = v.current_player_health ?? 10;
         const maxHealth = v.max_player_health ?? 10;
         const strength = v.strength || 0;
@@ -3137,23 +2885,17 @@
         const expToNextLevel = v.expToNextLevel || 100;
         const expPercent = Math.min(100, (exp / expToNextLevel) * 100);
 
-        // --- CALCUL DE LA LOCALISATION JOUEUR ---
+        // Localisation
         let locationString = "Position inconnue";
         if (v.playerCoordinates) {
              locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
-        } else {
-             const currentPassage = State.variables.currentPassage || State.passage;
-             const pCoords = window.setup.ensurePassageCoords(currentPassage);
-             locationString = window.setup.getLocationString(pCoords, pCoords.continent);
         }
 
+        // Initialisation unique
         if (!$hud.find('.hud-inner').length) {
           $hud.html(`
             <div class="hud-inner">
-                <!-- BARRE PRINCIPALE : STATS + XP + TOGGLES (Grid Layout) -->
                 <div class="hud-row-top">
-                    
-                    <!-- GAUCHE : Stats -->
                     <div class="hud-stats">
                         <div class="hud-block hud-health">${icon(ICONS.health)} ${health}/${maxHealth}</div>
                         <div class="hud-block hud-strength">${icon(ICONS.strength)} ${strength}</div>
@@ -3162,164 +2904,87 @@
                         <div class="hud-block hud-magic">${icon(ICONS.magic)} ${magic}</div>
                         <div class="hud-block hud-gold">${icon(ICONS.gold)} ${gold}</div>
                     </div>
-
-                    <!-- CENTRE : XP Bar -->
                     <div class="hud-exp-bar">
                         <span class="hud-level">${level}</span>
-                        <div class="hud-exp-container">
-                            <div class="hud-exp-fill" style="width: ${expPercent}%;"></div>
-                        </div>
+                        <div class="hud-exp-container"><div class="hud-exp-fill" style="width: ${expPercent}%;"></div></div>
                         <span class="hud-level">${level + 1}</span>
                     </div>
-
-                    <!-- DROITE : Toggles -->
-                    <div class="hud-toggles"></div>
+                    <div class="hud-toggles">
+                        <div id="inventory-toggle" title="Inventaire">${icon(ICONS.inventory)}<span id="inventory-counter" class="counter">0</span></div>
+                        <div id="equipment-toggle" title="Équipement">${icon(ICONS.equipment)}</div>
+                        <div id="buddy-toggle" title="Compagnons" style="display:none;">
+                            <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnons">
+                            <span id="buddy-counter" class="counter">0</span>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- L'ENCART PENDANT (Hors du flux de la barre, positionné en absolu) -->
                 <div class="hud-location" title="${window.setup.escapeHtml(locationString)}">
                     ${icon(ICONS.map)} <span class="location-text">${locationString}</span>
                 </div>
             </div>
-            
-            <!-- Panneaux latéraux -->
             <div id="inventory-panel" class="side-panel"></div>
             <div id="equipment-panel" class="side-panel"></div>
             <div id="messages-panel" class="side-panel"></div>
             <div id="quest-panel" class="side-panel"></div>
             <div id="buddies-panel" class="side-panel"></div>
           `);
-          $(document).trigger('hudready');
-        } else {
-          // MISE À JOUR DYNAMIQUE
-          // Localisation
-          $('.hud-location .location-text').text(locationString);
-          $('.hud-location').attr('title', locationString);
 
-          // Stats
+          // Bind events une seule fois
+          $('#inventory-toggle').on('click', (e) => {
+              e.stopPropagation();
+              window.setup.togglePanel('#inventory-panel');
+              v.inventoryViewed = true;
+              window.setup.updateInventoryCounter();
+              window.setup.renderInventory(); // Render à l'ouverture
+          });
+          $('#equipment-toggle').on('click', (e) => {
+              e.stopPropagation();
+              window.setup.togglePanel('#equipment-panel');
+              window.setup.renderEquipment(); // Render à l'ouverture
+          });
+          $('#buddy-toggle').on('click', (e) => {
+              e.stopPropagation();
+              window.setup.togglePanel('#buddies-panel');
+              window.renderBuddiesPanel(); // Render à l'ouverture
+          });
+
+          // Fermeture panels
+          $(document).on('click.hudpanels', e => {
+             if (!$(e.target).closest('.side-panel, #hud .hud-toggles > div, .context-menu, .modal-content').length) {
+               $('.side-panel').removeClass('show');
+             }
+          });
+        } else {
+          // MISE À JOUR LÉGÈRE (TEXTE SEULEMENT)
+          $('.hud-location .location-text').text(locationString);
           $('.hud-health').html(`${icon(ICONS.health)} ${health}/${maxHealth}`);
           $('.hud-strength').html(`${icon(ICONS.strength)} ${strength}`);
           $('.hud-dexterity').html(`${icon('images/icons/dexterity.png')} ${dexterity}`);
           $('.hud-resistance').html(`${icon(ICONS.defense)} ${resistance}`);
           $('.hud-magic').html(`${icon(ICONS.magic)} ${magic}`);
           $('.hud-gold').html(`${icon(ICONS.gold)} ${gold}`);
+          $('.hud-exp-fill').css('width', `${expPercent}%`);
 
-          // XP
-          const $firstLevel = $('.hud-exp-bar .hud-level:first');
-          const $lastLevel = $('.hud-exp-bar .hud-level:last');
-          const $expFill = $('.hud-exp-fill');
-          if ($firstLevel.length) $firstLevel.text(`Niv. ${level}`);
-          if ($lastLevel.length) $lastLevel.text(`Niv. ${level + 1}`);
-          if ($expFill.length) $expFill.css('width', `${expPercent}%`);
-        }
-
-        // Gestion des boutons (toggles)
-        const $toggles = $('#hud .hud-toggles');
-        if (!document.getElementById('inventory-toggle')) {
-          $toggles.append(`
-            <div id="inventory-toggle" title="Inventaire">
-                ${icon(ICONS.inventory)}
-                <span id="inventory-counter" class="counter">0</span>
-            </div>
-          `);
-        }
-        if (!document.getElementById('equipment-toggle')) {
-          $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(ICONS.equipment)}</div>`);
-        }
-        // BUDDIES
-        const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned).length;
-        if (!document.getElementById('buddy-toggle')) {
-          $toggles.prepend(`
-            <div id="buddy-toggle" title="Compagnons" style="display:none;">
-                <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnons">
-                <span id="buddy-counter" class="counter">0</span>
-            </div>
-          `);
-        }
-        $('#buddy-toggle').toggle(buddiesCount > 0);
-        const $buddyCounter = $('#buddy-counter');
-        if ($buddyCounter.length) {
-          $buddyCounter.text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
+          // Compteur Buddy
+          const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned).length;
+          $('#buddy-toggle').toggle(buddiesCount > 0);
+          $('#buddy-counter').text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
         }
 
         // Gestionnaire panneaux
         window.setup.togglePanel = function(panelSelector) {
           const $panel = $(panelSelector);
-          if (!$panel.length) return;
           const isVisible = $panel.hasClass('show');
           $('.side-panel').removeClass('show');
           if (!isVisible) $panel.addClass('show');
         };
 
-        // Evénements
-        $('#inventory-toggle').off('click').on('click', (e) => {
-          e.stopPropagation();
-          window.setup.togglePanel('#inventory-panel');
-          v.inventoryViewed = true;
-          window.setup.updateInventoryCounter();
-          renderInventory();
-        });
-        $('#equipment-toggle').off('click').on('click', (e) => {
-          e.stopPropagation();
-          window.setup.togglePanel('#equipment-panel');
-          renderEquipment();
-        });
-        $('#buddy-toggle').off('click').on('click', (e) => {
-          e.stopPropagation();
-          window.setup.togglePanel('#buddies-panel');
-          window.renderBuddiesPanel();
-        });
-
-        // Fermeture panels
-        $(document).off('click.hudpanels').on('click.hudpanels', e => {
-             const $target = $(e.target);
-             const isInsidePanel = $target.closest('.side-panel').length > 0;
-             const isToggle = $target.closest('#hud .hud-toggles > div').length > 0;
-             const isContextMenu = $target.closest('.context-menu, #inventory-context-menu, #delete-confirm').length > 0;
-             const isModal = $target.closest('.modal-content').length > 0;
-
-             if (!isInsidePanel && !isToggle && !isContextMenu && !isModal) {
-               $('.side-panel').removeClass('show');
-             }
-        });
-
-        function renderInventory() {
-            const $panel = $('#inventory-panel').empty();
-            const inventory = v.inventory || [];
-            const equipped = v.equipped || {};
-            if (inventory.length) {
-                 const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
-                 const frag = document.createDocumentFragment();
-                 inventory.forEach(it => {
-                     const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(it) : '';
-                     const isNew = v.inventoryNewItems?.includes(it.id);
-                     const $item = $(`<div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}"><div>${window.setup.escapeHtml(it.label)}</div><span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>${encartsHTML}</div>`);
-                     $item.on('contextmenu', function(e) { e.preventDefault(); window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this)); });
-                     $item.on('mouseenter', function() { if($(this).hasClass('new')){ window.setup.updateInventoryCounter(); window.setup.updateHUD(); }});
-                     frag.appendChild($item[0]);
-                 });
-                 $panel[0].appendChild(frag);
-            } else {
-                 $panel.append('<em style="opacity:.6;">Aucun objet.</em>');
-            }
-        }
-
-        function renderEquipment() {
-             const $panel = $('#equipment-panel').empty();
-             const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
-             slots.forEach(slot => {
-                $panel.append(`<div class="equipment-slot" data-slot="${slot}"><strong>${slot}:</strong>${v.equipped[slot] ? ' (Objet)' : ' <em style="opacity:.6">Vide</em>'}</div>`);
-             });
-        }
-
-        // Rafraîchissement final
-        if ($('#inventory-panel').hasClass('show')) renderInventory();
-        if ($('#equipment-panel').hasClass('show')) renderEquipment();
-        if ($('#buddies-panel').hasClass('show')) window.renderBuddiesPanel();
-
         window.setup.updateMessageCounter();
         window.setup.updateQuestCounter();
         window.setup.updateInventoryCounter();
+
+        // IMPORTANT : NE PAS APPELER renderInventory() ou renderBuddiesPanel() ICI
+        // Cela évite le clignotement à chaque frame.
 
       }, 40);
     };
@@ -4676,248 +4341,104 @@
   // — version stable : le menu reste ouvert même avec filtres / interactions UI
   // ==========================================================
   window.renderBuddiesPanel = function() {
-  const v = State.variables;
-  const $panel = $('#buddies-panel');
+      const v = State.variables;
+      const $panel = $('#buddies-panel');
 
-  // Nettoyage timer
-  if (window.setup.buddiesPanelInterval) {
-    clearInterval(window.setup.buddiesPanelInterval);
-    window.setup.buddiesPanelInterval = null;
-  }
+      // Sécurité anti-clignotement : Si le panneau n'est pas visible, on ne calcule rien
+      if (!$panel.hasClass('show') && $panel.length > 0) return;
 
-  const $existingMenu = $('#buddy-context-menu');
-  const savedMenu = $existingMenu.length > 0 ? $existingMenu.detach() : null;
-
-  $panel.empty();
-
-  // Filtrage
-  const all = Object.values(v.npcs || {});
-  const list = all.filter(n => n.isSpawned && n.isBuddy);
-
-  if (!list.length) {
-    $panel.append('<em style="opacity:.6; font-style:italic;">Aucun compagnon.</em>');
-    if (savedMenu) $('body').append(savedMenu);
-    return;
-  }
-
-  list.forEach(b => {
-    const healthRatio = (b.health || 0) / (b.maxHealth || 1);
-    const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
-
-    let statusHTML = '';
-    let locationText = window.setup.getLocationString(b.coordinates, b.continent);
-
-    // --- BLOC VOYAGE ---
-    if (b.status === 'traveling' && b.travelCurrentStep) {
-      const step = b.travelCurrentStep;
-      const isResting = step.type === 'rest';
-
-      const endTime = step.endTime;
-      const totalDuration = step.duration;
-      const distSection = Number(step.dist) || 0;
-
-      // 🛠️ CORRECTION ICI : On définit la couleur finale AVANT le HTML
-      // Cela évite l'erreur "Mismatched property value" dans l'éditeur
-      const baseColor = isResting ? '#4fc3f7' : '#66bb6a';
-      const finalColor = baseColor || '#66bb6a';
-
-      let actionText = "";
-      let subText = "";
-
-      if (isResting) {
-        actionText = `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`;
-        subText = "Pause nécessaire";
-        locationText = `S'arrête à ${step.locationName}`;
-      } else {
-        actionText = `<span style="color:#eee;">${step.desc}</span>`;
-        subText = "En mouvement";
-        locationText = `Se déplace`;
-      }
-
-      // On utilise ${finalColor} qui est une variable simple, ce qui ne casse pas le linter CSS
-      statusHTML = `
-          <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
-               data-name="${b.name}"
-               data-end="${endTime}" 
-               data-total="${totalDuration}"
-               data-type="${step.type}"
-               data-dist="${distSection}">
-              
-              <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                  ${actionText}
-              </div>
-              
-              <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
-                  <span><span class="travel-timer-text">...</span></span>
-                  ${!isResting ? '<span class="travel-dist-text">... km</span>' : ''}
-              </div>
-              
-              <div class="travel-progress-bg">
-                <div class="travel-progress-fill" style="width: 0%;">
-                </div>
-              </div>
-
-              <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
-                   Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
-              </div>
-          </div>
-      `;
-    }
-
-    const $entry = $(`
-          <div class="buddy-entry" data-name="${b.name}">
-              <div class="msg-header">
-                  <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
-                  <strong>${window.setup.escapeHtml(b.name)}</strong>
-                  <span class="item-badge buddy-${b.status}">${b.status}</span>
-              </div>
-              <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
-              ${statusHTML}
-              <div class="buddy-location">${locationText}</div>
-          </div>
-      `);
-    $panel.append($entry);
-  });
-
-  // --- TIMER DYNAMIQUE ---
-  if ($panel.find('.buddy-travel-wrapper').length > 0) {
-    const updateTimers = () => {
-      const now = Date.now();
-      let active = false;
-
-      $panel.find('.buddy-travel-wrapper').each(function() {
-        const $wrapper = $(this);
-        const name = $wrapper.data('name');
-        const endTime = Number($wrapper.data('end'));
-        const totalTime = Number($wrapper.data('total'));
-        const type = $wrapper.data('type');
-        const distSection = Number($wrapper.data('dist'));
-
-        // Recalculer l'état pour la mise à jour visuelle
-        const isResting = type === 'rest';
-        const currentColor = isResting ? '#4fc3f7' : '#66bb6a';
-
-        const remaining = endTime - now;
-        let percent = 0;
-
-        if (remaining <= 0) {
-          percent = 100;
-          $wrapper.find('.travel-timer-text').text("Fin étape");
-        } else {
-          active = true;
-          percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
-          const secs = Math.ceil(remaining / 1000);
-          const timeStr = `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
-          $wrapper.find('.travel-timer-text').text(timeStr);
-        }
-
-        // MISE À JOUR CSS COMPLÈTE
-        $wrapper.find('.travel-progress-fill').css({
-          'width': `${percent}%`,
-          'background-color': currentColor,
-          'box-shadow': `0 0 5px ${currentColor}`
-        });
-
-        // --- CALCUL DES KM RESTANTS (GLOBAL) ---
-        const npc = v.npcs[name];
-        if (npc && npc.travelItinerary) {
-          let totalKmLeft = 0;
-
-          // 1. Reste de l'étape en cours
-          if (type === 'travel' && remaining > 0) {
-            const kmLeftSection = distSection * (remaining / totalTime);
-            totalKmLeft += kmLeftSection;
-            $wrapper.find('.travel-dist-text').text(`${kmLeftSection.toFixed(1)} km`);
-          } else {
-            $wrapper.find('.travel-dist-text').text('');
-          }
-
-          // 2. Somme des étapes futures
-          if (npc.travelStepIndex < npc.travelItinerary.length - 1) {
-            for (let i = npc.travelStepIndex + 1; i < npc.travelItinerary.length; i++) {
-              totalKmLeft += (npc.travelItinerary[i].dist || 0);
-            }
-          }
-
-          $wrapper.find('.travel-total-km').text(`${totalKmLeft.toFixed(1)} km`);
-        }
-      });
-
-      if (!active && window.setup.buddiesPanelInterval) {
+      // Nettoyage timer
+      if (window.setup.buddiesPanelInterval) {
         clearInterval(window.setup.buddiesPanelInterval);
         window.setup.buddiesPanelInterval = null;
       }
-    };
-    updateTimers();
-    window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
-  }
 
-  if (savedMenu) $('body').append(savedMenu);
+      $panel.empty();
 
-  // Gestion du clic droit
-  $panel.find('.buddy-entry').on('contextmenu', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $('#buddy-context-menu').remove();
-    const name = $(this).data('name');
-    const npc = v.npcs[name];
-    const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
+      const all = Object.values(v.npcs || {});
+      const list = all.filter(n => n.isSpawned && n.isBuddy);
 
-    function addOption(text, fn, disabled = false) {
-      const $opt = $('<div class="context-option"></div>').text(text);
-      if (disabled) $opt.addClass('disabled');
-      else $opt.on('click', ev => {
-        ev.stopPropagation();
-        fn();
-        $menu.remove();
-      });
-      $menu.append($opt);
-    }
-
-    if (npc.status === 'traveling') {
-      addOption('Annuler voyage', () => window.setup.cancelPNJTravel(name));
-    } else {
-      addOption('Me suivre', () => {
-        const destPassage = State.passage;
-        const destCoords = window.setup.ensurePassageCoords(destPassage);
-        const destCont = destCoords.continent || "Eldaron";
-        window.setup.startPNJTravel(name, destPassage, destCoords, destCont, 'follow');
-      });
-      addOption('Attendre ici', () => {
-        npc.status = 'fixed';
-        npc.passage = State.passage;
-        npc.coordinates = { ...window.setup.ensurePassageCoords(State.passage)
-        };
-        window.renderBuddiesPanel();
-      });
-      addOption('Parler', () => window.setup.openChatModal(name));
-
-      const currentHP = Number(npc.health) || 0;
-      const maxHP = Number(npc.maxHealth) || 1;
-      if (currentHP < maxHP) {
-        addOption('Soigner (+5 PV)', () => window.setup.healBuddy(name, 5));
+      if (!list.length) {
+        $panel.append('<em style="opacity:.6; font-style:italic;">Aucun compagnon.</em>');
+        return;
       }
-      addOption('Faire partir', () => {
-        npc.isActive = false;
-        window.renderBuddiesPanel();
+
+      list.forEach(b => {
+        const healthRatio = (b.health || 0) / (b.maxHealth || 1);
+        const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
+        let locationText = window.setup.getLocationString ? window.setup.getLocationString(b.coordinates, b.continent) : "Localisation inconnue";
+
+        // Voyage
+        let statusHTML = '';
+        if (b.status === 'traveling' && b.travelCurrentStep) {
+          const step = b.travelCurrentStep;
+          const isResting = step.type === 'rest';
+          const actionText = isResting ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>` : `<span style="color:#eee;">${step.desc}</span>`;
+          statusHTML = `
+              <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" data-name="${b.name}" data-end="${step.endTime}" data-total="${step.duration}">
+                  <div class="travel-text-primary" style="font-size:0.85em;">${actionText}</div>
+                  <div class="travel-progress-bg"><div class="travel-progress-fill" style="width: 0%;"></div></div>
+              </div>
+          `;
+        }
+
+        // Arme
+        let weaponHTML = '';
+        if (b.equipment && b.equipment.weapon) {
+            const wId = b.equipment.weapon;
+            const wData = window.setup.getItemFromCache(wId);
+            const wLabel = wData ? wData.label : wId;
+            weaponHTML = `
+                <div class="buddy-weapon-display">
+                    <img src="${window.ICONS.weapon || window.ICONS.equipment}" class="icon-08em">
+                    <span>${window.setup.escapeHtml(wLabel)}</span>
+                </div>
+            `;
+        }
+
+        const $entry = $(`
+              <div class="buddy-entry" data-name="${b.name}">
+                  <div class="msg-header">
+                      <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
+                      <strong>${window.setup.escapeHtml(b.name)}</strong>
+                      <span class="item-badge buddy-${b.status}">${b.status}</span>
+                  </div>
+                  <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
+                  ${weaponHTML}
+                  ${statusHTML}
+                  <div class="buddy-location">${locationText}</div>
+              </div>
+          `);
+
+        $panel.append($entry);
       });
-    }
 
-    const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
-    const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
-    $menu.css({
-      top: `${posY}px`,
-      left: `${posX}px`
-    });
+      // Events
+      $panel.find('.buddy-entry').on('click', function(e) {
+          e.preventDefault();
+          const name = $(this).data('name');
+          window.setup.showPnjModal(name);
+      });
 
-    $(document).off('mousedown.buddymenuclose').on('mousedown.buddymenuclose', ev => {
-      if (!$(ev.target).closest('#buddy-context-menu').length) {
-        $('#buddy-context-menu').remove();
-        $(document).off('mousedown.buddymenuclose');
+      // Timer visuel (seulement si nécessaire)
+      if ($panel.find('.buddy-travel-wrapper').length > 0) {
+          const updateTimers = () => {
+              $panel.find('.buddy-travel-wrapper').each(function() {
+                  const $wrapper = $(this);
+                  const now = Date.now();
+                  const endTime = Number($wrapper.data('end'));
+                  const totalTime = Number($wrapper.data('total'));
+                  if(endTime > now) {
+                       const percent = Math.min(100, Math.max(0, ((totalTime - (endTime - now)) / totalTime) * 100));
+                       $wrapper.find('.travel-progress-fill').css('width', percent + '%');
+                  } else {
+                       $wrapper.find('.travel-progress-fill').css('width', '100%');
+                  }
+              });
+          };
+          window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
       }
-    });
-  });
-};
+  };
   // ------------------------------------------------------
   // MENU "DONNER À UN COMPAGNON" — VERSION AMÉLIORÉE ET UNIFIÉE
   // ------------------------------------------------------
@@ -5750,72 +5271,11 @@
   // À appeler dans la console : setup.debugLocationSystem()
 
   $(document).one(':storyready', function() {
-    console.log("🎮 STORY READY - INITIALISATION SÉCURISÉE");
-
-    // 🔴 CORRECTION CRITIQUE : Synchroniser IMMÉDIATEMENT currentPassage
-    State.variables.currentPassage = (typeof State.passage === 'string' ? State.passage : State.passage?.title) || 'Geole';
-    console.log(`🔧 State.variables.currentPassage = "${State.variables.currentPassage}"`);
-
-    // Initialiser les variables de base
+    console.log("🎮 [INIT] Story Ready");
+    // ... Chargements initiaux ...
+    if (typeof loadAllPNJ === 'function') loadAllPNJ();
     window.setup.ensureBaseStats();
-
-    // Initialiser les coordonnées du passage de départ
-    window.setup.ensurePassageCoords(State.variables.currentPassage);
-
-    // Initialiser les coordonnées du joueur si manquantes
-    const v = State.variables;
-    if (!v.playerCoordinates) {
-      const initialCoords = window.setup.ensurePassageCoords(State.variables.currentPassage);
-      v.playerCoordinates = {
-        x: Number(initialCoords.x),
-        y: Number(initialCoords.y),
-        continent: initialCoords.continent,
-        passage: State.variables.currentPassage
-      };
-    }
-
-    // Démarrer les chargements asynchrones
-    Promise.resolve()
-      .then(() => loadGeography())
-      .then(() => loadLootsSequentially())
-      .then(() => loadAllPNJ())
-      .catch(error => {
-        console.error("❌ ERREUR D'INITIALISATION:", error);
-        // Fallbacks sécurisés
-        initLootSystem();
-        window.setup.pnjState.ready = true;
-        window.setup.geographyState.ready = true;
-      });
-
-    // Initialiser les variables du jeu
-    v.inventory = v.inventory || [];
-    v.equipped = v.equipped || {};
-    v.current_player_health = v.current_player_health ?? 10;
-    v.max_player_health = v.max_player_health ?? 10;
-    v.strength = v.strength || 0;
-    v.resistance = v.resistance || 0;
-    v.magic = v.magic || 0;
-    v.gold = v.gold || 0;
-    v.dexterity = v.dexterity || 0;
-    v.level = v.level || 1;
-    v.exp = v.exp || 0;
-    v.inventoryNewItems = v.inventoryNewItems || [];
-    v.inventoryViewed = v.inventoryViewed !== false;
-    v.messages = v.messages || [];
-    v.quests = v.quests || [];
-    v.completedQuests = v.completedQuests || [];
-    v.pendingQuests = v.pendingQuests || {};
-    v.npcs = v.npcs || {};
-    v.passageCoords = v.passageCoords || {};
-
-    // Créer le HUD si nécessaire
-    if (!document.getElementById('hud')) $('body').prepend('<div id="hud"></div>');
-    if (!document.getElementById('notification-container')) $('body').append('<div id="notification-container"></div>');
-
-    // Mise à jour initiale du HUD
     window.setup.updateHUD();
-
-    console.log("✅ Initialisation storyready terminée");
   });
 
   // ------------------------------------------------------

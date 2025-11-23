@@ -1,0 +1,291 @@
+# geopolitique.yaml
+modele: "hybride_ia_semantique"
+description: "Système géopolitique complet de Velkarum - Alliances, conflits et personnages influents"
+
+# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+embedding_optimized:
+  themes: ["géopolitique", "alliances", "conflits", "diplomatie", "personnages_influents", "pouvoir", "relations_internationales"]
+  mots_cles: ["conseil_royaumes", "pacte_continental", "crise_glaciaire", "alliance_feu_glace", "triangle_energetique", "seigneurs_guerre", "ambassadeurs"]
+  description_semantique: "Système géopolitique complet de Velkarum avec alliances, conflits actuels et personnages influents de chaque région"
+
+# STRUCTURES GOUVERNEMENTALES PRINCIPALES
+gouvernements_continentaux:
+  - continent: "Eldaron"
+    type_gouvernement: "Monarchie constitutionnelle avec Conseil des Royaumes"
+    dirigeant: "Roi Alaric de Valnoria"
+    capitale: "Lorn (45,55)"
+    structure: "8 régions autonomes unies sous couronne centrale"
+    influence: "Pouvoir diplomatique et économique dominant"
+
+  - continent: "Varnäl"
+    type_gouvernement: "Confédération écocratique"
+    dirigeant: "Grand Druide Kaelen"
+    capitale: "Rhaal (35,75)"
+    structure: "Conseil des régions écologiques avec veto des anciens"
+    influence: "Pouvoir écologique et biologique vital"
+
+  - continent: "Iskarion"
+    type_gouvernement: "Théocratie solaire"
+    dirigeant: "Grand Prêtre Solaire Zephyros"
+    capitale: "Zhaïr (35,75)"
+    structure: "Hiérarchie sacerdotale avec conseil des maîtres énergéticiens"
+    influence: "Pouvoir énergétique et spirituel croissant"
+
+  - continent: "Thaurgrim"
+    type_gouvernement: "Clanocratie volcanique"
+    dirigeant: "Grand Forgemaster Vulkan"
+    capitale: "Vulkar (75,70)"
+    structure: "Assemblée des clans avec primauté du clan du Ghaarn"
+    influence: "Pouvoir industriel et minéral stratégique"
+
+  - continent: "Helrün"
+    type_gouvernement: "Conseil tribal polaire"
+    dirigeant: "Jarl Hrothgar des Clans du Nerr"
+    capitale: "Skarnheim (75,55)"
+    structure: "Assemblée des chefs tribaux avec rotation saisonnière"
+    influence: "Pouvoir climatique et scientifique spécialisé"
+
+# ALLIANCES INTERCONTINENTALES MAJEURES
+alliances_principales:
+  - nom: "Conseil des Royaumes de Lorn"
+    type: "Organisation diplomatique suprême"
+    siege: "Lorn (45,55)"
+    membres_fondateurs: ["Eldaron", "Varnäl", "Iskarion", "Thaurgrim", "Helrün"]
+    objectif: "Maintien de la paix et coordination des échanges continentaux"
+    pouvoirs: ["Arbitrage des conflits", "Gestion des crises", "Organisation de l'aide humanitaire"]
+    reussites: ["Traité de stabilisation énergétique", "Protocole d'assistance écologique"]
+
+  - nom: "Pacte du Triangle Énergétique"
+    type: "Alliance économique et technologique"
+    membres: ["Iskarion", "Thaurgrim", "Eldaron"]
+    objectif: "Optimisation de la production et distribution d'énergie"
+    benefices: ["+35% efficacité énergétique continentale", "Réduction de 40% des pénuries"]
+    tensions_internes: "Concurrence technologique entre Iskari et Nains Thaurgriens"
+
+  - nom: "Alliance du Feu et de la Glace"
+    type: "Partenaire de recherche et développement"
+    membres: ["Helrün", "Thaurgrim"]
+    objectif: "Maîtrise des énergies extrêmes et régulation climatique"
+    realisations: ["Système de refroidissement géothermale", "Stockage énergie dans glace noire"]
+    importance: "Vital pour la stabilité volcanique et climatique"
+
+  - nom: "Arc Nord Écologique"
+    type: "Coopération environnementale"
+    membres: ["Varnäl", "Helrün", "Eldaron"]
+    objectif: "Préservation des écosystèmes et régulation climatique"
+    actions: ["Banque de semences mondiale", "Protocoles de purification d'air", "Surveillance climatique"]
+
+  - nom: "Ligue Maritime Commerciale"
+    type: "Cartel commercial maritime"
+    membres: ["Nautes du Draen", "Ligues Côtières de Lirn", "Territoires des Nautes du Draen"]
+    objectif: "Contrôle et régulation du commerce maritime international"
+    influence: "70% du transport maritime continental sous leur influence"
+
+# CONFLITS ACTUELS ET TENSIONS
+conflits_majeurs:
+  - nom: "Crise des Cendres Fertilisantes"
+    parties: ["Thaurgrim", "Eldaron", "Varnäl"]
+    nature: "Conflit commercial et écologique"
+    causes: ["Demande croissante d'Eldaron", "Préoccupations écologiques de Varnäl", "Capacité de production limitée de Thaurgrim"]
+    manifestations: ["Augmentation des prix de 150%", "Restrictions d'exportation", "Tensions diplomatiques"]
+    mediation: "Conseil des Royaumes tente une résolution négociée"
+    intensite: "Élevée - Risque de pénurie alimentaire"
+
+  - nom: "Tension Frontalière Orientale"
+    parties: ["Marches Orientales d'Eldaron", "Territoires Gobelins non affiliés"]
+    nature: "Conflit territorial et sécuritaire"
+    causes: ["Expansion minière eldarienne", "Incursions gobelines", "Contrôle des ressources"]
+    manifestations: ["Escarmouches frontalières", "Fortifications renforcées", "Embargo commercial"]
+    mediation: "Négociations bloquées depuis 3 ans"
+    intensite: "Moyenne - Conflit latent avec pics violents"
+
+  - nom: "Conflit d'Influence en Mer d'Ashraal"
+    parties: ["Thaurgrim", "Nautes du Draen"]
+    nature: "Conflit d'accès aux ressources"
+    causes: ["Contrôle des gisements de soufre", "Droits de navigation", "Installations industrielles"]
+    manifestations: ["Blocus temporaires", "Sabotages industriels", "Guerre des prix"]
+    mediation: "Tribunal maritime de Lirn saisi"
+    intensite: "Moyenne - Impact sur l'industrie continentale"
+
+  - nom: "Crise de Succession Helrunienne"
+    parties: ["Clans du Nerr", "Tribus du Nar", "Montagnards du Skarnheim"]
+    nature: "Conflit politique interne"
+    causes: ["Disparition mystérieuse du Jarl précédent", "Rivalités tribales anciennes", "Contrôle du commerce de la glace"]
+    manifestations: ["Désaccords au conseil tribal", "Blocus commerciaux internes", "Violences sporadiques"]
+    mediation: "Ermites du Drann tentent une médiation spirituelle"
+    intensite: "Élevée - Menace l'approvisionnement en glace noire"
+
+  - nom: "Tension Énergétique Iskarienne"
+    parties: ["Royaume Solaire du Zhaïr", "Territoires du Rift Shaar"]
+    nature: "Conflit doctrinal et technologique"
+    causes: ["Opposition entre énergie solaire et géothermale", "Rivalité sacerdotale", "Contrôle de la recherche"]
+    manifestations: ["Sabotage de miroirs solaires", "Blocus de sites géothermaux", "Propagande active"]
+    mediation: "Grand Prêtre Solaire impose un compromis fragile"
+    intensite: "Moyenne - Risque pour la production énergétique"
+
+# PERSONNAGES INFLUENTS PAR RÉGION
+personnages_cles:
+  - continent: "Eldaron"
+    personnages:
+      - nom: "Roi Alaric de Valnoria"
+        titre: "Souverain d'Eldaron et Président du Conseil des Royaumes"
+        localisation: "Lorn (45,55)"
+        influence: "9/10"
+        caracteristiques: ["Diplomate érudit", "Stratège économique", "Bâtisseur d'alliances"]
+        objectifs: ["Stabiliser le commerce continental", "Renforcer le Conseil des Royaumes", "Contrôler l'inflation"]
+        faiblesses: ["Trop confiant dans la diplomatie", "Sous-estime les crises écologiques"]
+
+      - nom: "Lady Seraphina d'Ardel"
+        titre: "Maîtresse de la Guilde des Marchands"
+        localisation: "Ardel (60,35)"
+        influence: "8/10"
+        caracteristiques: ["Négociatrice impitoyable", "Réseau d'informateurs étendu", "Maîtresse des finances"]
+        objectifs: ["Maximiser les profits commerciaux", "Contrôler les routes marchandes", "Influencer la politique fiscale"]
+        faiblesses: ["Mépris des considérations écologiques", "Alliances fragiles"]
+
+  - continent: "Varnäl"
+    personnages:
+      - nom: "Grand Druide Kaelen"
+        titre: "Gardien des Forêts Primaires"
+        localisation: "Rhaal (35,75)"
+        influence: "9/10"
+        caracteristiques: ["Sagesse ancestrale", "Pouvoir de communication avec la nature", "Autorité morale incontestée"]
+        objectifs: ["Protéger les écosystèmes", "Équilibre écologique planétaire", "Préserver les savoirs anciens"]
+        faiblesses: ["Rigidité doctrinale", "Méfiance excessive envers le progrès"]
+
+      - nom: "Maître Alchimiste Lyra"
+        titre: "Directrice des Laboratoires de Marael"
+        localisation: "Marael (55,45)"
+        influence: "7/10"
+        caracteristiques: ["Génie de la bio-alchimie", "Réseau scientifique international", "Innovatrice pragmatique"]
+        objectifs: ["Développer les technologies de purification", "Créer de nouveaux matériaux biologiques", "Commercialiser les découvertes"]
+        faiblesses: ["Ambition personnelle démesurée", "Conflits avec les traditionalistes"]
+
+  - continent: "Iskarion"
+    personnages:
+      - nom: "Grand Prêtre Solaire Zephyros"
+        titre: "Guide Spirituel et Énergétique d'Iskarion"
+        localisation: "Zhaïr (35,75)"
+        influence: "8/10"
+        caracteristiques: ["Orateur charismatique", "Visionnaire énergétique", "Stratège à long terme"]
+        objectifs: ["Étendre l'influence solaire", "Développer les technologies sacrées", "Maintenir l'indépendance énergétique"]
+        faiblesses: ["Dogmatisme croissant", "Sous-estimation des risques écologiques"]
+
+      - nom: "Docteur Kaelen Shaar"
+        titre: "Directeur de la Recherche Géothermique"
+        localisation: "Shaar-Keth (55,45)"
+        influence: "7/10"
+        caracteristiques: ["Scientifique brillant", "Pragmatique et innovant", "Réseau international de chercheurs"]
+        objectifs: ["Diversifier les sources énergétiques", "Développer la coopération scientifique", "Réduire la dépendance solaire"]
+        faiblesses: ["Manque de soutien politique", "Ressources limitées"]
+
+  - continent: "Thaurgrim"
+    personnages:
+      - nom: "Grand Forgemaster Vulkan"
+        titre: "Chef du Clan du Ghaarn"
+        localisation: "Vulkar (75,70)"
+        influence: "9/10"
+        caracteristiques: ["Forgeron légendaire", "Stratège industriel", "Négociateur intraitable"]
+        objectifs: ["Maximiser la production industrielle", "Contrôler le marché des cendres", "Renforcer l'indépendance technologique"]
+        faiblesses: ["Autoritarisme croissant", "Sous-estimation des impacts écologiques"]
+
+      - nom: "Capitaine Ragnar"
+        titre: "Commandant de la Flotte de Kaar"
+        localisation: "Kaar (85,40)"
+        influence: "6/10"
+        caracteristiques: ["Marine expérimenté", "Loyal envers Vulkan", "Tacticien maritime"]
+        objectifs: ["Protéger les routes commerciales", "Étendre l'influence maritime", "Contrôler l'accès aux ressources"]
+        faiblesses: ["Manque de vision stratégique", "Dépendance envers Vulkan"]
+
+  - continent: "Helrün"
+    personnages:
+      - nom: "Jarl Hrothgar"
+        titre: "Chef des Clans du Nerr"
+        localisation: "Nerr (25,15)"
+        influence: "8/10"
+        caracteristiques: ["Survivant endurci", "Commerçant astucieux", "Stratège des conditions extrêmes"]
+        objectifs: ["Stabiliser le commerce de la glace", "Unifier les clans helruniens", "Négocier de meilleurs accords commerciaux"]
+        faiblesses: ["Manque de soutien des autres clans", "Dépendance aux conditions polaires"]
+
+      - nom: "Érudit Ygrid"
+        titre: "Directeur de la Station Polaire d'Ygral"
+        localisation: "Ygral (55,75)"
+        influence: "7/10"
+        caracteristiques: ["Savant visionnaire", "Diplomate scientifique", "Gardien des connaissances anciennes"]
+        objectifs: ["Développer la recherche polaire", "Préserver la mémoire glaciale", "Établir des collaborations internationales"]
+        faiblesses: ["Isolement géographique", "Ressources limitées"]
+
+# INDICATEURS DE POPULATION
+indicateurs_demographiques:
+  eldaron: "62 millions"
+  varnäl: "54 millions"
+  iskarion: "40 millions"
+  thaurgrim: "25 millions"
+  helrün: "3.8 millions"
+  total_velkarum: "184.8 millions"
+
+# POINTS CHAUDS GÉOPOLITIQUES
+zones_sensibles:
+  - nom: "Détroit du Fer-Bleu"
+    coordonnees: {x: 20, y: 25}
+    importance: "Point de passage maritime crucial entre Eldaron et Helrün"
+    tensions: "Contrôle disputé entre Nautes du Draen et Marine Eldarienne"
+    risques: "Blocus commercial pouvant paralyser 40% des échanges nord"
+
+  - nom: "Champs de Cendres de Valdrek"
+    coordonnees: {x: 70, y: 65}
+    importance: "Source de 60% des cendres fertilisantes continentales"
+    tensions: "Exploitation intensive vs préservation écologique"
+    risques: "Épuisement des ressources en 15-20 ans au rythme actuel"
+
+  - nom: "Forêt Frontalière du Dalen"
+    coordonnees: {x: 40, y: 80}
+    importance: "Zone tampon entre Eldaron et territoires non contrôlés"
+    tensions: "Incursions de créatures et groupes hostiles"
+    risques: "Extension possible du conflit vers les terres civilisées"
+
+  - nom: "Canal du Drann"
+    coordonnees: {x: 50, y: 60}
+    importance: "Réseau souterrain vital pour la recherche et le transport"
+    tensions: "Contrôle d'accès entre Ermites du Drann et autorités locales"
+    risques: "Effondrement possible menaçant les stations de recherche"
+
+# SYSTÈME D'ALERTE ET CRISE
+protocoles_crise:
+  niveau_1: "Alerte précoce - Surveillance renforcée"
+  niveau_2: "Crise naissante - Mobilisation diplomatique"
+  niveau_3: "Crise active - Médiation du Conseil des Royaumes"
+  niveau_4: "Crise majeure - Sanctions économiques et intervention"
+  niveau_5: "Conflit ouvert - Intervention militaire coordonnée"
+
+crises_imminentes:
+  - nom: "Pénurie de Cendres Fertilisantes"
+    probabilite: "75% dans les 3 ans"
+    impact: "Famine régionale, effondrement économique partiel"
+    preparation: "Stockage stratégique, développement d'alternatives"
+
+  - nom: "Éruption Majeure du Valdrek"
+    probabilite: "30% dans les 5 ans"
+    impact: "Arrêt de 40% de l'industrie continentale, crise écologique"
+    preparation: "Plans d'évacuation, diversification des sources"
+
+  - nom: "Effondrement des Glaciers Helruniens"
+    probabilite: "60% dans les 10 ans"
+    impact: "Montée des eaux, perte des réserves de glace noire"
+    preparation: "Recherche de solutions de conservation alternatives"
+
+# MÉTA-DONNÉES IA
+meta_ia:
+  date_creation: "2025-11-05"
+  version: 1.0
+  type_contenu: "geopolitique_complete_velkarum"
+  coherence_verifiee: ["alliances", "conflits", "personnages", "zones_sensibles", "crises"]
+  points_entree_semantiques: [
+    "recherche_par_alliance",
+    "recherche_par_conflit",
+    "recherche_par_personnage",
+    "recherche_par_zone_sensible",
+    "recherche_par_crise",
+    "relations_diplomatiques",
+    "equilibre_des_pouvoirs"
+  ]

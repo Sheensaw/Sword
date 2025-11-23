@@ -1,0 +1,456 @@
+{
+  "meta": {
+    "continent_id": "iskarion",
+    "description": "Cartographie haute résolution intégrale du continent Iskarion.",
+    "scale_factor": "local",
+    "parent_file": "velkarum.json"
+  },
+  "nodes": {
+    "Zhair_Grand_Autel": {
+      "x": 35.00,
+      "y": 75.00,
+      "continent": "Iskarion",
+      "type": "Capitale_Centre",
+      "name": "Zhaïr - Grand Autel",
+      "description": "Le cœur éblouissant de la théocratie. Des miroirs d'or pur renvoient la lumière du soleil. L'air vibre de chaleur sacrée.",
+      "sociology": { "ruling_faction": "Clergé Solaire", "law_enforcement": "Religious_Inquisition", "social_tension": 50 },
+      "environment": { "temperature": "Extreme_Heat", "brightness": "Blinding" },
+      "encounters": { "roaming_mobs": ["Garde Solaire", "Prêtre du Disque", "Inquisiteur"] }
+    },
+    "Zhair_Reservoir_Sacre": {
+      "x": 35.05,
+      "y": 75.05,
+      "continent": "Iskarion",
+      "type": "Reserve",
+      "name": "Le Grand Réservoir",
+      "description": "Un lac souterrain artificiel sous le temple. L'eau y est froide et pure, gardée comme un trésor de guerre.",
+      "access": "Restricted",
+      "danger": 0
+    },
+    "Zhair_Palais_Solaire": {
+      "x": 35.02,
+      "y": 75.08,
+      "continent": "Iskarion",
+      "type": "Gouvernement",
+      "name": "Palais des Reflets",
+      "description": "Résidence du Sultan-Soleil. Les murs sont incrustés de pierres précieuses. Des fontaines coulent à perte, insulte à la soif du peuple.",
+      "access": "Restricted",
+      "sociology": { "wealth_tier": "Opulent" }
+    },
+    "Zhair_Theatre_Solaire": {
+      "x": 34.95,
+      "y": 75.02,
+      "continent": "Iskarion",
+      "type": "Culture",
+      "name": "Théâtre Solaire",
+      "description": "Amphithéâtre à ciel ouvert où l'on joue des drames sacrés et où l'on exécute les hérétiques par insolation.",
+      "danger": 1
+    },
+    "Zhair_Jardins_Caches": {
+      "x": 35.10,
+      "y": 74.90,
+      "continent": "Iskarion",
+      "type": "Lieu_Detente",
+      "name": "Jardins Cachés",
+      "description": "Oasis privée pour la noblesse. Palmiers, figuiers et ombre fraîche payée au prix fort.",
+      "market": { "services": ["Eau_Fraiche", "Plaisirs_Interdits"] },
+      "access": "Restricted"
+    },
+    "Zhair_Observatoire": {
+      "x": 34.90,
+      "y": 75.10,
+      "continent": "Iskarion",
+      "type": "Science",
+      "name": "Tour des Astres",
+      "description": "Les astronomes y calculent les cycles de sécheresse et ajustent le prix de l'eau en conséquence."
+    },
+    "Zhair_Quartier_Desseches": {
+      "x": 34.85,
+      "y": 74.85,
+      "continent": "Iskarion",
+      "type": "Slum",
+      "name": "Le Quartier des Desséchés",
+      "description": "Bidonville poussiéreux où les pauvres boivent l'eau de drainage saumâtre. L'espérance de vie y est de 30 ans.",
+      "danger": 3,
+      "disease_vector": "High",
+      "market": { "wealth_tier": "Destitute", "prices": { "eau_saumatre": { "base": 1, "scarcity": "high" } } }
+    },
+    "Zhair_Bazar_Ombre": {
+      "x": 34.92,
+      "y": 74.95,
+      "continent": "Iskarion",
+      "type": "Commerce",
+      "name": "Souk de l'Ombre",
+      "description": "Ruelles couvertes de toiles pour bloquer le soleil. On y vend des épices, des charmes et de l'eau volée.",
+      "market": { "black_market": true, "specialty": "Eau_Illegale" }
+    },
+    "Zhair_Station_Sables": {
+      "x": 35.15,
+      "y": 75.15,
+      "continent": "Iskarion",
+      "type": "Station",
+      "name": "Port des Sables",
+      "description": "Docks pour les chars à voile qui traversent le désert. L'odeur de graisse et de chameau.",
+      "market": { "services": ["Transport_Char_Voile"] }
+    },
+    "Asuren_Place_Banque": {
+      "x": 15.00,
+      "y": 35.00,
+      "continent": "Iskarion",
+      "type": "Ville_Centre",
+      "name": "Asuren - Place de l'Or",
+      "description": "Le centre financier du monde. Ici, le silence est d'or et les murs ont des oreilles.",
+      "sociology": { "ruling_faction": "Banque du Zénith", "wealth_tier": "Rich" }
+    },
+    "Asuren_Siege_Banque": {
+      "x": 15.05,
+      "y": 35.05,
+      "continent": "Iskarion",
+      "type": "Banque",
+      "name": "La Citadelle d'Or (Siège)",
+      "description": "Un cube de granit noir imprenable. Il contient les dettes de tous les rois du continent.",
+      "access": "Restricted",
+      "danger": 5,
+      "encounters": { "roaming_mobs": ["Huissier d'Élite", "Golem de Coffre"] }
+    },
+    "Asuren_Port_Franc": {
+      "x": 14.90,
+      "y": 35.10,
+      "continent": "Iskarion",
+      "type": "Port",
+      "name": "Le Port Franc",
+      "description": "Zone de non-droit tolérée pour les étrangers. Alcool, jeux et hérésies sont permis ici.",
+      "danger": 2,
+      "market": { "black_market": true, "specialty": "Change_Devises" }
+    },
+    "Asuren_Taverne_Sel": {
+      "x": 14.95,
+      "y": 35.08,
+      "continent": "Iskarion",
+      "type": "Taverne",
+      "name": "La Route du Sel",
+      "description": "Taverne luxueuse où les capitaines dépensent leur solde en vins importés d'Eldaron.",
+      "services": ["Vin_Etranger", "Rumeurs_Finance"]
+    },
+    "Asuren_Jardin_Reflets": {
+      "x": 15.10,
+      "y": 34.95,
+      "continent": "Iskarion",
+      "type": "Lieu_Detente",
+      "name": "Jardin des Reflets",
+      "description": "Parc contemplatif avec des bassins miroirs. Lieu de rendez-vous des espions.",
+      "danger": 1
+    },
+    "Asuren_Tour_Or": {
+      "x": 15.15,
+      "y": 35.15,
+      "continent": "Iskarion",
+      "type": "Monument",
+      "name": "La Tour d'Or",
+      "description": "Un phare immense plaqué d'or qui guide les navires et affiche la puissance d'Asuren.",
+      "access": "Public"
+    },
+    "Asuren_Quartier_Changeurs": {
+      "x": 15.02,
+      "y": 34.98,
+      "continent": "Iskarion",
+      "type": "Commerce",
+      "name": "Rue des Usuriers",
+      "description": "Des centaines de petites échoppes où l'on prête sur gage à des taux criminels.",
+      "encounters": { "roaming_mobs": ["Voleur à la Tire", "Garde du Corps"] }
+    },
+    "Asuren_Station_Energie": {
+      "x": 15.20,
+      "y": 35.00,
+      "continent": "Iskarion",
+      "type": "Industrie",
+      "name": "Station Solaire",
+      "description": "Centrale expérimentale concentrant les rayons du soleil pour fondre le métal sans feu."
+    },
+    "ShaarKeth_Porte_Rift": {
+      "x": 55.00,
+      "y": 45.00,
+      "continent": "Iskarion",
+      "type": "Forteresse",
+      "name": "Shaar-Keth - Porte du Rift",
+      "description": "Verrou militaire bloquant l'accès à la vallée sacrée. Murs vitrifiés par la chaleur.",
+      "sociology": { "ruling_faction": "Armée Solaire", "law_enforcement": "Martial_Law" }
+    },
+    "ShaarKeth_Caserne_Inmortels": {
+      "x": 55.05,
+      "y": 45.05,
+      "continent": "Iskarion",
+      "type": "Caserne",
+      "name": "Caserne des Immortels",
+      "description": "Logement de l'élite de l'armée. Soldats fanatiques ne craignant pas la mort.",
+      "danger": 3
+    },
+    "ShaarKeth_Laboratoire_Geo": {
+      "x": 55.10,
+      "y": 45.10,
+      "continent": "Iskarion",
+      "type": "Science",
+      "name": "Laboratoires Géothermiques",
+      "description": "On y étudie les failles volcaniques pour créer des armes sismiques.",
+      "access": "Restricted"
+    },
+    "ShaarKeth_Auberge_Vapeur": {
+      "x": 54.95,
+      "y": 44.95,
+      "continent": "Iskarion",
+      "type": "Taverne",
+      "name": "Auberge de la Vapeur",
+      "description": "Sauna et repos pour les officiers. L'humidité y est maintenue artificiellement.",
+      "services": ["Bain_Vapeur", "Repos"]
+    },
+    "ShaarKeth_Caverne_Acide": {
+      "x": 55.20,
+      "y": 44.80,
+      "continent": "Iskarion",
+      "type": "Mine",
+      "name": "Grotte des Poisons",
+      "description": "Extraction de cristaux toxiques utilisés par les assassins.",
+      "danger": 5,
+      "market": { "black_market": true, "specialty": "Poison_Pur" }
+    },
+    "Korra_Caravanserail": {
+      "x": 45.00,
+      "y": 20.00,
+      "continent": "Iskarion",
+      "type": "Ville_Centre",
+      "name": "Korra - Grand Caravansérail",
+      "description": "Immense cour fortifiée où se croisent nomades, marchands et bandits. L'odeur du thé à la menthe et du fumier.",
+      "market": { "specialty": "Dromadaires_Sel", "prices": { "eau_1L": { "base": 0.5, "scarcity": "medium" } } }
+    },
+    "Korra_Station_Chameaux": {
+      "x": 45.05,
+      "y": 20.05,
+      "continent": "Iskarion",
+      "type": "Station",
+      "name": "Oasis des Montures",
+      "description": "Écuries et abreuvoirs pour les bêtes. Voler de l'eau ici est puni de mort immédiate.",
+      "services": ["Achat_Monture", "Soins_Veterinaires"]
+    },
+    "Korra_Marche_Esclaves_Ombre": {
+      "x": 45.10,
+      "y": 19.90,
+      "continent": "Iskarion",
+      "type": "Repaire",
+      "name": "L'Enclos des Ombres",
+      "description": "Marché aux esclaves clandestin, spécialisé dans les prises de guerre non déclarées.",
+      "market": { "black_market": true, "specialty": "Esclaves_Combat" },
+      "danger": 4
+    },
+    "Korra_Tente_Chicha": {
+      "x": 44.95,
+      "y": 20.02,
+      "continent": "Iskarion",
+      "type": "Taverne",
+      "name": "La Tente aux Fumées",
+      "description": "Fumerie d'opium et de tabac noir. Lieu neutre où les tribus négocient les trêves.",
+      "services": ["Fumerie", "Diplomatie_Tribale"]
+    },
+    "Krystos_Mine_Verre": {
+      "x": 80.00,
+      "y": 15.00,
+      "continent": "Iskarion",
+      "type": "Mine",
+      "name": "Krystos - Carrière de Quartz",
+      "description": "Cité minière éblouissante. Les bâtiments sont taillés dans le cristal brut.",
+      "environment": { "brightness": "Blinding" },
+      "market": { "specialty": "Verre_Optique" }
+    },
+    "Krystos_Atelier_Optique": {
+      "x": 80.05,
+      "y": 15.05,
+      "continent": "Iskarion",
+      "type": "Industrie",
+      "name": "Les Polisseurs",
+      "description": "Ateliers où l'on fabrique les lentilles des phares et les lunettes des riches.",
+      "access": "Restricted"
+    },
+    "Krystos_Temple_Lumiere": {
+      "x": 79.95,
+      "y": 14.95,
+      "continent": "Iskarion",
+      "type": "Sanctuaire",
+      "name": "Prisme Sacré",
+      "description": "Un temple transparent. La lumière y est décomposée en arcs-en-ciel divins."
+    },
+    "Salines_Sud_Camp": {
+      "x": 55.00,
+      "y": 10.00,
+      "continent": "Iskarion",
+      "type": "Prison",
+      "name": "Salines-Sud (Goulag)",
+      "description": "Camp de travail forcé à ciel ouvert. Le sel brûle la peau et aveugle les yeux.",
+      "sociology": { "wealth_tier": "Slavery" },
+      "danger": 5,
+      "encounters": { "roaming_mobs": ["Gardien Sadique", "Scorpion de Cristal"] }
+    },
+    "Salines_Entrepots": {
+      "x": 55.10,
+      "y": 10.10,
+      "continent": "Iskarion",
+      "type": "Entrepot",
+      "name": "Montagnes Blanches",
+      "description": "Stocks de sel gemme prêts pour l'export. La seule richesse de cet enfer."
+    },
+    "Mirage_Ville_Resort": {
+      "x": 75.00,
+      "y": 30.00,
+      "continent": "Iskarion",
+      "type": "Ville",
+      "name": "Mirage-Ville",
+      "description": "Station balnéaire de luxe artificielle au milieu du désert. L'eau y est gaspillée par ostentation.",
+      "market": { "wealth_tier": "Opulent" },
+      "access": "Restricted"
+    },
+    "Mirage_Casino_Sables": {
+      "x": 75.05,
+      "y": 30.05,
+      "continent": "Iskarion",
+      "type": "Taverne",
+      "name": "Palais du Hasard",
+      "description": "On y joue des fortunes en eau et en esclaves.",
+      "danger": 2
+    },
+    "Vethar_Guilde_Talents": {
+      "x": 75.00,
+      "y": 55.00,
+      "continent": "Iskarion",
+      "type": "Guilde",
+      "name": "Vethar - Guilde des Talents",
+      "description": "Marché d'esclaves spécialisés (artisans, scribes, concubines). 'Le talent s'achète'.",
+      "market": { "specialty": "Esclaves_Luxe" }
+    },
+    "Vethar_Mines_Ferriques": {
+      "x": 75.10,
+      "y": 55.10,
+      "continent": "Iskarion",
+      "type": "Mine",
+      "name": "Mines Rouges",
+      "description": "Extraction de minerai de fer de mauvaise qualité, exporté vers Thaurgrim."
+    },
+    "Oasis_Secrete_Source": {
+      "x": 60.00,
+      "y": 25.00,
+      "continent": "Iskarion",
+      "type": "Oasis",
+      "name": "La Source Oubliée",
+      "description": "Un point d'eau connu seulement des bédouins et des contrebandiers. L'eau y est gratuite.",
+      "access": "Hidden",
+      "market": { "prices": { "eau_1L": { "base": 0, "scarcity": "none" } } }
+    },
+    "Geyser_Principal": {
+      "x": 60.00,
+      "y": 40.00,
+      "continent": "Iskarion",
+      "type": "Lieu_Sauvage",
+      "name": "Le Geyser Hurlant",
+      "description": "Une colonne d'eau bouillante qui jaillit toutes les heures. Dangereux mais vital.",
+      "danger": 3
+    },
+    "Dunes_Infinies_Centre": {
+      "x": 85.00,
+      "y": 10.00,
+      "continent": "Iskarion",
+      "type": "Lieu_Sauvage",
+      "name": "Cœur des Dunes",
+      "description": "Le désert profond. Ici, le temps et l'espace se déforment sous la chaleur.",
+      "danger": 5,
+      "encounters": { "boss": "Ver des Sables Ancien" }
+    },
+    "Monastere_Lentilles": {
+      "x": 85.00,
+      "y": 25.00,
+      "continent": "Iskarion",
+      "type": "Science",
+      "name": "Monastère des Lentilles",
+      "description": "Lieu isolé où des moines aveugles polissent les lentilles pour les armes solaires.",
+      "access": "Restricted"
+    },
+    "Caravanserail_Dunes": {
+      "x": 45.00,
+      "y": 60.00,
+      "continent": "Iskarion",
+      "type": "Relais",
+      "name": "Halte des Scorpions",
+      "description": "Un fort en ruine servant de relais sur la route du nord."
+    },
+    "Relais_Sel": {
+      "x": 30.00,
+      "y": 27.00,
+      "continent": "Iskarion",
+      "type": "Relais",
+      "name": "Relais du Sel",
+      "description": "Point de repos pour les convois venant des salines. L'eau y coûte une fortune."
+    },
+    "Relais_Poussiere": {
+      "x": 52.00,
+      "y": 40.00,
+      "continent": "Iskarion",
+      "type": "Relais",
+      "name": "Relais de la Poussière",
+      "description": "Dernière halte civilisée avant le grand vide du centre."
+    },
+    "Puits_Perdus": {
+      "x": 52.00,
+      "y": 22.00,
+      "continent": "Iskarion",
+      "type": "Mine",
+      "name": "Les Puits Perdus",
+      "description": "Anciennes mines d'or épuisées, maintenant repaire de monstres et de parias.",
+      "danger": 6,
+      "access": "Hidden"
+    }
+  },
+  "routes": [
+    { "id": "zhair_voie_procession", "name": "Voie Processionnelle", "type": "street", "start": "Zhair_Grand_Autel", "end": "Zhair_Palais_Solaire", "distance_km": 0.5, "danger": 0 },
+    { "id": "zhair_acces_reservoir", "name": "Escalier Sacré", "type": "tunnel", "start": "Zhair_Grand_Autel", "end": "Zhair_Reservoir_Sacre", "distance_km": 0.2, "danger": 1 },
+    { "id": "zhair_acces_theatre", "name": "Allée des Masques", "type": "street", "start": "Zhair_Grand_Autel", "end": "Zhair_Theatre_Solaire", "distance_km": 0.3, "danger": 0 },
+    { "id": "zhair_jardin_secret", "name": "Porte de Nacre", "type": "hidden_path", "start": "Zhair_Palais_Solaire", "end": "Zhair_Jardins_Caches", "distance_km": 0.2, "danger": 2 },
+    { "id": "zhair_montee_obs", "name": "Rampe Céleste", "type": "street", "start": "Zhair_Palais_Solaire", "end": "Zhair_Observatoire", "distance_km": 0.4, "danger": 0 },
+    { "id": "zhair_descente_taudis", "name": "Pente de la Soif", "type": "alley", "start": "Zhair_Grand_Autel", "end": "Zhair_Quartier_Desseches", "distance_km": 0.8, "danger": 3 },
+    { "id": "zhair_ruelle_souk", "name": "Passage Voilé", "type": "alley", "start": "Zhair_Quartier_Desseches", "end": "Zhair_Bazar_Ombre", "distance_km": 0.3, "danger": 2 },
+    { "id": "zhair_acces_port_sable", "name": "Route des Dunes", "type": "street", "start": "Zhair_Grand_Autel", "end": "Zhair_Station_Sables", "distance_km": 0.6, "danger": 1 },
+    { "id": "asuren_promenade_or", "name": "Promenade de Marbre", "type": "street", "start": "Asuren_Place_Banque", "end": "Asuren_Siege_Banque", "distance_km": 0.2, "danger": 1 },
+    { "id": "asuren_descente_port", "name": "Rue des Épices", "type": "street", "start": "Asuren_Place_Banque", "end": "Asuren_Port_Franc", "distance_km": 0.5, "danger": 1 },
+    { "id": "asuren_ruelle_taverne", "name": "Impasse Salée", "type": "alley", "start": "Asuren_Port_Franc", "end": "Asuren_Taverne_Sel", "distance_km": 0.1, "danger": 2 },
+    { "id": "asuren_acces_jardin", "name": "Pont de Verre", "type": "street", "start": "Asuren_Place_Banque", "end": "Asuren_Jardin_Reflets", "distance_km": 0.3, "danger": 0 },
+    { "id": "asuren_acces_tour", "name": "Montée du Phare", "type": "street", "start": "Asuren_Port_Franc", "end": "Asuren_Tour_Or", "distance_km": 0.4, "danger": 1 },
+    { "id": "asuren_ruelle_changeurs", "name": "Passage des Pièces", "type": "alley", "start": "Asuren_Place_Banque", "end": "Asuren_Quartier_Changeurs", "distance_km": 0.2, "danger": 2 },
+    { "id": "asuren_route_energie", "name": "Route des Miroirs", "type": "street", "start": "Asuren_Place_Banque", "end": "Asuren_Station_Energie", "distance_km": 0.6, "danger": 1 },
+    { "id": "shaar_acces_caserne", "name": "Cour d'Armes", "type": "street", "start": "ShaarKeth_Porte_Rift", "end": "ShaarKeth_Caserne_Inmortels", "distance_km": 0.2, "danger": 1 },
+    { "id": "shaar_tunnel_labo", "name": "Couloir Sismique", "type": "tunnel", "start": "ShaarKeth_Porte_Rift", "end": "ShaarKeth_Laboratoire_Geo", "distance_km": 0.3, "danger": 2 },
+    { "id": "shaar_rue_auberge", "name": "Rue de la Brume", "type": "street", "start": "ShaarKeth_Porte_Rift", "end": "ShaarKeth_Auberge_Vapeur", "distance_km": 0.2, "danger": 0 },
+    { "id": "shaar_acces_caverne", "name": "Sentier Interdit", "type": "hidden_path", "start": "ShaarKeth_Porte_Rift", "end": "ShaarKeth_Caverne_Acide", "distance_km": 0.5, "danger": 5 },
+    { "id": "korra_acces_station", "name": "Piste des Bêtes", "type": "street", "start": "Korra_Caravanserail", "end": "Korra_Station_Chameaux", "distance_km": 0.1, "danger": 0 },
+    { "id": "korra_ruelle_esclaves", "name": "Passage des Chaînes", "type": "hidden_path", "start": "Korra_Caravanserail", "end": "Korra_Marche_Esclaves_Ombre", "distance_km": 0.3, "danger": 4 },
+    { "id": "korra_acces_tente", "name": "Allée des Tapis", "type": "street", "start": "Korra_Caravanserail", "end": "Korra_Tente_Chicha", "distance_km": 0.1, "danger": 1 },
+    { "id": "krystos_acces_atelier", "name": "Rue de Cristal", "type": "street", "start": "Krystos_Mine_Verre", "end": "Krystos_Atelier_Optique", "distance_km": 0.2, "danger": 0 },
+    { "id": "krystos_acces_temple", "name": "Chemin de Lumière", "type": "street", "start": "Krystos_Mine_Verre", "end": "Krystos_Temple_Lumiere", "distance_km": 0.3, "danger": 0 },
+    { "id": "salines_acces_entrepots", "name": "Route du Sel", "type": "road", "start": "Salines_Sud_Camp", "end": "Salines_Entrepots", "distance_km": 0.2, "danger": 1 },
+    { "id": "mirage_acces_casino", "name": "Promenade des Palmiers", "type": "street", "start": "Mirage_Ville_Resort", "end": "Mirage_Casino_Sables", "distance_km": 0.2, "danger": 0 },
+    { "id": "vethar_acces_mines", "name": "Piste Rouge", "type": "road", "start": "Vethar_Guilde_Talents", "end": "Vethar_Mines_Ferriques", "distance_km": 0.5, "danger": 1 },
+    { "id": "route_solaire_1", "name": "Voie Solaire (Nord)", "type": "sand_skiff", "start": "Zhair_Station_Sables", "end": "Caravanserail_Dunes", "distance_km": 400.0, "danger": 2 },
+    { "id": "route_solaire_2", "name": "Voie Solaire (Sud)", "type": "sand_skiff", "start": "Caravanserail_Dunes", "end": "ShaarKeth_Porte_Rift", "distance_km": 250.0, "danger": 2 },
+    { "id": "route_solaire_3", "name": "Voie Solaire (Bas)", "type": "sand_skiff", "start": "ShaarKeth_Porte_Rift", "end": "Korra_Caravanserail", "distance_km": 500.0, "danger": 3 },
+    { "id": "route_sel_1", "name": "Route du Sel (Nord)", "type": "road", "start": "Asuren_Place_Banque", "end": "Relais_Sel", "distance_km": 300.0, "danger": 2 },
+    { "id": "route_sel_2", "name": "Route du Sel (Sud)", "type": "road", "start": "Relais_Sel", "end": "Korra_Caravanserail", "distance_km": 300.0, "danger": 2 },
+    { "id": "route_plateaux", "name": "Piste des Plateaux", "type": "mountain_path", "start": "Vethar_Guilde_Talents", "end": "ShaarKeth_Porte_Rift", "distance_km": 750.0, "danger": 3 },
+    { "id": "route_vents_1", "name": "Piste des Vents", "type": "desert_path", "start": "Korra_Caravanserail", "end": "Oasis_Secrete_Source", "distance_km": 400.0, "danger": 5 },
+    { "id": "route_monastere", "name": "Chemin du Silence", "type": "desert_path", "start": "Krystos_Mine_Verre", "end": "Monastere_Lentilles", "distance_km": 150.0, "danger": 3 },
+    { "id": "route_dunes_infinies", "name": "Piste du Néant", "type": "desert_path", "start": "Vethar_Guilde_Talents", "end": "Dunes_Infinies_Centre", "distance_km": 400.0, "danger": 6 },
+    { "id": "route_geyser", "name": "Piste Brûlante", "type": "badlands", "start": "ShaarKeth_Porte_Rift", "end": "Geyser_Principal", "distance_km": 200.0, "danger": 4 },
+    { "id": "route_puits_perdus", "name": "Trace des Disparus", "type": "desert_path", "start": "Relais_Poussiere", "end": "Puits_Perdus", "distance_km": 100.0, "danger": 6 },
+    { "id": "zhair_link_global", "name": "Connexion Globale Zhaïr", "type": "link", "start": "Zhair", "end": "Zhair_Grand_Autel", "distance_km": 0.0, "danger": 0 },
+    { "id": "asuren_link_global", "name": "Connexion Globale Asuren", "type": "link", "start": "Asuren", "end": "Asuren_Place_Banque", "distance_km": 0.0, "danger": 0 },
+    { "id": "shaar_link_global", "name": "Connexion Globale Shaar-Keth", "type": "link", "start": "Shaar_Keth", "end": "ShaarKeth_Porte_Rift", "distance_km": 0.0, "danger": 0 },
+    { "id": "korra_link_global", "name": "Connexion Globale Korra", "type": "link", "start": "Korra", "end": "Korra_Caravanserail", "distance_km": 0.0, "danger": 0 },
+    { "id": "krystos_link_global", "name": "Connexion Globale Krystos", "type": "link", "start": "Krystos", "end": "Krystos_Mine_Verre", "distance_km": 0.0, "danger": 0 },
+    { "id": "salines_link_global", "name": "Connexion Globale Salines", "type": "link", "start": "Salines_Sud", "end": "Salines_Sud_Camp", "distance_km": 0.0, "danger": 0 },
+    { "id": "mirage_link_global", "name": "Connexion Globale Mirage", "type": "link", "start": "Mirage_Ville", "end": "Mirage_Ville_Resort", "distance_km": 0.0, "danger": 0 },
+    { "id": "vethar_link_global", "name": "Connexion Globale Vethar", "type": "link", "start": "Vethar", "end": "Vethar_Guilde_Talents", "distance_km": 0.0, "danger": 0 }
+  ]
+}

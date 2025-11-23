@@ -1398,52 +1398,97 @@
     window.setup.geographyState.loading = true;
     window.setup.geographyState.attempted = true;
 
-    console.log("🗺️ DÉBUT CHARGEMENT GÉOGRAPHIE...");
+    console.log("🗺️ DÉBUT CHARGEMENT GÉOGRAPHIE MULTI-ÉCHELLES...");
 
-    // 🔴 CORRECTION : Chemins prioritaires pour Twine
-    const possiblePaths = [
-      './server/lore/velkarum.json',
-      'server/lore/velkarum.json',
-      './lore/velkarum.json',
-      'lore/velkarum.json',
-      'velkarum.json'
+    // Liste exhaustive des fichiers de lore générés
+    const geoFiles = [
+      'velkarum.json', // Carte Mondiale (Niveau 0)
+      'eldaron.json',  // Détail Eldaron (Niveau 1)
+      'thaurgrim.json',
+      'iskarion.json',
+      'helrun.json',
+      'varnal.json'
     ];
 
-    let success = false;
+    // Chemins possibles (pour compatibilité locale/serveur)
+    const basePaths = [
+      './server/lore/',
+      'server/lore/',
+      './lore/',
+      'lore/',
+      './',
+      ''
+    ];
 
-    for (const path of possiblePaths) {
-      try {
-        console.log(`🔄 Tentative de chargement depuis: ${path}`);
-        const response = await fetch(path);
+    // Conteneur de fusion
+    let mergedData = {
+      continents: {},
+      nodes: {},
+      routes: []
+    };
 
-        if (response.ok) {
-          const geographyData = await response.json();
-          window.setup.geographyState.data = geographyData;
-          window.setup.geographyState.ready = true;
-          success = true;
-          console.log(`✅ GÉOGRAPHIE CHARGÉE depuis: ${path}`, geographyData);
-          break;
-        } else {
-          console.warn(`❌ Échec HTTP ${response.status} pour: ${path}`);
+    let successCount = 0;
+
+    // Helper de chargement unitaire
+    const loadFile = async (filename) => {
+      for (const basePath of basePaths) {
+        const path = basePath + filename;
+        try {
+          const response = await fetch(path);
+          if (response.ok) {
+            const json = await response.json();
+            console.log(`✅ Chargé: ${filename} (${Object.keys(json.nodes || {}).length} noeuds)`);
+            return json;
+          }
+        } catch (e) {
+          // On continue vers le chemin suivant silencieusement
         }
-      } catch (error) {
-        console.warn(`❌ Erreur fetch pour ${path}:`, error.message);
-        continue;
       }
-    }
+      console.warn(`❌ Impossible de charger ${filename} (introuvable sur tous les chemins)`);
+      return null;
+    };
 
-    // 🔴 CORRECTION : Appliquer fallback IMMÉDIATEMENT si échec
-    if (!success) {
-      console.warn("❌ ÉCHEC CHARGEMENT GÉOGRAPHIE sur tous les chemins");
-      console.warn("⚠️ Utilisation de la géographie de fallback");
+    // Chargement parallèle sécurisé
+    const promises = geoFiles.map(file => loadFile(file).catch(err => {
+        console.error(`Erreur critique sur ${file}:`, err);
+        return null;
+    }));
 
-      // 🔴 CORRECTION : Créer une copie indépendante du fallback
+    const results = await Promise.all(promises);
+
+    results.forEach((data) => {
+      if (data) {
+        successCount++;
+        // Fusion des Continents
+        if (data.continents) Object.assign(mergedData.continents, data.continents);
+
+        // Fusion des Noeuds (Les clés identiques dans les fichiers détaillés écrasent celles de velkarum, ce qui permet d'enrichir les descriptions)
+        if (data.nodes) Object.assign(mergedData.nodes, data.nodes);
+
+        // Concaténation des Routes
+        if (data.routes && Array.isArray(data.routes)) {
+          mergedData.routes = mergedData.routes.concat(data.routes);
+        }
+      }
+    });
+
+    if (successCount > 0) {
+      window.setup.geographyState.data = mergedData;
+      window.setup.geographyState.ready = true;
+      console.log(`✅ GÉOGRAPHIE PRÊTE : ${successCount}/${geoFiles.length} fichiers fusionnés.`);
+      console.log(`📊 Stats Globales : ${Object.keys(mergedData.nodes).length} lieux, ${mergedData.routes.length} connexions.`);
+
+      // Reconstruire le graphe immédiatement après le chargement
+      if (window.setup.buildNavigationGraph) {
+          window.setup.buildNavigationGraph();
+      }
+    } else {
+      console.warn("⚠️ ÉCHEC TOTAL chargement géographie. Activation du fallback de secours.");
       window.setup.geographyState.data = JSON.parse(JSON.stringify(window.setup.fallbackGeography));
       window.setup.geographyState.ready = true;
     }
 
     window.setup.geographyState.loading = false;
-    console.log("✅ SYSTÈME GÉOGRAPHIE PRÊT");
   }
 
   // REMPLACER window.setup.getGeographyData
@@ -1923,53 +1968,89 @@
   // -------------------------------------------------------------------------
   // 7. UTILITAIRES DE ROUTAGE
   // -------------------------------------------------------------------------
-  window.setup.calculateComplexRoute = function(startCoords, endCoords) {
+  window.setup.calculateComplexRoute = function(startCoords, endCoords, startContinent, endContinent) {
+    // S'assurer que le graphe est construit
     if (!window.setup.navGraph) window.setup.buildNavigationGraph();
     const graph = window.setup.navGraph;
 
-    // Trouver les nœuds les plus proches du départ et de l'arrivée
-    let startNode = null,
-      endNode = null;
-    let minStartDist = Infinity,
-      minEndDist = Infinity;
+    // Normalisation des continents pour la recherche
+    const sCont = (startContinent || "Eldaron").toLowerCase().trim();
+    const eCont = (endContinent || "Eldaron").toLowerCase().trim();
 
+    let startNode = null, endNode = null;
+    let minStartDist = Infinity, minEndDist = Infinity;
+
+    // --- ÉTAPE 1 : Trouver les points d'ancrage sur le graphe ---
     Object.keys(graph).forEach(key => {
       const node = graph[key].data;
-      // IMPORTANT : Vérifier que le nœud est sur le même continent que la coordonnée cible
-      // Sinon le pathfinding essaiera de connecter des points impossibles
-      // (Bien que le pathfinding de graphe gère les connexions, la recherche du nœud le plus proche doit être pertinente)
+      const nodeCont = (node.continent || "Eldaron").toLowerCase().trim();
 
-      // On compare aussi le continent si disponible dans les coords
-      // if (startCoords.continent && node.continent && startCoords.continent !== node.continent) return;
+      // Recherche du nœud de départ le plus proche
+      // On privilégie les nœuds du même continent pour éviter de "sauter" la mer par erreur
+      if (nodeCont === sCont || (sCont === 'ocean' && node.type.includes('Ocean'))) {
+          const dx = node.x - startCoords.x;
+          const dy = node.y - startCoords.y;
+          const dStart = dx*dx + dy*dy; // Distance euclidienne au carré (plus rapide)
 
-      const dStart = Math.sqrt(Math.pow(node.x - startCoords.x, 2) + Math.pow(node.y - startCoords.y, 2));
-      if (dStart < minStartDist) {
-        minStartDist = dStart;
-        startNode = key;
+          if (dStart < minStartDist) {
+            minStartDist = dStart;
+            startNode = key;
+          }
       }
 
-      const dEnd = Math.sqrt(Math.pow(node.x - endCoords.x, 2) + Math.pow(node.y - endCoords.y, 2));
-      if (dEnd < minEndDist) {
-        minEndDist = dEnd;
-        endNode = key;
+      // Recherche du nœud d'arrivée le plus proche
+      if (nodeCont === eCont || (eCont === 'ocean' && node.type.includes('Ocean'))) {
+          const dx = node.x - endCoords.x;
+          const dy = node.y - endCoords.y;
+          const dEnd = dx*dx + dy*dy;
+
+          if (dEnd < minEndDist) {
+            minEndDist = dEnd;
+            endNode = key;
+          }
       }
     });
 
-    const graphPath = window.setup.findPathInGraph(startNode, endNode);
+    // Conversion des distances carrées en réelles pour le calcul final
+    minStartDist = Math.sqrt(minStartDist);
+    minEndDist = Math.sqrt(minEndDist);
 
-    // Si pas de chemin réseau, retour direct
-    if (!graphPath) {
-      const dist = Math.sqrt(Math.pow(endCoords.x - startCoords.x, 2) + Math.pow(endCoords.y - startCoords.y, 2)) * window.setup.GEO_SCALE;
-      return {
+    // --- ÉTAPE 2 : Vérification de faisabilité ---
+    // Si aucun nœud n'est trouvé (ex: coordonnées invalides ou continent inconnu)
+    if (!startNode || !endNode) {
+       console.warn(`⚠️ Pathfinding: Nœuds introuvables pour ${startContinent}->${endContinent}`);
+       // Fallback : vol d'oiseau direct
+       const dist = Math.sqrt(Math.pow(endCoords.x - startCoords.x, 2) + Math.pow(endCoords.y - startCoords.y, 2)) * window.setup.GEO_SCALE;
+       return {
         type: 'direct',
         path: [startCoords, endCoords],
-        totalDistance: dist + 50
+        totalDistance: dist + 50 // Pénalité
       };
     }
 
+    // --- ÉTAPE 3 : Calcul Dijkstra sur le réseau ---
+    const graphPath = window.setup.findPathInGraph(startNode, endNode);
+
+    // Si pas de chemin réseau trouvé (ex: îles non connectées)
+    if (!graphPath) {
+      // Si on est sur le même continent, on autorise le hors-piste
+      if (sCont === eCont) {
+          const dist = Math.sqrt(Math.pow(endCoords.x - startCoords.x, 2) + Math.pow(endCoords.y - startCoords.y, 2)) * window.setup.GEO_SCALE;
+          return {
+            type: 'direct',
+            path: [startCoords, endCoords],
+            totalDistance: dist + 100 // Forte pénalité pour encourager les routes
+          };
+      }
+      console.warn(`❌ Aucun chemin trouvé entre ${startNode} (${sCont}) et ${endNode} (${eCont}).`);
+      return { type: 'error', pathNodes: [], totalDistance: 0 };
+    }
+
+    // --- ÉTAPE 4 : Finalisation ---
     let totalDist = 0;
     graphPath.forEach(p => totalDist += (p.segmentDist || 0));
-    // Ajout des distances d'approche (Départ -> Noeud1 et NoeudFin -> Arrivée)
+
+    // On ajoute la distance de marche pour rejoindre le premier nœud et quitter le dernier
     totalDist += (minStartDist + minEndDist) * window.setup.GEO_SCALE;
 
     return {

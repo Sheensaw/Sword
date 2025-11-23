@@ -1,114 +1,148 @@
 # thaurgrim.yaml
-modele: "low_fantasy_grim"
-description: "Continent Thaurgrim - Terres de cendres, d'industrie primitive et de tyrannie clanique"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "low_fantasy_grim_realistic"
+description: "Continent Thaurgrim - Une dystopie industrielle primitive, étouffant sous la suie, où l'acier vaut plus que la vie humaine."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["volcans", "industrie_lourde", "esclavage", "pollution", "tyrannie", "fer_et_feu"]
-  mots_cles: ["vulkar", "suie", "forçats", "clans_guerriers", "famine_noire", "souffre"]
-  description_semantique: "Un continent étouffant sous la cendre. Une société industrielle primitive basée sur la force brute, l'esclavage et la maîtrise fanatique du feu."
+  themes: ["industrialisation_forcée", "pollution_mortelle", "esclavage_économique", "théocratie_technologique", "survie_respiratoire"]
+  mots_cles: ["silicose", "quotas_de_production", "famine_noire", "architecture_brutaliste", "pluies_acides", "recyclage_organique"]
+  description_semantique: "Un monde gris et rouge. Le bruit des marteaux-pilons est constant. La population ne meurt pas sacrifiée sur des autels, mais toussante dans des mines ou broyée par des machines sans sécurité."
+  tonalite_audit: "Grimdark Consistent - La souffrance est systémique et non gratuite. Elle est le coût de production de l'acier mondial."
 
-# DONNÉES FONDAMENTALES
+# 2. DONNÉES FONDAMENTALES & GÉOPHYSIQUE
 nom: "Thaurgrim"
-designation: "La Terre des Cendres"
-type: "Continent volcanique et industriel"
+designation: "La Terre des Cendres (ou L'Usine du Monde)"
+type: "Continent volcanique actif et semi-aride"
 superficie_mkm2: 34.2
-population_estimee_millions: 25 (dont 40% d'esclaves/serfs)
+population_estimee_millions: 58 (Densité artificielle : Surpopulation forcée dans les zones filtrées, vides absolus ailleurs)
 systeme_coordonnees: "grid_thaurgrimien_100x100"
+climatologie_audit: "L'activité volcanique constante crée un 'Hiver Volcanique' localisé. Les particules bloquent le soleil, abaissant les températures malgré la géothermie. L'eau de pluie est acide (non potable sans traitement)."
 
-# RÉGIONS GÉOPOLITIQUES (ENFERS INDUSTRIELS)
+# 3. RÉGIONS GÉOPOLITIQUES (ZONES DE PRODUCTION)
 regions:
-  - nom: "Le Creuset (Royaume du Vulkar)"
+  - nom: "Le Creuset (Cœur Industriel)"
     coordonnees: { x_min: 60, x_max: 90, y_min: 60, y_max: 85 }
-    biome_principal: "Désert de basalte et volcans actifs"
-    capitale: "Vulkar"
-    peuples_principaux: ["Thaurgrims (Maîtres)", "Esclaves de toutes races"]
-    description: "L'air y est irrespirable sans filtre rudimentaire. Le ciel est noir en permanence."
-    ressources: ["Fer", "Obsidienne", "Main d'œuvre forcée"]
-    particularites: ["Forges monumentales à soufflets manuels", "Fosses communes", "Temples sacrificiels"]
+    biome_principal: "Désert de basalte, Smog permanent"
+    capitale_regionale: "Vulkar (Capitale Suprême)"
+    logique_geographique: "Situé au centre des plaques tectoniques pour un accès maximal à la géothermie de surface."
+    etat: "L'air y est si chargé de particules que le soleil n'est qu'une tache rouge pâle. C'est ici que sont fondus 80% des métaux du monde connu."
 
-  - nom: "Les Plaines de Suie (Drav)"
+  - nom: "Les Steppes de Suie (Le Grenier Gris)"
     coordonnees: { x_min: 40, x_max: 70, y_min: 40, y_max: 60 }
-    biome_principal: "Steppes couvertes de cendre grise"
-    capitale: "Drav"
-    peuples_principaux: ["Serfs Thaurgrims", "Parias"]
-    description: "Zone agricole misérable où l'on cultive des champignons géants et des lichens résistants sous la cendre."
-    ressources: ["Cendres fertilisantes (récoltées à la main)", "Nourriture de base infecte"]
-    particularites: ["Silos fortifiés", "Villages troglodytes pour fuir les pluies acides"]
+    biome_principal: "Plaines de cendres fertiles mais toxiques"
+    capitale_regionale: "Agri-Nove"
+    logique_geographique: "Zone sous le vent des volcans. Les dépôts de cendres fertilisent le sol, mais empoisonnent les fermiers. Utilisation de cultures résistantes (Myciculture)."
+    etat: "Agriculture souterraine (champignons géants) et de surface (blé noir). Espérance de vie des fermiers : 28 ans (fibrose pulmonaire)."
 
-  - nom: "La Forêt Pétrifiée (Derna)"
+  - nom: "La Ceinture de Fer (Les Mines)"
     coordonnees: { x_min: 20, x_max: 50, y_min: 50, y_max: 75 }
-    biome_principal: "Arbres morts minéralisés"
-    capitale: "Derna"
-    peuples_principaux: ["Derniens (Humains adaptés)", "Exilés"]
-    description: "Une forêt de pierre coupante. Les habitants y chassent des créatures cuirassées."
-    ressources: ["Bois de pierre (aussi dur que le fer)", "Charbon de surface"]
-    particularites: ["Fortins de bandits", "Carrières à ciel ouvert"]
+    biome_principal: "Massif montagneux percé (Karst artificiel)"
+    capitale_regionale: "Profond-Gouffre"
+    ambiance: "Des millions de serfs vivent sous terre. Ils dépendent des ventilateurs de surface pour l'oxygène."
 
-  - nom: "Les Côtes Jaunes (Thun'ar)"
+  - nom: "La Côte Jaune (Zone Commerciale)"
     coordonnees: { x_min: 30, x_max: 60, y_min: 20, y_max: 40 }
     biome_principal: "Littoral sulfureux"
-    capitale: "Thun'ar"
-    description: "L'odeur d'œuf pourri est omniprésente. L'eau y est toxique."
-    ressources: ["Soufre (pour la poudre noire rudimentaire et l'alchimie)", "Sel acide"]
-    particularites: ["Mines de soufre (espérance de vie : 25 ans)", "Ports fortifiés contre les pirates"]
+    capitale_regionale: "Kaar"
+    logique_geographique: "Seule côte avec des eaux assez profondes pour les cargos lourds, malgré les émanations de soufre."
+    etat: "Zone tampon pour les étrangers (Eldariens). L'odeur d'œuf pourri (soufre) masque celle des cadavres."
 
-# VILLES PRINCIPALES (CITE-USINES)
-villes_principales:
+# 4. VILLES PRINCIPALES (HIÉRARCHIE INDUSTRIELLE & LOGISTIQUE)
+villes_majeures:
   - nom: "Vulkar"
-    type: "Capitale industrielle et religieuse"
-    coordonnees: { x: 75, y: 70 }
-    population: 1900000 (Surpeuplée)
-    ambiance: "Bruit assourdissant des marteaux, chaleur étouffante, smog épais."
-    lieux_cles: ["La Grand-Forge (Palais)", "Le Gouffre des Rebuts (Quartier bas)", "Marché aux Esclaves"]
-
-  - nom: "Derna"
-    type: "Bastion frontalier"
-    coordonnees: { x: 35, y: 60 }
-    ambiance: "Silencieuse, grise, méfiante. Maisons en pierre noire sans fenêtres."
+    statut: "La Cité-Moteur"
+    population: 3500000
+    description: "Une monstruosité urbaine verticale. Les riches vivent dans les tours hermétiques du sommet (Le Haut-Filtre), les pauvres s'entassent dans les bas-fonds étouffants."
+    infrastructure_cle: "Le Grand Soufflet : Un système titanesque de ventilation alimenté par la vapeur géothermique."
+    logistique_survie: "Eau : Condensateurs de vapeur géothermique (goût métallique). Nourriture : Pâte de champignons des Steppes + Rations importées d'Eldaron."
 
   - nom: "Kaar"
-    type: "Port Noir"
-    coordonnees: { x: 85, y: 40 }
-    population: 1000000
-    ambiance: "Ville de marins, de prostitution et de crimes. La suie se mélange aux embruns."
-    activite: "Exportation massive de cendres et d'armes."
+    statut: "Port d'Exportation"
+    population: 1200000
+    description: "Gigantesques docks de fer noir. Point névralgique du 'Cycle de la Faim'."
+    logistique_survie: "La ville la mieux nourrie grâce au vol et à la corruption sur les cargaisons de blé entrant."
 
-# RÉSEAU ROUTIER (LOGISTIQUE DE GUERRE)
-routes_principales:
-  - nom: "La Voie du Fer"
-    type: "Route pavée militaire"
-    statut: "Entretenue par des forçats, patrouillée par des milices."
-    danger: "Bandits de grand chemin, éboulements, coulées de lave occasionnelles."
+  - nom: "Profond-Gouffre"
+    statut: "Capitale Minière"
+    population: 900000 (Population Souterraine)
+    description: "Une ville inversée, creusée dans la paroi d'un immense cratère éteint."
+    logistique_survie: "Eau : Nappes phréatiques profondes (souvent contaminées à l'arsenic). Nourriture : Lichens de grotte et 'Viande Longue' (recyclage des morts dissimulé)."
 
-  - nom: "La Piste des Cendres"
-    type: "Route commerciale vers Eldaron"
-    statut: "Poussiéreuse, balisée par des crânes sur des piques."
-    trafic: "Convois lourds de chariots blindés."
+# 5. VILLES SECONDAIRES & HUBS LOGISTIQUES
+villes_secondaires:
+  - nom: "Fonderie-Est"
+    type: "Ville Usine"
+    population: 250000
+    role: "Spécialisée dans l'artillerie et les plaques de blindage. Les accidents y tuent 50 personnes par semaine."
 
-# INTERACTIONS ET CONFLITS
-relations_internes:
-  - "Les Clans de Vulkar méprisent les agriculteurs de Drav, qu'ils considèrent comme du bétail."
-  - "Derna est en quasi-rébellion, servant de refuge aux esclaves en fuite."
+  - nom: "Cendre-Bourg"
+    type: "Centre de Tri"
+    population: 80000
+    role: "Hub ferroviaire. Point de rupture de charge entre le minerai brut et le charbon raffiné."
 
-relations_externes:
-  - "Eldaron : Client principal (dépendance alimentaire réciproque), mais ennemi historique."
-  - "Iskarion : Rivalité pour le contrôle des minerais. Escarmouches fréquentes en mer."
+  - nom: "Sanitarium-IV"
+    type: "Ville Hôpital (Centre de Recyclage)"
+    population: 150000
+    role: "Officiellement : Soins palliatifs pour la 'Toux Noire'. Officieusement : Usine de transformation des cadavres en engrais (phosphates) pour les Steppes de Suie."
 
-# VOLCANS ET DANGERS NATURELS
-volcans_majeurs:
-  Ghaarn:
-    statut: "Dieu-Volcan Actif"
-    danger: "Eruptions fréquentes, pluies de lapilli, gaz toxiques inodores."
-    culte: "On lui sacrifie les prisonniers de guerre pour apaiser sa colère."
+  - nom: "Fort-Soufre"
+    type: "Bastion Côtier"
+    population: 45000
+    role: "Protège les mines de soufre à ciel ouvert. Les prisonniers y travaillent sans protection."
 
-# INFRASTRUCTURES
+# 6. RÉSEAU DE TRANSPORT (CAPILLARITÉ LOGISTIQUE)
 infrastructures:
-  - "Les Grands Soufflets de Vulkar : Actionnés par des centaines d'hommes, ils alimentent les fourneaux."
-  - "Les Canaux de Lave : Tranchées creusées pour diriger le magma vers les forges (extrêmement dangereux)."
+  - nom: "La Voie du Fer (Ironway)"
+    type: "Réseau de rails lourds"
+    description: "Des milliers de kilomètres de rails. Les locomotives sont des monstres à vapeur haute pression, consommant des quantités phénoménales d'eau et de charbon."
+    audit_coherence: "Le transport par rail est la seule méthode viable pour déplacer l'acier (trop lourd pour les routes, pas de fleuves navigables à l'intérieur)."
 
-# MÉTA-DONNÉES IA
+  - nom: "Les Canaux de Lave"
+    type: "Réseau Énergétique"
+    description: "Détournement de flux de magma pour alimenter les hauts fourneaux sans combustible solide."
+    risque: "Rupture de confinement = Incinération de quartier."
+
+  - nom: "La Route de la Faim"
+    type: "Axe vital vers Kaar"
+    description: "La route par laquelle arrive le blé d'Eldaron. Protégée par des fortins tous les 5 km."
+    impact_strategique: "Si cette route est coupée, Thaurgrim entre en famine en 25 jours (Stock critique)."
+
+# 7. SOCIÉTÉ ET CASTES (UTILITARISME BRUTAL)
+hierarchie_sociale:
+  principe: "Ta valeur est égale à ta production calorique ou manufacturière."
+  castes:
+    - "Les Maîtres de Forge (Oligarchie)": "Détiennent les moyens de production.Espérance de vie : 70 ans (grâce à l'air filtré)."
+    - "Les Ingénieurs-Prêtres": "Technocrates maintenant les machines. Savoir hérité et secret."
+    - "Les Mains (Ouvriers qualifiés)": "Nourris correctement (1800 cal/jour). Logés dans les étages médians."
+    - "Les Charbons (Serfs/Forçats)": "Masques filtrants usagés. Espérance de vie : 30 ans. Rations de survie (1200 cal/jour)."
+    - "Les Scories (Invalides)": "Déportés vers Sanitarium-IV pour 'traitement'."
+
+# 8. TENSIONS & MENACES (STRESS-TEST SYSTÉMIQUE)
+conflits_internes:
+  - "La Grève du Souffle": "Sabotage des ventilations par les mineurs. Chantage à l'asphyxie contre chantage à la famine."
+  - "Guerre Froide des Clans": "Clan du Marteau (Armement) vs Clan de la Roue (Logistique). Le Marteau a les armes, mais la Roue transporte la nourriture. Équilibre de la terreur."
+
+menaces_environnementales:
+  - "L'Hiver de Cendre": "Éruptions majeures faisant chuter la température de 10°C. Gel des cultures fongiques de surface."
+  - "Gaz Rampants": "Poches de CO2 et de Soufre descendant des montagnes. Plus lourds que l'air, ils noient les vallées et les sous-sols pendant le sommeil."
+
+# 9. ÉCONOMIE LOCALE (INTERDÉPENDANCE CRITIQUE)
+specialites:
+  Export:
+    - "Acier trempé (Qualité mondiale)"
+    - "Armes de siège & Artillerie"
+    - "Outils agricoles (Vital pour Eldaron)"
+    - "Cendres & Phosphates humains (Engrais pour Eldaron)"
+    - "Soufre"
+  Import:
+    - "Blé (Vital - 60% de l'apport calorique)"
+    - "Bois (Luxe absolu, inexistant sur place)"
+    - "Eau potable (Importée en barils pour l'élite)"
+
+# 10. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 3.2_grim
-  type_contenu: "geographie_dark_medieval"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "geographie_continentale_complete"
+  note_intention: "S'inspirer de la révolution industrielle à Londres/Manchester + Norilsk (Russie). Pas de magie, juste de la thermodynamique et de la souffrance. Cohérence : La pollution est la conséquence inévitable de la production nécessaire à l'achat de nourriture."

@@ -1,0 +1,197 @@
+# bestiaire.yaml
+# AUDIT STATUS: ULTRA-COHERENT (Agrégation Canonique v3.0 - Expansion Systémique)
+modele: "low_fantasy_grim_realistic"
+description: "Catalogue du Vivant et du Non-Vivant de Velkarum - Une classification basée sur la létalité, la valeur calorique et le potentiel de loot."
+
+# 1. EMBEDDING SOMBRE & RÉALISTE
+embedding_optimized:
+  themes: ["darwinisme_impitoyable", "chaine_alimentaire_toxique", "parasitisme_omnipresent", "ressources_biologiques", "horreur_naturelle"]
+  mots_cles: ["valeur_nutritive", "indice_de_predation", "symbiose_forcee", "vecteur_pathogene", "biomasse_exploitable"]
+  description_semantique: "Dans cet univers, les animaux ne sont pas des compagnons. Ce sont soit des calories (nourriture), soit des outils (transport), soit des prédateurs qui vous voient comme des calories. La distinction entre le naturel et le surnaturel est floue : un champignon qui mange vos souvenirs est-il magique ou juste biologique ?"
+  tonalite_audit: "Scientific Grimdark - Une encyclopédie écrite par un boucher-naturaliste qui cherche à survivre."
+
+# 2. FAUNE TERRESTRE (BÉTAIL & LABEUR)
+# Les animaux utiles, souvent malades ou mutants à cause de l'environnement.
+faune_domestique:
+  - nom: "Le Bœuf-Cendre (Eldaron/Thaurgrim)"
+    habitat: "Plaines agricoles et zones industrielles."
+    biologie: "Bovidé massif à la peau grise et calleuse, filtrant mal l'air (poumons fragiles)."
+    utilite: "Force de traction pour les charrues et les canons. Viande dure mais abondante."
+    statut: "En déclin à cause de la qualité de l'air. Nécessite des masques en toile à Thaurgrim."
+
+  - nom: "Le Dromadaire de Sel (Iskarion)"
+    habitat: "Déserts et ergs."
+    biologie: "Capable de boire de l'eau saumâtre grâce à des reins hyper-performants (qui forment des calculs précieux)."
+    utilite: "Transport transsaharien. Son lait est la seule source de calcium pour les nomades."
+    particularite: "Agressif. Mordre est son réflexe de défense."
+
+  - nom: "Le Renne des Toundras (Helrün)"
+    habitat: "Inlandsis et côtes froides."
+    biologie: "Pelage épais, sabots larges pour la neige."
+    utilite: "Totale. On boit son sang sans le tuer (nutrition renouvelable), on utilise sa peau, ses os, ses tendons."
+    statut: "Sacré. Tuer une femelle reproductrice est un crime capital."
+
+  - nom: "Le Scarabée-Porteur (Varnäl)"
+    habitat: "Zones périphériques de la jungle."
+    biologie: "Insecte de la taille d'un poney. Carapace insensible à la rouille verte."
+    utilite: "Seul animal de bât qui survit dans la jungle. Peut porter 150kg."
+    inconvenient: "Doit être nourri de viande avariée, sinon il mange sa charge."
+
+# 3. FAUNE URBAINE ET CHAROGNARDS (AGRO-MOBS)
+# Ennemis de bas niveau, présents en meute.
+faune_parasite:
+  - nom: "Le Rat-Lame (Eldaron/Villes)"
+    habitat: "Égouts, champs de bataille, silos vides."
+    description: "Rongeur dont les incisives ont durci en absorbant le fer du sang des cadavres."
+    comportement: "Attaque en nuée (Swarm). Ciblage prioritaire des blessés."
+    loot: "Queues (Prime municipale), Dents (Pointes de flèches basiques)."
+    danger: "Vecteur de la 'Fièvre des Tranchées' (Debuff endurance)."
+
+  - nom: "Le Cafard-Fournaise (Thaurgrim)"
+    habitat: "Conduits de ventilation, décharges de scories."
+    description: "Insecte blindé thermorésistant. Son abdomen luit d'une chaleur interne."
+    mechanique_jeu: "Explose à la mort (Dégâts de feu de zone). Ne pas tuer au corps-à-corps."
+    loot: "Glande volatile (Crafting d'explosifs)."
+
+  - nom: "Le Chien de Fonderie (Thaurgrim)"
+    habitat: "Zones industrielles, décharges."
+    description: "Canidé glabre à la peau épaisse et crouteuse, insensible aux étincelles. Aveugle mais ouïe surdéveloppée."
+    comportement: "Chasseur de meute. Hurlement alerte les gardes."
+    loot: "Cuir Cuit (Crafting armure résistante au feu)."
+
+  - nom: "La Mouche de Verre (Iskarion)"
+    habitat: "Oasis et zones urbaines."
+    description: "Insecte dont les ailes reflètent la lumière pour aveugler ses proies avant de boire leurs larmes (humidité)."
+    danger: "Nuée aveuglante (Debuff précision)."
+
+# 4. PRÉDATEURS NATURELS (MENACES PHYSIQUES - MOBS ÉLITES)
+# La faune qui chasse l'homme. Nécessite tactique et équipement.
+faune_sauvage:
+  - nom: "Le Tigre-Écorce (Varnäl)"
+    habitat: "Jungle profonde."
+    description: "Félin au camouflage mimétique parfait (texture bois/mousse)."
+    comportement: "Stealth. Devient visible seulement 0.5s avant l'impact."
+    dangerosite: "Extrême. Dégâts de saignement massifs."
+    butin: "Peau Mimétique (Crafting d'armures légères furtives)."
+
+  - nom: "La Fourmi-Taureau (Varnäl)"
+    habitat: "Colonies souterraines."
+    description: "Insecte de la taille d'un loup. Mandibules coupe-boulons."
+    tactique: "Tanky. Chitine renvoie les projectiles légers."
+    faiblesse: "Le feu (brûle l'oxygène des galeries)."
+
+  - nom: "Le Loup des Glaces (Helrün)"
+    habitat: "Banquise."
+    description: "Prédateur au pelage huileux imperméable."
+    tactique: "Harassement. Baisse la température de la cible avant d'attaquer."
+    loot: "Huile de Loup (Imperméabilisant pour équipement)."
+
+  - nom: "Le Scorpion de Cristal (Iskarion)"
+    habitat: "Plateaux de Verre."
+    description: "Arachnide translucide quasi-invisible."
+    attaque: "Dard focalisateur (Laser solaire). Brûle l'armure."
+    loot: "Carapace prismatique (Optique de haute valeur)."
+
+  - nom: "L'Ours de Suie (Thaurgrim/Marches du Nord)"
+    habitat: "Forêts brûlées et montagnes."
+    biologie: "Ursidé dont la fourrure est saturée de charbon et de goudron naturel."
+    attaque: "Charge lourde. Très difficile à tuer (PV massifs)."
+    loot: "Bile noire (Ingrédient alchimique toxique)."
+
+# 5. HORREURS BIOLOGIQUES & FLORE HOSTILE (PIÈGES VIVANTS)
+# Dangers statiques ou environnementaux.
+bio_risques:
+  - nom: "Le Piranha-Scie (Varnäl)"
+    habitat: "Eaux douces."
+    danger: "Coule les radeaux en bois. Nécessite coque métal."
+
+  - nom: "L'Amibe de Coque"
+    habitat: "Eaux stagnantes."
+    danger: "Détruit la durabilité de l'équipement au contact."
+
+  - nom: "Le Ver de l'Œil"
+    type: "Parasite furtif."
+    danger: "Cécité progressive. Donne 'Vision Thermique' avant la mort."
+
+  - nom: "La Ronce-Rasoir (Eldaron/Varnäl)"
+    type: "Flore Hostile."
+    description: "Buisson aux épines métalliques (absorbe le fer du sol)."
+    danger: "Dégâts physiques au mouvement. Provoque 'Hémorragie'."
+    loot: "Épine d'Acier (Munition naturelle pour sarbacane/arbalète)."
+
+  - nom: "Le Champignon-Vessie (Thaurgrim)"
+    type: "Flore Explosive."
+    description: "Pousse sur les cadavres. Rempli de gaz méthane."
+    mechanique: "Explose si on marche dessus ou si une étincelle est proche."
+
+# 6. ENTITÉS SURNATURELLES & SPIRITUELLES (BOSS)
+# Phénomènes actifs demandant des mécaniques spécifiques.
+entites_etherees:
+  - nom: "Le Grinceur Majeur (Juggernaut Industriel)"
+    localisation: "Usines de Thaurgrim."
+    nature: "Amalgame de chair et de métal hanté."
+    attaque: "Vapeur brûlante (AoE) et Presse Hydraulique."
+    faiblesse: "Valves de pression dorsales."
+    loot: "Cœur de Machine (Item de quête)."
+
+  - nom: "L'Enfant-Rouille"
+    localisation: "Silos d'Eldaron."
+    nature: "Poltergeist."
+    attaque: "Attire dans le grain mouvant. Dégâts psychiques."
+    contre_mesure: "Bannissement rituel."
+
+  - nom: "Le Wendigo (Mal des Glaces)"
+    localisation: "Helrün."
+    nature: "Mutant cannibale."
+    comportement: "Berserker régénératif."
+    faiblesse: "Feu (cautérise la régénération)."
+
+  - nom: "Le Miroir de Soif"
+    localisation: "Iskarion."
+    nature: "Anomalie physique."
+    danger: "Mur de chaleur invisible. Déshydratation instantanée."
+
+  - nom: "La Dame de Vase (Marael/Varnäl)"
+    localisation: "Marécages du Delta."
+    nature: "Colonie d'insectes mimant une forme humaine pour attirer les voyageurs."
+    attaque: "Dislocation (La forme humaine s'effondre en nuée d'insectes qui étouffent la cible)."
+    loot: "Miel Noir (Antidote universel rare)."
+
+# 7. RESSOURCES ANIMALES SPÉCIALES (CRAFTING HAUT NIVEAU)
+ressources_critiques:
+  - nom: "La Baleine Albinos (Helrün)"
+    ressource: "Huile spectrale."
+    propriete: "Lumière froide, révélation de la vérité."
+
+  - nom: "Le Champignon-Mémoire (Varnäl)"
+    usage: "Révèle des indices (souvenirs) au prix de la santé mentale."
+
+  - nom: "Le Poisson-Coffre (Lirn)"
+    usage: "Inventaire de contrebande indétectable."
+
+  - nom: "Le Crabe de Soufre (Thaurgrim)"
+    habitat: "Lacs acides."
+    loot: "Carapace jaune."
+    usage: "Raffinage de poudre à canon de haute qualité."
+
+  - nom: "L'Oiseau-Filtre (Thaurgrim)"
+    habitat: "Toits des usines."
+    biologie: "Bec rempli de lamelles filtrantes."
+    loot: "Filtre Biologique."
+    usage: "Crafting de masques à gaz de haute qualité (meilleurs que les masques en tissu)."
+
+# 8. INDEX DE LÉTALITÉ (INTERFACE JOUEUR)
+classement_danger:
+  - Rang_F (Nuisible): "Rat-Lame, Mouche de Verre."
+  - Rang_D (Gênant): "Chien de Fonderie, Bandit."
+  - Rang_C (Soldat): "Loup des Glaces, Garde d'Eldaron."
+  - Rang_B (Élite): "Tigre-Écorce, Scorpion Cristal, Ours de Suie."
+  - Rang_A (Boss de Zone): "Essaim de Fourmis, Wendigo, Dame de Vase."
+  - Rang_S (Raid Boss): "Baleine Albinos, Grinceur Colossal."
+
+# 9. MÉTA-DONNÉES IA
+meta_ia:
+  date_creation: "2025-11-23"
+  version: 3.0_bestiary_expanded
+  type_contenu: "bestiaire_rpg_survival"
+  note_intention: "Extension systémique : Chaque région possède désormais sa propre chaine alimentaire complète (charognard -> prédateur -> boss) et ses propres ressources de crafting uniques."

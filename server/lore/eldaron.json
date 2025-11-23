@@ -1,0 +1,652 @@
+{
+  "meta": {
+    "continent_id": "eldaron",
+    "description": "Cartographie haute résolution intégrale du continent Eldaron.",
+    "scale_factor": "local",
+    "parent_file": "velkarum.json"
+  },
+  "nodes": {
+    "Lorn_Place_Royale": {
+      "x": 45.00,
+      "y": 55.00,
+      "continent": "Eldaron",
+      "type": "Capitale_Centre",
+      "name": "Lorn - Place Royale",
+      "description": "Le centre névralgique de l'Empire. La statue du Premier Roi suinte de rouille. Les crieurs publics annoncent les nouvelles taxes sous les gibets.",
+      "sociology": { "ruling_faction": "Cour Royale", "law_enforcement": "High", "social_tension": 60 },
+      "encounters": { "roaming_mobs": ["Garde Royal", "Courtisan", "Espion du Bureau", "Crieur Public"] }
+    },
+    "Lorn_Palais_Vieux": {
+      "x": 45.02,
+      "y": 55.05,
+      "continent": "Eldaron",
+      "type": "Gouvernement",
+      "name": "Le Vieux Palais",
+      "description": "Forteresse administrative aux murs épais. C'est ici que se décide qui mange et qui meurt de faim. Les fenêtres sont étroites pour empêcher les flèches d'entrer.",
+      "access": "Restricted",
+      "danger": 0
+    },
+    "Lorn_Bureau_Dettes": {
+      "x": 45.03,
+      "y": 55.04,
+      "continent": "Eldaron",
+      "type": "Administration",
+      "name": "Bureau Royal des Dettes",
+      "description": "Un bâtiment gris où des milliers de scribes enregistrent les impayés. L'encre y coule plus que le vin.",
+      "encounters": { "roaming_mobs": ["Scribe Épuisé", "Huissier Gris"] }
+    },
+    "Lorn_Banque_Zenith_Branche": {
+      "x": 45.04,
+      "y": 55.01,
+      "continent": "Eldaron",
+      "type": "Banque",
+      "name": "Banque du Zénith (Succursale)",
+      "description": "Un bâtiment de marbre blanc importé d'Iskarion, jurant avec la crasse locale. Les Huissiers Gris montent la garde avec des arbalètes.",
+      "market": { "specialty": "Change_Credit", "wealth_tier": "Opulent", "services": ["Pret_Souverain", "Depot_Or"] }
+    },
+    "Lorn_Cathedrale_Pere": {
+      "x": 44.98,
+      "y": 55.03,
+      "continent": "Eldaron",
+      "type": "Sanctuaire",
+      "name": "Cathédrale du Père Sévère",
+      "description": "Une nef gothique glaciale. Les fidèles s'y flagellent pour expier la dette nationale sur des dalles froides.",
+      "services": ["Soin_Spirituel", "Benediction", "Confession"]
+    },
+    "Lorn_Cimetiere_Nobles": {
+      "x": 44.97,
+      "y": 55.06,
+      "continent": "Eldaron",
+      "type": "Cimetiere",
+      "name": "Jardin du Repos Éternel",
+      "description": "Seuls ceux qui ont payé leurs dettes peuvent être enterrés ici. Les tombes sont somptueuses.",
+      "encounters": { "roaming_mobs": ["Pilleur de Tombe (Nuit)", "Fantôme d'Ancêtre"] }
+    },
+    "Lorn_Quartier_Misericorde": {
+      "x": 44.95,
+      "y": 54.95,
+      "continent": "Eldaron",
+      "type": "Quartier_Pauvre",
+      "name": "Quartier de la Miséricorde",
+      "description": "Un labyrinthe de taudis en bois pourri. La 'Miséricorde' est le surnom ironique de la fièvre locale qui abrège les souffrances.",
+      "sociology": { "social_tension": 85, "disease_chance": 0.25 },
+      "market": { "wealth_tier": "Destitute", "prices": { "pain_1kg": { "base": 0.1, "scarcity": "high" } } }
+    },
+    "Lorn_Fosse_Aux_Ours": {
+      "x": 44.90,
+      "y": 54.90,
+      "continent": "Eldaron",
+      "type": "Slum",
+      "name": "La Fosse aux Ours",
+      "description": "Zone inondable en contrebas. Ici, la Garde Royale n'entre jamais. Le territoire de la Guilde des Voleurs.",
+      "danger": 4,
+      "market": { "black_market": true, "specialty": "Objets_Voles", "prices": { "dague_rouillee": { "base": 5, "scarcity": "none" } } },
+      "encounters": { "danger_rating": "B", "roaming_mobs": ["Coupe-Jarret", "Rat-Lame", "Recruteur de la Guilde"] }
+    },
+    "Lorn_Arene_Clandestine": {
+      "x": 44.88,
+      "y": 54.88,
+      "continent": "Eldaron",
+      "type": "Arene",
+      "name": "Le Cercle de Sang",
+      "description": "Une cave où l'on parie sur des combats de chiens ou de mendiants.",
+      "access": "Hidden",
+      "danger": 5
+    },
+    "Lorn_Taverne_Borgne": {
+      "x": 44.96,
+      "y": 54.96,
+      "continent": "Eldaron",
+      "type": "Taverne",
+      "name": "Le Dragon Borgne",
+      "description": "L'auberge la plus célèbre de la capitale. La bière y est coupée à l'eau, mais les rumeurs sont pures et les mercenaires nombreux.",
+      "services": ["Rumeurs", "Recrutement", "Biere_Tiede", "Chambre_Commune"]
+    },
+    "Lorn_Maison_Plaisirs": {
+      "x": 45.05,
+      "y": 54.98,
+      "continent": "Eldaron",
+      "type": "Bordel",
+      "name": "Le Velours Rouge",
+      "description": "Établissement de luxe où les secrets d'État se murmurent sur l'oreiller.",
+      "danger": 1,
+      "sociology": { "faction": "Clan de l'Ombre" }
+    },
+    "Lorn_Port_Fluvial_Int": {
+      "x": 44.85,
+      "y": 55.05,
+      "continent": "Eldaron",
+      "type": "Port_Fluvial",
+      "name": "Quais de l'Ostral",
+      "description": "Le poumon de la ville. Des milliers de sacs de blé y sont déchargés sous l'œil des contremaîtres et des rats.",
+      "market": { "imports_vital": ["Blé", "Charbon"], "exports": ["Vin", "Tissus"] },
+      "encounters": { "roaming_mobs": ["Docker", "Syndicaliste Enragé", "Rat Géant"] }
+    },
+    "Lorn_Porte_Sud": {
+      "x": 45.00,
+      "y": 54.80,
+      "continent": "Eldaron",
+      "type": "Gate",
+      "name": "Porte du Sud (Octroi)",
+      "description": "Point de contrôle douanier principal. Une longue file de chariots attend l'inspection fiscale.",
+      "sociology": { "law_enforcement": "High" }
+    },
+    "Lorn_Silos_Strategiques": {
+      "x": 45.10,
+      "y": 55.10,
+      "continent": "Eldaron",
+      "type": "Reserve",
+      "name": "Silos Royaux",
+      "description": "Immenses tours de pierre sans fenêtre contenant le blé de l'hiver. Gardées par des golems d'argile.",
+      "access": "Restricted",
+      "danger": 5,
+      "encounters": { "boss": "Golem de Garde" }
+    },
+    "Lorn_Egouts_Entree": {
+        "x": 44.92,
+        "y": 54.92,
+        "continent": "Eldaron",
+        "type": "Dungeon_Entrance",
+        "name": "Bouche d'Égout (Fosse)",
+        "description": "Une grille descellée menant aux catacombes inondées et aux anciens tombeaux.",
+        "danger": 3
+    },
+    "Lorn_Academie_Ostral": {
+        "x": 45.08,
+        "y": 55.08,
+        "continent": "Eldaron",
+        "type": "Science",
+        "name": "Académie Royale",
+        "description": "Lieu de savoir décadent où les érudits débattent du sexe des anges pendant que le peuple meurt de faim.",
+        "services": ["Bibliotheque", "Identification_Objet"]
+    },
+    "Ardel_Grand_Marche": {
+      "x": 60.00,
+      "y": 35.00,
+      "continent": "Eldaron",
+      "type": "Ville_Centre",
+      "name": "Ardel - Grand Marché",
+      "description": "Une explosion de couleurs et d'odeurs. Ici, tout s'achète, du poison au titre de noblesse, sous le soleil du sud.",
+      "market": { "wealth_tier": "Rich", "prices": { "vin_luxe": { "base": 8, "scarcity": "low" }, "soie": { "base": 50, "scarcity": "medium" } } }
+    },
+    "Ardel_Guilde_Marchands": {
+      "x": 60.05,
+      "y": 35.05,
+      "continent": "Eldaron",
+      "type": "Guilde",
+      "name": "Palais de la Bourse",
+      "description": "Le véritable siège du pouvoir en Eldaron. Un bâtiment somptueux où se négocient les destins des royaumes.",
+      "sociology": { "ruling_faction": "Guilde des Marchands" }
+    },
+    "Ardel_QG_Capes_Or": {
+      "x": 60.02,
+      "y": 34.95,
+      "continent": "Eldaron",
+      "type": "Caserne",
+      "name": "Bastion des Capes d'Or",
+      "description": "Caserne de la milice privée. Mieux équipée que l'armée royale, et bien plus corrompue.",
+      "danger": 3,
+      "encounters": { "roaming_mobs": ["Milicien Cape d'Or", "Officier Corrompu"] }
+    },
+    "Ardel_Thermes_Luxe": {
+      "x": 60.08,
+      "y": 35.02,
+      "continent": "Eldaron",
+      "type": "Lieu_Detente",
+      "name": "Les Thermes de Jade",
+      "description": "Bains publics réservés à l'élite. L'eau est parfumée et chauffée par géothermie artificielle.",
+      "services": ["Soin_Complet", "Massage_Relaxant"]
+    },
+    "Ardel_Quartier_Villas": {
+      "x": 60.15,
+      "y": 35.10,
+      "continent": "Eldaron",
+      "type": "Quartier_Riche",
+      "name": "Colline des Villas",
+      "description": "Résidences des oligarques entourées de hauts murs, de verre importé et de jardins luxuriants.",
+      "access": "Restricted"
+    },
+    "Ardel_Forge_Ombres": {
+      "x": 60.10,
+      "y": 34.90,
+      "continent": "Eldaron",
+      "type": "Repaire",
+      "name": "La Forge des Ombres",
+      "description": "Une entrée discrète derrière une teinturerie. On y fabrique des lames empoisonnées et des serrures complexes.",
+      "market": { "black_market": true, "specialty": "Poisons_Armes" },
+      "danger": 4
+    },
+    "Ardel_Caveaux_Vin": {
+      "x": 59.95,
+      "y": 35.05,
+      "continent": "Eldaron",
+      "type": "Entrepot",
+      "name": "Caveaux de Vieillissement",
+      "description": "Des kilomètres de tunnels souterrains remplis de fûts de chêne millésimés.",
+      "encounters": { "roaming_mobs": ["Voleur de Vin", "Rat Géant"] }
+    },
+    "Ardel_Porte_Nord": {
+      "x": 60.00,
+      "y": 35.20,
+      "continent": "Eldaron",
+      "type": "Gate",
+      "name": "Porte Nord d'Ardel",
+      "description": "La sortie vers les routes dangereuses du Nord et de l'Est."
+    },
+    "Ardel_Jardin_Poisons": {
+      "x": 60.12,
+      "y": 35.12,
+      "continent": "Eldaron",
+      "type": "Jardin",
+      "name": "Arboretum Toxique",
+      "description": "Un jardin botanique privé où poussent les plantes les plus mortelles de Varnäl.",
+      "access": "Restricted",
+      "danger": 5
+    },
+    "OstVelen_Place_Fonderie": {
+      "x": 75.00,
+      "y": 55.00,
+      "continent": "Eldaron",
+      "type": "Ville_Centre",
+      "name": "Place de la Fonderie",
+      "description": "Pavés noirs de suie. Une statue d'ouvrier en fer domine la place, perpétuellement couverte de cendres.",
+      "environment": { "pollution": "High", "smog": true }
+    },
+    "OstVelen_Usine_Armement": {
+      "x": 75.05,
+      "y": 55.05,
+      "continent": "Eldaron",
+      "type": "Industrie",
+      "name": "Manufacture Royale d'Armes",
+      "description": "Bruit assourdissant de marteaux-pilons. La chaleur y est infernale.",
+      "market": { "prices": { "epee_acier": { "base": 150, "scarcity": "low" }, "armure_plaque": { "base": 800, "scarcity": "medium" } } }
+    },
+    "OstVelen_Cantine_Ouvriere": {
+      "x": 74.95,
+      "y": 54.95,
+      "continent": "Eldaron",
+      "type": "Taverne",
+      "name": "La Gamelle de Fer",
+      "description": "Soupe grasse et bière noire pour les mineurs. Le QG officieux des syndicats révolutionnaires.",
+      "sociology": { "social_tension": 90, "faction": "Syndicats" }
+    },
+    "OstVelen_Gare_Marchandises": {
+      "x": 75.15,
+      "y": 55.00,
+      "continent": "Eldaron",
+      "type": "Station",
+      "name": "Gare de Tri",
+      "description": "Départ des convois blindés de minerai vers Thaurgrim et des armes vers Lorn. Les rails sont gardés.",
+      "danger": 2
+    },
+    "OstVelen_Bas_Quartier": {
+      "x": 74.90,
+      "y": 55.10,
+      "continent": "Eldaron",
+      "type": "Slum",
+      "name": "Le Dortoir (Bas-Quartier)",
+      "description": "Barres d'immeubles insalubres où s'entassent les familles d'ouvriers. L'air y est jaune de soufre.",
+      "danger": 3,
+      "disease_vector": "High",
+      "encounters": { "roaming_mobs": ["Malade de la Toux Noire", "Vaurien", "Agitateur"] }
+    },
+    "OstVelen_Arene_Mecanique": {
+      "x": 74.98,
+      "y": 55.08,
+      "continent": "Eldaron",
+      "type": "Arene",
+      "name": "La Casse",
+      "description": "Arène où des ouvriers affrontent des prototypes de golems défectueux pour quelques pièces.",
+      "danger": 4
+    },
+    "OstVelen_Clinique_Clandestine": {
+      "x": 74.92,
+      "y": 55.12,
+      "continent": "Eldaron",
+      "type": "Hopital",
+      "name": "Le Charcutier des Ombres",
+      "description": "Un médecin radié qui soigne les maladies pulmonaires et les blessures par balle sans poser de questions.",
+      "market": { "black_market": true, "services": ["Soin_Discret"] }
+    },
+    "OstVelen_Entree_Mines": {
+        "x": 75.25,
+        "y": 55.25,
+        "continent": "Eldaron",
+        "type": "Mine_Entrance",
+        "name": "Puits n°1",
+        "description": "L'entrée principale des mines de charbon. 'Abandonnez tout espoir'.",
+        "access": "Restricted"
+    },
+    "Lirn_Quais_Principaux": {
+      "x": 15.00,
+      "y": 45.00,
+      "continent": "Eldaron",
+      "type": "Port",
+      "name": "Lirn - Les Grands Quais",
+      "description": "Odeur de sel, de goudron et de poisson pourri. Les mouettes y sont aussi agressives que les dockers.",
+      "market": { "cycle_dependence": "Mer", "prices": { "poisson_frais": { "base": 2, "scarcity": "none" } } }
+    },
+    "Lirn_Ligue_Nautes": {
+      "x": 15.05,
+      "y": 45.05,
+      "continent": "Eldaron",
+      "type": "Guilde",
+      "name": "Citadelle des Nautes",
+      "description": "Forteresse bureaucratique gérant le commerce maritime. Rien ne part sans leur tampon et un pot-de-vin.",
+      "sociology": { "ruling_faction": "Ligue des Nautes" }
+    },
+    "Lirn_Taverne_Nasse": {
+      "x": 14.95,
+      "y": 44.95,
+      "continent": "Eldaron",
+      "type": "Taverne",
+      "name": "La Nasse",
+      "description": "Repaire de contrebandiers construit sur pilotis. On y vend de tout, surtout des secrets et des cartes maritimes.",
+      "market": { "black_market": true },
+      "danger": 3
+    },
+    "Lirn_Phare_Cristal": {
+      "x": 14.85,
+      "y": 45.15,
+      "continent": "Eldaron",
+      "type": "Monument",
+      "name": "Le Phare Cristallin",
+      "description": "Technologie ancienne d'Iskarion. Sa lumière perce le brouillard magique qui protège la baie.",
+      "encounters": { "roaming_mobs": ["Gardien du Phare (Sorcier)", "Spectre Marin"] }
+    },
+    "Lirn_Grotte_Stockage": {
+      "x": 14.90,
+      "y": 44.90,
+      "continent": "Eldaron",
+      "type": "Repaire",
+      "name": "Entrepôts Clandestins",
+      "description": "Grottes naturelles aménagées sous la ville, accessibles uniquement à marée basse.",
+      "access": "Hidden",
+      "danger": 4
+    },
+    "Lirn_Cimetiere_Marins": {
+      "x": 14.80,
+      "y": 45.00,
+      "continent": "Eldaron",
+      "type": "Cimetiere",
+      "name": "Le Champ des Noyés",
+      "description": "Un cimetière de pierres tombales rongées par le sel, face à la mer.",
+      "danger": 2
+    },
+    "Lirn_Marche_Flottant": {
+      "x": 15.02,
+      "y": 44.98,
+      "continent": "Eldaron",
+      "type": "Commerce",
+      "name": "Le Marché Flottant",
+      "description": "Des dizaines de barques reliées entre elles où s'échangent les marchandises non taxées.",
+      "market": { "black_market": true, "specialty": "Exotisme" }
+    },
+    "Lirn_Sortie_Est": {
+      "x": 15.20,
+      "y": 45.00,
+      "continent": "Eldaron",
+      "type": "Gate",
+      "name": "Barrière de l'Est",
+      "description": "Sortie vers les routes côtières balayées par les vents."
+    },
+    "Gue_Place_Marche": {
+      "x": 50.00,
+      "y": 60.00,
+      "continent": "Eldaron",
+      "type": "Ville_Centre",
+      "name": "Gué-du-Roi - Place",
+      "description": "Une ville artisanale sur le déclin. La place est pavée de briques rouges usées par le temps.",
+      "market": { "wealth_tier": "Common", "prices": { "outils": { "base": 15, "scarcity": "low" } } }
+    },
+    "Gue_Auberge_Marteau": {
+      "x": 50.05,
+      "y": 60.05,
+      "continent": "Eldaron",
+      "type": "Auberge",
+      "name": "Au Marteau Doré",
+      "description": "Auberge robuste pour les voyageurs de la Route Royale. Le ragoût y est honnête.",
+      "services": ["Chambre_Sure", "Repas_Chaud"]
+    },
+    "Gue_Quartier_Ceramistes": {
+      "x": 49.95,
+      "y": 60.10,
+      "continent": "Eldaron",
+      "type": "Faubourg",
+      "name": "Quartier des Céramistes",
+      "description": "Les fours fument jour et nuit. Les poteries d'ici sont réputées dans tout le continent.",
+      "encounters": { "roaming_mobs": ["Apprenti Voleur", "Chien Errant", "Maître Artisan"] }
+    },
+    "Gue_Pont_Vieux": {
+      "x": 50.00,
+      "y": 59.90,
+      "continent": "Eldaron",
+      "type": "Bridge",
+      "name": "Le Vieux Pont",
+      "description": "Le seul point de passage sur l'Ostral à 100km à la ronde. Le péage est exorbitant.",
+      "sociology": { "law_enforcement": "Medium" }
+    },
+    "Dalen_Longere_Barons": {
+      "x": 30.00,
+      "y": 75.00,
+      "continent": "Eldaron",
+      "type": "Forteresse",
+      "name": "Longère des Barons",
+      "description": "Grande salle en bois massif, décorée de trophées de chasse. Siège du pouvoir du Nord, loin de Lorn.",
+      "sociology": { "ruling_faction": "Barons du Nord" }
+    },
+    "Dalen_Place_Commerce": {
+      "x": 30.05,
+      "y": 75.05,
+      "continent": "Eldaron",
+      "type": "Ville_Centre",
+      "name": "Dalen - Place du Commerce",
+      "description": "On y échange des fourrures et du bois contre des outils en fer venus du sud.",
+      "market": { "specialty": "Fourrures_Bois" }
+    },
+    "Dalen_Auberge_Druide": {
+      "x": 30.10,
+      "y": 74.95,
+      "continent": "Eldaron",
+      "type": "Auberge",
+      "name": "Le Repos du Druide",
+      "description": "Auberge calme où l'on dort dans des hamacs de vigne. Le silence est d'or ici.",
+      "services": ["Tisane_Soin", "Repos"]
+    },
+    "Dalen_Ecole_Sylviculture": {
+      "x": 29.90,
+      "y": 75.10,
+      "continent": "Eldaron",
+      "type": "Science",
+      "name": "École de Sylviculture",
+      "description": "On y apprend à gérer la forêt ancienne sans la mettre en colère.",
+      "access": "Public"
+    },
+    "Dalen_Cercle_Pierre": {
+      "x": 29.80,
+      "y": 75.20,
+      "continent": "Eldaron",
+      "type": "Sanctuaire",
+      "name": "Cercle des Anciens",
+      "description": "Menhirs couverts de mousse à la lisière de la ville. Lieu de rituels païens.",
+      "danger": 1
+    },
+    "KharGhul_Donjon": {
+      "x": 85.00,
+      "y": 80.00,
+      "continent": "Eldaron",
+      "type": "Forteresse",
+      "name": "Donjon de Khar-Ghul",
+      "description": "Sinistre forteresse frontalière. Les murs sont tachés de sang séché et l'acier y règne.",
+      "danger": 2,
+      "sociology": { "law_enforcement": "Martial_Law" }
+    },
+    "KharGhul_Marche_Esclaves": {
+      "x": 85.10,
+      "y": 80.10,
+      "continent": "Eldaron",
+      "type": "Commerce",
+      "name": "L'Enclos (Marché aux Esclaves)",
+      "description": "Le plus grand marché d'êtres humains de l'Est. Une honte pour le Royaume, une fortune pour le gouverneur.",
+      "market": { "black_market": true, "specialty": "Esclaves" },
+      "danger": 4
+    },
+    "KharGhul_Caserne": {
+      "x": 84.90,
+      "y": 80.05,
+      "continent": "Eldaron",
+      "type": "Caserne",
+      "name": "Caserne des Loups",
+      "description": "Logements pour la garnison. Ambiance brutale, jeux d'argent et bagarres.",
+      "encounters": { "roaming_mobs": ["Soldat Ivre", "Sergent Instructeur", "Déserteur"] }
+    },
+    "KharGhul_Geoles": {
+      "x": 85.05,
+      "y": 79.95,
+      "continent": "Eldaron",
+      "type": "Prison",
+      "name": "Les Oubliettes",
+      "description": "On y jette les prisonniers de guerre et les rebelles. Peu en ressortent.",
+      "access": "Restricted",
+      "danger": 5
+    },
+    "PortOstral_Quais_Vaseux": {
+      "x": 35.00,
+      "y": 15.00,
+      "continent": "Eldaron",
+      "type": "Port",
+      "name": "Quais Vaseux",
+      "description": "Le delta se jette ici dans la mer. Tout est humide, couvert d'algues et sent la vase.",
+      "danger": 1
+    },
+    "PortOstral_Taverne_Grenouille": {
+      "x": 35.05,
+      "y": 15.05,
+      "continent": "Eldaron",
+      "type": "Taverne",
+      "name": "La Grenouille Assoiffée",
+      "description": "On y sert de l'alcool de riz frelaté et des brochettes de rat des marais.",
+      "services": ["Repas_Exotique", "Info_Marais"]
+    },
+    "PortOstral_Temple_Eaux": {
+      "x": 34.95,
+      "y": 14.95,
+      "continent": "Eldaron",
+      "type": "Sanctuaire",
+      "name": "Temple des Eaux Saumâtres",
+      "description": "Un temple à moitié immergé dédié aux esprits du marais. Les offrandes coulent.",
+      "danger": 2
+    },
+    "PortOstral_Marche_Amphibie": {
+      "x": 35.02,
+      "y": 15.02,
+      "continent": "Eldaron",
+      "type": "Commerce",
+      "name": "Marché Amphibie",
+      "description": "Le commerce se fait de barque à barque. Attention aux sangsues.",
+      "market": { "specialty": "Herbes_Marais" }
+    },
+    "Relais_Croisee_Chemins": {
+      "x": 48.00,
+      "y": 50.00,
+      "continent": "Eldaron",
+      "type": "Relais",
+      "name": "Auberge de la Croisée",
+      "description": "Halte fortifiée au milieu de nulle part. Un havre de paix relatif sur la route infestée de bandits.",
+      "services": ["Repos_Securise"]
+    },
+    "Ruines_Tour_Guet": {
+      "x": 42.00,
+      "y": 58.00,
+      "continent": "Eldaron",
+      "type": "Ruines",
+      "name": "La Tour Rompue",
+      "description": "Ancienne tour de garde royale, maintenant occupée par une bande de désertuers.",
+      "danger": 4,
+      "encounters": { "roaming_mobs": ["Bandit de Grand Chemin", "Chef de Gang"] }
+    },
+    "Foret_Noire_Clairiere": {
+      "x": 37.00,
+      "y": 65.00,
+      "continent": "Eldaron",
+      "type": "Lieu_Sauvage",
+      "name": "Clairière aux Os",
+      "description": "Une zone de forêt dense où les voyageurs disparaissent souvent.",
+      "danger": 3,
+      "encounters": { "roaming_mobs": ["Loup des Bois", "Ours"] }
+    },
+    "Village_Riviere_Claire": {
+      "x": 30.00,
+      "y": 50.00,
+      "continent": "Eldaron",
+      "type": "Village",
+      "name": "Rivière-Claire",
+      "description": "Petit village de pêcheurs appauvri par les taxes royales.",
+      "market": { "wealth_tier": "Poor" }
+    }
+  },
+  "routes": [
+    { "id": "lorn_avenue_royale", "name": "Avenue Royale", "type": "street", "start": "Lorn_Place_Royale", "end": "Lorn_Palais_Vieux", "distance_km": 0.3, "danger": 0 },
+    { "id": "lorn_rue_banque", "name": "Rue de l'Or", "type": "street", "start": "Lorn_Place_Royale", "end": "Lorn_Banque_Zenith_Branche", "distance_km": 0.2, "danger": 1 },
+    { "id": "lorn_rue_dettes", "name": "Impasse des Pleurs", "type": "street", "start": "Lorn_Place_Royale", "end": "Lorn_Bureau_Dettes", "distance_km": 0.2, "danger": 0 },
+    { "id": "lorn_parvis_cathedrale", "name": "Parvis des Pénitents", "type": "street", "start": "Lorn_Place_Royale", "end": "Lorn_Cathedrale_Pere", "distance_km": 0.2, "danger": 0 },
+    { "id": "lorn_allee_tombes", "name": "Allée des Cyprès", "type": "path", "start": "Lorn_Cathedrale_Pere", "end": "Lorn_Cimetiere_Nobles", "distance_km": 0.3, "danger": 1 },
+    { "id": "lorn_descente_taudis", "name": "La Descente", "type": "alley", "start": "Lorn_Place_Royale", "end": "Lorn_Quartier_Misericorde", "distance_km": 0.5, "danger": 2 },
+    { "id": "lorn_ruelle_sombre", "name": "Coupe-Gorge", "type": "alley", "start": "Lorn_Quartier_Misericorde", "end": "Lorn_Fosse_Aux_Ours", "distance_km": 0.3, "danger": 4, "stealth_bonus": true },
+    { "id": "lorn_acces_arene", "name": "Trappe Secrète", "type": "hidden_path", "start": "Lorn_Fosse_Aux_Ours", "end": "Lorn_Arene_Clandestine", "distance_km": 0.1, "danger": 5 },
+    { "id": "lorn_acces_taverne", "name": "Impasse du Borgne", "type": "alley", "start": "Lorn_Quartier_Misericorde", "end": "Lorn_Taverne_Borgne", "distance_km": 0.1, "danger": 2 },
+    { "id": "lorn_ruelle_plaisir", "name": "Ruelle de Soie", "type": "alley", "start": "Lorn_Taverne_Borgne", "end": "Lorn_Maison_Plaisirs", "distance_km": 0.2, "danger": 2 },
+    { "id": "lorn_quai_chargement", "name": "Rampe des Dockers", "type": "street", "start": "Lorn_Quartier_Misericorde", "end": "Lorn_Port_Fluvial_Int", "distance_km": 0.4, "danger": 2 },
+    { "id": "lorn_route_silos", "name": "Route des Chariots", "type": "street", "start": "Lorn_Place_Royale", "end": "Lorn_Silos_Strategiques", "distance_km": 0.8, "danger": 1 },
+    { "id": "lorn_sortie_sud", "name": "Avenue de la Porte Sud", "type": "street", "start": "Lorn_Place_Royale", "end": "Lorn_Porte_Sud", "distance_km": 1.0, "danger": 0 },
+    { "id": "lorn_egouts_access", "name": "Grille Rouillée", "type": "hidden_path", "start": "Lorn_Fosse_Aux_Ours", "end": "Lorn_Egouts_Entree", "distance_km": 0.1, "danger": 3 },
+    { "id": "lorn_academie_access", "name": "Pont des Savoirs", "type": "street", "start": "Lorn_Palais_Vieux", "end": "Lorn_Academie_Ostral", "distance_km": 0.4, "danger": 0 },
+    { "id": "ardel_promenade", "name": "Promenade des Marchands", "type": "street", "start": "Ardel_Grand_Marche", "end": "Ardel_Guilde_Marchands", "distance_km": 0.2, "danger": 0 },
+    { "id": "ardel_montee_villas", "name": "Montée de Marbre", "type": "street", "start": "Ardel_Guilde_Marchands", "end": "Ardel_Quartier_Villas", "distance_km": 0.4, "danger": 1 },
+    { "id": "ardel_ruelle_forge", "name": "Passage Secret", "type": "hidden_path", "start": "Ardel_Grand_Marche", "end": "Ardel_Forge_Ombres", "distance_km": 0.3, "danger": 3 },
+    { "id": "ardel_patrouille", "name": "Ronde des Capes", "type": "street", "start": "Ardel_Grand_Marche", "end": "Ardel_QG_Capes_Or", "distance_km": 0.3, "danger": 0 },
+    { "id": "ardel_tunnel_vin", "name": "Accès Caves", "type": "tunnel", "start": "Ardel_Grand_Marche", "end": "Ardel_Caveaux_Vin", "distance_km": 0.5, "danger": 2 },
+    { "id": "ardel_sortie_nord", "name": "Avenue du Nord", "type": "street", "start": "Ardel_Grand_Marche", "end": "Ardel_Porte_Nord", "distance_km": 0.6, "danger": 1 },
+    { "id": "ardel_acces_thermes", "name": "Allée des Parfums", "type": "street", "start": "Ardel_Quartier_Villas", "end": "Ardel_Thermes_Luxe", "distance_km": 0.2, "danger": 0 },
+    { "id": "ardel_jardin_toxique", "name": "Porte Dérobée", "type": "hidden_path", "start": "Ardel_Quartier_Villas", "end": "Ardel_Jardin_Poisons", "distance_km": 0.2, "danger": 4 },
+    { "id": "ost_acces_usine", "name": "Pont des Soupirs", "type": "street", "start": "OstVelen_Place_Fonderie", "end": "OstVelen_Usine_Armement", "distance_km": 0.2, "danger": 1 },
+    { "id": "ost_rue_cantine", "name": "Rue de la Faim", "type": "street", "start": "OstVelen_Place_Fonderie", "end": "OstVelen_Cantine_Ouvriere", "distance_km": 0.1, "danger": 1 },
+    { "id": "ost_rail_interne", "name": "Voie Ferrée", "type": "rail", "start": "OstVelen_Place_Fonderie", "end": "OstVelen_Gare_Marchandises", "distance_km": 0.3, "danger": 2 },
+    { "id": "ost_descente_dortoir", "name": "Escalier de Fer", "type": "alley", "start": "OstVelen_Place_Fonderie", "end": "OstVelen_Bas_Quartier", "distance_km": 0.3, "danger": 3 },
+    { "id": "ost_acces_arene", "name": "Trou du Grillage", "type": "hidden_path", "start": "OstVelen_Bas_Quartier", "end": "OstVelen_Arene_Mecanique", "distance_km": 0.2, "danger": 4 },
+    { "id": "ost_ruelle_clinique", "name": "Impasse Sombre", "type": "alley", "start": "OstVelen_Bas_Quartier", "end": "OstVelen_Clinique_Clandestine", "distance_km": 0.2, "danger": 3 },
+    { "id": "ost_acces_mines", "name": "Chemin des Forçats", "type": "road", "start": "OstVelen_Bas_Quartier", "end": "OstVelen_Entree_Mines", "distance_km": 0.5, "danger": 2 },
+    { "id": "lirn_jetee", "name": "La Grande Jetée", "type": "street", "start": "Lirn_Quais_Principaux", "end": "Lirn_Phare_Cristal", "distance_km": 0.8, "danger": 1 },
+    { "id": "lirn_acces_ligue", "name": "Ponton Doré", "type": "street", "start": "Lirn_Quais_Principaux", "end": "Lirn_Ligue_Nautes", "distance_km": 0.2, "danger": 0 },
+    { "id": "lirn_ruelle_taverne", "name": "Quai des Brumes", "type": "alley", "start": "Lirn_Quais_Principaux", "end": "Lirn_Taverne_Nasse", "distance_km": 0.2, "danger": 2 },
+    { "id": "lirn_acces_marche_flottant", "name": "Passerelle Pourrie", "type": "street", "start": "Lirn_Taverne_Nasse", "end": "Lirn_Marche_Flottant", "distance_km": 0.1, "danger": 2 },
+    { "id": "lirn_passage_grotte", "name": "Entrée Contrebandiers", "type": "hidden_path", "start": "Lirn_Taverne_Nasse", "end": "Lirn_Grotte_Stockage", "distance_km": 0.1, "danger": 4 },
+    { "id": "lirn_chemin_cimetiere", "name": "Sentier du Deuil", "type": "path", "start": "Lirn_Phare_Cristal", "end": "Lirn_Cimetiere_Marins", "distance_km": 0.3, "danger": 1 },
+    { "id": "lirn_sortie_est", "name": "Route des Falaises", "type": "street", "start": "Lirn_Quais_Principaux", "end": "Lirn_Sortie_Est", "distance_km": 0.5, "danger": 1 },
+    { "id": "gue_rue_auberge", "name": "Rue Pavée", "type": "street", "start": "Gue_Place_Marche", "end": "Gue_Auberge_Marteau", "distance_km": 0.1, "danger": 0 },
+    { "id": "gue_impasse_potiers", "name": "Impasse des Fours", "type": "alley", "start": "Gue_Place_Marche", "end": "Gue_Quartier_Ceramistes", "distance_km": 0.2, "danger": 1 },
+    { "id": "gue_acces_pont", "name": "Rampe du Pont", "type": "street", "start": "Gue_Place_Marche", "end": "Gue_Pont_Vieux", "distance_km": 0.3, "danger": 0 },
+    { "id": "dalen_chemin_longere", "name": "Sentier des Chefs", "type": "path", "start": "Dalen_Place_Commerce", "end": "Dalen_Longere_Barons", "distance_km": 0.2, "danger": 0 },
+    { "id": "dalen_sente_auberge", "name": "Chemin de Terre", "type": "path", "start": "Dalen_Place_Commerce", "end": "Dalen_Auberge_Druide", "distance_km": 0.1, "danger": 0 },
+    { "id": "dalen_piste_ecole", "name": "Sentier Forestier", "type": "forest_path", "start": "Dalen_Place_Commerce", "end": "Dalen_Ecole_Sylviculture", "distance_km": 0.4, "danger": 1 },
+    { "id": "dalen_chemin_cercle", "name": "Piste Moussue", "type": "forest_path", "start": "Dalen_Ecole_Sylviculture", "end": "Dalen_Cercle_Pierre", "distance_km": 0.3, "danger": 1 },
+    { "id": "kharghul_allee_sang", "name": "Allée du Sang", "type": "street", "start": "KharGhul_Donjon", "end": "KharGhul_Marche_Esclaves", "distance_km": 0.3, "danger": 3 },
+    { "id": "kharghul_acces_caserne", "name": "Cour d'Honneur", "type": "street", "start": "KharGhul_Donjon", "end": "KharGhul_Caserne", "distance_km": 0.2, "danger": 1 },
+    { "id": "kharghul_descente_geoles", "name": "Escalier Noir", "type": "tunnel", "start": "KharGhul_Donjon", "end": "KharGhul_Geoles", "distance_km": 0.2, "danger": 4 },
+    { "id": "portostral_ponton", "name": "Ponton Pourri", "type": "swamp_path", "start": "PortOstral_Quais_Vaseux", "end": "PortOstral_Taverne_Grenouille", "distance_km": 0.1, "danger": 1 },
+    { "id": "portostral_acces_temple", "name": "Chemin Immergé", "type": "swamp_path", "start": "PortOstral_Quais_Vaseux", "end": "PortOstral_Temple_Eaux", "distance_km": 0.3, "danger": 2 },
+    { "id": "portostral_acces_marche", "name": "Canal des Marchands", "type": "swamp_path", "start": "PortOstral_Quais_Vaseux", "end": "PortOstral_Marche_Amphibie", "distance_km": 0.2, "danger": 1 },
+    { "id": "lorn_link_global", "name": "Connexion Globale Lorn", "type": "link", "start": "Lorn", "end": "Lorn_Place_Royale", "distance_km": 0.0, "danger": 0 },
+    { "id": "ardel_link_global", "name": "Connexion Globale Ardel", "type": "link", "start": "Ardel", "end": "Ardel_Grand_Marche", "distance_km": 0.0, "danger": 0 },
+    { "id": "ost_link_global", "name": "Connexion Globale Ost-Velen", "type": "link", "start": "Ost_Velen", "end": "OstVelen_Place_Fonderie", "distance_km": 0.0, "danger": 0 },
+    { "id": "lirn_link_global", "name": "Connexion Globale Lirn", "type": "link", "start": "Lirn", "end": "Lirn_Quais_Principaux", "distance_km": 0.0, "danger": 0 },
+    { "id": "gue_link_global", "name": "Connexion Globale Gué", "type": "link", "start": "Gue_du_Roi", "end": "Gue_Place_Marche", "distance_km": 0.0, "danger": 0 },
+    { "id": "dalen_link_global", "name": "Connexion Globale Dalen", "type": "link", "start": "Dalen", "end": "Dalen_Place_Commerce", "distance_km": 0.0, "danger": 0 },
+    { "id": "kharghul_link_global", "name": "Connexion Globale Khar-Ghul", "type": "link", "start": "Khar_Ghul", "end": "KharGhul_Donjon", "distance_km": 0.0, "danger": 0 },
+    { "id": "portostral_link_global", "name": "Connexion Globale Port-Ostral", "type": "link", "start": "Port_Ostral", "end": "PortOstral_Quais_Vaseux", "distance_km": 0.0, "danger": 0 },
+    { "id": "route_relais_croisee", "name": "Route Royale (Tronçon Perdu)", "type": "road", "start": "Relais_Croisee_Chemins", "end": "Carrefour_Ostral", "distance_km": 20.0, "danger": 2 },
+    { "id": "route_ruines_tour", "name": "Sentier des Bandits", "type": "path", "start": "Ruines_Tour_Guet", "end": "Lorn_Porte_Sud", "distance_km": 15.0, "danger": 4 },
+    { "id": "route_foret_noire", "name": "Piste des Bêtes", "type": "forest_path", "start": "Foret_Noire_Clairiere", "end": "Auberge_Chasseur", "distance_km": 10.0, "danger": 3 },
+    { "id": "route_village_riviere", "name": "Chemin de Halage", "type": "path", "start": "Village_Riviere_Claire", "end": "Gue_Pont_Vieux", "distance_km": 25.0, "danger": 1 }
+  ]
+}

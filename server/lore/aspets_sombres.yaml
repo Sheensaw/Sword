@@ -1,85 +1,93 @@
-# aspects_sombres_hybrid.yaml
-modele: "low_fantasy_grim"
-description: "La réalité crue de Velkarum - Criminalité, Vices et Désespoir"
+# mythes_legendes.yaml
+modele: "grim_magic_realism_expanded"
+description: "Le cœur battant de la peur sur Velkarum. Un mélange indissociable de fables pour enfants, de propagande religieuse et de phénomènes paranormaux avérés. Ici, croire peut vous sauver, ou vous tuer."
 
-# EMBEDDING SOMBRE
+# EMBEDDING D'IMAGINAIRE
 embedding_optimized:
-  themes: ["crime", "torture", "trafic_humain", "drogues_sales", "peste", "corruption_totale"]
-  mots_cles: ["coupe-jarrets", "marche_noir", "esclavage", "lames_louees", "bas-fonds"]
-  description_semantique: "Il n'y a pas de 'Guilde des Voleurs' romantique. Juste des gangs brutaux, des nobles dégénérés et la survie du plus fort."
+  themes: ["contes_cruels", "magie_du_prix_a_payer", "entites_liminales", "memoire_des_lieux", "superstitions_logiques"]
+  mots_cles: ["l'enfant_rouille", "les_yeux_du_puits", "la_danse_des_dents", "le_pacte_de_sel", "les_machines_qui_revent"]
+  description_semantique: "Un folklore riche et inventif qui justifie les comportements bizarres des habitants. Le surnaturel n'est pas une ressource, c'est une pollution de la réalité."
 
-# ORGANISATIONS CRIMINELLES (GANGS ET MAFIAS)
-organisations_criminelles:
-  - nom: "Les Ecorcheurs"
-    territoire: "Bas-fonds de Lorn"
-    activite: "Racket, enlèvement, meurtres sur commande."
-    methode: "Ils ne laissent pas de témoins. Connus pour mutiler leurs rivaux."
-    chef: "Inconnu (probablement un noble déchu)."
+# 1. COSMOGONIE (CE QUE LES GENS CROIENT VS CE QUI EST PEUT-ÊTRE VRAI)
+origines_du_monde:
+  - titre: "Le Géant Dépecé (Thaurgrim)"
+    mythe: "Le monde est le cadavre d'un Titan tué par le Froid. Les montagnes sont ses os, la lave est son sang qui n'a pas encore refroidi."
+    realite_surnaturelle: "Il y a une part de vérité. Les mineurs qui creusent trop profond entendent parfois un battement de cœur lent et titanesque. Ceux qui l'écoutent trop longtemps finissent par synchroniser leur propre cœur et meurent d'arrêt cardiaque."
 
-  - nom: "La Fraternité du Port"
-    territoire: "Lirn et côtes"
-    activite: "Contrebande, piraterie, traite des esclaves."
-    couverture: "Syndicat des dockers et marins."
+  - titre: "Le Soleil Voleur (Iskarion)"
+    mythe: "Le Soleil était une étoile mineure qui a dévoré ses sœurs pour devenir roi. Il a soif de tout ce qui brille (l'eau, l'or, les yeux)."
+    pratique: "C'est pourquoi les Iskariens portent des voiles : pour cacher leur 'humidité' au regard du dieu."
 
-  - nom: "Les Rats des Mines"
-    territoire: "Thaurgrim"
-    activite: "Vol de minerai précieux, trafic d'alcool de contrebande dans les camps de travail."
+  - titre: "La Tisseuse de Brume (Eldaron)"
+    mythe: "Une déesse araignée a tissé le destin des hommes. Mais elle est devenue folle et a commencé à tisser des nœuds (les guerres, les famines)."
+    superstition: "Tuer une araignée porte malheur, car c'est peut-être un de ses yeux."
 
-# TRAFICS ILLICITES
-trafic_etres:
-  - type: "Main d'œuvre forcée"
-    clients: "Mines de Thaurgrim, Galères d'Iskarion."
-    victimes: "Orphelins des rues, paysans endettés, prisonniers de guerre."
-    prix: "Moins cher qu'un cheval."
+# 2. CONTES ET FABLES (FOLKLORE INVENTÉ MAIS STRUCTURANT)
+# Histoires racontées au coin du feu. Fausses, mais culturellement vitales.
+fables_populaires:
+  - titre: "L'Enfant-Rouille (Eldaron)"
+    recit: "L'histoire d'un garçon qui ne voulait pas travailler aux champs. Il s'est caché dans un silo à grain pour dormir. La Rouille l'a mangé. Maintenant, quand le blé grince au vent, c'est lui qui pleure."
+    fonction: "Sert à empêcher les enfants de jouer dans les silos (où l'on meurt étouffé ou par les gaz de fermentation)."
 
-  - type: "Servitude domestique"
-    clients: "Bourgeoisie d'Eldaron et Ardel."
-    nature: "Souvent déguisé en 'contrat d'apprentissage' à vie."
+  - titre: "La Mariée de Cendre (Thaurgrim)"
+    recit: "Une fille qui aimait tellement un fourneau qu'elle s'est jetée dedans pour le réchauffer. Le fourneau a forgé pour elle un cœur en diamant."
+    fonction: "Romantisation du suicide au travail. Propagande pour dire que le sacrifice ultime apporte la beauté éternelle."
 
-stupefiants:
-  - nom: "Lait de Pavot Noir"
-    effet: "Anti-douleur puissant, rend léthargique et dépendant en quelques jours."
-    consommateurs: "Soldats blessés, pauvres cherchant l'oubli."
+  - titre: "Celui qui a bu la Mer (Iskarion)"
+    recit: "Un Sultan si riche qu'il a voulu acheter l'océan. Il l'a bu pour le posséder, mais le sel l'a rendu fou et il a explosé, créant les déserts de sel."
+    fonction: "Mise en garde contre l'hubris et explication géographique des étendues salines."
 
-  - nom: "Poussière de Rhaal"
-    effet: "Hallucinogène violent, provoque des crises de rage."
-    origine: "Champignons parasites de la jungle."
-    consommateurs: "Berserkers, cultistes."
+# 3. LE SURNATUREL ACTIF (PHÉNOMÈNES RÉELS ET DANGEREUX)
+# Ce ne sont pas des histoires. Ce sont des faits.
+entites_parasites:
+  - nom: "Les Grinceurs (Esprits Industriels)"
+    localisation: "Usines de Thaurgrim."
+    nature: "Quand une machine tue un ouvrier, elle garde parfois un morceau de son âme. La machine commence à travailler toute seule la nuit, produisant des pièces difformes ou maudites."
+    danger: "Ces machines doivent être exorcisées par les Ingénieurs-Prêtres, sinon elles finissent par 'manger' d'autres ouvriers volontairement."
 
-  - nom: "Cendre Rouge"
-    effet: "Stimulant respiratoire (temporaire), puis nécrose des poumons."
-    consommateurs: "Mineurs de Thaurgrim (pour travailler plus longtemps)."
+  - nom: "Les Miroirs de Soif (Iskarion)"
+    localisation: "Désert profond."
+    nature: "Des zones de chaleur si intense que l'air se solidifie en miroirs invisibles. Si vous traversez, vous entrez dans une version du monde où l'eau n'existe pas."
+    danger: "On y voit souvent des voyageurs égarés qui grattent le sol en hurlant, alors qu'ils sont à 10 mètres d'une oasis."
 
-# EXPLOITATIONS CLANDESTINES
-activites:
-  - "Fosses de combat illégales (animaux vs humains, ou humains vs humains à mort)."
-  - "Ateliers de fausse monnaie (punissable d'être bouilli vivant)."
-  - "Médecine de l'ombre (chirurgie sans hygiène, avortements dangereux, poisons)."
+  - nom: "Le Champignon-Mémoire (Varnäl)"
+    localisation: "Jungle profonde."
+    nature: "Un champignon qui absorbe les derniers souvenirs des mourants. Si on le mange, on vit leur mort."
+    usage: "Utilisé par les chamans pour résoudre les meurtres, au prix de leur propre santé mentale."
 
-# CORRUPTION
-systemique:
-  - "Les Gardes de ville : Ne patrouillent que si payés par les commerçants."
-  - "Les Juges : Les sentences sont à vendre. Un noble ne sera jamais pendu, un paysan le sera pour un vol de pomme."
-  - "L'Église : Vend des indulgences et absout les péchés des riches donateurs."
+# 4. RITUELS DE PROTECTION (LA MAGIE DU PEUPLE)
+# Magie sale, coûteuse, basée sur le troc symbolique.
+pratiques_courantes:
+  - nom: "Le Clouage d'Ombre"
+    but: "Empêcher un mort de revenir."
+    rituel: "Planter un clou en fer froid dans l'ombre du cadavre juste avant le coucher du soleil."
+    cout: "Le lanceur perdra l'usage de sa main dominante pendant une semaine."
 
-# GROUPES DE MERCENAIRES (LES CHIENS DE GUERRE)
-mercenaires:
-  - nom: "La Compagnie Noire"
-    réputation: "Disciplinés mais sans pitié. Brûlent les villages qui ne paient pas."
-    tarif: "Très élevé. Paiement en or uniquement."
+  - nom: "La Pièce de Silence"
+    but: "Acheter un secret."
+    rituel: "Mettre une pièce d'or dans la bouche d'un poisson et le rejeter à la mer en murmurant le secret."
+    croyance: "Tant que le poisson vit, le secret est gardé. Si le poisson est pêché et mangé, le secret éclate."
 
-  - nom: "Les Bâtards de Valnoria"
-    réputation: "Déséteurs et criminels. Utiles pour le sale boulot, imprévisibles."
+  - nom: "Le Partage de Souffle (Helrün)"
+    but: "Sauver un hypothermique."
+    rituel: "Un transfert d'énergie vitale bouche-à-bouche, considéré comme un lien de mariage spirituel. On ne partage pas son souffle avec n'importe qui, car on lie ses destins."
 
-# JUSTICE (BRUTALE ET EXPÉDITIVE)
-peines_courantes:
-  - "Vol : Ablation d'une main ou marquage au fer rouge."
-  - "Meurtre (roturier) : Pendaison ou Roue."
-  - "Hérésie/Sorcellerie : Bûcher."
-  - "Dettes : Prison à vie ou esclavage."
+# 5. RELIQUES ET OBJETS MAUDITS (ÉCONOMIE OCCULTE)
+objets_legendaires:
+  - nom: "Les Lanternes d'Âme (Helrün)"
+    description: "Lampes à huile faites avec la graisse de baleines albinos. La flamme ne chauffe pas, mais révèle les mensonges (les ombres des menteurs se tordent)."
+    valeur: "Inestimable. Utilisées par les juges du Nord."
+
+  - nom: "Le Livre des Dettes (Eldaron)"
+    description: "Un registre tenu par la Banque qui, dit-on, se met à jour tout seul quand quelqu'un meurt endetté, transférant la dette sur ses enfants."
+    statut: "Légende urbaine terrifiante qui maintient les gens dans la peur des banquiers."
+
+  - nom: "La Flûte d'Os (Varnäl)"
+    description: "Instrument taillé dans le fémur d'un traître. En la jouant, on peut contrôler les insectes, mais on finit par être dévoré par eux."
 
 # MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 1.0_dark
-  type_contenu: "criminalite_realiste"
+  date_creation: "2025-11-23"
+  version: 7.0_creative_mythos
+  type_contenu: "folklore_et_surnaturel_complexe"
+  note_intention: "Créer une distinction claire entre 'ce qu'on raconte' (fables) et 'ce qui tue' (surnaturel). Le monde est saturé de magie, mais c'est une magie sale, industrielle ou biologique, pas féérique."

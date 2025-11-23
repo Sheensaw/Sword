@@ -1,0 +1,421 @@
+{
+  "meta": {
+    "continent_id": "varnal",
+    "description": "Cartographie haute résolution intégrale du continent Varnäl.",
+    "scale_factor": "local",
+    "parent_file": "velkarum.json"
+  },
+  "nodes": {
+    "Rhaal_Canopee_Centrale": {
+      "x": 35.00,
+      "y": 72.00,
+      "continent": "Varnal",
+      "type": "Capitale_Centre",
+      "name": "Rhaal - La Canopée",
+      "description": "Le sommet de la ville-arbre, à 80m du sol. Des passerelles de soie d'araignée relient les feuilles géantes. L'air y est presque respirable.",
+      "sociology": { "ruling_faction": "Mères-Lianes", "law_enforcement": "Biological", "social_tension": 20 },
+      "environment": { "biome": "Jungle_Canopy", "hazards": ["Chute_Mortelle"] },
+      "encounters": { "roaming_mobs": ["Guerrier Symbiote", "Messager Insecte"] }
+    },
+    "Rhaal_Palais_Mere": {
+      "x": 35.05,
+      "y": 72.05,
+      "continent": "Varnal",
+      "type": "Gouvernement",
+      "name": "Le Cœur de Sève",
+      "description": "Palais vivant formé par le tressage de trois arbres millénaires. C'est ici que les Mères-Lianes distillent les lois et les poisons.",
+      "access": "Restricted",
+      "danger": 0
+    },
+    "Rhaal_Banque_Genetique": {
+      "x": 35.10,
+      "y": 72.10,
+      "continent": "Varnal",
+      "type": "Laboratoire",
+      "name": "Banque Génétique",
+      "description": "Bibliothèque de graines et d'embryons conservés dans de l'ambre liquide. La mémoire biologique du monde.",
+      "market": { "specialty": "Semences_Rares", "wealth_tier": "Inestimable" },
+      "access": "Restricted"
+    },
+    "Rhaal_Arbrena": {
+      "x": 34.95,
+      "y": 71.95,
+      "continent": "Varnal",
+      "type": "Culture",
+      "name": "L'Arbrena",
+      "description": "Arène suspendue où l'on pratique la danse rituelle et le duel au premier sang (empoisonné).",
+      "danger": 2
+    },
+    "Rhaal_Temple_Souffle": {
+      "x": 35.02,
+      "y": 71.98,
+      "continent": "Varnal",
+      "type": "Sanctuaire",
+      "name": "Temple du Souffle",
+      "description": "Sanctuaire ouvert aux vents, dédié à la pureté de l'air. On y médite avec des masques filtrants en or.",
+      "services": ["Purification_Poumons", "Ventilation"]
+    },
+    "Rhaal_Auberge_Racine": {
+      "x": 34.90,
+      "y": 72.05,
+      "continent": "Varnal",
+      "type": "Auberge",
+      "name": "Auberge de la Racine Mère",
+      "description": "Nids de sommeil tissés pour les voyageurs. On y sert du nectar fermenté qui efface la douleur.",
+      "services": ["Sommeil_Sans_Reve", "Nectar"]
+    },
+    "Rhaal_Marche_Spores": {
+      "x": 35.15,
+      "y": 72.00,
+      "continent": "Varnal",
+      "type": "Commerce",
+      "name": "Marché des Spores",
+      "description": "Étalages suspendus vendant des antidotes, des prothèses en bois-fer et des insectes de compagnie.",
+      "market": { "wealth_tier": "Organic", "prices": { "antidote_universel": { "base": 100, "scarcity": "common" } } }
+    },
+    "Rhaal_Station_Scarabe": {
+      "x": 35.20,
+      "y": 72.15,
+      "continent": "Varnal",
+      "type": "Station",
+      "name": "Enclos des Porteurs",
+      "description": "Plateforme d'envol pour les scarabées géants de transport. L'odeur de phéromones est entêtante.",
+      "market": { "services": ["Transport_Beetle"] }
+    },
+    "Rhaal_Zone_Quarantaine": {
+      "x": 34.80,
+      "y": 72.10,
+      "continent": "Varnal",
+      "type": "Quarantine",
+      "name": "Branche Morte (Quarantaine)",
+      "description": "Une branche isolée où l'on parque ceux qui présentent des signes de 'Rouille Verte'. On coupe la branche si l'infection se propage.",
+      "danger": 4,
+      "disease_vector": "Critical"
+    },
+    "Rhaal_Sol_Interdit": {
+      "x": 35.00,
+      "y": 72.00,
+      "z": 0,
+      "continent": "Varnal",
+      "type": "Forbidden",
+      "name": "Le Sol (Zone de Mort)",
+      "description": "80 mètres plus bas. Obscurité totale, moisissures carnivores et prédateurs alpha. Personne ne descend ici volontairement.",
+      "danger": 6,
+      "encounters": { "boss": "Moisissure Carnivore Ancienne" },
+      "access": "Hidden"
+    },
+    "Marael_Place_Flottante": {
+      "x": 55.00,
+      "y": 45.00,
+      "continent": "Varnal",
+      "type": "Ville_Centre",
+      "name": "Marael - Place Flottante",
+      "description": "Un immense radeau de bois-fer au centre du delta. Ça tangue légèrement. L'odeur de vase et d'épices est omniprésente.",
+      "environment": { "biome": "Swamp", "hazards": ["Cholera", "Sangsues"] },
+      "sociology": { "ruling_faction": "Syndicats des Eaux" }
+    },
+    "Marael_Marche_Senteurs": {
+      "x": 55.05,
+      "y": 45.05,
+      "continent": "Varnal",
+      "type": "Commerce",
+      "name": "Marché aux Senteurs",
+      "description": "On y vend les drogues les plus pures du monde. Opium, Lotus Noir, Poudre de Rêve.",
+      "market": { "wealth_tier": "Rich", "specialty": "Drogues_Luxe" }
+    },
+    "Marael_Laboratoires_Alchimie": {
+      "x": 55.10,
+      "y": 44.95,
+      "continent": "Varnal",
+      "type": "Industrie",
+      "name": "Distilleries du Delta",
+      "description": "Cuves bouillonnantes où l'on raffine les poisons et les remèdes. Les vapeurs sont multicolores.",
+      "danger": 3
+    },
+    "Marael_Auberge_Nenuphar": {
+      "x": 54.95,
+      "y": 45.02,
+      "continent": "Varnal",
+      "type": "Auberge",
+      "name": "Le Nénuphar Flottant",
+      "description": "Auberge dérivante attachée par des chaînes. On y mange du poisson-chat grillé.",
+      "services": ["Repas_Sure", "Hamac"]
+    },
+    "Marael_Refuge_Brumes": {
+      "x": 54.80,
+      "y": 44.90,
+      "continent": "Varnal",
+      "type": "Repaire",
+      "name": "Refuge des Brumes",
+      "description": "Laboratoire clandestin caché dans la mangrove. On y teste des drogues illégales sur des volontaires désespérés.",
+      "access": "Hidden",
+      "danger": 4,
+      "market": { "black_market": true, "specialty": "Mutagenes" }
+    },
+    "Marael_Marais_Voix": {
+      "x": 55.20,
+      "y": 45.10,
+      "continent": "Varnal",
+      "type": "Sanctuaire",
+      "name": "Marais de la Voix",
+      "description": "Une zone de silence où les roseaux chantent. Lieu de méditation sonore.",
+      "danger": 2,
+      "encounters": { "roaming_mobs": ["Esprit du Marais", "Sirene de Vase"] }
+    },
+    "Marael_Station_Barges": {
+      "x": 55.15,
+      "y": 45.00,
+      "continent": "Varnal",
+      "type": "Station",
+      "name": "Embarcadère des Riziers",
+      "description": "Départ des convois fluviaux vers Thaurgrim (Riz contre Acier)."
+    },
+    "Tarran_Quais_Blancs": {
+      "x": 15.00,
+      "y": 35.00,
+      "continent": "Varnal",
+      "type": "Port",
+      "name": "Tarran - Quais Blancs",
+      "description": "Port de quarantaine. Tout est passé à la chaux vive. C'est le seul endroit 'propre' du continent.",
+      "sociology": { "ruling_faction": "Medecins_de_la_Peste", "law_enforcement": "Sanitary_Martial_Law" },
+      "market": { "imports_vital": ["Verre_Medical", "Or"], "exports": ["Antibiotiques"] }
+    },
+    "Tarran_Lazaret": {
+      "x": 15.10,
+      "y": 35.10,
+      "continent": "Varnal",
+      "type": "Prison",
+      "name": "Le Lazaret",
+      "description": "Hôpital-Prison forteresse. Les étrangers y attendent 7 jours avant d'entrer. S'ils toussent, ils sont brûlés.",
+      "danger": 3,
+      "access": "Restricted"
+    },
+    "Tarran_Comptoir_Echanges": {
+      "x": 15.05,
+      "y": 34.95,
+      "continent": "Varnal",
+      "type": "Commerce",
+      "name": "La Grille des Échanges",
+      "description": "Zone de commerce sans contact physique. On glisse l'or et les marchandises à travers des doubles grilles trempées dans le vinaigre.",
+      "market": { "wealth_tier": "Rich" }
+    },
+    "Tarran_Phare_Bio": {
+      "x": 14.90,
+      "y": 35.20,
+      "continent": "Varnal",
+      "type": "Monument",
+      "name": "Le Phare Bioluminescent",
+      "description": "Une tour de corail vivant qui pulse d'une lumière verte la nuit. Visible à des kilomètres.",
+      "encounters": { "roaming_mobs": ["Gardien du Phare (Mutant)"] }
+    },
+    "Tarran_Taverne_Maree": {
+      "x": 14.95,
+      "y": 35.05,
+      "continent": "Varnal",
+      "type": "Taverne",
+      "name": "La Marée Haute",
+      "description": "Taverne pour marins en quarantaine. L'alcool y est si fort qu'il sert aussi de désinfectant.",
+      "services": ["Alcool_Medical", "Jeu_Des"]
+    },
+    "Velkar_Observatoire": {
+      "x": 45.00,
+      "y": 20.00,
+      "continent": "Varnal",
+      "type": "Science",
+      "name": "Observatoire Atmosphérique",
+      "description": "Perché sur un pic montagneux au-dessus des nuages. On y étudie les vents toxiques.",
+      "environment": { "biome": "Cloud_Forest", "altitude": "High" }
+    },
+    "Velkar_Banque_Semences_Haute": {
+      "x": 45.10,
+      "y": 20.10,
+      "continent": "Varnal",
+      "type": "Reserve",
+      "name": "Le Coffre des Cimes",
+      "description": "Réserve de sécurité ultime pour la biodiversité, loin de la pourriture de la jungle basse.",
+      "access": "Restricted"
+    },
+    "Velkar_Bibliotheque_Brume": {
+      "x": 45.05,
+      "y": 19.95,
+      "continent": "Varnal",
+      "type": "Culture",
+      "name": "Bibliothèque de Brume",
+      "description": "Des rouleaux de parchemin en peau de lézard, insensibles à l'humidité, conservant le savoir des anciens.",
+      "services": ["Savoir_Ancien"]
+    },
+    "Velkar_Refuge_Observateurs": {
+      "x": 44.95,
+      "y": 20.05,
+      "continent": "Varnal",
+      "type": "Refuge",
+      "name": "Dortoir des Veilleurs",
+      "description": "Cellules monacales pour les scientifiques. Froid et humide."
+    },
+    "Velkar_Station_Telepherique": {
+      "x": 45.15,
+      "y": 20.00,
+      "continent": "Varnal",
+      "type": "Station",
+      "name": "Gare des Nacelles",
+      "description": "Point de départ des câbles reliant les pics. Vertigineux."
+    },
+    "Cenra_Temple_Vent": {
+      "x": 75.00,
+      "y": 55.00,
+      "continent": "Varnal",
+      "type": "Ville_Centre",
+      "name": "Cenra - Temple du Vent",
+      "description": "Cité nomade des savanes. Le temple est une immense structure de toile et d'os qui se déplace avec la tribu.",
+      "sociology": { "ruling_faction": "Chamans du Vent" }
+    },
+    "Cenra_Champs_Mobiles": {
+      "x": 75.10,
+      "y": 55.10,
+      "continent": "Varnal",
+      "type": "Culture",
+      "name": "Champs de Migration",
+      "description": "Cultures à croissance rapide plantées sur le passage de la tribu.",
+      "market": { "specialty": "Graines_Rapides" }
+    },
+    "Falaar_Marche_Vent": {
+      "x": 25.00,
+      "y": 25.00,
+      "continent": "Varnal",
+      "type": "Ville_Centre",
+      "name": "Falaar - Marché du Vent",
+      "description": "Cité suspendue légère, extension de la canopée vers l'ouest. Les maisons sont des nids d'oiseaux géants.",
+      "danger": 3
+    },
+    "Falaar_Auberge_Nuages": {
+      "x": 25.05,
+      "y": 25.05,
+      "continent": "Varnal",
+      "type": "Auberge",
+      "name": "Au Lit des Nuages",
+      "description": "On y dort à la belle étoile, bercé par le vent."
+    },
+    "Seve_Noire_Camp": {
+      "x": 25.00,
+      "y": 20.00,
+      "continent": "Varnal",
+      "type": "Industrie",
+      "name": "Camp de Sève-Noire",
+      "description": "Avant-poste d'extraction de caoutchouc et de résines caustiques. Les ouvriers ont la peau brûlée.",
+      "danger": 3
+    },
+    "Citadelle_Cendres_Fort": {
+      "x": 70.00,
+      "y": 60.00,
+      "continent": "Varnal",
+      "type": "Forteresse",
+      "name": "Citadelle des Cendres",
+      "description": "Enclave fortifiée de Thaurgrim. Une zone de terre brûlée au lance-flammes pour repousser la jungle.",
+      "sociology": { "ruling_faction": "Thaurgrim", "law_enforcement": "Martial_Law" },
+      "danger": 4
+    },
+    "Port_Veneneux_Comptoir": {
+      "x": 35.00,
+      "y": 10.00,
+      "continent": "Varnal",
+      "type": "Port",
+      "name": "Port-Vénéneux",
+      "description": "Repaire de contrebandiers au sud. On y vend des animaux exotiques et des poisons interdits par Rhaal.",
+      "market": { "black_market": true, "specialty": "Animaux_Dangereux" },
+      "danger": 5
+    },
+    "Relais_Souffle_Nord": {
+      "x": 40.00,
+      "y": 65.00,
+      "continent": "Varnal",
+      "type": "Relais",
+      "name": "Relais du Souffle Nord",
+      "description": "Halte de sûreté dans la canopée. Filets anti-insectes."
+    },
+    "Relais_Souffle_Sud": {
+      "x": 50.00,
+      "y": 51.00,
+      "continent": "Varnal",
+      "type": "Relais",
+      "name": "Relais du Souffle Sud",
+      "description": "Plateforme sur pilotis au-dessus du marais."
+    },
+    "Relais_Brume": {
+      "x": 30.00,
+      "y": 30.00,
+      "continent": "Varnal",
+      "type": "Relais",
+      "name": "Halte des Brumes",
+      "description": "Point de ravitaillement pour les transports aériens."
+    },
+    "Auberge_Cimes": {
+      "x": 45.00,
+      "y": 58.00,
+      "continent": "Varnal",
+      "type": "Auberge",
+      "name": "Repos des Cimes",
+      "description": "Auberge isolée pour les chasseurs de peaux."
+    },
+    "Condenseurs_Brume": {
+      "x": 32.00,
+      "y": 32.00,
+      "continent": "Varnal",
+      "type": "Industrie",
+      "name": "Ferme de Condensation",
+      "description": "Filets géants capturant l'eau du brouillard. Seule source d'eau potable locale."
+    },
+    "Jungle_Vierge_Est": {
+      "x": 88.00,
+      "y": 45.00,
+      "continent": "Varnal",
+      "type": "Lieu_Sauvage",
+      "name": "L'Enfer Vert (Est)",
+      "description": "Zone inexplorée. Les arbres y sont carnivores.",
+      "danger": 6,
+      "encounters": { "roaming_mobs": ["Tigre-Écorce", "Plante Carnivore Geante"] }
+    }
+  },
+  "routes": [
+    { "id": "rhaal_pont_central", "name": "Grand Pont de Soie", "type": "bridge", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Palais_Mere", "distance_km": 0.1, "danger": 0 },
+    { "id": "rhaal_acces_banque", "name": "Branche Gardée", "type": "forest_path", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Banque_Genetique", "distance_km": 0.2, "danger": 1 },
+    { "id": "rhaal_acces_arbrena", "name": "Liane des Duels", "type": "forest_path", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Arbrena", "distance_km": 0.1, "danger": 1 },
+    { "id": "rhaal_montee_temple", "name": "Ascension du Souffle", "type": "forest_path", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Temple_Souffle", "distance_km": 0.2, "danger": 0 },
+    { "id": "rhaal_acces_auberge", "name": "Passerelle du Repos", "type": "forest_path", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Auberge_Racine", "distance_km": 0.1, "danger": 0 },
+    { "id": "rhaal_acces_marche", "name": "Allée des Spores", "type": "forest_path", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Marche_Spores", "distance_km": 0.2, "danger": 1 },
+    { "id": "rhaal_acces_station", "name": "Branche d'Envol", "type": "forest_path", "start": "Rhaal_Marche_Spores", "end": "Rhaal_Station_Scarabe", "distance_km": 0.2, "danger": 1 },
+    { "id": "rhaal_acces_quarantaine", "name": "Pont Coupé", "type": "forest_path", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Zone_Quarantaine", "distance_km": 0.3, "danger": 3 },
+    { "id": "rhaal_descente_mort", "name": "L'Échelle Inversée", "type": "ladder", "start": "Rhaal_Canopee_Centrale", "end": "Rhaal_Sol_Interdit", "distance_km": 0.1, "danger": 6 },
+    { "id": "marael_ponton_marche", "name": "Ponton des Épices", "type": "swamp_path", "start": "Marael_Place_Flottante", "end": "Marael_Marche_Senteurs", "distance_km": 0.1, "danger": 0 },
+    { "id": "marael_acces_labo", "name": "Canal Acide", "type": "boat", "start": "Marael_Place_Flottante", "end": "Marael_Laboratoires_Alchimie", "distance_km": 0.2, "danger": 2 },
+    { "id": "marael_acces_auberge", "name": "Passerelle Flottante", "type": "swamp_path", "start": "Marael_Place_Flottante", "end": "Marael_Auberge_Nenuphar", "distance_km": 0.1, "danger": 1 },
+    { "id": "marael_chemin_refuge", "name": "Sente des Brumes", "type": "hidden_path", "start": "Marael_Place_Flottante", "end": "Marael_Refuge_Brumes", "distance_km": 0.5, "danger": 4 },
+    { "id": "marael_acces_marais", "name": "Voie du Silence", "type": "boat", "start": "Marael_Place_Flottante", "end": "Marael_Marais_Voix", "distance_km": 0.3, "danger": 2 },
+    { "id": "marael_acces_station", "name": "Quai des Riziers", "type": "swamp_path", "start": "Marael_Place_Flottante", "end": "Marael_Station_Barges", "distance_km": 0.2, "danger": 1 },
+    { "id": "tarran_acces_lazaret", "name": "Chemin de la Chaux", "type": "street", "start": "Tarran_Quais_Blancs", "end": "Tarran_Lazaret", "distance_km": 0.2, "danger": 2 },
+    { "id": "tarran_acces_comptoir", "name": "Grille Sud", "type": "street", "start": "Tarran_Quais_Blancs", "end": "Tarran_Comptoir_Echanges", "distance_km": 0.1, "danger": 0 },
+    { "id": "tarran_jetee_phare", "name": "Jetée Vivante", "type": "street", "start": "Tarran_Quais_Blancs", "end": "Tarran_Phare_Bio", "distance_km": 0.5, "danger": 1 },
+    { "id": "tarran_ruelle_taverne", "name": "Impasse de la Soif", "type": "alley", "start": "Tarran_Quais_Blancs", "end": "Tarran_Taverne_Maree", "distance_km": 0.1, "danger": 1 },
+    { "id": "velkar_montee_banque", "name": "Escalier de Pierre", "type": "mountain_path", "start": "Velkar_Observatoire", "end": "Velkar_Banque_Semences_Haute", "distance_km": 0.2, "danger": 1 },
+    { "id": "velkar_acces_biblio", "name": "Corridor des Nuages", "type": "mountain_path", "start": "Velkar_Observatoire", "end": "Velkar_Bibliotheque_Brume", "distance_km": 0.1, "danger": 0 },
+    { "id": "velkar_acces_refuge", "name": "Passage Froid", "type": "mountain_path", "start": "Velkar_Observatoire", "end": "Velkar_Refuge_Observateurs", "distance_km": 0.1, "danger": 0 },
+    { "id": "velkar_acces_telepherique", "name": "Plateforme de saut", "type": "mountain_path", "start": "Velkar_Observatoire", "end": "Velkar_Station_Telepherique", "distance_km": 0.2, "danger": 2 },
+    { "id": "cenra_acces_champs", "name": "Piste des Récoltes", "type": "road", "start": "Cenra_Temple_Vent", "end": "Cenra_Champs_Mobiles", "distance_km": 0.2, "danger": 1 },
+    { "id": "falaar_pont_auberge", "name": "Pont de Plumes", "type": "forest_path", "start": "Falaar_Marche_Vent", "end": "Falaar_Auberge_Nuages", "distance_km": 0.1, "danger": 1 },
+    { "id": "route_seve_noire", "name": "Piste Collante", "type": "forest_path", "start": "Falaar_Marche_Vent", "end": "Seve_Noire_Camp", "distance_km": 50.0, "danger": 3 },
+    { "id": "route_citadelle", "name": "La Brûlure", "type": "road", "start": "Cenra_Temple_Vent", "end": "Citadelle_Cendres_Fort", "distance_km": 80.0, "danger": 4 },
+    { "id": "route_port_veneneux", "name": "Fleuve Serpent", "type": "boat", "start": "Seve_Noire_Camp", "end": "Port_Veneneux_Comptoir", "distance_km": 150.0, "danger": 5 },
+    { "id": "route_condenseurs", "name": "Sentier Humide", "type": "mountain_path", "start": "Relais_Brume", "end": "Condenseurs_Brume", "distance_km": 30.0, "danger": 2 },
+    { "id": "route_souffle_nord", "name": "Voie du Souffle (Nord)", "type": "forest_path", "start": "Rhaal_Station_Scarabe", "end": "Relais_Souffle_Nord", "distance_km": 200.0, "danger": 2 },
+    { "id": "route_souffle_centre", "name": "Voie du Souffle (Centre)", "type": "forest_path", "start": "Relais_Souffle_Nord", "end": "Auberge_Cimes", "distance_km": 200.0, "danger": 2 },
+    { "id": "route_souffle_sud", "name": "Voie du Souffle (Sud)", "type": "forest_path", "start": "Auberge_Cimes", "end": "Marael_Station_Barges", "distance_km": 200.0, "danger": 3 },
+    { "id": "route_brume_1", "name": "Piste des Brumes (Air)", "type": "beetle", "start": "Falaar_Marche_Vent", "end": "Relais_Brume", "distance_km": 100.0, "danger": 3 },
+    { "id": "route_brume_2", "name": "Piste des Brumes (Fin)", "type": "beetle", "start": "Relais_Brume", "end": "Velkar_Station_Telepherique", "distance_km": 500.0, "danger": 4 },
+    { "id": "route_jungle_est", "name": "Piste des Disparus", "type": "wild_path", "start": "Cenra_Temple_Vent", "end": "Jungle_Vierge_Est", "distance_km": 200.0, "danger": 6 },
+    { "id": "rhaal_link_global", "name": "Connexion Globale Rhaal", "type": "link", "start": "Rhaal", "end": "Rhaal_Canopee_Centrale", "distance_km": 0.0, "danger": 0 },
+    { "id": "marael_link_global", "name": "Connexion Globale Marael", "type": "link", "start": "Marael", "end": "Marael_Place_Flottante", "distance_km": 0.0, "danger": 0 },
+    { "id": "tarran_link_global", "name": "Connexion Globale Tarran", "type": "link", "start": "Tarran", "end": "Tarran_Quais_Blancs", "distance_km": 0.0, "danger": 0 },
+    { "id": "velkar_link_global", "name": "Connexion Globale Velkar", "type": "link", "start": "Velkar", "end": "Velkar_Observatoire", "distance_km": 0.0, "danger": 0 },
+    { "id": "cenra_link_global", "name": "Connexion Globale Cenra", "type": "link", "start": "Cenra", "end": "Cenra_Temple_Vent", "distance_km": 0.0, "danger": 0 },
+    { "id": "falaar_link_global", "name": "Connexion Globale Falaar", "type": "link", "start": "Falaar", "end": "Falaar_Marche_Vent", "distance_km": 0.0, "danger": 0 }
+  ]
+}

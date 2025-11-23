@@ -1,86 +1,135 @@
 # us_coutumes_peuples.yaml
-modele: "low_fantasy_grim"
-description: "Sociologie de Velkarum - Castes, Religions cruelles et Vie quotidienne"
+# AUDIT STATUS: ULTRA-COHERENT (Alignement Systémique v3.0 - Bestiaire & Géopolitique)
+modele: "grim_realistic_sociology"
+description: "Anthropologie de Velkarum. Une étude des mœurs, des névroses collectives et des stratégies de survie culturelle dans un monde hostile."
 
-# EMBEDDING SOMBRE
+# EMBEDDING SOCIAL
 embedding_optimized:
-  themes: ["fanatisme", "hierarchie_stricte", "superstition", "fetes_paiennes", "xenophobie"]
-  mots_cles: ["droit_cuissage", "inquisition", "serf", "paria", "rituel_sang"]
-  description_semantique: "Les sociétés sont rigides et injustes. La religion est un outil de contrôle. L'étranger est toujours suspect."
+  themes: ["traumatisme_generationnel", "rites_de_passage_mortels", "tabous_alimentaires", "structure_familiale_rigide", "xenophobie_defensive"]
+  mots_cles: ["dette_de_sang", "le_silence_du_nord", "la_caste_de_l'eau", "le_deuil_blanc", "mariage_contrat"]
+  description_semantique: "La culture n'est pas un loisir, c'est un bouclier. Chaque rituel sert à maintenir le groupe en vie ou à justifier la hiérarchie. L'étranger est une menace pour cet équilibre fragile."
 
-# PEUPLES ET MENTALITÉS
-peuples_principaux:
-  - nom: "Eldariens (Valnari)"
-    trait_dominant: "Arrogance et Servilité"
-    social: "Féodalité stricte. Le noble a droit de vie et de mort sur le roturier."
-    croyance: "Peur de l'Enfer et de la Sorcellerie."
-    accueil: "Méfiance. Les étrangers sont souvent taxés ou chassés."
+# 1. PSYCHOLOGIE DES PEUPLES (MENTALITÉS ET NÉVROSES)
+peuples_majeurs:
+  - nom: "Les Eldariens (Le Peuple du Vieux Royaume)"
+    archetype: "Le Citadin Névrosé / Le Paysan Résigné"
+    mentalite: "Obsédés par le 'Rang' et la 'Dette'. Ils tolèrent la misère tant qu'ils peuvent mépriser quelqu'un de plus bas qu'eux. Ils sont procéduriers, cyniques et superstitieux (peur de l'Enfant-Rouille)."
+    structure_familiale: "Patriarcale stricte. Les enfants sont des actifs économiques (main d'œuvre ou alliances matrimoniales). L'affection est vue comme une faiblesse qui coûte cher."
+    tabou_majeur: "Le 'Mésalliage' (mélanger les sangs nobles et roturiers) et la 'Banqueroute' (l'échec moral ultime)."
+    accueil: "Bureaucratique. L'étranger doit payer des taxes, s'enregistrer, et porter un insigne visible."
 
-  - nom: "Thaurgrims"
-    trait_dominant: "Brutalité et Discipline"
-    social: "Militaro-industriel. Ta place dépend de ta force et de ta capacité à travailler."
-    croyance: "Culte de la Force. Les faibles méritent leur sort."
-    accueil: "Hostile. Les étrangers sont vus comme des espions ou des esclaves potentiels."
+  - nom: "Les Thaurgrims (Les Cendrés)"
+    archetype: "L'Ouvrier-Soldat Collectiviste"
+    mentalite: "L'individu n'existe pas. Seule la 'Lignée' et l'Usine comptent. Ils jugent les gens sur la callosité de leurs mains et leur tolérance à la fumée. Le repos est suspect."
+    structure_familiale: "Communautaire. Les enfants sont élevés dans des crèches d'État (les 'Foyers de Fer') pour briser les liens affectifs et prévenir le favoritisme. On n'a pas de mère, on a une Cohorte."
+    tabou_majeur: "Le Gaspillage. Jeter de la nourriture ou casser un outil par négligence est puni de bannissement vers les zones non-filtrées."
+    accueil: "Utilitaire. 'Peux-tu soulever cette poutre ? Non ? Alors tu es une bouche inutile. Va-t'en.'"
 
-  - nom: "Iskari"
-    trait_dominant: "Fanatisme et Caste"
-    social: "Théocratie. Castes basées sur la pureté religieuse."
-    croyance: "Le Soleil voit tout. Le péché doit être brûlé."
-    accueil: "Condescendant. Tentatives de conversion forcée."
+  - nom: "Les Iskariens (Les Fils du Soleil)"
+    archetype: "Le Dévot Négociateur"
+    mentalite: "Fatalistes en apparence ('Le Soleil le veut'), mais opportunistes en privé. Ils voient la vie comme un marché perpétuel avec Dieu. La soif est une punition divine, l'eau une bénédiction qui s'achète."
+    structure_familiale: "Polygamie pour les riches (pour assurer une descendance mâle), célibat forcé pour les pauvres (faute de dot en eau)."
+    tabou_majeur: "La Souillure Humide. Pleurer, cracher ou suer visiblement est vulgaire car c'est gaspiller l'eau du corps. On pleure dans des fioles."
+    accueil: "Condescendant. L'étranger est un barbare sale ('humide') qu'il faut éduquer et exploiter financièrement."
 
-  - nom: "Varnäliens"
-    trait_dominant: "Sauvagerie et Pragmatisme"
-    social: "Tribal. Le chef est le plus fort ou le plus rusé."
-    croyance: "Animisme sombre. Les esprits doivent être apaisés par le sang."
-    accueil: "Mortel. Si vous n'êtes pas invité, vous êtes une proie."
+  - nom: "Les Varnäliens (Les Organiques)"
+    archetype: "Le Survivant Adaptatif"
+    mentalite: "Ils ne craignent pas la mort, ils la voient comme un recyclage utile (le Grand Compost). Ils sont calmes, observateurs et impitoyables. La pitié est une insulte à la sélection naturelle."
+    structure_familiale: "Matriarcale et mouvante. La paternité importe peu, seule la Mère-Liane et le clan comptent."
+    tabou_majeur: "Le Métal Mort. Porter du métal raffiné (qui rouille) est une insulte à la forêt vivante. Ils utilisent l'os, la chitine de Fourmi-Taureau et le Bois-Fer."
+    accueil: "Invisible. Si vous les voyez, c'est qu'ils ont décidé de ne pas vous tuer tout de suite avec une sarbacane."
 
-  - nom: "Helruniens"
-    trait_dominant: "Fatalisme et Solidarité clanique"
-    social: "Clanique. La loyauté au Jarl est absolue."
-    croyance: "Les Dieux sont cruels et indifférents. Il faut survivre malgré eux."
-    accueil: "Froid. Partage du feu possible, mais vol puni de mort."
+  - nom: "Les Helruniens (Les Silencieux)"
+    archetype: "Le Pragmatique Glacé"
+    mentalite: "La parole est de l'énergie perdue (thermodynamique sociale). Ils sont honnêtes jusqu'à la brutalité. Le mensonge est un luxe du sud. La loyauté est binaire : ami ou ennemi."
+    structure_familiale: "Le 'Foyer'. Tous ceux qui partagent la chaleur d'un même feu sont famille, liens du sang ou non."
+    tabou_majeur: "L'Abandon du Feu. Laisser s'éteindre le foyer domestique est un crime spirituel grave (passible d'exil sur la banquise)."
+    accueil: "Méfiant mais sacré. Une fois invité au feu et ayant partagé le ragoût, l'étranger est intouchable (Loi de l'Hospitalité Calorique)."
 
-# RELIGIONS (OPIUM ET CONTRÔLE)
-cultes:
+# 2. RELIGIONS ET CULTES (L'OPIUM ET LE FOUET)
+institutions_religieuses:
   - nom: "L'Église du Père Sévère (Eldaron)"
-    dogme: "Souffrir sur terre pour gagner le paradis. Obéir au Roi."
-    pratiques: "Confession obligatoire, dîme, chasse aux sorcières."
+    dogme: "La Douleur est le test de la Vertu."
+    fonction_sociale: "Justifie les inégalités. Les riches souffrent de 'soucis d'esprit', les pauvres de 'faim'. Chacun sa croix pour le salut du royaume."
+    rituel_phare: "La Semaine des Pénitents. Les nobles marchent pieds nus (sur des tapis) et les pauvres se flagellent pour expier la dette nationale."
 
-  - nom: "Le Culte de la Fournaise (Thaurgrim)"
-    dogme: "Le monde est un métal impur qui doit être forgé."
-    pratiques: "Sacrifices humains dans la lave pour prévenir les éruptions."
+  - nom: "Le Mécanisme Divin (Thaurgrim)"
+    dogme: "L'Univers est une Horloge, nous sommes les Rouages."
+    fonction_sociale: "Optimisation du travail. La prière se fait en rythme avec le marteau-pilon. La grève est une hérésie mécanique."
+    rituel_phare: "L'Huilage Sacré. À la naissance, le bébé est oint d'huile industrielle usagée pour l'endurcir et le protéger des brûlures acides."
 
-  - nom: "L'Œil Solaire (Iskarion)"
-    dogme: "La pureté par le feu."
-    pratiques: "Purification des hérétiques par miroirs ardents."
+  - nom: "Le Culte du Disque (Iskarion)"
+    dogme: "La Lumière révèle, l'Ombre cache le péché."
+    fonction_sociale: "Surveillance de masse. Comme le Soleil voit tout, dénoncer la fraude de son voisin est un acte de piété."
+    rituel_phare: "Le Jugement de Midi. Les accusés sont attachés sur une place sans ombre (le Zénith). S'ils survivent 3 heures sans insolation mortelle, ils sont innocents (taux de survie : 2%)."
 
-  - nom: "Le Pacte Vert (Varnäl)"
-    dogme: "Prendre et rendre. Une vie pour une vie."
-    pratiques: "Cannibalisme rituel (manger la force de l'ennemi)."
+  - nom: "Le Grand Compost (Varnäl)"
+    dogme: "Nous empruntons notre chair à la Terre, nous devons la rendre."
+    fonction_sociale: "Gestion écologique et funéraire. Pas de cimetières (trop de place perdue), les corps sont donnés aux champignons ou aux Tigres-Écorce sacrés."
+    rituel_phare: "La Fête de la Pourriture. On consomme des aliments fermentés hallucinogènes pour communier avec les ancêtres recyclés."
 
-# FÊTES ET TRADITIONS
-festivals:
-  - nom: "La Nuit des Longs Couteaux (Eldaron)"
-    type: "Carnaval macabre"
-    description: "Une nuit où l'ordre social est inversé. Souvent prétexte à des règlements de compte."
+# 3. RITES DE PASSAGE ET VIE QUOTIDIENNE
+vie_et_mort:
+  naissance:
+    Eldaron: "L'enfant n'a pas de nom avant 2 ans (mortalité infantile trop élevée due à la malnutrition). On l'appelle 'Le Petit' ou 'Le Nouveau'."
+    Thaurgrim: "Inspecté par un Contremaître. S'il a une malformation pulmonaire, il est 'recyclé' à Sanitarium-IV."
+    Helrun: "Plongé quelques secondes dans la neige. S'il ne crie pas, il est fort. S'il devient bleu trop vite, il est faible."
 
-  - nom: "Le Jour de la Cendre (Thaurgrim)"
-    type: "Commémoration"
-    description: "Jeûne collectif pour se rappeler la Grande Famine."
+  mariage:
+    Principe: "C'est un contrat d'affaires. L'amour est un accident heureux, pas un pré-requis."
+    Eldaron: "La femme apporte la dot (terres), l'homme apporte le titre ou le métier. Le contrat est signé devant notaire avant le prêtre."
+    Iskarion: "Contrats temporaires renouvelables (3 ans, 5 ans). On paie la dot en barils d'eau purifiée."
 
-  - nom: "La Chasse Sauvage (Helrün)"
-    type: "Rite de passage"
-    description: "Les jeunes doivent survivre une semaine seuls dans le blizzard."
+  mort:
+    Eldaron: "Enterrement coûteux (taxe foncière sur la tombe). Les pauvres louent des pleureuses pour ne pas avoir l'air misérables."
+    Thaurgrim: "Incinération dans les fourneaux de l'usine pour générer de l'énergie (rien ne se perd). La famille reçoit un petit lingot de fer symbolique."
+    Iskarion: "Dessiccation au soleil. Les os secs sont broyés pour faire de la chaux blanche pour peindre les maisons (littéralement, les ancêtres protègent les murs de la chaleur)."
 
-# LOISIRS (RARES ET VIOLENTS)
+# 4. ALIMENTATION ET CUISINE (GASTRONOMIE DE SURVIE)
+gastronomie_de_survie:
+  - plat: "La Bouillie Grise (Eldaron)"
+    compo: "Avoine, eau, parfois du saindoux rance ou des morceaux de Rat-Lame pour les protéines."
+    statut: "Nourriture de base de 80% de la population. Bourratif mais sans goût. Les riches mangent du 'Pain Blanc' (farine pure)."
+
+  - plat: "Le Pain de Cendre (Thaurgrim)"
+    compo: "Farine de blé noir mélangée à de la poudre d'écorce et des champignons de grotte."
+    statut: "Dur comme la pierre. Il faut le tremper dans de la bière acide pour ne pas se casser une dent. Goût métallique."
+
+  - plat: "Le Steak de Bœuf-Cendre (Thaurgrim/Eldaron)"
+    compo: "Viande très dure, nécessitant 6h de cuisson. Goût fumé naturel (dû à la pollution absorbée par l'animal)."
+    statut: "Plat de fête pour les ouvriers."
+
+  - plat: "Le Vin de Cactus (Iskarion)"
+    compo: "Jus fermenté d'agave du désert."
+    statut: "Luxe absolu. Goût sucré et terreux. Rend ivre très vite à cause de la déshydratation ambiante."
+
+  - plat: "Le Ragoût Perpétuel (Helrün)"
+    compo: "Graisse de phoque, viande de Renne, lichen, poisson. La marmite ne quitte jamais le feu."
+    statut: "Symbole du foyer. Certains ragoûts ont 'commencé' il y a 50 ans et n'ont jamais été vidés, juste complétés."
+
+# 5. FÊTES ET SOUPAPES DE SÉCURITÉ
+calendrier_festif:
+  - nom: "Le Carnaval des Fous (Eldaron)"
+    date: "Solstice d'Hiver."
+    but: "Inversion sociale. Le Roi sert les pauvres (symboliquement), on brûle un mannequin du percepteur d'impôts. Permet au peuple de 'tuer' l'autorité sans verser de sang réel."
+
+  - nom: "La Trêve du Fer (Thaurgrim)"
+    date: "Jour le plus chaud de l'été."
+    but: "Les machines sont arrêtées pour maintenance majeure. C'est le seul jour de silence total de l'année. Les gens parlent en chuchotant, effrayés par le calme inhabituel."
+
+  - nom: "L'Arrivée de la Glace (Iskarion)"
+    date: "Arrivée du premier convoi d'Helrün."
+    but: "Fête commerciale. On distribue des éclats de glace aux enfants. C'est le seul jour où l'on boit de l'eau fraîche gratuitement."
+
+# 6. JEUX ET LOISIRS (CRUAUTÉ ORDINAIRE)
 divertissements:
-  - "Combats de chiens ou de coqs."
-  - "Exécutions publiques (très populaires)."
-  - "Jeux de dés et de cartes (souvent truqués)."
-  - "Bardes chantant des complaintes tragiques."
+  - "Le Lancer de Rat (Tavernes)": "Pari sur la distance ou sur quel chien de Fonderie l'attrapera le plus vite."
+  - "La Roulette des Dettes (Thaurgrim)": "Jeu de cartes où l'on mise des jours de travail. On peut gagner une semaine de repos ou perdre un mois de salaire (esclavage temporaire)."
+  - "Le Théâtre d'Ombres (Ardel)": "Raffiné et satirique. Seul endroit où l'on peut se moquer du Roi, tant que c'est subtil."
 
 # MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 1.0_grim
-  type_contenu: "sociologie_dark_fantasy"
+  date_creation: "2025-11-23"
+  version: 3.0_ultra_coherent_sociology
+  type_contenu: "anthropologie_culturelle_et_sociale"
+  note_intention: "Intégration complète avec le Bestiaire v3.0 (alimentation) et la Géopolitique v5.1 (impact de la dette et des ressources sur les mœurs)."

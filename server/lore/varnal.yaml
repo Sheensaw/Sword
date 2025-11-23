@@ -1,88 +1,138 @@
 # varnal.yaml
-modele: "low_fantasy_grim"
-description: "Continent Varnäl - Jungle hostile, maladies et tribus xénophobes"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "low_fantasy_grim_realistic"
+description: "Continent Varnäl - Un océan de verdure toxique où la civilisation est une lutte permanente contre la putréfaction et les parasites."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["jungle_mortelle", "parasites", "tribus_sauvages", "isolationnisme", "poison", "nature_cruelle"]
-  mots_cles: ["rhaal", "pourriture", "insectes_geants", "flechettes", "sacrifice_vert"]
-  description_semantique: "La nature ici ne veut pas l'harmonie, elle veut vous manger. La croissance est rapide, la décomposition aussi. Les habitants sont des survivants impitoyables."
+  themes: ["horreur_biologique", "darwinisme_immunitaire", "pharmacopée_mortelle", "guerre_asymétrique", "décomposition_accélérée"]
+  mots_cles: ["gangrène_humide", "symbiose_parasitaire", "commerce_des_poisons", "villes_arboricoles", "rouille_verte"]
+  description_semantique: "La nature n'est pas une mère bienveillante, c'est un prédateur affamé. Ici, tout essaie de vous manger : les plantes, les insectes, l'air lui-même. Les Varnäliens sont des maîtres de la biologie parce qu'ils n'ont pas le choix."
+  tonalite_audit: "Grimdark Consistent - La beauté de la fleur cache toujours une neurotoxine. La survie se paie par la mutation ou la souffrance."
 
-# DONNÉES FONDAMENTALES
+# 2. DONNÉES FONDAMENTALES & GÉOPHYSIQUE
 nom: "Varnäl"
-designation: "L'Enfer Vert"
-type: "Continent équatorial"
+designation: "Le Vivier (ou L'Enfer Vert)"
+type: "Continent équatorial et tropical humide (Hyper-dense)"
 superficie_mkm2: 32.6
-population_estimee_millions: 54 (Dispersée)
-systeme_coordonnees: "grid_varnälien_100x100"
+population_estimee_millions: 54 (Population diffuse. La densité urbaine est faible pour éviter les épidémies foudroyantes.)
+systeme_coordonnees: "grid_varnalien_100x100"
+climatologie_audit: "Humidité constante de 98%. Cycle de la 'Rouille Verte' : Oxydation accélérée de tous les métaux ferreux. Seuls l'Or, le Verre et le Bois-Fer résistent."
 
-# RÉGIONS GÉOPOLITIQUES
+# 3. RÉGIONS GÉOPOLITIQUES (ZONES DE CONTAMINATION)
 regions:
   - nom: "Le Cœur Noir (Rhaal)"
-    coordonnees: { x_min: 20, x_max: 50, y_min: 60, y_max: 85 }
-    biome_principal: "Jungle primaire impénétrable"
-    capitale: "Rhaal"
-    danger: "Prédateurs géants, plantes carnivores, tribus cannibales."
-    description: "La lumière du soleil touche rarement le sol."
+    coordonnees: { x_min: 25, x_max: 55, y_min: 55, y_max: 85 }
+    biome_principal: "Jungle primaire à canopée triple (Obscurité au sol)"
+    capitale_regionale: "Rhaal-la-Suspendue"
+    logique_geographique: "Zone la plus ancienne. Les arbres y sont si hauts et denses qu'ils créent un microclimat stable."
+    etat: "Zone Interdite (Tabou). Seules les Mères-Lianes y entrent pour récolter les souches virales pures."
 
-  - nom: "Les Marais de la Fièvre (Marael)"
-    coordonnees: { x_min: 40, x_max: 70, y_min: 30, y_max: 60 }
-    biome_principal: "Marécages pestilentiels"
-    capitale: "Marael"
-    danger: "Malaria, sangsues, sables mouvants."
-    population: "Sorciers des marais, alchimistes douteux."
+  - nom: "Le Delta des Sangsues (Marael)"
+    coordonnees: { x_min: 45, x_max: 75, y_min: 30, y_max: 60 }
+    biome_principal: "Marécages saumâtres et mangroves"
+    capitale_regionale: "Marael"
+    ressource_cle: "Riz Noir (Céréale génétiquement adaptée qui pousse dans l'eau saumâtre. Seule source d'amidon exportable)."
+    danger: "Choléra vert endémique. L'eau doit être bouillie trois fois."
 
-  - nom: "La Côte des Naufrages (Tarran)"
-    coordonnees: { x_min: 5, x_max: 25, y_min: 20, y_max: 50 }
-    biome_principal: "Mangroves et falaises"
-    capitale: "Tarran"
-    activite: "Seul point de contact avec l'extérieur. Comptoir commercial fortifié."
+  - nom: "La Côte des Épaves (Zone Franche)"
+    coordonnees: { x_min: 5, x_max: 30, y_min: 25, y_max: 55 }
+    biome_principal: "Plages de sable gris, récifs coralliens tranchants"
+    capitale_regionale: "Tarran"
+    logique_geographique: "Vent du large chassant les spores. Seul endroit où un étranger peut respirer sans masque filtrant."
 
-# VILLES PRINCIPALES (ORGANISATIONS TRIBALES)
-villes_principales:
-  - nom: "Rhaal"
-    type: "Cité-Arbre Forteresse"
-    coordonnees: { x: 35, y: 72 }
-    description: "Construite dans la canopée pour échapper aux bêtes du sol. Reliée par des ponts de lianes piégés."
+  - nom: "Les Hauts-Plateaux Brumeux"
+    coordonnees: { x_min: 60, x_max: 85, y_min: 60, y_max: 80 }
+    biome_principal: "Forêts de nuages, fougères géantes"
+    capitale_regionale: "Xylos"
+    etat: "Plus frais. Refuge des tribus guerrières 'Coupeurs de Têtes' qui refusent le commerce avec l'extérieur."
 
-  - nom: "Marael"
-    type: "Village sur Pilotis"
-    coordonnees: { x: 55, y: 45 }
-    description: "Cabanes pourrissantes au-dessus d'une eau noire. L'odeur de vase et de produits chimiques est insupportable."
+# 4. VILLES PRINCIPALES (ARCHITECTURES DE SURVIE)
+villes_majeures:
+  - nom: "Rhaal-la-Suspendue"
+    statut: "Capitale Biologique"
+    population: 850000 (Répartis verticalement)
+    description: "Une métropole invisible du sol. Des milliers de passerelles de soie d'araignée relient des arbres-titans. On vit en hauteur car le sol est le domaine des décomposeurs géants."
+    logistique_survie: "Collecte de l'eau de pluie dans des feuilles-réservoirs (avant qu'elle ne touche le sol contaminé)."
 
   - nom: "Tarran"
-    type: "Port Franc"
-    coordonnees: { x: 15, y: 35 }
-    description: "Une enclave de pierre entourée de palissades pour repousser la jungle. Lieu de tous les trafics."
+    statut: "Port de Quarantaine"
+    population: 400000
+    description: "Ville de pierre chaulée (la chaux tue les moisissures). Chaque navire arrivant doit attendre 7 jours au mouillage 'sous le vent'."
+    infrastructure_cle: "Le Lazaret : Hôpital-prison gigantesque. C'est ici que s'échangent les drogues contre l'or. Les négociations se font à travers des grilles doubles."
 
-# FLORE ET FAUNE (CAUCHEMARDESQUES)
-ecosysteme:
-  - "Arbres Étrangleurs : Parasitent les autres arbres et peuvent piéger les animaux."
-  - "Mouches de Sang : Essaims capables de vider un homme de son sang."
-  - "Spores Nécrotiques : Champignons qui infectent les poumons."
-  - "Prédateurs : Reptiles géants, félins camouflés."
+  - nom: "Marael"
+    statut: "Cité Flottante"
+    population: 600000
+    description: "Un immense radeau urbain sur le delta. Les maisons sont sur pilotis de Bois-Fer. L'odeur de vase est prenante."
+    logistique_audit: "Point de départ des barges de riz vers Thaurgrim (qui achète le riz pour nourrir ses esclaves quand le blé d'Eldaron manque)."
 
-# PEUPLES ET COUTUMES
-varnaliens:
-  mentalite: "Tuer ou être tué. La pitié est une faiblesse."
-  pratiques:
-    - "Culte de la Décomposition : Les morts sont laissés à la forêt pour la nourrir."
-    - "Chasse aux Têtes : Preuve de valeur guerrière."
-    - "Usage des Poisons : Toutes leurs armes sont enduites de toxines."
+# 5. VILLES SECONDAIRES & AVANT-POSTES
+villes_secondaires:
+  - nom: "Sève-Noire"
+    type: "Centre d'Extraction"
+    population: 45000
+    role: "Saignée des arbres à caoutchouc et à résine. Les ouvriers ont les mains rongées par la sève caustique, mais sont payés en doses d'anti-douleur."
 
-# RESSOURCES
-ressources_exportees:
-  - "Bois de Fer : Extrêmement dur, mais coûteux en vies humaines à extraire."
-  - "Poisons et Remèdes : Les deux faces de la même pièce."
-  - "Animaux exotiques : Vendus pour les arènes d'Eldaron."
+  - nom: "La Citadelle des Cendres"
+    type: "Enclave Étrangère (Thaurgrim)"
+    population: 15000
+    role: "Zone fortifiée maintenue par des lance-flammes constants. Thaurgrim brûle la jungle autour pour créer un 'No Man's Land' sanitaire et extraire du bois précieux."
 
-# INFRASTRUCTURES
-routes:
-  - "Aucune route pavée. Seulement des sentiers de chasse connus des seuls locaux."
-  - "La Rivière du Serpent : Voie navigable mais infestée de crocodiles."
+  - nom: "Port-Vénéneux"
+    type: "Comptoir de Contrebande"
+    population: 30000
+    role: "Marché noir. On y vend ce que les Mères-Lianes interdisent : des animaux vivants, des parasites armés, des esclaves immunisés."
 
-# MÉTA-DONNÉES IA
+# 6. RÉSEAU DE TRANSPORT (LA MORT AU TOURNANT)
+voies_de_communication:
+  - nom: "Le Fleuve Serpent (Yarr)"
+    type: "Artère Fluviale"
+    danger: "Infesté de piranhas géants et d'amibes mangeuses de coques. Les bateaux doivent être enduits d'une résine répulsive secrète."
+
+  - nom: "Les Pistes Vertes"
+    type: "Sentiers de Canopée"
+    description: "Réseau de ponts de lianes à 40m du sol. Rapide, mais demande une agilité d'acrobate. Une chute est fatale (prédateurs au sol)."
+
+# 7. SOCIÉTÉ ET COUTUMES (IMMUNOLOGIE SOCIALE)
+hierarchie_sociale:
+  principe: "Ton rang dépend de ta résistance aux toxines."
+  castes:
+    - "Les Mères-Lianes (Matriarcat)": "Sang saturé d'anticorps. Peuvent manger du poison pur. Détiennent les secrets pharmacologiques."
+    - "Les Chasseurs de Peaux": "Guerriers symbiotiques. Acceptent des parasites volontaires pour augmenter leur force/perception."
+    - "Les Greffeurs": "Artisans du vivant. Fabriquent des outils en os, chitine et bois (puisque le métal rouille)."
+    - "Le Compost (Les Faibles)": "Ceux qui rejettent les greffes ou tombent malades trop souvent. Exilés au sol pour nourrir la forêt."
+
+pratiques_remarquables:
+  - "L'Immunisation (Rite de passage)": "Dès l'enfance, on ingère des doses croissantes de venins. 40% de mortalité infantile. Les survivants sont des surhommes biologiques."
+  - "La Guerre Silencieuse": "Varnäl n'a pas d'armée régulière. Sa défense est la jungle elle-même. En cas d'invasion, ils cessent de contenir la flore, qui engloutit les routes en 24h."
+
+# 8. MENACES & MALADIES
+pathogenes:
+  - "La Pourriture Grise": "Champignon pulmonaire. On tousse de la poussière grise avant d'étouffer. Très contagieux."
+  - "Le Ver de l'Œil": "Parasite qui mange le nerf optique mais remplace la vue par une perception thermique."
+
+faune_notable:
+  - "Fourmis-Taureau": "Taille d'un chien. Attaquent en essaims. Seule défense : le feu (ou la fuite)."
+  - "Tigre-Écorce": "Camouflage mimétique parfait. Prédateur apex."
+
+# 9. ÉCONOMIE LOCALE (MONOPOLE PHARMACEUTIQUE)
+specialites:
+  Export:
+    - "Opium Noir (Anti-douleur universel - Vital pour les guerres mondiales)"
+    - "Antibiotiques Fongiques (Vendu à prix d'or à Iskarion)"
+    - "Poisons & Neurotoxines (Pour les assassins d'Eldaron)"
+    - "Bois de Fer (Incombustible, pour la construction navale de luxe)"
+  Import:
+    - "Or & Verre (Matériaux inaltérables pour stocker les remèdes)"
+    - "Tissus synthétiques/traités (Le coton pourrit trop vite)"
+    - "Esclaves (Pour tester les nouveaux mélanges)"
+
+  Interdependance_Critique: "Le monde déteste Varnäl mais en est esclave. Sans l'Opium de Varnäl, les armées d'Eldaron se mutinent à la première blessure. Sans les antibiotiques, la peste rase les villes surpeuplées."
+
+# 10. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 3.2_grim
-  type_contenu: "continent_jungle_dark"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "geographie_continentale_complete"
+  note_intention: "Ambiance 'Heart of Darkness' + Bio-Punk. Varnäl est la preuve que la nature est plus cruelle que n'importe quelle machine."

@@ -1,61 +1,100 @@
 # mythes_legendes.yaml
-modele: "low_fantasy_grim"
-description: "Légendes de Velkarum - Histoires de peur, d'avertissement et de monstres"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "grim_magic_realism_expanded"
+description: "Le folklore de Velkarum - Un mélange indissociable de fables de sécurité, de propagande religieuse et de phénomènes paranormaux avérés."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING D'IMAGINAIRE
 embedding_optimized:
-  themes: ["peur", "monstres", "punition_divine", "malediction", "heros_dechus"]
-  mots_cles: ["le_roi_fou", "la_grande_peste", "les_ombres", "fin_du_monde"]
-  description_semantique: "Les mythes ne sont pas là pour inspirer, mais pour effrayer les enfants et expliquer pourquoi le monde est si dur. Pas de 'happy end'."
+  themes: ["contes_avertisseurs", "magie_sacrificielle", "animisme_industriel", "memoire_des_lieux", "superstitions_de_survie"]
+  mots_cles: ["l'enfant_rouille", "les_grinceurs", "la_dette_du_sang", "le_silence_blanc", "les_machines_qui_revent"]
+  description_semantique: "Ici, croire peut vous sauver ou vous tuer. Le surnaturel n'est pas une ressource merveilleuse, c'est une pollution de la réalité, une fuite toxique de l'au-delà."
+  tonalite_audit: "Grimdark Consistent - Les monstres existent, mais ils sont souvent moins effrayants que la famine ou la banque."
 
-# LÉGENDES FONDATRICES (VERSION SOMBRE)
-mythes_origines:
-  - titre: "Le Fratricide Divin"
-    culture: "Eldaron"
-    recit: "Au commencement, deux frères dieux se battirent pour le trône céleste. Leur sang tomba sur terre et créa les hommes, condamnés à se battre éternellement comme leurs créateurs."
-    morale: "La guerre est l'état naturel de l'homme."
+# 2. COSMOGONIE (CE QUE LES PEUPLES CROIENT POUR DONNER DU SENS)
+origines_du_monde:
+  - titre: "Le Géant Dépecé (Thaurgrim)"
+    mythe: "Le monde est le cadavre d'un Titan tué par le Froid. Les montagnes sont ses os brisés, la lave est son sang qui n'a pas encore refroidi."
+    fonction_sociale: "Justifie l'exploitation minière outrancière. On ne viole pas la terre, on 'moissonne' un cadavre."
+    realite_surnaturelle: "Vrai. Les mineurs profonds entendent parfois un battement de cœur lent (1 battement/heure). Ceux qui l'écoutent meurent d'arythmie cardiaque par synchronisation."
 
-  - titre: "La Trahison du Feu"
-    culture: "Thaurgrim"
-    recit: "Les hommes volèrent le feu aux profondeurs. En représailles, la terre jura de les brûler et de les étouffer à jamais."
-    morale: "Tout progrès se paie par la souffrance."
+  - titre: "Le Soleil Voleur (Iskarion)"
+    mythe: "Le Soleil était une étoile jalouse qui a dévoré ses sœurs. Il a soif de tout ce qui brille (l'eau, l'or, les yeux)."
+    fonction_sociale: "Justifie le port du voile et l'avarice. Cacher son eau, c'est se protéger de Dieu."
 
-  - titre: "Le Soleil Dévoreur"
-    culture: "Iskarion"
-    recit: "Le Soleil est un œil affamé. S'il ne reçoit pas assez d'offrandes, il se rapprochera jusqu'à tout calciner."
-    morale: "Sacrifie ou brûle."
+  - titre: "La Tisseuse de Nœuds (Eldaron)"
+    mythe: "Une déesse araignée tisse le destin. Mais elle est devenue folle à force de voir les hommes souffrir et tisse désormais des nœuds (guerres, famines) pour abréger leurs souffrances."
+    superstition: "Tuer une araignée porte malheur (c'est crever un œil du Destin)."
 
-# CRÉATURES FOLKLORIQUES (BESTIAIRE EFFRAYANT)
-creatures:
-  - nom: "Les Goules des Tranchées"
-    description: "Créatures nécrophages qui déterrent les morts des champs de bataille."
-    croyance: "Ce sont les âmes des déserteurs maudits."
+# 3. CONTES ET FABLES (FOLKLORE DE SÉCURITÉ)
+# Histoires inventées pour éloigner les gens des dangers réels.
+fables_populaires:
+  - titre: "L'Enfant-Rouille (Eldaron)"
+    recit: "Un garçon paresseux s'est caché dans un silo à grain pour dormir. La Rouille l'a mangé. On l'entend encore gratter quand le blé bouge."
+    danger_reel: "Les silos fermentent (dégagement de CO2 mortel/risque d'ensevelissement). Le conte sauve la vie des enfants."
 
-  - nom: "Le Marcheur de Brume"
-    description: "Entité invisible qui enlève les voyageurs égarés dans les marais de Varnäl."
-    signe: "Un silence soudain dans la jungle."
+  - titre: "La Mariée de Cendre (Thaurgrim)"
+    recit: "Une ouvrière aimait tant son haut-fourneau qu'elle s'est jetée dedans pour augmenter la température lors d'une coulée critique. Le métal produit était indestructible."
+    danger_reel: "Propagande des Maîtres de Forge pour romancer les accidents du travail et le suicide sacrificiel."
 
-  - nom: "Les Wendigos (Helrün)"
-    description: "Hommes ayant mangé de la chair humaine, transformés en monstres insatiables."
-    réalité: "Probablement des fous rendus sauvages par la faim."
+  - titre: "Celui qui a bu la Mer (Iskarion)"
+    recit: "Un Sultan si riche qu'il a voulu acheter l'océan. Il l'a bu, mais le sel l'a cristallisé de l'intérieur."
+    danger_reel: "Mise en garde contre la consommation d'eau saumâtre/salée des nappes phréatiques côtières (qui tue les reins)."
 
-# LÉGENDES HISTORIQUES (RÉALITÉ DÉFORMÉE)
-histoire_orale:
-  - titre: "La Peste Noire d'Ardel"
-    recit: "Une maladie envoyée par les dieux pour punir la cupidité des marchands. Elle tua la moitié du continent en un an."
-    héritage: "Peur panique des rats et des étrangers malades."
+# 4. LE SURNATUREL ACTIF (PHÉNOMÈNES RÉELS ET DANGEREUX)
+# Ce ne sont pas des histoires. Ce sont des faits auditables.
+entites_parasites:
+  - nom: "Les Grinceurs (Esprits Industriels)"
+    localisation: "Usines de Thaurgrim."
+    nature: "Quand une machine tue un ouvrier, elle garde parfois un fragment de son âme traumatisée. La machine se met à travailler seule la nuit, produisant des pièces maudites qui cassent au pire moment."
+    contre_mesure: "Les Ingénieurs-Prêtres doivent bénir chaque nouvelle presse hydraulique avec de l'huile sainte."
 
-  - titre: "Le Roi Fou Valdemar"
-    recit: "Un roi qui emmurait ses femmes vivantes et parlait aux corbeaux. Il fut assassiné par sa propre garde."
-    héritage: "Méfiance envers l'autorité royale absolue."
+  - nom: "Les Miroirs de Soif (Iskarion)"
+    localisation: "Désert profond."
+    nature: "Anomalie thermique. L'air devient si chaud qu'il solidifie la lumière. Si on traverse un miroir, on en ressort totalement déshydraté (momifié) en une seconde."
 
-# PROPHÉTIES (FIN DU MONDE)
-eschatologie:
-  - "L'Hiver Éternel : Un jour, le soleil s'éteindra et le froid d'Helrün recouvrira tout Velkarum."
-  - "Le Réveil du Grand Ver : Un monstre sous terre qui fera s'effondrer les continents."
+  - nom: "Le Champignon-Mémoire (Varnäl)"
+    localisation: "Jungle profonde."
+    nature: "Fongus qui absorbe la conscience des mourants à proximité. Si on le mange, on revit leur agonie."
+    usage: "Utilisé par les juges de Varnäl pour résoudre les meurtres (preuve forensique absolue), au prix de leur propre santé mentale."
 
-# MÉTA-DONNÉES IA
+# 5. RITUELS DE PROTECTION (LA MAGIE DU PEUPLE)
+# Magie sale, coûteuse, basée sur le troc symbolique.
+pratiques_courantes:
+  - nom: "Le Clouage d'Ombre (Universel)"
+    but: "Empêcher un mort de revenir (revenant)."
+    rituel: "Planter un clou en fer froid dans l'ombre du cadavre juste avant le coucher du soleil."
+    cout: "Le lanceur perd la sensibilité de sa main dominante pendant un an."
+
+  - nom: "La Pièce de Silence (Lirn/Eldaron)"
+    but: "Acheter un secret pour qu'il ne soit jamais révélé."
+    rituel: "Mettre une pièce d'or dans la bouche d'un poisson vivant, murmurer le secret, et rejeter le poisson à la mer."
+    condition: "Tant que le poisson vit, le secret tient. Si le poisson est pêché, le secret éclate au grand jour."
+
+  - nom: "Le Partage de Souffle (Helrün)"
+    but: "Sauver un hypothermique sévère."
+    rituel: "Transfert d'énergie vitale bouche-à-bouche. Considéré comme un mariage d'âme."
+    cout: "Le donneur perd définitivement 5 ans d'espérance de vie. On ne le fait que pour ses enfants ou son amour."
+
+# 6. RELIQUES ET OBJETS MAUDITS (ÉCONOMIE OCCULTE)
+objets_legendaires:
+  - nom: "Les Lanternes d'Âme (Helrün)"
+    description: "Lampes faites avec la graisse de baleines albinos (créatures magiques). La flamme est froide."
+    pouvoir: "Révèle les mensonges (l'ombre du menteur se tord)."
+    valeur: "Inestimable. Outil principal des tribunaux du Nord."
+
+  - nom: "Le Grand Livre des Dettes (Eldaron)"
+    description: "Un registre mythique tenu par la Banque du Zénith. La légende dit qu'il est écrit avec le sang des premiers rois."
+    pouvoir: "On dit que si votre nom y est inscrit, vous ne pouvez pas mourir tant que vous n'avez pas payé. Vous devenez une goule de bureau, travaillant éternellement."
+    fonction: "Terreur sociale pour forcer le remboursement."
+
+  - nom: "La Flûte d'Os (Varnäl)"
+    description: "Instrument taillé dans le fémur d'un traître."
+    pouvoir: "Contrôle les essaims d'insectes."
+    malediction: "L'utilisateur finit toujours par être dévoré par ses propres insectes."
+
+# 7. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 1.0_grim
-  type_contenu: "folklore_horreur"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "folklore_et_surnaturel_complexe"
+  note_intention: "Créer une distinction nette : les mythes sont là pour éduquer/faire peur, la magie est là pour coûter cher. Rien n'est merveilleux, tout est utile ou dangereux."

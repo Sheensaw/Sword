@@ -1,98 +1,130 @@
 # eldaron.yaml
-modele: "low_fantasy_grim"
-description: "Continent Eldaron - Féodalité, intrigues politiques et misère rurale"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "low_fantasy_grim_realistic"
+description: "Continent Eldaron - Un empire millénaire en phase terminale, où la grandeur passée est rongée par la dette et l'épuisement des sols."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["feodalite", "guerre_civile", "peste", "corruption", "chevalerie_brutale", "inquisition"]
-  mots_cles: ["lorn", "roi_faible", "jacqueries", "boue", "dime", "inquisiteurs"]
-  description_semantique: "Un royaume médiéval classique mais sale et brutal. La noblesse écrase le peuple, les maladies sont fréquentes, et l'autorité royale est contestée."
+  themes: ["effondrement_systémique", "disparités_sociales_extremes", "impasse_malthusienne", "guerre_froide_interne", "insécurité_routière"]
+  mots_cles: ["dette_souveraine", "exode_rural_massif", "mercenariat_legal", "justice_censitaire", "érosion_des_sols"]
+  description_semantique: "La noirceur ici n'est pas volcanique, elle est sociale. C'est un monde de bureaucratie kafkaïenne et de faim silencieuse. Le pays vend son blé pour payer sa dette, laissant ses propres paysans mourir de faim."
+  tonalite_audit: "Grimdark Consistent - La corruption n'est pas un vice, c'est le seul moyen de lubrifier un système grippé."
 
-# DONNÉES FONDAMENTALES
+# 2. DONNÉES FONDAMENTALES & GÉOPHYSIQUE
 nom: "Eldaron"
-designation: "Les Terres du Roi"
-type: "Continent tempéré"
+designation: "Le Vieux Royaume (L'Homme Malade de Velkarum)"
+type: "Continent tempéré à influence continentale"
 superficie_mkm2: 35.5
-population_estimee_millions: 62 (Majorité paysanne pauvre)
+population_estimee_millions: 78 (Surpopulation critique par rapport à la capacité actuelle des sols)
 systeme_coordonnees: "grid_eldarien_100x100"
+climatologie_audit: "Le déboisement massif pour l'agriculture a perturbé le cycle de l'eau. Les inondations de printemps sont dévastatrices, suivies de sécheresses estivales."
 
-# RÉGIONS GÉOPOLITIQUES
+# 3. RÉGIONS GÉOPOLITIQUES (DÉCOUPAGE FIN)
 regions:
-  - nom: "Le Val de Lorn (Valnoria)"
-    coordonnees: { x_min: 30, x_max: 60, y_min: 40, y_max: 70 }
-    biome_principal: "Plaines agricoles boueuses"
-    capitale: "Lorn"
-    etat: "Surpeuplé, déboisé, terres épuisées."
-    pouvoir: "Contrôlé directement par la Couronne, mais infiltré par les Guildes."
+  - nom: "Le Cœur-Val (L'Anneau Agricole)"
+    coordonnees: { x_min: 40, x_max: 55, y_min: 45, y_max: 60 }
+    biome_principal: "Plaines céréalières, Monoculture intensive"
+    capitale_regionale: "Lorn (Capitale Impériale)"
+    logique_geographique: "Bassin sédimentaire du fleuve Ostral. Sols épuisés maintenus en vie uniquement par l'import massif d'engrais (cendres/phosphates) de Thaurgrim."
+    etat: "Les haies ont disparu. Le vent emporte la terre arable (Dust Bowl). C'est le grenier du monde, mais il est vide."
 
-  - nom: "Les Marches du Dalen"
-    coordonnees: { x_min: 15, x_max: 45, y_min: 65, y_max: 85 }
-    biome_principal: "Forêts denses et brumeuses"
-    capitale: "Dalen"
-    ambiance: "Territoire de chasse, superstitions, peur des 'Choses' de la forêt."
-    population: "Bûcherons bourrus, Elfes renégats vivant en clans sauvages."
+  - nom: "La Péninsule d'Ardel (Le Sud)"
+    coordonnees: { x_min: 55, x_max: 85, y_min: 20, y_max: 40 }
+    biome_principal: "Climat méditerranéen, maquis, côtes rocheuses"
+    capitale_regionale: "Ardel"
+    logique_geographique: "Protégée des vents froids du nord par les Monts d'Airain. Climat idéal pour la vigne et l'olive."
+    ambiance: "Richesse arrogante. Ici, on ne meurt pas de froid, mais de dette ou de poison."
 
-  - nom: "Les Terres du Sud (Ardel)"
-    coordonnees: { x_min: 45, x_max: 80, y_min: 20, y_max: 45 }
-    biome_principal: "Collines sèches et vignobles"
-    capitale: "Ardel"
-    ambiance: "Riche, corrompue, influence étrangère (Iskarion)."
-    conflit: "Les ducs du Sud menacent souvent de faire sécession."
+  - nom: "Le Bassin Noir (L'Est Industriel)"
+    coordonnees: { x_min: 60, x_max: 80, y_min: 45, y_max: 65 }
+    biome_principal: "Vallées encaissées, Smog toxique"
+    capitale_regionale: "Ost-Velen"
+    etat: "Pollué par les tanneries (chrome/arsenic) et les fonderies primitives. L'espérance de vie y est de 35 ans. L'eau des rivières est multicolore et mortelle."
 
-  - nom: "Le Ferharn (Principauté Naine)"
-    coordonnees: { x_min: 65, x_max: 90, y_min: 45, y_max: 70 }
-    biome_principal: "Montagnes fortifiées"
-    capitale: "Ferharn"
-    description: "Forteresses imprenables. Les Nains ici sont des isolationnistes xénophobes qui vendent leur acier au prix fort."
+  - nom: "Les Marches du Nord (Dalen)"
+    coordonnees: { x_min: 25, x_max: 50, y_min: 65, y_max: 90 }
+    biome_principal: "Taïga, tourbières froides"
+    capitale_regionale: "Dalen-la-Grise"
+    logistique_audit: "Zone inaccessible 4 mois par an (Boue/Neige). Le pouvoir royal y est une fiction. Les Barons locaux sont des rois de fait."
 
-  - nom: "La Côte des Naufrageurs (Lirn)"
-    coordonnees: { x_min: 5, x_max: 30, y_min: 30, y_max: 60 }
-    capitale: "Lirn"
-    ambiance: "Brumeuse, salée. La loi du Roi s'arrête aux portes de la ville."
+  - nom: "La Côte des Brisants (L'Ouest)"
+    coordonnees: { x_min: 5, x_max: 35, y_min: 30, y_max: 60 }
+    biome_principal: "Landes venteuses, falaises de craie"
+    capitale_regionale: "Lirn"
+    reputation: "Terre de contrebande. La géographie tourmentée (criques, grottes) rend le contrôle douanier impossible."
 
-# VILLES PRINCIPALES (CLOAQUES URBAINS)
-villes_principales:
+# 4. VILLES PRINCIPALES (HIÉRARCHIE URBAINE & SURVIE)
+villes_majeures:
   - nom: "Lorn"
-    type: "Capitale Impériale"
-    coordonnees: { x: 45, y: 55 }
-    population: 4200000 (Entassés)
-    description: "Une mégalopole de bois et de pierre, aux rues étroites et boueuses. Le château royal domine une mer de taudis."
-    problemes: "Épidémies récurrentes, criminalité endémique, émeutes du pain."
+    statut: "Capitale Impériale"
+    population: 1200000
+    description: "Une tumeur urbaine. Le centre historique en pierre est vide (résidences secondaires de nobles ruinés), tandis que 800 000 réfugiés ruraux s'entassent dans la 'Ceinture de Paille' (bidonvilles inflammables)."
+    logistique_survie: "Dépendance totale aux convois fluviaux. Si le fleuve Ostral gèle ou baisse trop, émeutes de la faim en 3 jours."
+    quartiers:
+      - "Le Haut-Castel : Palais royal, fortifié contre sa propre population."
+      - "La Fosse aux Ours : Bas-fonds inondables, zone de non-droit gérée par la Guilde des Voleurs (qui assure l'ordre mieux que la Garde)."
 
   - nom: "Ardel"
-    type: "Cité des Marchands"
-    coordonnees: { x: 60, y: 35 }
-    description: "Plus propre que Lorn, mais cruelle. L'argent y achète tout, même la vie."
+    statut: "Métropole Financière"
+    population: 650000
+    description: "Ville de marbre et de tuiles rouges. Elle finance les guerres du Roi mais méprise sa cour. Possède sa propre milice privée (les 'Capes d'Or') mieux payée que l'armée royale."
 
-  - nom: "Khar-Ghul"
-    type: "Bastion Militaire"
-    coordonnees: { x: 85, y: 80 }
-    description: "Une forteresse de pierre grise, garnison de soldats endurcis surveillant les tribus barbares de l'Est."
+  - nom: "Ost-Velen"
+    statut: "Cité des Guildes"
+    population: 480000
+    description: "Cité de brique rouge noircie. C'est l'atelier d'Eldaron, produisant les armes pour les guerres du Roi, mais vendant aussi en secret aux ennemis pour maximiser les profits."
 
-# SOCIÉTÉ ET POLITIQUE
+# 5. RÉSEAU DE TRANSPORT (VITAL ET FRAGILE)
+routes_et_fleuves:
+  - nom: "La Voie Impériale"
+    type: "Route Pavée (Ancienne)"
+    trajet: "Lorn -> Gué-du-Roi -> Ardel"
+    etat: "Dégradée. Les péages (tous les 20km) servent à payer les Barons locaux, pas à réparer la route."
+    danger: "Élevé. Les 'Chevaliers-Brigands' (nobles ruinés) rançonnent les voyageurs légalement."
+
+  - nom: "Le Fleuve Ostral"
+    type: "Artère Jugulaire"
+    trajet: "Traverse le Cœur-Val et le Bassin Noir"
+    importance: "Transporte 90% du tonnage (Grain vs Charbon). Les berges sont des zones de guerre larvée entre syndicats de bateliers."
+
+  - nom: "La Route de la Boue"
+    type: "Piste Saisonnière"
+    trajet: "Lorn -> Dalen"
+    logistique_audit: "Temps de trajet : 2 semaines en été, 2 mois en hiver. Explique pourquoi le Nord est autonome."
+
+# 6. SOCIÉTÉ ET TENSIONS (RÉALISME SOMBRE)
 structure_sociale:
-  - "Haute Noblesse : Complots, mariages arrangés, décadence."
-  - "Clergé : Puissant, intolérant, prélève la dîme avec force."
-  - "Bourgeoisie : Guildes marchandes qui achètent les nobles endettés."
-  - "Peuple : Paysans attachés à la terre (serfs), ouvriers urbains misérables."
+  noblesse:
+    - "Haute Noblesse (Les Pairs)": "Propriétaires terriens riches en terres mais pauvres en argent liquide. Endettés auprès d'Ardel."
+    - "Noblesse de Robe": "Bourgeois ayant acheté des titres. Détestés par le peuple et la vieille noblesse, mais ils font tourner l'État."
 
-conflits_internes:
-  - "Guerre de Succession latente : Le Roi Alaric est vieux et malade, ses fils se haïssent."
-  - "Révoltes Paysannes : Les 'Jacques' brûlent régulièrement les châteaux des petits seigneurs."
+  peuple:
+    - "Les Francs-Tenanciers": "Espèce en voie de disparition. Rachetés ou expropriés par les grands domaines (Latifundia)."
+    - "Les Bras-Nus (Prolétariat)": "Masse flottante qui migre entre les moissons et les villes. Carburant des émeutes."
 
-# INFRASTRUCTURES
-routes_principales:
-  - "La Voie Royale : Seule route pavée décente, mais les péages sont exorbitants."
-  - "Le Chemin des Pendus : Route vers le Nord, ainsi nommée à cause des bandits exécutés le long du chemin."
+tensions_politiques:
+  - conflit: "La Guerre des Tarifs"
+    description: "Ardel refuse de payer l'impôt royal, arguant que les intérêts de la dette du Roi couvrent déjà l'impôt. Le Roi n'ose pas attaquer sa propre banque."
 
-# RELATIONS INTERNATIONALES
-diplomatie:
-  - "Dépendance vitale aux cendres de Thaurgrim pour l'agriculture."
-  - "Méfiance envers les 'sauvages' de Varnäl."
-  - "Dettes massives envers les banquiers d'Iskarion."
+  - conflit: "La Peste Rouge"
+    description: "Une rouille du blé (champignon) ravage les récoltes. Conséquence de la monoculture intensive. Risque de famine structurelle."
 
-# MÉTA-DONNÉES IA
+# 7. ÉCONOMIE LOCALE (BALANCE COMMERCIALE DÉFICITAIRE)
+specialites_regionales:
+  Export:
+    - "Blé & Céréales (Massif, vers Thaurgrim et Iskarion)"
+    - "Textile (Laine et Lin)"
+    - "Mercenaires (La Compagnie Noire est majoritairement Eldarienne)"
+  Import:
+    - "Engrais/Cendres (Vital, vient de Thaurgrim)"
+    - "Acier industriel (Thaurgrim)"
+    - "Capitaux/Prêts (Iskarion/Ardel)"
+
+  Symbiose_Toxique: "Eldaron nourrit Thaurgrim. Thaurgrim fertilise Eldaron. Si l'un tombe, l'autre meurt en une saison."
+
+# 8. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 3.2_grim
-  type_contenu: "geographie_medievale_realiste"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "geographie_continentale_complete"
+  note_intention: "Donner une sensation de lourdeur administrative. L'État est un géant aux pieds d'argile. La menace n'est pas l'invasion, mais la banqueroute et la révolte du pain."

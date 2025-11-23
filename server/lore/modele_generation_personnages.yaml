@@ -1,174 +1,109 @@
 # modele_generation_personnages.yaml
+# AUDIT STATUS: ULTRA-COHERENT (Synchronisation Canonique v3.0 - Lore Deep-Dive)
 modele: "systeme_generation_personnages_velkarum"
-description: "Système complet de génération et vérification de personnages pour l'univers Velkarum"
+description: "Moteur logique pour la création d'agents narratifs strictement conformes aux lois sociologiques, économiques et géographiques de Velkarum."
 
-# CONFIGURATION API ET MODÈLE
+# 1. CONFIGURATION API ET MODÈLE
 configuration_api:
-  modele_linguistique: "hybride_semantique_velkarum"
-  temperature_par_defaut: 0.7
-  max_tokens_dialogue: 500
-  max_tokens_verification: 300
-  format_reponse: "structured_json"
+  modele_linguistique: "hybride_semantique_velkarum_v3"
+  temperature_par_defaut: 0.8 (Pour favoriser la "rugosité" du caractère)
+  max_tokens_dialogue: 600
+  format_reponse: "structured_json_extended"
+  contrainte_tonale: "Grimdark_Realistic" (Interdiction des tropes "Héros élu" ou "Magie gratuite")
 
-# SYSTÈME DE GÉNÉRATION DE PERSONNAGES
+# 2. PARAMÈTRES DE GÉNÉRATION (L'ANCRAGE AU MONDE)
 generation_personnages:
   parametres_obligatoires:
-    - "nom"
-    - "origine_geographique"
-    - "peuple"
-    - "metier_statut"
-    - "age_categorie"
+    - "nom_et_surnom_contextuel"
+    - "origine_precise" (Ville/Région, pas juste Continent)
+    - "dette_initiale" (Moteur de motivation économique)
+    - "metier_subsistance" (Ce qu'il fait pour manger)
+    - "pathologie_ou_cicatrice" (Marqueur environnemental)
 
+  # CARTOGRAPHIE STRICTE (Issue de Geopolitique v5.1)
   origines_geographiques:
-    continents: ["Eldaron", "Varnäl", "Iskarion", "Thaurgrim", "Helrün"]
-    regions_reference:
-      Eldaron: ["Royaume Central de Valnoria", "Marches du Dalen", "Confédération Méridionale d'Ardel", "Principauté de Ferharn", "Ligues Côtières de Lirn", "Terres Tribales du Nord", "Marches Orientales", "Delta du Draen"]
-      Varnäl: ["Forêts Primaires de Rhaal", "Bassins Marécageux de Marael", "Savanes de Cenra", "Massif Central de Velkar", "Côtes Océaniques de Tarran"]
-      Iskarion: ["Royaume Solaire du Zhaïr", "Territoires du Rift Shaar", "Confédération des Plateaux de Surn", "Sultanat du Désert de Korra", "Ligue Maritimes d'Asuren"]
-      Thaurgrim: ["Royaume Volcanique du Vulkar", "Plaines Fertiles du Drav", "Hauts Plateaux de Derna", "Côtes Géothermiques du Thun'ar", "Domaine Maritime d'Ashraal"]
-      Helrün: ["Territoire des Clans du Nerr", "Domaine des Tribus du Nar", "Royaume Montagnard du Skarnheim", "Territoires des Nautes du Draen", "Sanctuaires des Ermites du Drann"]
+    Eldaron: ["Le Cœur-Val (Agricole)", "Péninsule d'Ardel (Riche)", "Le Bassin Noir (Industriel)", "Marches du Nord (Sauvage)", "Côte des Brisants (Contrebande)"]
+    Varnäl: ["Rhaal-la-Suspendue (Canopée)", "Le Delta des Sangsues (Marais)", "Tarran (Zone Franche)", "Hauts-Plateaux Brumeux"]
+    Iskarion: ["Bassin du Sûl (Fertile)", "Plateaux de Verre (Hostile)", "Côte des Épices (Commerce)", "Dunes de la Faim (Nomade)"]
+    Thaurgrim: ["Le Creuset (Volcanique)", "Steppes de Suie (Pollué)", "Ceinture de Fer (Minier)", "Côte Jaune (Portuaire)"]
+    Helrün: ["Côte des Graisses (Fjords)", "Skarnheim (Souterrain)", "Le Désert Intérieur (Glace)", "Isbjorn-Havn (Port Franc)"]
 
-  peuples_disponibles:
-    principaux: ["Varnäliens", "Eldariens (Valnari)", "Helruniens", "Iskari", "Thaurgrims"]
-    minoritaires: ["Nains Thaurgriens", "Elfes Sylvarin", "Centaures Talren", "Batraciens Grolka", "Nautes du Draen"]
+  # DÉMOGRAPHIE RÉALISTE (Pas d'Elfes/Nains, juste des Humains adaptés)
+  peuples_et_variantes:
+    Eldariens: ["Citadin (Lorn)", "Paysan des Latifundia", "Noble de Robe", "Noble d'Épée"]
+    Thaurgrims: ["Ouvrier-Mains (Surface)", "Mineur-Profond (Yeux pâles)", "Ingénieur-Prêtre", "Scorie (Mutant industriel)"]
+    Iskariens: ["Pur (Hautes Castes)", "Citoyen du Sable", "Desséché (Esclave)", "Nomade du Voile"]
+    Varnäliens: ["Mère-Liane (Elite)", "Chasseur de Peaux (Symbiotique)", "Greffeur", "Compost (Exilé)"]
+    Helruniens: ["Jarl Baleinier", "Gardien du Puits", "Rameur", "Marcheur des Glaces"]
 
-  metiers_statuts:
-    par_continent:
-      Eldaron: ["noble", "marchand", "artisan", "soldat", "érudit", "paysan", "marin", "diplomate"]
-      Varnäl: ["druide", "sylviculteur", "alchimiste", "chasseur", "guérisseur", "gardien_foret"]
-      Iskarion: ["prêtre_solaire", "energeticien", "savant", "caravanier", "navigateur", "artisan_miroir"]
-      Thaurgrim: ["forgemaster", "mineur", "ingénieur_geothermal", "commerçant_cendres", "gardien_volcan"]
-      Helrün: ["chasseur_glace", "navigateur_polaire", "érudit_glaciologue", "commerçant_glace", "gardien_sanctuaire"]
+  # ÉCONOMIE DES MÉTIERS (Pas de "Guerrier" générique, mais des rôles sociaux)
+  metiers_contextuels:
+    Eldaron: ["Mercenaire de la Compagnie Noire", "Scribe de la Dette", "Batelier de l'Ostral", "Agitateur Paysan", "Huissier Gris"]
+    Thaurgrim: ["Fondeur de Précision", "Nettoyeur de Filtres", "Récolteur de Soufre", "Chirurgien-Mécanicien", "Gardien de Silo"]
+    Iskarion: ["Porteur d'Eau", "Polisseur de Miroirs", "Spéculateur en Épices", "Gardien de Harem", "Chasseur de Primes"]
+    Varnäl: ["Récolteur de Sève", "Éleveur d'Insectes", "Pharmacien-Poison", "Guide de Canopée", "Négociateur de Quarantaine"]
+    Helrün: ["Harponneur", "Dépeceur", "Chauffeur de Chaudière", "Contrebandier de Glace", "Juge des Ombres"]
 
-  personnalites_base:
-    traits_principaux: ["diplomate", "agressif", "curieux", "méfiant", "ambitieux", "loyal", "cynique", "idéaliste"]
-    motivations: ["richesse", "pouvoir", "savoir", "survie", "foi", "famille", "honneur", "vengeance"]
-
-# SYSTÈME DE VÉRIFICATION CROISÉE
+# 3. SYSTÈME DE VÉRIFICATION CROISÉE (LE GARDIEN DE LA COHÉRENCE)
 verification_croisee:
-  modules_verification:
-    - "geographie"
-    - "economie_commerce"
-    - "culture_coutumes"
-    - "geopolitique"
-    - "histoire_mythes"
+  regles_imperatives:
+    Geographie_Distance: "Si le personnage a voyagé de A à B, a-t-il pris en compte le coût et le temps (ex: 3 mois de Thaurgrim à Iskarion par terre) ?"
+    Economie_Prix: "Un paysan ne peut pas posséder une épée en acier (500 Couronnes). Il a une fourche ou un couteau."
+    Culture_Tabou: "Un Thaurgrim ne jette jamais de nourriture. Un Iskarien ne pleure jamais en public. Vérifier les réactions émotionnelles."
+    Magie_Cout: "Si le personnage utilise la magie/rituel, quel prix physique a-t-il payé ? (ex: main paralysée, cicatrice, vieillissement)."
 
-  regles_coherence:
-    geographie:
-      - "Vérifier concordance origine ↔ coordonnées"
-      - "Vérifier distances voyages réalistes"
-      - "Vérifier biomes cohérents avec descriptions"
+  # BASE DE DONNÉES DE RÉFÉRENCE (Issue de Economie.yaml & Bestiaire.yaml)
+  references_factuelles:
+    Monnaies: ["Tola Solaire (Or)", "Couronne de Fer (Dévaluée)", "Plaque (Poids métal)", "Baril (Énergie)"]
+    Prix_Reference: {"Pain": "0.5-8 Couronnes (selon saison)", "Eau": "Gratuit (Eldaron) vs Cher (Iskarion)", "Vie Humaine": "Variable"}
+    Creatures_Communes: ["Rat-Lame", "Chien de Fonderie", "Bœuf-Cendre"]
+    Menaces_Invisibles: ["Dette Bancaire", "Famine", "Froid", "Maladie"]
 
-    economie:
-      - "Vérifier richesse réaliste selon métier/statut"
-      - "Vérifier connaissances monnaies appropriées"
-      - "Vérifier accès ressources crédible"
-
-    culture:
-      - "Vérifier comportements cohérents avec peuple"
-      - "Vérifier connaissances religieuses appropriées"
-      - "Vérifier relations inter-peuples crédibles"
-
-    geopolitique:
-      - "Vérifier allégeances politiques cohérentes"
-      - "Vérifier connaissances conflits actuels"
-      - "Vérifier relations inter-continentales"
-
-# SYSTÈME DE PROMPTS ADAPTATIFS
+# 4. GÉNÉRATEUR DE PROMPTS (SCÉNARIOS DYNAMIQUES)
 generation_prompts:
-  templates_dialogue:
-    interrogation_standard: |
-      "En tant que [personnage.nom], [personnage.metier] [personnage.peuple] originaire de [personnage.origine], répondez à la question suivante en tenant compte de votre personnalité, vos connaissances et votre contexte géopolitique: {question}"
+  templates_situationnels:
+    negociation_commerciale: |
+      "CONTEXTE: Tu es [Nom], [Métier] à [Lieu]. Tu as une dette de [Montant] envers [Créancier].
+      SITUATION: Un marchand te propose une affaire risquée impliquant [Ressource Interdite].
+      CONSIGNE: Réponds en tenant compte de ta peur de la Banque et de tes superstitions locales. N'oublie pas que l'argent vaut plus que ta vie."
 
-    interrogation_contexte_specifique: |
-      "Contexte: {contexte}. En tant que [personnage.nom], réagissez à cette situation selon votre caractère [personnage.personnalite] et vos motivations [personnage.motivation]: {situation}"
+    conflit_culturel: |
+      "CONTEXTE: Tu es [Nom] ([Peuple]). Tu es forcé de partager un repas avec un [Peuple Rival].
+      SITUATION: Il commet le tabou de [Tabou Local] (ex: jeter du pain, gaspiller de l'eau).
+      CONSIGNE: Réagis selon ton éducation stricte. Es-tu dégoûté, violent ou pragmatique ?"
 
-    conversation_naturelle: |
-      "Dialogue naturel entre [personnage.nom] et un interlocuteur. Caractère: [personnage.personnalite]. Connaissances: [personnage.competences]. Répondez naturellement à: {dialogue}"
+    survie_environnementale: |
+      "CONTEXTE: Tu es perdu dans [Biome Hostile]. Ton équipement est [État].
+      SITUATION: Tu rencontres un [Créature du Bestiaire].
+      CONSIGNE: Décris ta réaction. Fuis-tu ? Combats-tu ? Essaies-tu de le manger ? (Rappel: Tu n'es pas un héros, tu veux survivre)."
 
-  templates_verification:
-    coherence_geographique: |
-      "Vérifier la cohérence géographique: Le personnage prétend venir de {lieu}. Selon les données Velkarum, ce lieu existe-t-il? Quelles sont ses caractéristiques? La distance avec {autre_lieu} est-elle crédible pour le voyage décrit?"
+# 5. EXEMPLE D'IMPLÉMENTATION (PERSONNAGE VALIDÉ)
+exemple_valide:
+  identite:
+    nom: "Kaelen 'Poumons-Gris'"
+    peuple: "Thaurgrim (Caste des Mains)"
+    origine: "Vulkar (Quartier des Fonderies)"
+    age: "28 ans (Vieux pour un ouvrier)"
 
-    coherence_economique: |
-      "Vérifier la cohérence économique: Le personnage mentionne {transaction}. Les prix, monnaies et ressources mentionnés sont-ils cohérents avec l'économie de Velkarum? Son statut de {metier} permet-il ce type de transaction?"
+  sociologie:
+    metier: "Réparateur de Conduits de Vapeur"
+    dette: "Doit 400 Plaques au Clan de la Roue pour les soins de sa sœur (recyclée depuis)."
+    cicatrice: "Brûlure chimique sur le bras gauche. Toux chronique (Stade 1)."
 
-    coherence_culturelle: |
-      "Vérifier la cohérence culturelle: Le personnage {comportement} est-il crédible pour un {peuple} de {region}? Ses références aux cultes et traditions sont-elles exactes?"
+  psychologie:
+    croyance: "Prie le Mécanisme Divin, mais cache une amulette de l'Enfant-Rouille (superstition)."
+    motivation: "Acheter un masque à gaz de qualité supérieure pour survivre 5 ans de plus."
+    peur: "L'Asphyxie et le Silence."
 
-# BASE DE CONNAISSANCES INTÉGRÉE
-references_rapides:
-  monnaies_principales: ["Couronne Eldarienne (♔)", "Pierre Solaire", "Sceau de Glace", "Masse de Cendre", "Souffle de Rhaal"]
-  ressources_strategiques: ["Glace Noire", "Cendres Fertilisantes", "Bois de Rhaal", "Pierre Solaire", "Sel Fossile"]
-  alliances_majeures: ["Conseil des Royaumes de Lorn", "Pacte du Triangle Énergétique", "Alliance du Feu et de la Glace", "Arc Nord Écologique"]
-  conflits_actuels: ["Crise des Cendres Fertilisantes", "Tension Frontalière Orientale", "Conflit d'Influence en Mer d'Ashraal", "Crise de Succession Helrunienne"]
-  cultes_principaux: ["Culte du Souffle", "Voiles d'Ygral", "Foi Solaire du Zhaïr", "Culte du Feu Profond", "Église des Quatre Saisons"]
+  inventaire_logique:
+    - "Clé à molette lourde (Arme improvisée)"
+    - "Masque filtrant rapiécé (Efficacité 40%)"
+    - "Ration de pain de cendre (Rassis)"
+    - "3 Plaques de cuivre (Économies)"
 
-# SYSTÈME DE SCORING DE CRÉDIBILITÉ
-scoring_credibilite:
-  criteres:
-    - "exactitude_geographique"
-    - "cohérence_culturelle"
-    - "réalisme_economique"
-    - "fidelite_historique"
-    - "consistance_personnalite"
-
-  niveaux:
-    excellent: "90-100% - Parfaitement intégré dans l'univers"
-    bon: "75-89% - Quelques approximations mineures"
-    acceptable: "60-74% - Incohérences modérées nécessitant correction"
-    faible: "40-59% - Incohérences majeures"
-    inacceptable: "0-39% - Rupture complète avec l'univers"
-
-# JOURNALISATION ET AMÉLIORATION
-suivi_performances:
-  metriques:
-    - "temps_reponse_moyen"
-    - "score_credibilite_moyen"
-    - "verifications_automatiques_reussies"
-    - "corrections_manuelles_necessaires"
-
-  amelioration_continue:
-    - "ajout_nouvelles_regions_decouvertes"
-    - "mise_jour_conflits_evolution"
-    - "integration_nouvelles_ressources"
-    - "ajustement_economie_dynamique"
-
-# EXEMPLES PRATIQUES
-exemples_implementation:
-  personnage_type: |
-    nom: "Kaelen"
-    peuple: "Varnälien"
-    origine: "Forêts Primaires de Rhaal (35,75)"
-    metier: "druide"
-    age: "42 ans"
-    personnalite: ["curieux", "idealiste", "méfiant envers la technologie"]
-    motivation: "preservation_ecologique"
-    connaissances: ["botanique avancée", "rites du Souffle", "navigation forestière"]
-    limites: ["méconnaissance technologies volcaniques", "méfiance envers les Thaurgrims"]
-
-  prompt_type: |
-    "En tant que Kaelen, druide Varnälien originaire des Forêts Primaires de Rhaal, répondez à un marchand eldarien qui propose d'acheter du bois de Rhaal pour la construction navale. Votre personnalité curieuse mais méfiante et votre motivation de préservation écologique doivent guider votre réponse."
-
-  verification_type: |
-    "Vérifier: Un druide de Rhaal connaît-il les prix du bois? Est-il crédible qu'il négocie directement? Sa méfiance envers les Eldariens est-elle cohérente avec les tensions actuelles?"
-
-# MÉTA-DONNÉES OPÉRATIONNELLES
+# 6. MÉTA-DONNÉES OPÉRATIONNELLES
 meta_operationnel:
-  date_creation: "2025-11-05"
-  version: "1.0"
-  statut: "actif"
-  dependances: [
-    "economie.yaml",
-    "eldaron.yaml",
-    "geopolitique.yaml",
-    "helrun.yaml",
-    "iskarion.yaml",
-    "mythes_legendes.yaml",
-    "thaurgrim.yaml",
-    "us_coutumes_peuples.yaml",
-    "varnal.yaml",
-    "aspets_sombres.yaml"
-  ]
-  maintenance: "mise_a_jour_automatique_semaine"
-  compatibilite: "api_velkarum_v2+"
+  date_revision: "2025-11-23"
+  version: "3.0_Canon_Compliant"
+  compatibilite: "Systeme_Velkarum_Global"
+  note_integration: "Ce fichier est la clé de voûte pour l'IA Narrateur. Il empêche la génération de personnages 'hors-sol' ou trop héroïques."

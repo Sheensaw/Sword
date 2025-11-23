@@ -1,0 +1,472 @@
+{
+  "meta": {
+    "continent_id": "thaurgrim",
+    "description": "Cartographie haute résolution intégrale du continent Thaurgrim.",
+    "scale_factor": "local",
+    "parent_file": "velkarum.json"
+  },
+  "nodes": {
+    "Vulkar_Place_Moteur": {
+      "x": 75.00,
+      "y": 70.00,
+      "continent": "Thaurgrim",
+      "type": "Capitale_Centre",
+      "name": "Vulkar - Place du Moteur",
+      "description": "Le centre de la cité-usine. Le sol tremble en rythme avec les pistons souterrains. L'air est un brouillard jaune.",
+      "sociology": { "ruling_faction": "Maîtres de Forge", "law_enforcement": "Brutal", "social_tension": 75 },
+      "environment": { "pollution": "Critical", "noise": "High" },
+      "encounters": { "roaming_mobs": ["Garde du Marteau", "Contremaître", "Automate de Surveillance"] }
+    },
+    "Vulkar_Grand_Soufflet": {
+      "x": 75.05,
+      "y": 70.05,
+      "continent": "Thaurgrim",
+      "type": "Monument",
+      "name": "Le Grand Soufflet",
+      "description": "Le poumon d'acier de la ville. Un mécanisme titanesque qui pompe l'air vicié des profondeurs. Le bruit rend sourd.",
+      "danger": 2,
+      "access": "Restricted"
+    },
+    "Vulkar_Haut_Filtre": {
+      "x": 75.02,
+      "y": 70.08,
+      "continent": "Thaurgrim",
+      "type": "Quartier_Riche",
+      "name": "Le Haut-Filtre (Zone Noble)",
+      "description": "Sommet des tours, au-dessus du smog. Ici, l'air est purifié par des machines coûteuses et les Maîtres de Forge vivent dans le luxe.",
+      "access": "Restricted",
+      "sociology": { "wealth_tier": "Industrial_Feudalism" }
+    },
+    "Vulkar_Temple_Feu": {
+      "x": 74.95,
+      "y": 70.02,
+      "continent": "Thaurgrim",
+      "type": "Sanctuaire",
+      "name": "Temple du Feu Profond",
+      "description": "Une cathédrale de fer noir où l'on vénère la thermodynamique. Les prêtres sont des ingénieurs huilés.",
+      "services": ["Reparation_Automate", "Soin_Brulure"]
+    },
+    "Vulkar_Bas_Fonds_Cendre": {
+      "x": 74.90,
+      "y": 69.90,
+      "continent": "Thaurgrim",
+      "type": "Slum",
+      "name": "La Fosse aux Scories",
+      "description": "Les bas-fonds où s'entassent les ouvriers 'Charbons'. La chaleur des conduites de vapeur y est étouffante.",
+      "danger": 4,
+      "disease_vector": "Critical",
+      "market": { "wealth_tier": "Destitute", "prices": { "masque_filtre_use": { "base": 5, "scarcity": "medium" } } }
+    },
+    "Vulkar_Usine_Centrale": {
+      "x": 75.10,
+      "y": 69.95,
+      "continent": "Thaurgrim",
+      "type": "Industrie",
+      "name": "Fonderie Principale",
+      "description": "Des rivières de métal en fusion et des milliers d'esclaves. On y forge l'acier qui arme le monde.",
+      "danger": 3,
+      "encounters": { "boss": "Grinceur Majeur (Esprit Machine)" }
+    },
+    "Vulkar_Gare_Centrale": {
+      "x": 75.15,
+      "y": 70.10,
+      "continent": "Thaurgrim",
+      "type": "Station",
+      "name": "Gare des Chariots de Fer",
+      "description": "Le hub ferroviaire. Des locomotives blindées partent vers les mines et les ports.",
+      "market": { "services": ["Transport_Rail"] }
+    },
+    "Vulkar_Taverne_Magma": {
+      "x": 74.98,
+      "y": 69.98,
+      "continent": "Thaurgrim",
+      "type": "Taverne",
+      "name": "Le Gobelet de Magma",
+      "description": "On y sert de l'alcool industriel pimenté pour faire oublier la toux noire.",
+      "services": ["Recrutement_Mercenaire", "Boisson_Forte"]
+    },
+    "Vulkar_Enclume_Noire": {
+      "x": 74.85,
+      "y": 69.85,
+      "continent": "Thaurgrim",
+      "type": "Repaire",
+      "name": "L'Enclume Noire",
+      "description": "Forge clandestine cachée dans les égouts thermiques. On y répare les armes illégales.",
+      "market": { "black_market": true, "specialty": "Armes_Lourdes" },
+      "danger": 5
+    },
+    "Vulkar_Silos_Pain": {
+      "x": 75.20,
+      "y": 70.00,
+      "continent": "Thaurgrim",
+      "type": "Reserve",
+      "name": "Silos de Distribution",
+      "description": "Lieu de distribution des rations de 'Pain de Cendre'. Les émeutes de la faim y sont fréquentes.",
+      "sociology": { "social_tension": 95 }
+    },
+    "Vulkar_Clinique_Mecanique": {
+      "x": 75.08,
+      "y": 70.12,
+      "continent": "Thaurgrim",
+      "type": "Hopital",
+      "name": "Atelier des Prothèses",
+      "description": "Ici, on remplace les membres broyés par des pinces en acier. 'La chair est faible'.",
+      "services": ["Greffe_Mecanique", "Chirurgie_Brutale"]
+    },
+    "Kaar_Quais_Fer": {
+      "x": 85.00,
+      "y": 40.00,
+      "continent": "Thaurgrim",
+      "type": "Port",
+      "name": "Kaar - Quais de Fer",
+      "description": "Des grues titanesques chargent l'acier sur les navires et déchargent le précieux blé d'Eldaron.",
+      "market": { "cycle_dependence": "Faim", "imports_vital": ["Blé"], "exports": ["Acier", "Armes"] }
+    },
+    "Kaar_Place_Echange": {
+      "x": 85.05,
+      "y": 40.05,
+      "continent": "Thaurgrim",
+      "type": "Ville_Centre",
+      "name": "Place de l'Échange",
+      "description": "Le seul endroit cosmopolite. Marchands d'Eldaron et d'Iskarion négocient avec des masques à gaz.",
+      "sociology": { "ruling_faction": "Clan de la Roue" }
+    },
+    "Kaar_Taverne_Cendres": {
+      "x": 84.95,
+      "y": 40.02,
+      "continent": "Thaurgrim",
+      "type": "Taverne",
+      "name": "Taverne des Cendres",
+      "description": "Lieu de rendez-vous des capitaines et des contrebandiers de grain.",
+      "danger": 2
+    },
+    "Kaar_Silos_Blindes": {
+      "x": 85.10,
+      "y": 40.10,
+      "continent": "Thaurgrim",
+      "type": "Reserve",
+      "name": "Silos du Port",
+      "description": "La banque de Thaurgrim. Ces silos contiennent la survie du continent. Gardés par des canons.",
+      "access": "Restricted",
+      "danger": 5
+    },
+    "Kaar_Gare_Terminus": {
+      "x": 85.20,
+      "y": 40.00,
+      "continent": "Thaurgrim",
+      "type": "Station",
+      "name": "Terminus Minier",
+      "description": "Arrivée des trains de minerai venant de l'intérieur des terres."
+    },
+    "Kaar_Marche_Noir_Vivres": {
+      "x": 84.90,
+      "y": 39.90,
+      "continent": "Thaurgrim",
+      "type": "Commerce",
+      "name": "Le Ventre Creux",
+      "description": "Ruelle sombre où l'on vend du 'vrai' pain et des légumes de contrebande à prix d'or.",
+      "market": { "black_market": true, "prices": { "pomme": { "base": 50, "scarcity": "unique" } } }
+    },
+    "Kaar_Siege_Confrerie": {
+      "x": 85.08,
+      "y": 40.08,
+      "continent": "Thaurgrim",
+      "type": "Guilde",
+      "name": "Bureau de la Confrérie",
+      "description": "Officiellement une guilde de transport, officieusement le cartel qui gère la famine."
+    },
+    "Profond_Gouffre_Puits": {
+      "x": 70.00,
+      "y": 65.00,
+      "continent": "Thaurgrim",
+      "type": "Mine",
+      "name": "Profond-Gouffre - Le Puits",
+      "description": "Une ville inversée creusée dans les parois d'un cratère. On ne voit jamais le soleil ici.",
+      "environment": { "darkness": true, "hazards": ["Chute", "Gaz"] },
+      "encounters": { "roaming_mobs": ["Mineur Esclave", "Ver de Roche", "Maitre-Fouettard"] }
+    },
+    "Gouffre_Dortoir_Serfs": {
+      "x": 70.05,
+      "y": 65.05,
+      "continent": "Thaurgrim",
+      "type": "Slum",
+      "name": "Les Niches",
+      "description": "Cavités dans la roche où dorment les mineurs. L'odeur est indescriptible.",
+      "danger": 3,
+      "sociology": { "wealth_tier": "Slavery" }
+    },
+    "Gouffre_Cantine_Viande": {
+      "x": 69.95,
+      "y": 64.95,
+      "continent": "Thaurgrim",
+      "type": "Taverne",
+      "name": "La Boucherie",
+      "description": "On y sert de la 'Viande Longue' (humaine) camouflée en pâté. Tout le monde sait, personne ne parle.",
+      "market": { "specialty": "Rations_Douteuses" }
+    },
+    "Gouffre_Ascenseur_Central": {
+      "x": 70.00,
+      "y": 65.00,
+      "continent": "Thaurgrim",
+      "type": "Station",
+      "name": "Le Monte-Charge",
+      "description": "Plateforme massive remontant le minerai et les cadavres vers la surface.",
+      "danger": 2
+    },
+    "Gouffre_Temple_Souterrain": {
+      "x": 70.10,
+      "y": 64.90,
+      "continent": "Thaurgrim",
+      "type": "Sanctuaire",
+      "name": "Autel du Titan",
+      "description": "Un lieu de culte interdit où les mineurs prient le Géant mort qui forme le monde.",
+      "access": "Hidden"
+    },
+    "Agri_Nove_Centre": {
+      "x": 55.00,
+      "y": 50.00,
+      "continent": "Thaurgrim",
+      "type": "Ville_Centre",
+      "name": "Agri-Nove",
+      "description": "Capitale agricole des terres de cendres. Tout est gris, même le blé.",
+      "environment": { "pollution": "High", "dust": true }
+    },
+    "Agri_Champs_Champignons": {
+      "x": 55.10,
+      "y": 50.10,
+      "continent": "Thaurgrim",
+      "type": "Culture",
+      "name": "Champs de Myciculture",
+      "description": "Des champignons géants poussent sur du compost industriel. La seule nourriture locale.",
+      "market": { "specialty": "Champignons_Geants" }
+    },
+    "Agri_Silos_Cendre": {
+      "x": 55.20,
+      "y": 50.20,
+      "continent": "Thaurgrim",
+      "type": "Reserve",
+      "name": "Silos Régionaux",
+      "description": "Stockage des récoltes avant expédition vers Vulkar."
+    },
+    "Agri_Gare_Fret": {
+      "x": 55.30,
+      "y": 50.30,
+      "continent": "Thaurgrim",
+      "type": "Station",
+      "name": "Relais Agricole",
+      "description": "Chargement des wagons de nourriture."
+    },
+    "Agri_Arene_Cendres": {
+      "x": 54.90,
+      "y": 49.90,
+      "continent": "Thaurgrim",
+      "type": "Arene",
+      "name": "L'Arène des Cendres",
+      "description": "Combats de gladiateurs pour divertir les fermiers condamnés à une mort précoce.",
+      "danger": 3
+    },
+    "Thun_ar_Centre": {
+      "x": 45.00,
+      "y": 30.00,
+      "continent": "Thaurgrim",
+      "type": "Ville_Centre",
+      "name": "Thun'ar",
+      "description": "Cité chimique. Des vapeurs acides jaunes flottent dans les rues. Les bâtiments sont en pierre rongée.",
+      "environment": { "pollution": "Chemical", "hazards": ["Acide", "Vapeur"] }
+    },
+    "Thun_ar_Complexe_Chimique": {
+      "x": 45.10,
+      "y": 30.10,
+      "continent": "Thaurgrim",
+      "type": "Industrie",
+      "name": "Raffinerie de Soufre",
+      "description": "Production d'explosifs et d'acides. Les accidents y sont quotidiens.",
+      "danger": 4
+    },
+    "Thun_ar_Laboratoire_Interdit": {
+      "x": 45.15,
+      "y": 30.15,
+      "continent": "Thaurgrim",
+      "type": "Laboratoire",
+      "name": "Zone de Test",
+      "description": "Lieu d'expérimentation sur les gaz de combat.",
+      "access": "Restricted",
+      "encounters": { "boss": "Mutant Chimique" }
+    },
+    "Thun_ar_Cantine_Vapeur": {
+      "x": 44.95,
+      "y": 29.95,
+      "continent": "Thaurgrim",
+      "type": "Taverne",
+      "name": "Cantine à Vapeur",
+      "description": "On y mange des pâtes nutritives en portant des lunettes de protection."
+    },
+    "Sanitarium_IV_Entree": {
+      "x": 60.00,
+      "y": 65.00,
+      "continent": "Thaurgrim",
+      "type": "Hopital",
+      "name": "Sanitarium-IV - Triage",
+      "description": "Hôpital mouroir. On y soigne ceux qui peuvent retourner travailler, on 'recycle' les autres.",
+      "sociology": { "ruling_faction": "Ingénieurs-Biologistes" },
+      "danger": 2
+    },
+    "Sanitarium_Fours": {
+      "x": 60.10,
+      "y": 65.10,
+      "continent": "Thaurgrim",
+      "type": "Industrie",
+      "name": "Unité de Recyclage Organique",
+      "description": "Ici, les morts deviennent de l'engrais (phosphates) pour Eldaron.",
+      "access": "Restricted",
+      "danger": 5,
+      "encounters": { "roaming_mobs": ["Nettoyeur", "Amalgame de Chair"] }
+    },
+    "Sanitarium_Pavillon_Peste": {
+      "x": 59.90,
+      "y": 64.90,
+      "continent": "Thaurgrim",
+      "type": "Quarantine",
+      "name": "Pavillon des Tousseurs",
+      "description": "Zone de quarantaine pour la Toux Noire. Personne n'en sort.",
+      "disease_vector": "Critical"
+    },
+    "Fort_Soufre_Bastion": {
+      "x": 90.00,
+      "y": 45.00,
+      "continent": "Thaurgrim",
+      "type": "Forteresse",
+      "name": "Fort-Soufre",
+      "description": "Bastion côtier protégeant les mines à ciel ouvert. Les canons pointent vers la mer.",
+      "danger": 3
+    },
+    "Fort_Soufre_Mine_Ouverte": {
+      "x": 90.10,
+      "y": 45.10,
+      "continent": "Thaurgrim",
+      "type": "Mine",
+      "name": "La Carrière Jaune",
+      "description": "Mine de soufre à ciel ouvert. Les prisonniers y travaillent sans protection respiratoire.",
+      "danger": 4
+    },
+    "Cendre_Bourg_Gare": {
+      "x": 70.00,
+      "y": 50.00,
+      "continent": "Thaurgrim",
+      "type": "Station",
+      "name": "Cendre-Bourg - Hub",
+      "description": "Point de rupture de charge entre le charbon brut et raffiné."
+    },
+    "Fonderie_Est_Usine": {
+      "x": 80.00,
+      "y": 65.00,
+      "continent": "Thaurgrim",
+      "type": "Industrie",
+      "name": "Fonderie-Est",
+      "description": "Ville-Usine spécialisée dans les plaques de blindage naval.",
+      "danger": 3
+    },
+    "Bivouac_Ghaarn": {
+      "x": 50.00,
+      "y": 40.00,
+      "continent": "Thaurgrim",
+      "type": "Bivouac",
+      "name": "Campement du Ghaarn",
+      "description": "Halte précaire dans le désert de basalte."
+    },
+    "Relais_Volcan": {
+      "x": 65.00,
+      "y": 60.00,
+      "continent": "Thaurgrim",
+      "type": "Relais",
+      "name": "Halte du Volcan",
+      "description": "Station de ravitaillement en eau pour les trains et les voyageurs.",
+      "services": ["Eau_Potable_Chere"]
+    },
+    "Frontiere_Faim_Poste": {
+      "x": 90.00,
+      "y": 35.00,
+      "continent": "Thaurgrim",
+      "type": "Frontiere",
+      "name": "Poste Frontière (Route de la Faim)",
+      "description": "Point d'entrée du blé d'Eldaron. Lourdement fortifié contre les pilleurs.",
+      "danger": 4
+    },
+    "Champs_Soufre_Wild": {
+      "x": 50.00,
+      "y": 25.00,
+      "continent": "Thaurgrim",
+      "type": "Lieu_Sauvage",
+      "name": "Champs de Soufre",
+      "description": "Désert jaune toxique. Geysers acides.",
+      "danger": 5,
+      "encounters": { "roaming_mobs": ["Crabe de Soufre", "Élémentaire Acide"] }
+    },
+    "Mer_Ashraal_Rivage": {
+      "x": 55.00,
+      "y": 20.00,
+      "continent": "Thaurgrim",
+      "type": "Lieu_Sauvage",
+      "name": "Rivage de la Mer Acide",
+      "description": "Mer intérieure morte. L'eau dissout la chair en quelques minutes.",
+      "danger": 5
+    },
+    "Cratere_Eteint_Lave": {
+      "x": 20.00,
+      "y": 80.00,
+      "continent": "Thaurgrim",
+      "type": "Lieu_Sauvage",
+      "name": "Désert de Lave Figée",
+      "description": "Immense étendue de roche noire coupante. Repaire de créatures anciennes.",
+      "danger": 6,
+      "encounters": { "boss": "Dragon de Magma (Endormi)" }
+    }
+  },
+  "routes": [
+    { "id": "vulkar_avenue_moteur", "name": "Avenue du Piston", "type": "street", "start": "Vulkar_Place_Moteur", "end": "Vulkar_Grand_Soufflet", "distance_km": 0.2, "danger": 1 },
+    { "id": "vulkar_montee_filtre", "name": "Ascenseur Privé", "type": "elevator", "start": "Vulkar_Place_Moteur", "end": "Vulkar_Haut_Filtre", "distance_km": 0.5, "danger": 0 },
+    { "id": "vulkar_route_temple", "name": "Voie du Feu", "type": "street", "start": "Vulkar_Place_Moteur", "end": "Vulkar_Temple_Feu", "distance_km": 0.3, "danger": 0 },
+    { "id": "vulkar_descente_scories", "name": "Rampe des Déchets", "type": "alley", "start": "Vulkar_Place_Moteur", "end": "Vulkar_Bas_Fonds_Cendre", "distance_km": 0.6, "danger": 3 },
+    { "id": "vulkar_acces_usine", "name": "Passerelle Ouvrière", "type": "street", "start": "Vulkar_Bas_Fonds_Cendre", "end": "Vulkar_Usine_Centrale", "distance_km": 0.4, "danger": 2 },
+    { "id": "vulkar_acces_gare", "name": "Boulevard de Fer", "type": "street", "start": "Vulkar_Place_Moteur", "end": "Vulkar_Gare_Centrale", "distance_km": 0.5, "danger": 1 },
+    { "id": "vulkar_ruelle_taverne", "name": "Impasse Rouge", "type": "alley", "start": "Vulkar_Bas_Fonds_Cendre", "end": "Vulkar_Taverne_Magma", "distance_km": 0.2, "danger": 2 },
+    { "id": "vulkar_tunnel_forge_noire", "name": "Conduit Thermique", "type": "tunnel", "start": "Vulkar_Bas_Fonds_Cendre", "end": "Vulkar_Enclume_Noire", "distance_km": 0.3, "danger": 4 },
+    { "id": "vulkar_acces_silos", "name": "Route du Pain", "type": "street", "start": "Vulkar_Place_Moteur", "end": "Vulkar_Silos_Pain", "distance_km": 0.4, "danger": 2 },
+    { "id": "vulkar_acces_clinique", "name": "Couloir Aseptisé", "type": "street", "start": "Vulkar_Haut_Filtre", "end": "Vulkar_Clinique_Mecanique", "distance_km": 0.2, "danger": 0 },
+    { "id": "kaar_quai_central", "name": "Quai de Chargement", "type": "street", "start": "Kaar_Place_Echange", "end": "Kaar_Quais_Fer", "distance_km": 0.3, "danger": 1 },
+    { "id": "kaar_rue_taverne", "name": "Rue des Marins", "type": "street", "start": "Kaar_Place_Echange", "end": "Kaar_Taverne_Cendres", "distance_km": 0.1, "danger": 1 },
+    { "id": "kaar_acces_silos", "name": "Zone Militaire", "type": "street", "start": "Kaar_Quais_Fer", "end": "Kaar_Silos_Blindes", "distance_km": 0.2, "danger": 4 },
+    { "id": "kaar_rail_port", "name": "Voie Portuaire", "type": "rail", "start": "Kaar_Gare_Terminus", "end": "Kaar_Quais_Fer", "distance_km": 0.5, "danger": 2 },
+    { "id": "kaar_ruelle_marche_noir", "name": "Passage Sombre", "type": "alley", "start": "Kaar_Place_Echange", "end": "Kaar_Marche_Noir_Vivres", "distance_km": 0.2, "danger": 3 },
+    { "id": "kaar_acces_confrerie", "name": "Porte Dorée", "type": "street", "start": "Kaar_Place_Echange", "end": "Kaar_Siege_Confrerie", "distance_km": 0.1, "danger": 0 },
+    { "id": "gouffre_descente_serfs", "name": "Echelle des Morts", "type": "ladder", "start": "Profond_Gouffre_Puits", "end": "Gouffre_Dortoir_Serfs", "distance_km": 0.1, "danger": 2 },
+    { "id": "gouffre_tunnel_cantine", "name": "Galerie Sanglante", "type": "tunnel", "start": "Gouffre_Dortoir_Serfs", "end": "Gouffre_Cantine_Viande", "distance_km": 0.2, "danger": 2 },
+    { "id": "gouffre_monte_charge", "name": "Puit Principal", "type": "elevator", "start": "Profond_Gouffre_Puits", "end": "Gouffre_Ascenseur_Central", "distance_km": 0.5, "danger": 1 },
+    { "id": "gouffre_acces_temple", "name": "Fissure Secrète", "type": "hidden_path", "start": "Gouffre_Dortoir_Serfs", "end": "Gouffre_Temple_Souterrain", "distance_km": 0.3, "danger": 4 },
+    { "id": "agri_route_champs", "name": "Piste de Cendre", "type": "road", "start": "Agri_Nove_Centre", "end": "Agri_Champs_Champignons", "distance_km": 0.5, "danger": 1 },
+    { "id": "agri_acces_silos", "name": "Route des Récoltes", "type": "road", "start": "Agri_Nove_Centre", "end": "Agri_Silos_Cendre", "distance_km": 0.3, "danger": 0 },
+    { "id": "agri_rail_interne", "name": "Voie Agricole", "type": "rail", "start": "Agri_Gare_Fret", "end": "Agri_Silos_Cendre", "distance_km": 0.4, "danger": 1 },
+    { "id": "agri_acces_arene", "name": "Chemin du Sang", "type": "street", "start": "Agri_Nove_Centre", "end": "Agri_Arene_Cendres", "distance_km": 0.2, "danger": 2 },
+    { "id": "thunar_rue_usine", "name": "Rue Jaune", "type": "street", "start": "Thun_ar_Centre", "end": "Thun_ar_Complexe_Chimique", "distance_km": 0.3, "danger": 3 },
+    { "id": "thunar_acces_labo", "name": "Sas de Sécurité", "type": "street", "start": "Thun_ar_Complexe_Chimique", "end": "Thun_ar_Laboratoire_Interdit", "distance_km": 0.1, "danger": 4 },
+    { "id": "thunar_ruelle_cantine", "name": "Impasse des Vapeurs", "type": "alley", "start": "Thun_ar_Centre", "end": "Thun_ar_Cantine_Vapeur", "distance_km": 0.1, "danger": 1 },
+    { "id": "sanitarium_couloir_fours", "name": "Le Dernier Voyage", "type": "corridor", "start": "Sanitarium_IV_Entree", "end": "Sanitarium_Fours", "distance_km": 0.2, "danger": 2 },
+    { "id": "sanitarium_zone_peste", "name": "Sas de Quarantaine", "type": "corridor", "start": "Sanitarium_IV_Entree", "end": "Sanitarium_Pavillon_Peste", "distance_km": 0.1, "danger": 5 },
+    { "id": "fort_soufre_acces_mine", "name": "Rampe des Canons", "type": "road", "start": "Fort_Soufre_Bastion", "end": "Fort_Soufre_Mine_Ouverte", "distance_km": 0.5, "danger": 2 },
+    { "id": "rail_vulkar_agri", "name": "La Voie du Fer (Nord)", "type": "rail", "start": "Vulkar_Gare_Centrale", "end": "Agri_Gare_Fret", "distance_km": 150.0, "danger": 2 },
+    { "id": "rail_agri_cendre", "name": "La Voie du Fer (Centre)", "type": "rail", "start": "Agri_Gare_Fret", "end": "Cendre_Bourg_Gare", "distance_km": 100.0, "danger": 2 },
+    { "id": "rail_cendre_gouffre", "name": "La Voie du Fer (Mines)", "type": "rail", "start": "Cendre_Bourg_Gare", "end": "Gouffre_Ascenseur_Central", "distance_km": 80.0, "danger": 3 },
+    { "id": "rail_cendre_kaar", "name": "La Voie du Fer (Export)", "type": "rail", "start": "Cendre_Bourg_Gare", "end": "Kaar_Gare_Terminus", "distance_km": 120.0, "danger": 2 },
+    { "id": "route_faim_1", "name": "La Route de la Faim (Est)", "type": "road", "start": "Kaar_Place_Echange", "end": "Frontiere_Faim_Poste", "distance_km": 50.0, "danger": 3 },
+    { "id": "route_soufre", "name": "Piste Toxique", "type": "badlands", "start": "Thun_ar_Centre", "end": "Champs_Soufre_Wild", "distance_km": 60.0, "danger": 4 },
+    { "id": "route_mer_acide", "name": "Chemin des Ossements", "type": "badlands", "start": "Champs_Soufre_Wild", "end": "Mer_Ashraal_Rivage", "distance_km": 40.0, "danger": 5 },
+    { "id": "route_cratere", "name": "Piste Oubliée", "type": "wild_path", "start": "Profond_Gouffre_Puits", "end": "Cratere_Eteint_Lave", "distance_km": 100.0, "danger": 6 },
+    { "id": "vulkar_link_global", "name": "Connexion Globale Vulkar", "type": "link", "start": "Vulkar", "end": "Vulkar_Place_Moteur", "distance_km": 0.0, "danger": 0 },
+    { "id": "kaar_link_global", "name": "Connexion Globale Kaar", "type": "link", "start": "Kaar", "end": "Kaar_Place_Echange", "distance_km": 0.0, "danger": 0 },
+    { "id": "gouffre_link_global", "name": "Connexion Globale Profond-Gouffre", "type": "link", "start": "Profond_Gouffre", "end": "Profond_Gouffre_Puits", "distance_km": 0.0, "danger": 0 },
+    { "id": "agri_link_global", "name": "Connexion Globale Agri-Nove", "type": "link", "start": "Agri_Nove", "end": "Agri_Nove_Centre", "distance_km": 0.0, "danger": 0 },
+    { "id": "thunar_link_global", "name": "Connexion Globale Thun'ar", "type": "link", "start": "Thun_ar", "end": "Thun_ar_Centre", "distance_km": 0.0, "danger": 0 },
+    { "id": "sanitarium_link_global", "name": "Connexion Globale Sanitarium", "type": "link", "start": "Sanitarium_IV", "end": "Sanitarium_IV_Entree", "distance_km": 0.0, "danger": 0 },
+    { "id": "fort_soufre_link_global", "name": "Connexion Globale Fort-Soufre", "type": "link", "start": "Fort_Soufre", "end": "Fort_Soufre_Bastion", "distance_km": 0.0, "danger": 0 }
+  ]
+}

@@ -1,81 +1,115 @@
 # helrun.yaml
-modele: "low_fantasy_grim"
-description: "Continent Helrun - Survie polaire, tribus barbares et désolation"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "low_fantasy_grim_realistic"
+description: "Continent Helrün - Un désert polaire où la survie est une industrie et où la graisse de baleine vaut plus que l'or."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["froid_mortel", "survie", "cannibalisme_de_survie", "raids", "vikings_inuit_dark"]
-  mots_cles: ["skarnheim", "glace_noire", "drakkars", "famine_hivernale", "chamanisme_sanglant"]
-  description_semantique: "Un enfer blanc. La civilisation ici se résume à ne pas mourir de froid ou de faim. Les faibles sont abandonnés."
+  themes: ["survie_thermodynamique", "isolement_psychotique", "industrie_baleinière", "solidarité_forcée", "cannibalisme_de_necessite"]
+  mots_cles: ["glace_noire", "huile_de_lampe", "scorbut", "silence_blanc", "dette_calorique"]
+  description_semantique: "Le froid n'est pas un décor, c'est l'antagoniste principal. Ici, un feu éteint est une condamnation à mort. Les habitants ne vivent pas, ils 'tiennent'. La graisse est la monnaie, la chaleur est la loi."
+  tonalite_audit: "Grimdark Consistent - L'horreur n'est pas surnaturelle, elle est physique. Le froid ne négocie pas."
 
-# DONNÉES FONDAMENTALES
-nom: "Helrun"
-designation: "Le Tombeau Blanc"
-type: "Continent polaire"
+# 2. DONNÉES FONDAMENTALES & GÉOPHYSIQUE
+nom: "Helrün"
+designation: "Le Tombeau Blanc (ou Le Nord Implacable)"
+type: "Continent polaire et toundra gelée"
 superficie_mkm2: 29.4
-population_estimee_millions: 3.8 (Faible densité)
+population_estimee_millions: 9 (Faible densité critique. La capacité de charge du milieu est atteinte. Tout excédent de population est 'invité' à partir ou mourir.)
 systeme_coordonnees: "grid_helrunien_100x100"
+climatologie_audit: "Nuit polaire de 5 mois. Températures moyennes de -30°C. L'agriculture est impossible. La seule biomasse disponible vient de la mer."
 
-# RÉGIONS GÉOPOLITIQUES
+# 3. RÉGIONS GÉOPOLITIQUES (ZONES THERMIQUES)
 regions:
-  - nom: "La Côte des Os (Nerr)"
-    coordonnees: { x_min: 10, x_max: 40, y_min: 5, y_max: 30 }
-    biome_principal: "Fjords glacés"
-    capitale: "Nerr"
-    activite: "Pêche (baleine, phoque), départ des raids."
-    ambiance: "Villages fortifiés, odeur de graisse de phoque et de fumée."
+  - nom: "La Côte des Graisses (Nerr)"
+    coordonnees: { x_min: 15, x_max: 45, y_min: 5, y_max: 35 }
+    biome_principal: "Fjords profonds libres de glace en été"
+    capitale_regionale: "Nerr-la-Rouge"
+    logique_geographique: "Seule zone où le Courant Chaud d'Ostral touche la côte, empêchant la mer de geler totalement."
+    etat: "L'air y empeste la graisse bouillie. C'est l'abattoir du continent. La neige y est souvent grise de suie ou rose de sang."
 
-  - nom: "Le Désert Blanc (Nar)"
-    coordonnees: { x_min: 35, x_max: 75, y_min: 15, y_max: 45 }
-    biome_principal: "Toundra et inlandsis"
-    population: "Nomades suivant les troupeaux de rennes."
-    danger: "Blizzards capables de tuer en une heure. Meutes de loups géants."
+  - nom: "Le Désert Intérieur (Le Vide)"
+    coordonnees: { x_min: 30, x_max: 80, y_min: 35, y_max: 75 }
+    biome_principal: "Inlandsis (Calotte glaciaire)"
+    population: "Tribus nomades (Les Marcheurs)"
+    logique_survie: "Suivent les troupeaux de rennes. Survivent en buvant du lait gras et du sang chaud prélevé sans tuer l'animal."
 
-  - nom: "Les Pics du Vent (Skarnheim)"
-    coordonnees: { x_min: 60, x_max: 95, y_min: 40, y_max: 70 }
-    biome_principal: "Hautes montagnes"
-    capitale: "Skarnheim"
-    description: "Forteresse taillée dans la roche et la glace. Siège du Jarl."
-    ressources: ["Mines de fer froid", "Glace Noire (extraite des glaciers profonds)"]
+  - nom: "Les Dents de Givre (Skarn)"
+    coordonnees: { x_min: 60, x_max: 95, y_min: 40, y_max: 80 }
+    biome_principal: "Montagnes volcaniques sous-glaciaires"
+    capitale_regionale: "Skarnheim"
+    ressource_cle: "Glace Noire (Glace fossile ultra-dense, fond 10x moins vite que la glace normale. Vital pour l'export)."
 
-  - nom: "Les Grottes du Drann"
-    coordonnees: { x_min: 45, x_max: 65, y_min: 65, y_max: 85 }
-    biome_principal: "Réseau souterrain"
-    population: "Ermites, parias, 'Ceux qui vivent dessous'."
-    reputation: "On dit qu'ils mangent leurs morts pour survivre."
-
-# VILLES PRINCIPALES (ABRIS DE FORTUNE)
-villes_principales:
+# 4. VILLES PRINCIPALES (REFUGES THERMIQUES)
+villes_majeures:
   - nom: "Skarnheim"
-    type: "Citadelle du Jarl"
-    coordonnees: { x: 75, y: 55 }
+    statut: "Citadelle Géothermique"
+    population: 450000 (Souterraine)
+    description: "Une ville creusée DANS un volcan actif mais dormant. C'est le seul endroit où l'eau est liquide naturellement."
+    infrastructure_cle: "Le Puits de Chaleur : Cheminée volcanique centrale. Les riches vivent près du chaud (centre), les pauvres en périphérie glaciale."
+    logistique_survie: "Culture de champignons et d'algues dans des bassins thermaux souterrains."
+
+  - nom: "Nerr-la-Rouge"
+    statut: "Port Baleinier"
     population: 300000
-    description: "Sombre, enfumée, chauffée par des feux de tourbe. Les murs sont couverts de peaux."
+    description: "Des quais glissants de givre et de sang. D'immenses carcasses sont dépecées à la lueur des torches."
+    logistique_survie: "Mange exclusivement de la viande de mer. Dépendance totale aux navires d'Eldaron pour le pain/légumes (anti-scorbut)."
 
-  - nom: "Nerr"
-    type: "Port de Raid"
-    coordonnees: { x: 25, y: 15 }
-    activite: "Commerce avec les contrebandiers du sud. Vente d'esclaves capturés."
+  - nom: "Isbjorn-Havn"
+    statut: "Comptoir Commercial (Zone Franche)"
+    population: 80000
+    description: "Ville isolée par des murs de neige compactée. C'est le point de contact avec le monde extérieur."
+    logistique_audit: "Seul port assez profond pour les grands cargos d'Iskarion venant chercher la Glace Noire."
 
-# CULTURE ET SURVIE
-coutumes_brutales:
-  - "Le Grand Sommeil : Les vieillards qui ne peuvent plus travailler partent volontairement dans le blizzard pour ne pas être une charge."
-  - "Le Partage du Sang : Lors des chasses, boire le sang chaud de la proie est un rituel vital."
-  - "Loi du Fer : Tout conflit se règle par le duel."
+# 5. RÉSEAU DE TRANSPORT (SAISONNIER & MORTEL)
+logistique:
+  - nom: "Les Pistes Blanches"
+    type: "Routes de Glace"
+    description: "En hiver, la mer gèle. On roule dessus en traîneaux à voile. En été, les routes fondent."
+    risque: "Si la glace rompt sous un convoi, tout est perdu. Les conducteurs sont payés une fortune."
 
-# RESSOURCES
-ressources:
-  - "Glace Noire : Glace extrêmement dense qui ne fond pas facilement. Vendue à prix d'or au sud pour conserver les aliments des rois."
-  - "Fourrures : Vitales pour le commerce."
-  - "Huile de baleine : Combustible."
+  - nom: "Les Drakkars Brise-Glace"
+    type: "Flotte Vitale"
+    description: "Navires à coque renforcée de fer Thaurgrimien. Sans cet acier, les navires seraient broyés par la banquise."
 
-# CLIMAT
-conditions:
-  - "Hiver : Dure 9 mois. Nuit perpétuelle."
-  - "Été : 3 mois de boue et de fonte des glaces. Saison de la guerre."
+# 6. SOCIÉTÉ ET COUTUMES (PRAGMATISME ABSOLU)
+hierarchie_sociale:
+  principe: "Tu manges ce que tu tues. Tu chauffes ce que tu gagnes."
+  castes:
+    - "Les Jarls du Harpon": "Possèdent les navires. Richesse mesurée en barils d'huile (Lumière/Chauffage)."
+    - "Les Gardiens du Puits": "Ingénieurs géothermiques de Skarnheim. Une caste quasi-religieuse."
+    - "Les Rameurs": "La masse laborieuse. Espérance de vie faible (noyade, hypothermie)."
+    - "Les Bouches Inutiles": "Vieux et infirmes. Tradition du 'Dernier Voyage' (Suicide altruiste dans le blizzard pour épargner les rations de la famille)."
 
-# MÉTA-DONNÉES IA
+culture_survivaliste:
+  - "Le Partage Calorique": "Refuser l'hospitalité à un voyageur est un crime capital. Mais l'invité doit travailler pour payer ses calories."
+  - "La Haine du Sud": "Pour un Helrunien, un Eldarien est un gaspilleur faible. Ils vendent leur glace avec mépris."
+
+# 7. TENSIONS & MENACES
+pathologies_polaires:
+  - "Le Mal des Glaces (Wendigo)": "Psychose de famine. Cannibalisme compulsif. Les coupables sont exécutés et brûlés (pas enterrés)."
+  - "Le Sommeil Blanc": "Mort douce par hypothermie. Certains pauvres la choisissent volontairement."
+
+conflits:
+  - "La Guerre des Huiles": "Skarnheim (Chaleur) vs Nerr (Lumière/Huile). Tensions commerciales constantes."
+  - "Les Raids de la Faim": "Si la pêche échoue, les Jarls n'ont pas le choix : ils doivent piller les côtes d'Eldaron pour ramener du grain, sinon c'est l'extinction."
+
+# 8. ÉCONOMIE LOCALE (L'EXPORTATION DU FROID)
+specialites:
+  Export:
+    - "Glace Noire (Monopole mondial de la réfrigération)"
+    - "Huile de Baleine (Éclaire 80% des lampes du monde)"
+    - "Ivoire & Fourrures"
+  Import:
+    - "Céréales & Légumes (Vital contre le scorbut - Eldaron)"
+    - "Acier & Coques de navires (Vital pour la pêche - Thaurgrim)"
+    - "Alcool fort (Monnaie d'échange courante)"
+
+  Interdependance_Critique: "Sans l'acier de Thaurgrim, Helrun ne peut pas pêcher. Sans la glace d'Helrun, Iskarion ne peut pas conserver ses médicaments. Sans le blé d'Eldaron, Helrun meurt de faim."
+
+# 9. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 3.2_grim
-  type_contenu: "continent_polaire_dark"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "geographie_continentale_complete"
+  note_intention: "Ambiance 'The Terror' + 'Frostpunk'. La société est une machine thermique. Chaque action a un coût calorique."

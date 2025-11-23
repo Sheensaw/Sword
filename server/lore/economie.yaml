@@ -1,196 +1,114 @@
 # economie.yaml
-modele: "low_fantasy_grim"
-description: "Système économique de Velkarum - Basé sur la pénurie, le métal et le contrôle des ressources"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "low_fantasy_grim_realistic"
+description: "Système économique de Velkarum - Un réseau mondial de dépendance mutuelle, gangrené par la dette, l'inflation et des logistiques mortelles."
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["économie_médiévale", "pénurie", "monnaie_physique", "troc", "taxes_lourdes", "routes_dangereuses"]
-  mots_cles: ["couronne_fer", "sel_gemme", "cendre_fertilisante", "bois_dur", "famine", "usure", "guildes_mafieuses"]
-  description_semantique: "Économie de subsistance et de guerre. Les monnaies sont souvent rognées ou dévaluées. Le commerce est vital mais mortellement dangereux."
+  themes: ["interdépendance_critique", "capitalisme_prédateur", "famine_logistique", "dette_souveraine", "monopoles_naturels"]
+  mots_cles: ["lettre_de_change", "inflation_calorique", "guerre_des_prix", "usure_bancaire", "servage_pour_dette"]
+  description_semantique: "L'argent est le véritable dieu de ce monde. Les royaumes ne s'effondrent pas à cause des dragons, mais parce qu'ils ne peuvent plus payer les intérêts de leurs emprunts aux banques d'Iskarion."
+  tonalite_audit: "Grimdark Consistent - La pauvreté n'est pas un accident, c'est un outil de contrôle social. Si les gens n'avaient pas faim, ils se révolteraient."
 
-# SYSTÈME MONÉTAIRE (MÉTALLIQUE ET INSTABLE)
-systeme_monetaire:
-  monnaie_principale:
-    nom: "Couronne de Fer"
-    symbole: "♔"
-    origine: "Royaume de Valnoria (45,55)"
-    statut: "Monnaie imposée par la force militaire"
-    subdivisions: ["Liotard (Argent, 1/20)", "Sol (Cuivre, 1/100)", "Clou (Fer brut, monnaie du peuple)"]
-    problemes_courants: ["Rognage des pièces", "Alliages de mauvaise qualité", "Refusée dans les zones tribales"]
-    materiau: "Fer noirci (Eldaron) ou Argent terni"
+# 2. SYSTÈME MONÉTAIRE (CHAOS MÉTALLIQUE)
+monnaies_mondiales:
+  - nom: "Le Tola Solaire (Iskarion)"
+    type: "Étalon-Or (Réserve Mondiale)"
+    valeur_ref: "1 Tola = 20 Couronnes (Taux officiel, mais 35 au marché noir)"
+    statut: "Monnaie des Rois et des Assassins. Sa pureté est garantie par le clergé. Falsifier un Tola est une hérésie punie par le plomb fondu."
+    usage: "Grosses transactions internationales, achat d'esclaves de luxe, paiement des mercenaires d'élite."
 
-  monnaies_regionales:
-    - nom: "Tola Solaire"
-      region: "Iskarion"
-      valeur: "Variable selon le poids"
-      utilisation: "Commerce des épices et du verre"
-      particularite: "Disques d'or fin, souvent coupés aux ciseaux pour faire l'appoint."
+  - nom: "La Couronne de Fer (Eldaron)"
+    type: "Monnaie Fiat Dévaluée"
+    probleme: "Le Roi réduit la teneur en argent des pièces à chaque guerre. Une 'Vielle Couronne' (avant-guerre) vaut 3 'Nouvelles Couronnes'."
+    consequence: "Les marchands pèsent chaque pièce. L'inflation galope : le prix du pain change le matin et le soir."
 
-    - nom: "Dent de Kraken"
-      region: "Helrün"
-      valeur: "Troc uniquement"
-      utilisation: "Commerce de survie (graisse, peaux)"
-      particularite: "Ivoire gravé. Valeur symbolique, inutile au sud."
+  - nom: "La Plaque (Thaurgrim)"
+    type: "Monnaie-Marchandise (Poids)"
+    forme: "Carrés de métal industriel standardisé (Fer, Cuivre, Acier) estampillés par les Clans."
+    usage: "On ne paie pas avec, on troque du poids de métal utile. C'est lourd, sale, mais ça a une valeur réelle indiscutable. Accepté partout par les forgerons."
 
-    - nom: "Plaque de Laitier"
-      region: "Thaurgrim"
-      valeur: "Reconnue pour sa pureté métallique"
-      utilisation: "Achats industriels, armes"
-      particularite: "Lourde, carrée, difficile à transporter."
+  - nom: "Le Baril (Helrün)"
+    type: "Étalon-Énergie"
+    valeur: "Basée sur l'huile de baleine (Lumière/Chauffage). Au Nord, l'or ne vaut rien s'il ne peut pas être brûlé pour se chauffer."
 
-    - nom: "Graine d'Ambre"
-      region: "Varnäl"
-      valeur: "Élevée (Luxe)"
-      utilisation: "Drogues, poisons, bois précieux"
-      particularite: "Monnaie organique, se dégrade si mal conservée."
+# 3. INDICES DES PRIX (L'ÉCHELLE DE LA MISÈRE)
+# Note : Salaire journalier moyen d'un ouvrier non qualifié (Bras-Nu) = 2 Couronnes.
 
-# INSTITUTIONS FINANCIÈRES (USURE ET COFFRES-FORTS)
-institutions_financieres:
-  - nom: "La Tour des Comptes (Lorn)"
-    type: "Trésor Royal et Prison pour débiteurs"
-    coordonnees: {x: 45, y: 55}
-    fonction: "Stockage des impôts royaux"
-    reserves: ["Or pillé", "Titres de propriété saisis", "Stocks de grain stratégiques"]
-    influence: "Détient la dette de la moitié des nobles du continent."
+cout_de_la_vie:
+  pain_1kg:
+    Eldaron (Été): "0.5 Couronne (Abordable)"
+    Eldaron (Hiver): "4 Couronnes (Famine des pauvres)"
+    Thaurgrim: "8 Couronnes (Luxe importé)"
+    Iskarion: "3 Couronnes (Subventionné pour les citoyens, 10 pour les autres)"
 
-  - nom: "La Table des Négociants (Lirn)"
-    type: "Guilde marchande impitoyable"
-    coordonnees: {x: 15, y: 45}
-    fonction: "Assurance maritime (prix exorbitant)"
-    volume_journalier: "Incertain, dépend des naufrages"
-    methodes: "Les capitaines qui perdent leurs cargaisons finissent souvent esclaves pour rembourser."
+  eau_1L:
+    Eldaron: "Gratuit (Puits/Rivière)"
+    Iskarion: "2 Couronnes (Plus cher que le vin médiocre). Rationnée."
+    Thaurgrim: "1 Couronne (L'eau gratuite est toxique/acide)."
 
-  - nom: "Les Changeurs de l'Ombre (Ardel)"
-    type: "Prêteurs sur gages"
-    coordonnees: {x: 60, y: 35}
-    fonction: "Blanchiment et prêts à taux usuraires (40%)"
-    securite: "Mercenaires privés brutaux."
+  vie_humaine (Esclave de labeur):
+    Thaurgrim: "50 Plaques (Moins cher qu'une bonne pelle). L'homme est jetable."
+    Iskarion: "200 Tolas (Cher, symbole de statut. Un esclave assoiffé est un mauvais investissement)."
+    Eldaron: "Illégal (Mais on peut acheter la 'Dette' d'un serf pour 100 Couronnes, ce qui revient au même)."
 
-# RESSOURCES STRATÉGIQUES (VITALES ET CONVOITÉES)
-ressources_strategiques:
-  - nom: "Glace Noire"
-    origine: "Helrün (25,15)"
-    valeur_unitaire: "Très élevée (seule façon de conserver la viande au sud)"
-    utilisation: "Conservation alimentaire (noblesse uniquement), médecine"
-    production_annuelle: "Limitée par la mortalité des extracteurs"
+  equipement_militaire:
+    Epee_acier_correct: "500 Couronnes (250 jours de salaire d'un paysan). Explique pourquoi les paysans se battent avec des fourches."
+    Armure_complete: "50 Tolas (Le prix d'un village). Seuls les nobles en ont."
 
-  - nom: "Cendres Fertilisantes"
-    origine: "Thaurgrim (55,50)"
-    valeur_unitaire: "Moyenne (Vital pour éviter la famine)"
-    utilisation: "Agriculture intensive sur les sols pauvres d'Eldaron"
-    enjeu: "Eldaron dépend totalement de ces cendres pour nourrir sa population."
+# 4. INSTITUTIONS FINANCIÈRES (LES VRAIS MAÎTRES)
+banques_et_guildes:
+  - nom: "La Banque du Zénith (Siège : Asuren)"
+    type: "Créancier Mondial"
+    pouvoir: "Détient la dette souveraine d'Eldaron (12 Millions de Tolas). Peut déclencher une famine en refusant une lettre de crédit pour l'achat de semences."
+    bras_arme: "Les Huissiers Gris (Assassins-Comptables qui 'liquident' les mauvais payeurs)."
 
-  - nom: "Bois de Fer (Rhaal)"
-    origine: "Varnäl (35,75)"
-    valeur_unitaire: "Élevée"
-    utilisation: "Navires de guerre, charpentes de forteresses, piques"
-    production: "Dangereuse (bûcherons souvent tués par la faune ou les locaux)"
+  - nom: "La Ligue des Nautes (Siège : Lirn)"
+    type: "Cartel Logistique"
+    monopole: "Contrôle 80% du fret maritime. Ils décident qui mange et qui a faim en fixant les tarifs du transport."
+    methode: "Le 'Blocus Silencieux'. Si une ville taxe trop les navires, plus aucun bateau n'accoste. La ville meurt en 2 mois."
 
-  - nom: "Verre Solaire"
-    origine: "Iskarion (35,75)"
-    valeur_unitaire: "Luxe"
-    utilisation: "Optique rudimentaire, fioles alchimiques, religion"
+  - nom: "Le Consortium du Fer (Siège : Vulkar)"
+    type: "Syndicat Industriel"
+    fonction: "Fixe les quotas de production d'acier. Vend des armes aux deux camps de chaque guerre pour maximiser les profits."
 
-  - nom: "Sel Fossile"
-    origine: "Helrün (25,15)"
-    valeur_unitaire: "Stable"
-    utilisation: "Salaison (survie de l'hiver), tannage"
+# 5. FLUX COMMERCIAUX (LES ARTÈRES DU MONDE)
+chaines_valeur:
+  - nom: "Le Cycle de la Faim (Eldaron -> Thaurgrim)"
+    flux: "Blé contre Engrais/Acier."
+    risque: "Si le flux s'arrête, double famine (Eldaron manque de pain l'année suivante faute d'engrais, Thaurgrim meurt de faim le mois même)."
 
-# FLUX COMMERCIAUX (DANGEREUX ET NÉCESSAIRES)
-flux_commerciaux_intercontinentaux:
-  - nom: "La Route de la Faim"
-    participants: ["Eldaron", "Thaurgrim"]
-    flux: "Grain (Eldaron) ↔ Cendres (Thaurgrim)"
-    tension: "Si Thaurgrim ne livre pas, Eldaron meurt de faim. Si Eldaron ne livre pas, Thaurgrim meurt de faim."
-    routes: ["Route des Cendres (infestée de bandits)"]
+  - nom: "Le Cycle du Froid (Helrün -> Iskarion)"
+    flux: "Glace Noire contre Or."
+    risque: "Vital pour Iskarion. Sans glace, les stocks de médicaments de Zhaïr pourrissent en 3 jours."
 
-  - nom: "Le Triangle du Fer et du Bois"
-    participants: ["Iskarion", "Thaurgrim", "Varnäl"]
-    flux: "Minerai brut ↔ Bois de construction ↔ Esclaves"
-    valeur: "Fondamental pour l'effort de guerre"
-    routes: ["Mer d'Ashraal (pirates)", "Piste du Soufre"]
+  - nom: "Le Cycle de la Douleur (Varnäl -> Monde)"
+    flux: "Opium/Poisons contre Or/Verre."
+    risque: "Monopole absolu. Varnäl fixe les prix. L'addiction de la noblesse mondiale assure une demande inélastique."
 
-  - nom: "Le Commerce du Froid"
-    participants: ["Helrün", "Eldaron"]
-    flux: "Glace/Sel ↔ Armes/Outils"
-    risques: "Naufrages fréquents, raids des tribus côtières."
+# 6. CRISES ÉCONOMIQUES (STRESS-TESTS)
+scenarios_catastrophe:
+  - nom: "L'Inflation du Charbon"
+    cause: "Une grève minière ou un effondrement de tunnel à Thaurgrim."
+    effet: "Le prix du chauffage triple à Eldaron. Les pauvres meurent de froid ou brûlent leurs meubles (puis leurs maisons)."
 
-# SYSTÈME FISCAL (OPPRESSIF)
-systeme_fiscal:
-  echelle_mondiale:
-    - nom: "Droit de Passage"
-      taux: "Arbitraire (souvent 10% de la cargaison)"
-      perception: "Gardes armés aux frontières et cols"
+  - nom: "La Panique des Tulipes Noires"
+    cause: "Spéculation sur un remède miracle venant de Varnäl."
+    effet: "Bulle financière qui éclate, ruinant la classe marchande d'Ardel. Suicide de masse des banquiers."
 
-  echelle_continentale:
-    - continent: "Eldaron"
-      taxes: ["La Dîme du Roi (20% récoltes)", "Taxe de Taille (par tête)", "Gabelle du Sel"]
-      consequence: "Révoltes paysannes fréquentes."
+  - nom: "La Crise de Liquidité Royale"
+    cause: "Le Roi d'Eldaron ne peut plus payer les mercenaires."
+    effet: "Les mercenaires se paient 'sur la bête' (pillage des propres villes d'Eldaron). Chaos social."
 
-    - continent: "Varnäl"
-      taxes: ["Tribut de la Forêt (offrandes obligatoires)", "Droit de Coupe (payé en sang ou or)"]
+# 7. LOGISTIQUE & RISQUES
+transport:
+  cout_transport: "Le transport terrestre double le prix d'une marchandise tous les 300km (taxes, gardes, pertes). Le transport maritime est 10x moins cher (d'où l'importance des ports)."
+  pertes_moyennes: "20% des cargaisons sont perdues (Pirates de Lirn, Tempêtes, Monstres). C'est intégré dans le prix de vente."
+  assurance: "Seule la Ligue des Nautes assure les cargaisons. Taux usuraire : 30% de la valeur déclarée."
 
-    - continent: "Iskarion"
-      taxes: ["L'Or du Temple (impôt religieux strict)", "Taxe de l'Eau (vitale)"]
-
-    - continent: "Thaurgrim"
-      taxes: ["Taxe du Marteau (sur la production)", "Tribut de Protection (payé aux clans dominants)"]
-
-    - continent: "Helrün"
-      taxes: ["Part du Jarl (butin de raid)", "Droit de Feu (bois de chauffage)"]
-
-# GUILDES ET CORPORATIONS (MAFIAS MÉDIÉVALES)
-guildes_influentes:
-  - nom: "La Ligue des Nautes"
-    specialite: "Transport maritime et Contrebande"
-    siege: "Lirn / Territoires flottants"
-    influence: "Peuvent affamer une ville côtière en bloquant le port."
-    reputation: "Impitoyables, vendent leurs services au plus offrant."
-
-  - nom: "Le Marteau Noir"
-    specialite: "Armement et Esclavage minier"
-    siege: "Vulkar"
-    influence: "Monopole sur l'acier de qualité supérieure."
-
-  - nom: "Les Coupeurs de Rhaal"
-    specialite: "Extraction de bois rare"
-    siege: "Enclave fortifiée en lisière de Rhaal"
-    methodes: "Utilisent des forçats pour les zones dangereuses de la forêt."
-
-# COÛT DE LA VIE (SURVIE)
-couts_de_vie_par_region:
-  - region: "Valnoria (Eldaron)"
-    niveau_vie: "Disparate (Nobles riches / Paysans affamés)"
-    repas_simple: "Pain noir et brouet (Cher en hiver)"
-    danger: "Basse-ville coupe-gorge la nuit"
-
-  - region: "Lisière de Rhaal (Varnäl)"
-    niveau_vie: "Sauvage"
-    repas_simple: "Chasse ou cueillette (Risque d'empoisonnement)"
-    troc: "Privilégié sur la monnaie"
-
-  - region: "Cités-Forges (Thaurgrim)"
-    niveau_vie: "Dur"
-    repas_simple: "Rations industrielles (pâte nutritive)"
-    logement: "Dortoirs collectifs insalubres"
-
-# CRISES ÉCONOMIQUES ET DÉFIS
-defis_economiques:
-  - nom: "La Rouille des Blés"
-    description: "Maladie fongique attaquant les récoltes d'Eldaron"
-    impact: "Prix du pain x10, émeutes de la faim à Lorn"
-
-  - nom: "Blocus des Glaces"
-    description: "Hiver trop rigoureux empêchant les navires d'Helrün de descendre"
-    impact: "Pourrissement des stocks de viande au sud, famine"
-
-  - nom: "Guerre des Clans Thaurgrims"
-    description: "Conflit interne pour le contrôle d'une veine de fer pur"
-    impact: "Arrêt des exportations d'armes, vulnérabilité des autres royaumes"
-
-# MÉTA-DONNÉES IA
+# 8. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 2.0_grim_dark
-  type_contenu: "economie_medievale_realiste"
-  ambiance: "Low Fantasy, Pénurie, Corruption"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "manuel_economie_politique_dark"
+  note_intention: "Montrer que l'économie est une arme. La pauvreté structurelle est nécessaire au système pour forcer les gens à faire les travaux dangereux (mines, armée, colonisation)."

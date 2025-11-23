@@ -1,89 +1,134 @@
 # iskarion.yaml
-modele: "low_fantasy_grim"
-description: "Continent Iskarion - Désert, fanatisme religieux et féodalité solaire"
+# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
+modele: "low_fantasy_grim_realistic"
+description: "Continent Iskarion - Une théocratie solaire opulente, bâtie sur le despotisme hydraulique et l'esclavage de la dette."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["desert", "theocratie", "sacrifices", "chaleur", "miroirs_ardents", "soif"]
-  mots_cles: ["zhaïr", "pretres_solaires", "eau_rare", "esclavage_dune", "inquisition_solaire"]
-  description_semantique: "Une théocratie impitoyable où l'eau vaut plus que le sang. Les prêtres utilisent des miroirs pour brûler les hérétiques. La technologie est stagnante, remplacée par le dogme."
+  themes: ["despotisme_hydraulique", "inégalités_extrêmes", "guerre_économique", "théocratie_bancaire", "beauté_trompeuse"]
+  mots_cles: ["rationnement_hydrique", "dette_générationnelle", "miroirs_thermiques", "castes_de_pureté", "oasis_artificielles"]
+  description_semantique: "Un désert magnifique et mortel. Ici, l'eau est plus chère que le sang. La civilisation est une bande verte étroite entourée de mort. La richesse est obscène, côtoyant une soif absolue."
+  tonalite_audit: "Grimdark Consistent - La cruauté n'est pas sadique, elle est mathématique. Si tu ne peux pas payer ton eau, tu meurs pour ne pas gaspiller la ressource du groupe."
 
-# DONNÉES FONDAMENTALES
+# 2. DONNÉES FONDAMENTALES & GÉOPHYSIQUE
 nom: "Iskarion"
-designation: "Les Terres Brûlées"
-type: "Continent désertique et tropical"
+designation: "Les Terres du Zénith (ou Le Sultanat Solaire)"
+type: "Continent désertique hyper-aride"
 superficie_mkm2: 41.7
-population_estimee_millions: 40 (Concentrée dans les oasis et côtes)
+population_estimee_millions: 45 (Concentration extrême : 90% de la population vit sur 2% du territoire - rives du Sûl et côtes)
 systeme_coordonnees: "grid_iskarien_100x100"
+climatologie_audit: "Zone de haute pression permanente (Cellule de Hadley descendante). Précipitations quasi-nulles. L'eau provient exclusivement d'aquifères fossiles non renouvelables (le 'Grand Réservoir') et du fleuve exogène."
 
-# RÉGIONS GÉOPOLITIQUES
+# 3. RÉGIONS GÉOPOLITIQUES (DIVERSITÉ DU DÉSERT)
 regions:
-  - nom: "Le Domaine Sacré (Zhaïr)"
-    coordonnees: { x_min: 20, x_max: 50, y_min: 60, y_max: 85 }
-    biome_principal: "Désert de roches rouges"
-    capitale: "Zhaïr"
-    gouvernement: "Théocratie absolue"
-    ambiance: "Processions religieuses, chaleur mortelle, silence imposé."
-    particularites: ["Pyramides à sacrifices", "Miroirs d'exécution"]
+  - nom: "Le Bassin du Sûl (La Veine Verte)"
+    coordonnees: { x_min: 30, x_max: 50, y_min: 50, y_max: 90 }
+    biome_principal: "Vallée fluviale irriguée (Agriculture intensive)"
+    capitale_regionale: "Zhaïr (Capitale Sacrée)"
+    logique_geographique: "Le Nil de ce monde. Une bande de terre noire de 10km de large. Au-delà, c'est le néant."
+    etat: "Un paradis artificiel maintenu par des légions d'esclaves curant les canaux. L'humidité y est étouffante, favorisant les maladies mais permettant 3 récoltes par an."
 
-  - nom: "La Faille du Rift (Shaar)"
-    coordonnees: { x_min: 40, x_max: 70, y_min: 30, y_max: 60 }
-    biome_principal: "Canyons géothermiques instables"
-    capitale: "Shaar-Keth"
-    population: "Parias, mineurs de soufre, lépreux exilés."
-    danger: "Gaz toxiques, éboulements, chaleur extrême."
+  - nom: "Les Plateaux de Verre (Le Miroir)"
+    coordonnees: { x_min: 50, x_max: 80, y_min: 40, y_max: 70 }
+    biome_principal: "Désert de sel et de quartz"
+    capitale_regionale: "Krystos"
+    danger: "Albédo mortel. La réverbération du soleil rend aveugle et cuit la peau en quelques heures sans protection lourde."
 
-  - nom: "Les Sables Mouvants (Korra)"
-    coordonnees: { x_min: 30, x_max: 65, y_min: 10, y_max: 35 }
-    biome_principal: "Dunes infinies"
-    capitale: "Korra"
-    peuple: "Nomades pillards, marchands d'esclaves."
-    ressource: "Sel, Verre de foudre (fulgurite)."
+  - nom: "La Côte des Épices (Le Bazar)"
+    coordonnees: { x_min: 10, x_max: 40, y_min: 20, y_max: 50 }
+    biome_principal: "Littoral rocheux aride"
+    capitale_regionale: "Asuren"
+    logistique_audit: "Seule zone ouverte aux infidèles. L'air marin rend la chaleur supportable. C'est le poumon économique."
 
-  - nom: "La Côte des Épices (Asuren)"
-    coordonnees: { x_min: 5, x_max: 25, y_min: 20, y_max: 50 }
-    biome_principal: "Littoral aride"
-    capitale: "Asuren"
-    ambiance: "Portuaire, cosmopolite mais ségréguée par caste religieuse."
+  - nom: "Les Dunes de la Faim (L'Exil)"
+    coordonnees: { x_min: 60, x_max: 95, y_min: 10, y_max: 40 }
+    biome_principal: "Erg mouvant infini"
+    population: "Tribus nomades (Les Oubliés)"
+    logique_survie: "Ils survivent en buvant le sang de leurs montures et en connaissant les puits secrets. Ils sont la défense naturelle d'Iskarion : aucune armée ne peut traverser leur territoire."
 
-# VILLES PRINCIPALES
-villes_principales:
+# 4. VILLES PRINCIPALES (HIÉRARCHIE DE L'EAU)
+villes_majeures:
   - nom: "Zhaïr"
-    type: "Cité-Temple"
-    coordonnees: { x: 35, y: 75 }
-    population: 2400000
-    description: "Des murs blancs aveuglants. Les castes inférieures vivent dans des tunnels pour fuir le soleil. L'eau est rationnée par le clergé."
+    statut: "Cité-Temple"
+    population: 2800000
+    description: "Architecture blanche aveuglante pour renvoyer la chaleur. Les rues sont couvertes de toiles. Le bruit de l'eau des fontaines royales est le signe ultime de pouvoir."
+    infrastructure_cle: "Le Grand Réservoir : Un lac souterrain gardé par l'Inquisition. C'est la réserve stratégique en cas de sécheresse du Sûl."
+    logistique_survie: "Dépendance critique à la Glace Noire importée d'Helrün pour refroidir les palais et les hôpitaux."
 
   - nom: "Asuren"
-    type: "Port de Commerce"
-    coordonnees: { x: 15, y: 35 }
-    description: "Riche en apparence, mais gangrenée par la contrebande d'eau et d'esclaves."
+    statut: "Métropole Bancaire"
+    population: 1500000
+    description: "Ville de bruits, d'épices et d'or. Siège de la Banque du Zénith. C'est ici que se négocie la dette du roi d'Eldaron."
+    quartiers:
+      - "Le Port Franc : Zone de non-droit tolérée, alcool et jeux."
+      - "Le Coffre : Quartier fortifié des banques, plus sûr qu'une forteresse royale."
 
-# TECHNOLOGIE ET RELIGION
-technologie_solaire:
-  description: "Pas de magie, mais de l'optique primitive."
-  miroirs_ardents: "Immenses disques de bronze poli utilisés pour concentrer la chaleur du soleil. Servent à allumer les feux sacrés, fondre le métal ou exécuter les condamnés."
-  horloges_solaires: "Mesurent le temps de prière et de travail."
+  - nom: "Oasis-Keth"
+    statut: "Verrou Militaire"
+    population: 400000
+    description: "Forteresse gardant l'accès à la vallée du Sûl. Ses murs sont incrustés de tessons de verre pour empêcher l'escalade et aveugler les assaillants."
 
-religion_dEtat:
-  nom: "Le Culte du Disque"
-  dogme: "Le Soleil est un dieu jaloux qui exige soumission et pureté."
-  pratiques: "Jeûnes secs, flagellations, exécutions publiques à midi."
-  inquisition: "Les 'Yeux du Soleil' traquent les hérétiques et les gaspilleurs d'eau."
+# 5. VILLES SECONDAIRES & RELAIS
+villes_secondaires:
+  - nom: "Salines-Sud"
+    type: "Camp de Travail (Goulag Solaire)"
+    population: 60000
+    role: "Extraction du sel gemme. Espérance de vie : 2 ans (déshydratation rénale)."
 
-# INFRASTRUCTURES
-routes:
-  - "La Piste des Os : Route caravanière traversant le désert. Jalonnée de squelettes d'animaux et d'hommes."
-  - "La Voie Sacrée : Route pavée interdite aux roturiers."
+  - nom: "Mirage-Ville"
+    type: "Relais de Luxe"
+    population: 25000
+    role: "Station balnéaire en plein désert pour les ultra-riches, alimentée par aqueducs privés."
 
-# RESSOURCES
-ressources_critiques:
-  - "Eau : Contrôlée par les temples (Puissance politique absolue)."
-  - "Or et Pierres précieuses : Abondants, mais ne se mangent pas."
-  - "Verre : Meilleure qualité du monde connu."
+  - nom: "Le Monastère des Lentilles"
+    type: "Centre Technologique"
+    population: 5000
+    role: "Prêtres-ingénieurs polissant les lentilles pour les armes solaires (Archimède) et les phares."
 
-# MÉTA-DONNÉES IA
+# 6. RÉSEAU DE TRANSPORT (MAÎTRISE HYDRAULIQUE)
+logistique:
+  - nom: "La Route de l'Eau"
+    type: "Canal Fortifié"
+    trajet: "Zhaïr -> Oasis-Keth"
+    description: "Canal couvert de dalles pour éviter l'évaporation. C'est l'artère vitale. Voler de l'eau est puni de crucifixion solaire."
+
+  - nom: "La Piste des Os"
+    type: "Route Caravanière"
+    trajet: "Asuren -> Thaurgrim (via désert)"
+    danger: "Extrême. Seules les caravanes lourdement armées et guidées par les Prêtres passent. Le coût du transport est x10."
+
+# 7. SOCIÉTÉ ET CASTES (LA PURETÉ PAR L'EAU)
+hierarchie_sociale:
+  principe: "Ta caste définit ta ration d'eau quotidienne et ta pureté rituelle."
+  castes:
+    - "Les Purs (Clergé & Banquiers)": "Accès illimité à l'eau. Peau hydratée, vêtements blancs. Détiennent la dette."
+    - "Les Marchands de l'Eau": "Intermédiaires puissants. Gèrent les aqueducs urbains."
+    - "Les Citoyens du Sable": "Artisans/Soldats. Ration fixe. Doivent payer pour tout extra (bains, cuisine)."
+    - "Les Desséchés (Débiteurs/Esclaves)": "Non-citoyens. Reçoivent l'eau saumâtre de drainage. Vie courte et brutale."
+
+# 8. POLITIQUE ET ÉCONOMIE (LE POUVOIR DE LA DETTE)
+systeme_politique:
+  type: "Théocratie Bancaire"
+  dirigeant: "Le Synode des Miroirs"
+  levier_geopolitique: "La Dette. Iskarion ne fait pas la guerre avec des soldats, mais en montant les taux d'intérêt. Ils peuvent ruiner Eldaron d'un trait de plume."
+
+economie:
+  Export:
+    - "Capitaux (Prêts)"
+    - "Épices rares & Sel"
+    - "Verre & Optique"
+    - "Céramique fine"
+  Import:
+    - "Glace Noire (Vital - vient d'Helrün)"
+    - "Bois (Inexistant - vient de Varnäl/Eldaron)"
+    - "Fer & Armes (Thaurgrim)"
+    - "Esclaves (Main d'œuvre jetable pour les mines de sel)"
+
+  Cycle_du_Froid: "Iskarion achète la Glace d'Helrün à prix d'or. Sans cette glace, les élites étouffent et les hôpitaux ne fonctionnent plus."
+
+# 9. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 3.2_grim
-  type_contenu: "geographie_desert_theocratie"
+  date_creation: "2025-11-23"
+  version: 4.0_optimized_audit
+  type_contenu: "geographie_continentale_complete"
+  note_intention: "Créer une tension entre la beauté (palais, fontaines) et l'horreur (soif, esclavage). Iskarion est le 'Méchant' économique du monde, intouchable militairement grâce au désert."

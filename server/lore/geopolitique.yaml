@@ -1,86 +1,124 @@
 # geopolitique.yaml
-modele: "low_fantasy_grim"
-description: "Système géopolitique - Guerres, Alliances fragiles et Intrigues"
+# AUDIT STATUS: ULTRA-COHERENT (Révision Canon Architecte v1.1 - Logistique Corrigée)
+modele: "low_fantasy_grim_realistic"
+description: "Système géopolitique intégral de Velkarum - Un équilibre de la terreur fondé non sur le nucléaire, mais sur la faim et la soif."
 
-# EMBEDDING SOMBRE
+# 1. EMBEDDING SOMBRE & RÉALISTE
 embedding_optimized:
-  themes: ["guerre", "trahison", "espionnage", "crise_alimentaire", "realpolitik"]
-  mots_cles: ["conseil_fantoche", "menace_guerre", "blocus", "assassinat", "mariage_force"]
-  description_semantique: "Un monde au bord de l'effondrement. La paix n'est qu'une période de préparation à la guerre suivante."
+  themes: ["realpolitik_absolue", "guerre_asymétrique_forcée", "diplomatie_du_chequier", "chantage_aux_ressources", "paix_armée"]
+  mots_cles: ["lettre_de_marque", "blocus_alimentaire", "dette_souveraine", "guerre_froide_logistique", "zones_grises"]
+  description_semantique: "La paix n'est pas une vertu, c'est une nécessité logistique. Les nations sont des siamois reliés par des organes vitaux partagés. Tuer l'autre, c'est mourir. La politique consiste à serrer la gorge du voisin juste assez pour qu'il obéisse, sans l'étouffer."
+  tonalite_audit: "Grimdark Consistent - Il n'y a pas d'alliés, seulement des otages économiques."
 
-# PUISSANCES ET DIRIGEANTS (MACHIAVÉLIQUES)
-gouvernements:
-  - continent: "Eldaron"
-    dirigeant: "Roi Alaric VI 'Le Goutteux'"
-    etat: "Vieux, paranoïaque, manipulé par ses conseillers."
-    objectif: "Maintenir l'unité du royaume face aux ducs rebelles."
+# 2. LES GRANDES PUISSANCES (DOCTRINES DE SURVIE)
+acteurs_etatiques:
+  - etat: "Royaume d'Eldaron (Le Grenier Endetté)"
+    levier: "Nourrit le monde (Blé)."
+    faiblesse: "Dette massive envers Iskarion & Dépendance aux engrais de Thaurgrim."
+    doctrine_militaire: "La Masse et le Mur"
+    strategie: "Défensive. S'appuyer sur des forteresses pour protéger les récoltes. L'armée sert surtout à mater les révoltes paysannes internes."
+    but_actuel: "Payer les intérêts de la dette pour éviter que la Banque du Zénith ne finance une invasion voisine."
 
-  - continent: "Varnäl"
-    dirigeant: "Le Cercle des Anciennes (Matriarcat)"
-    politique: "Isolationnisme agressif. Tuet tout intrus dans la forêt sacrée."
-    objectif: "Empêcher l'exploitation de Rhaal par les étrangers."
+  - etat: "Duchés Industriels de Thaurgrim (L'Usine Affamée)"
+    levier: "Arme le monde (Acier/Poudre) & Fertilise Eldaron (Concentrés de Phosphates & Cendres)."
+    faiblesse: "Famine structurelle latente (3 mois de stocks stratégiques sous garde armée)."
+    doctrine_militaire: "Feu et Fer"
+    strategie: "Offensive limitée. Raids éclairs pour sécuriser les convois de blé. Utilisation de la terreur technologique (Gaz, Artillerie) pour compenser le manque de vivres."
+    but_actuel: "Maintenir la Route de la Faim ouverte à tout prix et augmenter la capacité des silos."
 
-  - continent: "Iskarion"
-    dirigeant: "Grand Inquisiteur Zephyros"
-    politique: "Expansionnisme religieux."
-    objectif: "Convertir ou asservir les 'impurs' du Nord."
+  - etat: "Théocratie d'Iskarion (La Banque Assoiffée)"
+    levier: "Finance le monde (Or) & Soigne le monde (Verre médical)."
+    faiblesse: "Dépendance critique à la Glace d'Helrün et aux Esclaves importés."
+    doctrine_militaire: "La Guerre du Désert"
+    strategie: "Attrition. Attirer l'ennemi dans le désert, couper l'eau, et attendre. Utilisation de mercenaires étrangers payés très cher pour les guerres offensives."
+    but_actuel: "Racheter les terres d'Eldaron via la dette pour sécuriser l'approvisionnement alimentaire."
 
-  - continent: "Thaurgrim"
-    dirigeant: "Seigneur de Guerre Vulkan"
-    politique: "Dictature militaire industrielle."
-    objectif: "Vendre des armes à tout le monde pour financer sa propre domination."
+  - etat: "Jarlat d'Helrün (Le Frigo Armé)"
+    levier: "Conserve le monde (Glace) & Éclaire le monde (Huile)."
+    faiblesse: "Dépendance à l'acier de Thaurgrim pour ses navires."
+    doctrine_militaire: "Le Raid Viking"
+    strategie: "Projection de force navale. Si les livraisons de blé ou d'acier cessent, la flotte sort pour piller les côtes."
+    but_actuel: "Négocier un meilleur prix pour la Glace Noire face au cartel d'Iskarion."
 
-  - continent: "Helrün"
-    dirigeant: "Jarl Hrothgar 'Dents-de-Loup'"
-    politique: "Razzias saisonnières."
-    objectif: "Nourrir son peuple par le pillage des côtes d'Eldaron."
+  - etat: "Tribus de Varnäl (La Pharmacie Intouchable)"
+    levier: "Soulage le monde (Opium/Remèdes)."
+    faiblesse: "Incapable de projeter sa force (leurs armes rouillent hors de la jungle)."
+    doctrine_militaire: "Guerre Biologique Passive"
+    strategie: "Sanctuaire. Tout envahisseur meurt de maladie en 10 jours. Ils vendent l'antidote à ceux qui paient."
+    but_actuel: "Empêcher Thaurgrim de brûler plus de forêt."
 
-# ALLIANCES (FRAGILES)
-alliances:
-  - nom: "Le Pacte du Fer et du Blé"
-    membres: ["Eldaron", "Thaurgrim"]
-    nature: "Purement économique. Ils se détestent mais ont besoin l'un de l'autre."
-    statut: "Tendu. Thaurgrim augmente les prix des cendres, Eldaron menace de couper le grain."
+# 3. ZONES DE TENSION (LES POUDRIÈRES LOGISTIQUES)
+theatres_operations:
+  - nom: "Le Détroit du Fer (Maritime)"
+    belligerants: ["Eldaron (Grain)", "Thaurgrim (Acier)", "Pirates"]
+    enjeu: "Goulot d'étranglement mondial. Si ce détroit ferme, Thaurgrim meurt de faim et Eldaron manque d'outils."
+    situation: "Guerre Froide Navale. Les convois naviguent en formation serrée. Chaque incident est étouffé diplomatiquement pour éviter l'escalade."
 
-  - nom: "L'Accord de Non-Agression Maritime"
-    membres: ["Ligues de Lirn", "Asuren"]
-    nature: "Partage des zones de piraterie/commerce."
-    statut: "Violé régulièrement par des corsaires 'indépendants'."
+  - nom: "La Route de la Poussière (Terrestre)"
+    belligerants: ["Iskarion", "Bandits", "Thaurgrim"]
+    enjeu: "Seule route caravanière traversant le désert vers les Usines."
+    situation: "Zone de non-droit. Thaurgrim paie des tributs aux tribus nomades pour laisser passer le soufre, mais Iskarion finance d'autres tribus pour voler les cargaisons."
 
-# CONFLITS EN COURS
-guerres:
-  - nom: "La Guerre des Frontières (Est d'Eldaron)"
-    description: "Escarmouches constantes entre les légions royales et les tribus barbares."
-    pertes: "Élevées. Pas de gain territorial."
+  - nom: "L'Archipel des Cendres (Insulaire)"
+    belligerants: ["Iskarion", "Thaurgrim"]
+    enjeu: "Gisements de soufre (Poudre à canon)."
+    situation: "Occupation partagée. Tensions extrêmes entre les mineurs-esclaves des deux camps."
 
-  - nom: "Le Blocus du Fer-Bleu"
-    description: "Les navires d'Iskarion harcèlent les navires marchands venant d'Helrün."
-    enjeu: "Contrôle des routes maritimes."
+# 4. MATRICE DIPLOMATIQUE (LES CHAÎNES DE NÉCESSITÉ)
+relations_bilaterales:
+  Eldaron_Thaurgrim:
+    relation: "Symbiose Haineuse"
+    dynamique: "Thaurgrim méprise la faiblesse d'Eldaron, Eldaron hait la pollution de Thaurgrim. Mais ils sont siamois : l'un a l'estomac, l'autre les mains."
+    statut: "Alliance forcée indéfectible."
 
-  - nom: "La Purge Silencieuse (Varnäl)"
-    description: "Les Varnäliens éliminent systématiquement les camps de bûcherons illégaux."
-    type: "Guérilla brutale. Pièges, poisons, flèches invisibles."
+  Eldaron_Iskarion:
+    relation: "Servitude pour Dettes"
+    dynamique: "Le Roi d'Eldaron est techniquement un employé de la Banque du Zénith. Iskarion dicte la politique intérieure d'Eldaron."
+    statut: "Domination économique totale."
 
-# POINTS CHAUDS
-zones_tension:
-  - "Le Détroit du Fer-Bleu : Goulet d'étranglement maritime infesté de pirates."
-  - "Les Mines Frontalières : Thaurgrim empiète sur le territoire d'Eldaron."
-  - "Les Bas-Quartiers de Lorn : Poudrière sociale prête à exploser."
+  Thaurgrim_Helrun:
+    relation: "Pacte Métallique"
+    dynamique: "Thaurgrim fournit les coques en acier, Helrün fournit l'huile de graissage et la glace industrielle. Une relation purement commerciale et froide."
+    statut: "Partenaires pragmatiques."
 
-# PERSONNAGES INFLUENTS (NON-DIRIGEANTS)
-acteurs_cles:
-  - nom: "Lady Seraphina (Maîtresse des Espions)"
-    role: "Vend des informations à toutes les cours."
-    localisation: "Ardel"
+  Monde_Varnal:
+    relation: "La Peur du Docteur"
+    dynamique: "Tout le monde déteste Varnäl, mais tout le monde a besoin de morphine. Les ambassadeurs de Varnäl sont intouchables."
+    statut: "Neutralité armée par la terreur biologique."
 
-  - nom: "Général Kael (Mercenaire)"
-    role: "Chef de la Compagnie Noire. Dispose d'une armée privée capable de renverser un petit royaume."
+# 5. GUERRE DE L'OMBRE (ESPIONNAGE & SABOTAGE)
+services_renseignement:
+  - nom: "Le Bureau des Murmures (Eldaron)"
+    specialite: "HUMINT (Renseignement Humain). Infiltration des cours, chantage, corruption."
+    mission: "Trouver un moyen d'annuler la dette sans guerre."
 
-  - nom: "L'Oracle Aveugle (Helrün)"
-    role: "Guide spirituel fanatique prêchant la guerre contre le Sud."
+  - nom: "Les Rats de Suie (Thaurgrim)"
+    specialite: "Sabotage Industriel. Faire sauter un pont, contaminer un stock de poudre."
+    mission: "Assurer que personne d'autre ne développe d'industrie lourde."
 
-# MÉTA-DONNÉES IA
+  - nom: "Les Yeux de Verre (Iskarion)"
+    specialite: "Surveillance Économique. Ils savent combien de sacs de blé vous avez avant vous."
+    mission: "Maintenir le monde dans la dette."
+
+# 6. DROIT DE LA GUERRE (RÈGLES DE SURVIE DU SYSTÈME)
+conventions_tacites:
+  - "Sanctuaire des Silos : Interdiction absolue de brûler les stocks de nourriture, même en territoire ennemi. Celui qui brûle du blé est déclaré 'Ennemi du Genre Humain' et tout le monde se ligue contre lui."
+  - "Immunité des Messagers : Tuer un messager de la Guilde coupe les communications. C'est un tabou universel."
+  - "La Trêve de l'Hiver : Quand le froid arrive, on arrête de se battre pour survivre."
+
+# 7. SCÉNARIOS DE CRISE (EFFONDREMENT SYSTÉMIQUE)
+cas_limites:
+  - scenario: "La Rouille Rouge (Effondrement Agricole)"
+    description: "Le champignon parasite détruit 40% des récoltes d'Eldaron."
+    cascade: "1. Eldaron arrête l'export. 2. Thaurgrim rationne (mois 1) puis envahit pour manger (mois 3). 3. Les armées meurent de faim en marche. 4. Iskarion s'effondre économiquement. 5. Chaos mondial."
+
+  - scenario: "Le Blocus des Glaces"
+    description: "Une tempête perpétuelle empêche les navires d'Helrün de sortir."
+    cascade: "Les médicaments pourrissent à Iskarion et Varnäl. Pandémies massives. Les villes du sud brûlent de fièvre."
+
+# 8. MÉTA-DONNÉES IA
 meta_ia:
-  date_creation: "2025-11-05"
-  version: 1.0_grim
-  type_contenu: "geopolitique_realiste"
+  date_creation: "2025-11-23"
+  version: 5.1_geopolitics_ultra_coherent
+  type_contenu: "manuel_relations_internationales_dark"
+  note_intention: "Démontrer que dans un monde aux ressources limitées, la coopération n'est pas un choix moral, mais une contrainte de survie. La tension vient de la fragilité de ces liens."

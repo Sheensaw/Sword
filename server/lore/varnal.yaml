@@ -1,363 +1,88 @@
-# =====================================================================
-# continents/varnal_hybride_complet.yaml
-# =====================================================================
-modele: "hybride_ia_semantique"
-description: "Continent Varnäl - Géographie complète avec régions, villes et routes biologiques"
+# varnal.yaml
+modele: "low_fantasy_grim"
+description: "Continent Varnäl - Jungle hostile, maladies et tribus xénophobes"
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# EMBEDDING SOMBRE
 embedding_optimized:
-  themes: ["continent", "équatorial", "biologique", "foret_rhall", "commerce_organique", "varnäliens", "courant_fer_bleu"]
-  mots_cles: ["varnäl", "rhall", "marael", "velkar", "tarran", "falaar", "ambre_organique", "coordonnees_biologiques"]
-  description_semantique: "Varnäl, continent équatorial poumon biologique de Velkarum, structuré en régions écologiques avec villes organiques et routes de brume"
+  themes: ["jungle_mortelle", "parasites", "tribus_sauvages", "isolationnisme", "poison", "nature_cruelle"]
+  mots_cles: ["rhaal", "pourriture", "insectes_geants", "flechettes", "sacrifice_vert"]
+  description_semantique: "La nature ici ne veut pas l'harmonie, elle veut vous manger. La croissance est rapide, la décomposition aussi. Les habitants sont des survivants impitoyables."
 
 # DONNÉES FONDAMENTALES
 nom: "Varnäl"
-designation: "Le Poumon du Monde"
-type: "continent équatorial"
+designation: "L'Enfer Vert"
+type: "Continent équatorial"
 superficie_mkm2: 32.6
-population_estimee_millions: 54
+population_estimee_millions: 54 (Dispersée)
 systeme_coordonnees: "grid_varnälien_100x100"
 
-# RÉGIONS GÉOPOLITIQUES DÉTAILLÉES
+# RÉGIONS GÉOPOLITIQUES
 regions:
-  - nom: "Forêts Primaires de Rhaal"
+  - nom: "Le Cœur Noir (Rhaal)"
     coordonnees: { x_min: 20, x_max: 50, y_min: 60, y_max: 85 }
-    biome_principal: "Jungle équatoriale"
+    biome_principal: "Jungle primaire impénétrable"
     capitale: "Rhaal"
-    peuples_principaux: ["Varnäliens (80%)", "Maréens (15%)", "Elfes Sylvarin (5%)"]
-    population_region: 18.2
-    description: "Cœur biologique de Varnäl, forêt primaire produisant 40% de l'oxygène planétaire"
-    ressources: ["bois de Rhaal", "ambre organique", "résines ferriques", "plantes médicinales"]
-    particularites: ["arbres-habitats creux", "réseaux suspendus", "temple du Souffle"]
+    danger: "Prédateurs géants, plantes carnivores, tribus cannibales."
+    description: "La lumière du soleil touche rarement le sol."
 
-  - nom: "Bassins Marécageux de Marael"
+  - nom: "Les Marais de la Fièvre (Marael)"
     coordonnees: { x_min: 40, x_max: 70, y_min: 30, y_max: 60 }
-    biome_principal: "Marais salés et dépression"
+    biome_principal: "Marécages pestilentiels"
     capitale: "Marael"
-    peuples_principaux: ["Maréens (75%)", "Varnäliens (20%)", "Batraciens Grolka (5%)"]
-    population_region: 12.5
-    description: "Zone de filtration biologique majeure, spécialisée dans l'alchimie des sels"
-    ressources: ["sels légers", "gaz organiques", "poissons d'ambre", "lichens métalliques"]
-    particularites: ["maisons flottantes", "laboratoires alchimiques", "marais de la Voix"]
+    danger: "Malaria, sangsues, sables mouvants."
+    population: "Sorciers des marais, alchimistes douteux."
 
-  - nom: "Savanes de Cenra"
-    coordonnees: { x_min: 60, x_max: 90, y_min: 40, y_max: 70 }
-    biome_principal: "Savanes tempérées et forêts claires"
-    capitale: "Cenra"
-    peuples_principaux: ["Cenriens (70%)", "Varnäliens (25%)", "Centaures Talren (5%)"]
-    population_region: 15.3
-    description: "Grenier agricole de Varnäl, zone de transition entre jungle et montagnes"
-    ressources: ["céréales", "herbes médicinales", "bisons légers", "graines migratrices"]
-    particularites: ["agriculture cyclique", "élevage nomade", "temples du Vent"]
-
-  - nom: "Massif Central de Velkar"
-    coordonnees: { x_min: 30, x_max: 65, y_min: 10, y_max: 35 }
-    biome_principal: "Montagnes et cirques forestiers"
-    capitale: "Velkar"
-    peuples_principaux: ["Varnäliens (65%)", "Cenriens (25%)", "Nains Thaurgriens (10%)"]
-    population_region: 5.8
-    description: "Centre de savoir et de climatologie, point culminant du continent"
-    ressources: ["quartz noir", "sources thermales", "cristaux optiques", "herbes d'altitude"]
-    particularites: ["observatoire atmosphérique", "académie des Cycles", "sources sacrées"]
-
-  - nom: "Côtes Océaniques de Tarran"
+  - nom: "La Côte des Naufrages (Tarran)"
     coordonnees: { x_min: 5, x_max: 25, y_min: 20, y_max: 50 }
-    biome_principal: "Littoral et falaises orientales"
+    biome_principal: "Mangroves et falaises"
     capitale: "Tarran"
-    peuples_principaux: ["Falari (80%)", "Varnäliens (15%)", "Nautes du Draen (5%)"]
-    population_region: 2.2
-    description: "Interface maritime avec le Fer-Bleu, spécialisée dans la navigation et la pêche"
-    ressources: ["algues géantes", "poissons du Fer-Bleu", "ambre côtier", "sels marins"]
-    particularites: ["villages suspendus", "ponts de brume", "phares biologiques"]
+    activite: "Seul point de contact avec l'extérieur. Comptoir commercial fortifié."
 
-# VILLES PRINCIPALES AVEC COORDONNÉES DÉTAILLÉES
+# VILLES PRINCIPALES (ORGANISATIONS TRIBALES)
 villes_principales:
   - nom: "Rhaal"
-    region: "Forêts Primaires de Rhaal"
-    type: "Cité-forêt organique"
+    type: "Cité-Arbre Forteresse"
     coordonnees: { x: 35, y: 72 }
-    population: 3200000
-    altitude_m: 450
-    fondation: "-3500"
-    caracteristiques: ["arbres-habitats creux", "réseaux suspendus", "temple du Souffle", "marché aux résines"]
-    peuples: ["Varnäliens (75%)", "Maréens (15%)", "Elfes Sylvarin (10%)"]
+    description: "Construite dans la canopée pour échapper aux bêtes du sol. Reliée par des ponts de lianes piégés."
 
   - nom: "Marael"
-    region: "Bassins Marécageux de Marael"
-    type: "Ville-marais alchimique"
+    type: "Village sur Pilotis"
     coordonnees: { x: 55, y: 45 }
-    population: 2100000
-    altitude_m: -120
-    fondation: "-3200"
-    caracteristiques: ["maisons flottantes", "laboratoires de sels", "marché aux gaz", "sanctuaire marécageux"]
-    peuples: ["Maréens (70%)", "Varnäliens (25%)", "Batraciens Grolka (5%)"]
-
-  - nom: "Velkar"
-    region: "Massif Central de Velkar"
-    type: "Cité montagneuse savante"
-    coordonnees: { x: 45, y: 20 }
-    population: 1800000
-    altitude_m: 2200
-    fondation: "-3100"
-    caracteristiques: ["observatoire atmosphérique", "académie des Cycles", "bibliothèque de brume", "sources thermales"]
-    peuples: ["Varnäliens (60%)", "Cenriens (30%)", "Nains Thaurgriens (10%)"]
+    description: "Cabanes pourrissantes au-dessus d'une eau noire. L'odeur de vase et de produits chimiques est insupportable."
 
   - nom: "Tarran"
-    region: "Côtes Océaniques de Tarran"
-    type: "Port maritime biologique"
+    type: "Port Franc"
     coordonnees: { x: 15, y: 35 }
-    population: 2700000
-    altitude_m: 80
-    fondation: "-2800"
-    caracteristiques: ["docks d'ambre", "marché aux algues", "quartier des Falari", "phare bioluminescent"]
-    peuples: ["Falari (75%)", "Varnäliens (20%)", "Nautes du Draen (5%)"]
+    description: "Une enclave de pierre entourée de palissades pour repousser la jungle. Lieu de tous les trafics."
 
-  - nom: "Falaar"
-    region: "Côtes Océaniques de Tarran"
-    type: "Cité suspendue aérienne"
-    coordonnees: { x: 25, y: 25 }
-    population: 1400000
-    altitude_m: 650
-    fondation: "-2600"
-    caracteristiques: ["architecture suspendue", "ponts de corde", "observatoire côtier", "marché du vent"]
-    peuples: ["Falari (85%)", "Varnäliens (10%)", "Divers (5%)"]
+# FLORE ET FAUNE (CAUCHEMARDESQUES)
+ecosysteme:
+  - "Arbres Étrangleurs : Parasitent les autres arbres et peuvent piéger les animaux."
+  - "Mouches de Sang : Essaims capables de vider un homme de son sang."
+  - "Spores Nécrotiques : Champignons qui infectent les poumons."
+  - "Prédateurs : Reptiles géants, félins camouflés."
 
-  - nom: "Cenra"
-    region: "Savanes de Cenra"
-    type: "Cité agricole nomade"
-    coordonnees: { x: 75, y: 55 }
-    population: 1200000
-    altitude_m: 320
-    fondation: "-2900"
-    caracteristiques: ["greniers mobiles", "marché aux graines", "temple du Vent", "écuries de bisons"]
-    peuples: ["Cenriens (65%)", "Varnäliens (30%)", "Centaures Talren (5%)"]
+# PEUPLES ET COUTUMES
+varnaliens:
+  mentalite: "Tuer ou être tué. La pitié est une faiblesse."
+  pratiques:
+    - "Culte de la Décomposition : Les morts sont laissés à la forêt pour la nourrir."
+    - "Chasse aux Têtes : Preuve de valeur guerrière."
+    - "Usage des Poisons : Toutes leurs armes sont enduites de toxines."
 
-# RÉSEAU ROUTIER COMPLET - ADAPTÉ AU CONTEXTE BIOLOGIQUE
-routes_principales:
-  - nom: "Voie du Souffle"
-    type: "Route spirituelle et biologique"
-    longueur_km: 800
-    statut: "Sentiers forestiers, entretenus naturellement"
-    points_cles: [
-      { ville: "Rhaal", type: "cœur spirituel", coordonnees: {x: 35, y: 75} },
-      { ville: "Marael", type: "centre alchimique", coordonnees: {x: 55, y: 45} },
-      { ville: "Velkar", type: "sommet savant", coordonnees: {x: 45, y: 20} }
-    ]
-    trafic: "Moyen (pèlerins, produits biologiques)"
-    securite: "Élevée (territoire sacré)"
+# RESSOURCES
+ressources_exportees:
+  - "Bois de Fer : Extrêmement dur, mais coûteux en vies humaines à extraire."
+  - "Poisons et Remèdes : Les deux faces de la même pièce."
+  - "Animaux exotiques : Vendus pour les arènes d'Eldaron."
 
-  - nom: "Route des Marées"
-    type: "Route côtière et commerciale"
-    longueur_km: 1200
-    statut: "Pavée de coquillages, entretenue"
-    points_cles: [
-      { ville: "Tarran", type: "port principal", coordonnees: {x: 15, y: 35} },
-      { ville: "Falaar", type: "cité suspendue", coordonnees: {x: 25, y: 25} },
-      { ville: "Marael", type: "ville-marais", coordonnees: {x: 55, y: 45} }
-    ]
-    trafic: "Commercial intense (ambre, sels, algues)"
-    securite: "Moyenne (tempêtes côtières)"
-
-  - nom: "Chemin des Graines"
-    type: "Route agricole et migratoire"
-    longueur_km: 900
-    statut: "Pistes naturelles, cycles saisonniers"
-    points_cles: [
-      { ville: "Cenra", type: "cité agricole", coordonnees: {x: 75, y: 55} },
-      { lieu: "Plaines de Migration", type: "zone nomade", coordonnees: {x: 65, y: 50} },
-      { lieu: "Forêts de Transition", type: "limite écologique", coordonnees: {x: 50, y: 60} }
-    ]
-    trafic: "Saisonnière (nomades, marchands de grains)"
-    securite: "Bonne (territoire tribal)"
-
-  - nom: "Piste des Brumes"
-    type: "Route aérienne et scientifique"
-    longueur_km: 600
-    statut: "Ponts suspendus, passages aériens"
-    points_cles: [
-      { ville: "Falaar", type: "base aérienne", coordonnees: {x: 25, y: 25} },
-      { lieu: "Condenseurs de Brume", type: "sites scientifiques", coordonnees: {x: 30, y: 30} },
-      { ville: "Velkar", type: "observatoire", coordonnees: {x: 45, y: 20} }
-    ]
-    trafic: "Scientifique (climatologues, navigateurs)"
-    securite: "Dangereuse (vents forts, brumes denses)"
-
-  - nom: "Route Maritime du Fer-Bleu"
-    type: "Voie maritime internationale"
-    longueur_km: 2000
-    statut: "Courants chauds, navigation biologique"
-    points_cles: [
-      { ville: "Tarran", type: "port varnälien", coordonnees: {x: 15, y: 35} },
-      { lieu: "Confluence Fer-Bleu", type: "carrefour maritime", coordonnees: {x: 20, y: 20} },
-      { lieu: "Côtes d'Eldaron", type: "destination nord", coordonnees: {x: 25, y: 10} }
-    ]
-    trafic: "Commercial (bois, ambre, produits biologiques)"
-    securite: "Variable (courants imprévisibles)"
-
-# INTERACTIONS INTER-RÉGIONALES
-relations_interregionales:
-  - regions: ["Forêts Primaires de Rhaal", "Bassins Marécageux de Marael"]
-    type: "Symbiose écologique"
-    intensite: "Forte"
-    echanges: ["oxygène ↔ filtration", "bois ↔ sels", "spiritualité ↔ alchimie"]
-
-  - regions: ["Savanes de Cenra", "Massif Central de Velkar"]
-    type: "Complémentarité économique"
-    intensite: "Moyenne"
-    echanges: ["nourriture ↔ savoir", "migration ↔ stabilité", "agriculture ↔ climatologie"]
-
-  - regions: ["Côtes Océaniques de Tarran", "Toutes régions"]
-    type: "Interface commerciale vitale"
-    intensite: "Élevée"
-    echanges: ["accès maritime ↔ produits continentaux"]
-
-# DESCRIPTION NARRATIVE SYNTHÈSE COMPLÈTE ET COHÉRENTE
-description_narrative: |
-  Varnäl s'étend comme un poumon vivant, structuré en cinq régions écologiques
-  aux fonctions planétaires complémentaires. Au nord-ouest, les Forêts Primaires 
-  de Rhaal (35,75) dominent la production d'oxygène, connectées par la Voie du Souffle 
-  (800 km) qui descend vers Marael (55,45) à 400 km au sud-est puis Velkar (45,20) 
-  à 500 km au sud.
-
-  Les Bassins Marécageux de Marael forment un arc de filtration au centre, où
-  la Route des Marées (1200 km) relie Tarran (15,35) à Falaar (25,25) sur 200 km
-  puis Marael sur 600 km supplémentaires. À l'est, les Savanes de Cenra rayonnent
-  depuis Cenra (75,55), connectées par le Chemin des Graines (900 km) qui serpente
-  vers les plaines de migration.
-
-  Au sud, le Massif Central de Velkar commande la Piste des Brumes (600 km),
-  route aérienne reliant Falaar aux condenseurs de brume puis à l'observatoire
-  de Velkar. La Route Maritime du Fer-Bleu (2000 km) connecte Tarran aux côtes
-  eldariennes via la confluence des courants.
-
-  Chaque route a sa spécificité : la Voie du Souffle pour la spiritualité écologique,
-  la Route des Marées pour le commerce côtier, le Chemin des Graines pour l'agriculture,
-  la Piste des Brumes pour la recherche climatique, et la Route Maritime pour le
-  commerce international.
-
-  Cet équilibre entre régions forestières, marécageuses, agricoles, montagneuses
-  et côtières fait de Varnäl le régulateur biologique de Velkarum, où chaque
-  déplacement doit composer avec les cycles naturels et où les voyages entre
-  régions prennent de 5 à 25 jours selon les saisons et les conditions atmosphériques.
-
-# RELATIONS INTER-CONTINENTALES - COHÉRENCE PLANÉTAIRE
-relations_continentales:
-  connexion_biologique:
-    reseau: "Fer-Bleu ↔ Varnäl ↔ Courants Aériens"
-    points_liaison:
-      - { lieu_varnal: "Tarran (15,35)", lieu_eldaron: "Lirn (15,45)", distance: 600 }
-      - { lieu_varnal: "Rhaal (35,75)", lieu_thaurgrim: "Derna (35,60)", distance: 800 }
-  commerce_principal:
-    exportations_varnal: ["bois de Rhaal", "ambre organique", "sels légers", "résines ferriques", "épices"]
-    importations: ["métaux thaurgrimmiens", "outils eldariens", "glace helrunienne", "pierres solaires"]
-  routes_commerciales:
-    - "Route Maritime du Fer-Bleu : Tarran (15,35) ↔ Lirn (15,45) - 600 km"
-    - "Voie des Cendres : Rhaal (35,75) ↔ Derna (35,60) - 800 km"
-    - "Courant du Surn : Velkar (45,20) ↔ Asuren (15,35) - 1200 km"
-
-# SYSTÈME BIOLOGIQUE PLANÉTAIRE
-ecosystemes_critiques:
-  Foret_Rhaal:
-    coordonnees: { x: 35, y: 75 }
-    production_oxygene: "40% de l'oxygène planétaire"
-    biodiversite: "Plus de 50,000 espèces endémiques"
-    role: "Régulation du CO₂ des volcans thaurgrimmiens"
-
-  Marais_Marael:
-    coordonnees: { x: 55, y: 45 }
-    filtration: "70% des métaux lourds continentaux"
-    production: "Sels légers pour Helrün et Iskarion"
-    role: "Épurateur des cendres thaurgrimmiennes"
-
-# FLUX BIOLOGIQUES PLANÉTAIRES - NOUVELLE SECTION
-flux_biologiques_planetaires:
-  respiration_planetaire:
-    foret_rhaal:
-      fonction: "Absorbe 60% du CO₂ volcanique thaurgrimmien"
-      mecanisme: "Photosynthèse accélérée par cendres enrichies"
-      production: "12 milliards de tonnes O₂/an (40% besoins planète)"
-    marais_marael:
-      fonction: "Filtre 45% des cendres thaurgrimmiennes et métaux lourds"
-      production: "Sels légers pour industrie et conservation"
-      beneficiaires: ["Helrün (conservation glace)", "Iskarion (miroirs solaires)"]
-  equilibre_thermique:
-    courant_fer_bleu:
-      fonction: "Régule la température entre Varnäl et Eldaron"
-      impact: "Maintient +5°C moyenne eldarienne, -3°C moyenne varnälienne"
-    exportation_oxygene:
-      distribution: ["40% vers Thaurgrim (industrie)", "30% vers Iskarion (énergie)", "30% vers Eldaron (population)"]
-      transport: "Courants aériens naturels et canaux dirigés"
-
-# SYMBIOSES ÉCOLOGIQUES - NOUVELLE SECTION
-symbioses_intercontinentales:
-  - nom: "Cycle Oxygène-Cendres"
-    partenaires: ["Varnäl", "Thaurgrim"]
-    description: "Échange gazeux planétaire optimisé"
-    benefices:
-      - "Varnäl: Cendres fertilisantes → +40% croissance forestière"
-      - "Thaurgrim: Oxygène purifié → -60% pollution industrielle"
-    mecanisme: "Courants aériens dirigés et traitement biologique"
-
-  - nom: "Conservation Biologique Polaire"
-    partenaires: ["Varnäl", "Helrün"]
-    description: "Préservation espèces et ressources par froid contrôlé"
-    realisations:
-      - "Banque de graines mondiale dans glace noire (Skarnheim)"
-      - "Conservation tissues biologiques pour recherche (Ygral)"
-      - "Stockage ambres organiques pour médecine (Marael)"
-
-  - nom: "Agriculture Énergétique"
-    partenaires: ["Varnäl", "Iskarion"]
-    description: "Utilisation excès thermique pour boost croissance"
-    applications:
-      - "Serres biologiques chauffées par énergie solaire résiduelle"
-      - "Accélération maturation plantes médicinales (+300%)"
-      - "Culture algues géantes pour biocarburants"
-
-# INFRASTRUCTURES DE RECHERCHE - NOUVELLE SECTION
-centres_recherche_biologique:
-  - nom: "Observatoire Atmosphérique de Velkar"
-    type: "Centre climatologie planétaire"
-    coordonnees: { x: 45, y: 20 }
-    fonction: "Surveillance courants aériens et modélisation climat globale"
-    partenariats: ["Station Ygral (Helrün)", "Observatoire Zhaïr (Iskarion)", "Académie Draen (Eldaron)"]
-    importance: "Prévisions météo 95% précision - Essentiel pour agriculture continentale"
-
-  - nom: "Laboratoires Alchimiques de Marael"
-    type: "Centre recherche biotechnologie"
-    coordonnees: { x: 55, y: 45 }
-    specialites: ["Purification eaux contaminées", "Transformation déchets organiques", "Synthèse sels thérapeutiques"]
-    innovations: ["Filtration 90% métaux lourds thaurgrimmiens", "Production antibiotiques à base d'ambre"]
-
-  - nom: "Banque Génétique de Rhaal"
-    type: "Réserve biodiversité mondiale"
-    coordonnees: { x: 35, y: 75 }
-    contenu: "Échantillons 50,000 espèces végétales, 15,000 espèces animales"
-    sauvegarde: "Duplicatas dans glace noire helrunienne et archives eldariennes"
-
-# SYSTÈME D'URGENCE ÉCOLOGIQUE
-protocoles_urgence_ecologique:
-  niveau_1: "Détection anomalie atmosphérique (Velkar)"
-  niveau_2: "Alerte continents affectés (via Conseil Lorn)"
-  niveau_3: "Activation purification accélérée (Marael)"
-  niveau_4: "Redirection courants d'air (coordination observatoires)"
-  efficacite: "Neutralisation 85% des crises écologiques en 48h"
+# INFRASTRUCTURES
+routes:
+  - "Aucune route pavée. Seulement des sentiers de chasse connus des seuls locaux."
+  - "La Rivière du Serpent : Voie navigable mais infestée de crocodiles."
 
 # MÉTA-DONNÉES IA
 meta_ia:
   date_creation: "2025-11-05"
-  version: 3.2
-  type_contenu: "continent_biologique_complet"
-  coherence_verifiee: ["regions", "villes", "routes", "ecosystemes", "coordonnees", "relations_continentales", "flux_biologiques"]
-  points_entree_semantiques: [
-    "recherche_par_ville_organique",
-    "recherche_par_route_biologique",
-    "recherche_par_region_varnälienne",
-    "navigation_ecologique",
-    "calcul_itineraire_cycles_naturels",
-    "commerce_intercontinental_organique",
-    "recherche_biologique"
-  ]
-  echelle_voyage: "80_km_par_jour_conditions_normales"
-  conditions_speciales: ["brumes_denses", "saisons_migrantes", "cycles_biologiques"]
-  unite_coordonnees: "grid_100x100_varnälien"
+  version: 3.2_grim
+  type_contenu: "continent_jungle_dark"

@@ -1,301 +1,89 @@
 # iskarion.yaml
-modele: "hybride_ia_semantique"
-description: "Continent Iskarion - Géographie complète avec régions, villes et routes solaires"
+modele: "low_fantasy_grim"
+description: "Continent Iskarion - Désert, fanatisme religieux et féodalité solaire"
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# EMBEDDING SOMBRE
 embedding_optimized:
-  themes: ["continent", "tropical", "solaire", "rift_shaar", "commerce_mineral", "iskari", "courant_surn"]
-  mots_cles: ["iskarion", "zhaïr", "shaar", "korra", "asuren", "plateaux_surn", "courant_surn", "coordonnees_solaires"]
-  description_semantique: "Iskarion, continent tropical source d'énergie solaire de Velkarum, structuré en régions volcaniques avec villes pyramidales et routes thermiques"
+  themes: ["desert", "theocratie", "sacrifices", "chaleur", "miroirs_ardents", "soif"]
+  mots_cles: ["zhaïr", "pretres_solaires", "eau_rare", "esclavage_dune", "inquisition_solaire"]
+  description_semantique: "Une théocratie impitoyable où l'eau vaut plus que le sang. Les prêtres utilisent des miroirs pour brûler les hérétiques. La technologie est stagnante, remplacée par le dogme."
 
 # DONNÉES FONDAMENTALES
 nom: "Iskarion"
-designation: "Le Four Solaire"
-type: "continent tropical"
+designation: "Les Terres Brûlées"
+type: "Continent désertique et tropical"
 superficie_mkm2: 41.7
-population_estimee_millions: 40
+population_estimee_millions: 40 (Concentrée dans les oasis et côtes)
 systeme_coordonnees: "grid_iskarien_100x100"
 
-# RÉGIONS GÉOPOLITIQUES DÉTAILLÉES
+# RÉGIONS GÉOPOLITIQUES
 regions:
-  - nom: "Royaume Solaire du Zhaïr"
+  - nom: "Le Domaine Sacré (Zhaïr)"
     coordonnees: { x_min: 20, x_max: 50, y_min: 60, y_max: 85 }
-    biome_principal: "Forêts tropicales du Zhaïr"
+    biome_principal: "Désert de roches rouges"
     capitale: "Zhaïr"
-    peuples_principaux: ["Iskari (75%)", "Shaari (15%)", "Asuriens (10%)"]
-    population_region: 12.4
-    description: "Cœur spirituel et religieux d'Iskarion, dominé par les temples pyramidaux"
-    ressources: ["pierres solaires", "bois ferrugineux", "or natif", "énergie solaire"]
-    particularites: ["Grand Autel du Zhaïr", "miroirs monumentaux", "académie solaire"]
+    gouvernement: "Théocratie absolue"
+    ambiance: "Processions religieuses, chaleur mortelle, silence imposé."
+    particularites: ["Pyramides à sacrifices", "Miroirs d'exécution"]
 
-  - nom: "Territoires du Rift Shaar"
+  - nom: "La Faille du Rift (Shaar)"
     coordonnees: { x_min: 40, x_max: 70, y_min: 30, y_max: 60 }
-    biome_principal: "Rift géothermique"
+    biome_principal: "Canyons géothermiques instables"
     capitale: "Shaar-Keth"
-    peuples_principaux: ["Shaari (70%)", "Iskari (25%)", "Nains Thaurgriens (5%)"]
-    population_region: 6.2
-    description: "Région volcanique active dédiée à la recherche géothermique"
-    ressources: ["soufre cristallin", "énergie géothermique", "minerais hydrothermaux"]
-    particularites: ["geysers acides", "laboratoires souterrains", "sanctuaire du Shaar"]
+    population: "Parias, mineurs de soufre, lépreux exilés."
+    danger: "Gaz toxiques, éboulements, chaleur extrême."
 
-  - nom: "Confédération des Plateaux de Surn"
-    coordonnees: { x_min: 60, x_max: 90, y_min: 40, y_max: 70 }
-    biome_principal: "Plateaux ferriques"
-    capitale: "Vethar"
-    peuples_principaux: ["Iskari (65%)", "Humains Valnari (20%)", "Nains Thaurgriens (15%)"]
-    population_region: 7.1
-    description: "Région minière majeure exploitant les riches gisements ferriques"
-    ressources: ["minerais ferriques", "cuivre natif", "basalte poli", "vent du Brumes"]
-    particularites: ["mines à ciel ouvert", "centrales solaires", "forteresses minières"]
-
-  - nom: "Sultanat du Désert de Korra"
+  - nom: "Les Sables Mouvants (Korra)"
     coordonnees: { x_min: 30, x_max: 65, y_min: 10, y_max: 35 }
-    biome_principal: "Désert aride"
+    biome_principal: "Dunes infinies"
     capitale: "Korra"
-    peuples_principaux: ["Iskari (60%)", "Nomades Shaari (25%)", "Centaures Talren (15%)"]
-    population_region: 5.8
-    description: "Vastes étendues désertiques contrôlant les routes caravanières"
-    ressources: ["sel ferreux", "pierres de foudre", "vent constant", "herbes ferriques"]
-    particularites: ["oasis fortifiées", "caravansérails", "temples du vent"]
+    peuple: "Nomades pillards, marchands d'esclaves."
+    ressource: "Sel, Verre de foudre (fulgurite)."
 
-  - nom: "ligue Maritimes d'Asuren"
+  - nom: "La Côte des Épices (Asuren)"
     coordonnees: { x_min: 5, x_max: 25, y_min: 20, y_max: 50 }
-    biome_principal: "Côtes maritimes"
+    biome_principal: "Littoral aride"
     capitale: "Asuren"
-    peuples_principaux: ["Asuriens (80%)", "Iskari (15%)", "Batraciens Grolka (5%)"]
-    population_region: 8.5
-    description: "Région côtière spécialisée dans le commerce maritime international"
-    ressources: ["poisson-verre", "algues comestibles", "corail solaire", "routes maritimes"]
-    particularites: ["port d'Asuren", "voiles de sel", "tour d'or", "bourse maritime"]
+    ambiance: "Portuaire, cosmopolite mais ségréguée par caste religieuse."
 
-# VILLES PRINCIPALES AVEC COORDONNÉES DÉTAILLÉES
+# VILLES PRINCIPALES
 villes_principales:
   - nom: "Zhaïr"
-    region: "Royaume Solaire du Zhaïr"
-    type: "Capitale spirituelle"
+    type: "Cité-Temple"
     coordonnees: { x: 35, y: 75 }
     population: 2400000
-    altitude_m: 1200
-    fondation: "-3100"
-    caracteristiques: ["temples pyramidaux", "miroirs solaires", "académie des lumières", "jardins suspendus"]
-    peuples: ["Iskari (70%)", "Shaari (20%)", "Asuriens (10%)"]
+    description: "Des murs blancs aveuglants. Les castes inférieures vivent dans des tunnels pour fuir le soleil. L'eau est rationnée par le clergé."
 
   - nom: "Asuren"
-    region: "ligue Maritimes d'Asuren"
-    type: "Port maritime majeur"
+    type: "Port de Commerce"
     coordonnees: { x: 15, y: 35 }
-    population: 1800000
-    altitude_m: 20
-    fondation: "-2800"
-    caracteristiques: ["docks en pierre rouge", "tour d'or", "marché aux épices", "quartier des marins"]
-    peuples: ["Asuriens (75%)", "Iskari (20%)", "Batraciens Grolka (5%)"]
+    description: "Riche en apparence, mais gangrenée par la contrebande d'eau et d'esclaves."
 
-  - nom: "Shaar-Keth"
-    region: "Territoires du Rift Shaar"
-    type: "Cité scientifique"
-    coordonnees: { x: 55, y: 45 }
-    population: 1100000
-    altitude_m: 650
-    fondation: "-2600"
-    caracteristiques: ["galeries thermiques", "laboratoires acides", "observatoire volcanique", "bains de soufre"]
-    peuples: ["Shaari (65%)", "Iskari (25%)", "Nains Thaurgriens (10%)"]
+# TECHNOLOGIE ET RELIGION
+technologie_solaire:
+  description: "Pas de magie, mais de l'optique primitive."
+  miroirs_ardents: "Immenses disques de bronze poli utilisés pour concentrer la chaleur du soleil. Servent à allumer les feux sacrés, fondre le métal ou exécuter les condamnés."
+  horloges_solaires: "Mesurent le temps de prière et de travail."
 
-  - nom: "Vethar"
-    region: "Confédération des Plateaux de Surn"
-    type: "Cité minière"
-    coordonnees: { x: 75, y: 55 }
-    population: 900000
-    altitude_m: 850
-    fondation: "-2700"
-    caracteristiques: ["mines profondes", "fonderies", "marché aux minerais", "casernes de gardes"]
-    peuples: ["Iskari (60%)", "Nains Thaurgriens (25%)", "Humains Valnari (15%)"]
+religion_dEtat:
+  nom: "Le Culte du Disque"
+  dogme: "Le Soleil est un dieu jaloux qui exige soumission et pureté."
+  pratiques: "Jeûnes secs, flagellations, exécutions publiques à midi."
+  inquisition: "Les 'Yeux du Soleil' traquent les hérétiques et les gaspilleurs d'eau."
 
-  - nom: "Korra"
-    region: "Sultanat du Désert de Korra"
-    type: "Oasis fortifiée"
-    coordonnees: { x: 45, y: 20 }
-    population: 600000
-    altitude_m: 180
-    fondation: "-2400"
-    caracteristiques: ["murailles de sel", "souks couverts", "caravansérail", "puits artésiens"]
-    peuples: ["Iskari (55%)", "Nomades Shaari (30%)", "Centaures Talren (15%)"]
+# INFRASTRUCTURES
+routes:
+  - "La Piste des Os : Route caravanière traversant le désert. Jalonnée de squelettes d'animaux et d'hommes."
+  - "La Voie Sacrée : Route pavée interdite aux roturiers."
 
-# RÉSEAU ROUTIER COMPLET - ADAPTÉ AU CONTEXTE TROPICAL
-routes_principales:
-  - nom: "Voie Solaire du Zhaïr"
-    type: "Route religieuse et commerciale"
-    longueur_km: 900
-    statut: "Pavée de basalte poli"
-    points_cles: [
-      { ville: "Zhaïr", type: "capitale spirituelle", coordonnees: {x: 35, y: 75} },
-      { ville: "Shaar-Keth", type: "cité scientifique", coordonnees: {x: 55, y: 45} },
-      { ville: "Korra", type: "oasis", coordonnees: {x: 45, y: 20} }
-    ]
-    trafic: "Élevé (pèlerins, marchandises)"
-    securite: "Haute (patrouilles solaires)"
-
-  - nom: "Route des Plateaux"
-    type: "Route minière et commerciale"
-    longueur_km: 750
-    statut: "Pavée, entretenue"
-    points_cles: [
-      { ville: "Vethar", type: "cité minière", coordonnees: {x: 75, y: 55} },
-      { ville: "Shaar-Keth", type: "jonction", coordonnees: {x: 55, y: 45} },
-      { ville: "Asuren", type: "port", coordonnees: {x: 15, y: 35} }
-    ]
-    trafic: "Moyen-Élevé (minerais, outils)"
-    securite: "Moyenne (bandits occasionnels)"
-
-  - nom: "Piste des Vents"
-    type: "Route caravanière désertique"
-    longueur_km: 1200
-    statut: "Traces dans le sable, balisage solaire"
-    points_cles: [
-      { ville: "Korra", type: "oasis principale", coordonnees: {x: 45, y: 20} },
-      { lieu: "Dunes de Sable-Rouge", type: "zone dangereuse", coordonnees: {x: 50, y: 15} },
-      { lieu: "Oasis Secrète", type: "point d'eau", coordonnees: {x: 60, y: 25} }
-    ]
-    trafic: "Saisonnière (caravanes)"
-    securite: "Variable (tempêtes de sable, créatures désertiques)"
-
-  - nom: "Chemin du Rift"
-    type: "Route scientifique et thermique"
-    longueur_km: 450
-    statut: "Galeries aménagées, dangereuse"
-    points_cles: [
-      { ville: "Shaar-Keth", type: "base principale", coordonnees: {x: 55, y: 45} },
-      { lieu: "Geyser Principal", type: "site de recherche", coordonnees: {x: 60, y: 40} },
-      { lieu: "Source Acide", type: "laboratoire naturel", coordonnees: {x: 65, y: 35} }
-    ]
-    trafic: "Restreint (scientifiques, gardes)"
-    securite: "Dangereuse (fumées toxiques, instabilité)"
-
-  - nom: "Route Maritime du Surn"
-    type: "Voie maritime internationale"
-    longueur_km: 2000
-    statut: "Courants chauds, navigation aisée"
-    points_cles: [
-      { ville: "Asuren", type: "port principal", coordonnees: {x: 15, y: 35} },
-      { lieu: "Confluence Surn-Brumes", type: "carrefour maritime", coordonnees: {x: 25, y: 20} },
-      { lieu: "Côtes de Thaurgrim", type: "destination", coordonnees: {x: 40, y: 10} }
-    ]
-    trafic: "Commercial intense (minerais, cendres, bois)"
-    securite: "Moyenne (pirates, tempêtes tropicales)"
-
-# INTERACTIONS INTER-RÉGIONALES
-relations_interregionales:
-  - regions: ["Royaume Solaire du Zhaïr", "ligue Maritimes d'Asuren"]
-    type: "Symbiose énergétique"
-    intensite: "Forte"
-    echanges: ["énergie solaire ↔ routes maritimes", "pierres précieuses ↔ produits étrangers"]
-
-  - regions: ["Territoires du Rift Shaar", "Confédération des Plateaux de Surn"]
-    type: "Coopération industrielle"
-    intensite: "Élevée"
-    echanges: ["énergie géothermique ↔ minerais bruts", "expertise scientifique ↔ main d'œuvre"]
-
-  - regions: ["Sultanat du Désert de Korra", "Toutes régions"]
-    type: "Relation commerciale vitale"
-    intensite: "Moyenne"
-    echanges: ["routes caravanières ↔ protection et commerce"]
-
-# DESCRIPTION NARRATIVE SYNTHÈSE COMPLÈTE ET COHÉRENTE
-description_narrative: |
-  Iskarion s'étend comme un continent de feu et de lumière, structuré en cinq régions
-  aux spécialisations énergétiques complémentaires. Au nord, le Royaume Solaire du Zhaïr (35,75)
-  domine la spiritualité avec ses temples pyramidaux, connecté par la Voie Solaire (900 km)
-  qui descend vers Shaar-Keth (55,45) à 400 km au sud-est puis Korra (45,20) à 500 km au sud.
-
-  Les Territoires du Rift Shaar forment un arc volcanique au centre, où le Chemin du Rift
-  (450 km) relie Shaar-Keth aux sources géothermiques profondes. À l'est, la Confédération
-  des Plateaux de Surn rayonne depuis Vethar (75,55), connectée par la Route des Plateaux
-  (750 km) qui mène à Shaar-Keth puis au port d'Asuren (15,35) à 600 km à l'ouest.
-
-  Au sud, le Sultanat du Désert de Korra contrôle la Piste des Vents (1200 km), route
-  caravanière vitale traversant les dunes de sable-rouge. À l'ouest, les ligue Maritimes
-  d'Asuren commandent la Route Maritime du Surn (2000 km), artère commerciale vers Thaurgrim
-  et Varnäl.
-
-  Chaque route a sa spécificité : la Voie Solaire pour les pèlerinages et le commerce de luxe,
-  la Route des Plateaux pour l'industrie minière, la Piste des Vents pour les caravanes,
-  le Chemin du Rift pour la recherche, et la Route Maritime pour le commerce international.
-
-  Cet équilibre entre régions spirituelles, scientifiques, minières, désertiques et maritimes
-  fait d'Iskarion le moteur énergétique de Velkarum, où chaque déplacement doit composer avec
-  les extrêmes climatiques et où les voyages entre régions prennent de 5 à 25 jours selon
-  les moyens de transport et les conditions atmosphériques.
-
-# RELATIONS INTER-CONTINENTALES - COHÉRENCE PLANÉTAIRE
-relations_continentales:
-  connexion_energetique:
-    reseau: "Surn → Thaurgrim → Varnäl"
-    points_liaison:
-      - { lieu_iskarion: "Asuren (15,35)", lieu_thaurgrim: "Thun'ar (60,20)", distance: 1500 }
-      - { lieu_iskarion: "Côtes du Surn (20,25)", lieu_varnal: "Tarran (25,40)", distance: 1800 }
-  commerce_principal:
-    exportations_iskarion: ["minerais ferriques", "pierres solaires", "soufre", "bois ferrugineux"]
-    importations: ["cendres thaurgrimmiennes", "textiles varnäliens", "céréales eldariques"]
-  routes_commerciales:
-    - "Route Maritime du Surn : Asuren (15,35) ↔ Thun'ar (60,20) - 1500 km"
-    - "Voie des Cendres : Vethar (75,55) ↔ Valdrek (80,60) - 800 km"
-    - "Courant du Brumes : Zhaïr (35,75) ↔ Lorn (45,55) - 1200 km"
-
-# SYSTÈME ÉNERGÉTIQUE PLANÉTAIRE - NOUVELLE SECTION
-reseau_energetique_planetaire:
-  production_solaire:
-    capacite: "Couvre 25% des besoins énergétiques de Velkarum"
-    distribution:
-      - "40% vers Thaurgrim (industrie lourde et purification soufre)"
-      - "30% vers Eldaron (centres urbains et artisanat)"
-      - "20% vers Varnäl (biologie contrôlée et recherche)"
-      - "10% vers Helrün (recherche polaire et conservation)"
-  dependances_energetiques:
-    - "Nécessite cendres thaurgrimmiennes pour miroirs solaires (cycle maintenance 2 ans)"
-    - "Importe outils eldariens pour maintenance infrastructure énergétique"
-    - "Dépend du bois varnälien pour supports structurels"
-  synergies_intercontinentales:
-    - partenariat: "Iskarion-Thaurgrim"
-      nature: "Symbiose industrielle"
-      avantages: "Énergie solaire + vapeur géothermale = production métallurgique ×3"
-      echange_cle: "Faisceaux solaires concentrés ↔ Cendres fertilisantes enrichies"
-    - partenariat: "Iskarion-Varnäl"
-      nature: "Équilibre écologique"
-      avantages: "Excès thermique iskarien → stimulation croissance forestière varnälienne"
-      mecanisme: "Canaux thermiques dirigés vers serres biologiques"
-    - partenariat: "Iskarion-Helrün"
-      nature: "R&D énergies extrêmes"
-      realisations: ["Système stockage énergie dans glace noire", "Échange thermique saisonnier"]
-
-# INFRASTRUCTURES INTERCONTINENTALES - NOUVELLE SECTION
-infrastructures_critiques:
-  - nom: "Station de Transfert Solaire d'Asuren"
-    type: "Centrale de distribution énergétique"
-    coordonnees: { x: 15, y: 35 }
-    fonction: "Redistribution énergie solaire vers Thaurgrim et Eldaron"
-    capacite: "5 TW/jour"
-    securite: "Niveau maximum - Gardes solaires et boucliers thermiques"
-
-  - nom: "Observatoire Climatique de Zhaïr"
-    type: "Centre de recherche atmosphérique"
-    coordonnees: { x: 35, y: 75 }
-    fonction: "Coordination prévisions climatiques avec Velkar et Skarnheim"
-    importance: "Essentiel pour agriculture continentale et navigation"
+# RESSOURCES
+ressources_critiques:
+  - "Eau : Contrôlée par les temples (Puissance politique absolue)."
+  - "Or et Pierres précieuses : Abondants, mais ne se mangent pas."
+  - "Verre : Meilleure qualité du monde connu."
 
 # MÉTA-DONNÉES IA
 meta_ia:
   date_creation: "2025-11-05"
-  version: 3.2
-  type_contenu: "continent_tropical_complet"
-  coherence_verifiee: ["regions", "villes", "routes", "peuplements", "coordonnees", "relations_continentales", "reseau_energetique"]
-  points_entree_semantiques: [
-    "recherche_par_ville_solaire",
-    "recherche_par_route_thermique",
-    "recherche_par_region_iskarienne",
-    "navigation_tropicale",
-    "calcul_itineraire_conditions_extremes",
-    "commerce_intercontinental",
-    "reseau_energetique_planetaire"
-  ]
-  echelle_voyage: "100_km_par_jour_conditions_normales"
-  conditions_speciales: ["chaleur_extreme", "tempetes_solaires", "activite_volcanique"]
-  unite_coordonnees: "grid_100x100_iskarien"
+  version: 3.2_grim
+  type_contenu: "geographie_desert_theocratie"

@@ -2677,8 +2677,9 @@
      FONCTION UNIFIÉE — CONSTRUCTION MODALE STANDARD
      ========================================================================= */
   window.setup.buildModalHTML = function(options) {
-    const { title, icon = ICONS.misc, content, footer = '', className = '' } = options;
+    const { title, icon, content, footer = '', className = '' } = options;
     const safeTitle = window.setup.escapeHtml(title || '');
+    // Gestion de l'icône : on s'assure qu'elle existe avant de créer la balise img
     const iconHTML = icon ? `<img class="icon-1em" src="${icon}" alt="" onerror="this.style.display='none'">` : '';
 
     return `
@@ -2695,130 +2696,99 @@
     `;
   };
 
+
   /* =========================================================================
      FONCTION UNIFIÉE — CONSTRUCTION MODALE ITEM (SANS EN-TÊTE INTERNE)
      ========================================================================= */
   window.setup.buildItemModalHTML = function(item) {
-    const safeLabel = window.setup.escapeHtml(item.label || '');
     const safeDesc = window.setup.escapeHtml(item.description || '');
 
-    /* ---------- Icône ---------- */
-    const ICON_MAP = {
-      usable: 'Images/icons/usable.png',
-      health: 'Images/icons/heal.png',
-      food: 'Images/icons/food.png',
-      weapon: 'Images/icons/weapon.png',
-      shield: 'Images/icons/shield.png',
-      head: 'Images/icons/head.png',
-      torso: 'Images/icons/torso.png',
-      arms: 'Images/icons/arms.png',
-      legs: 'Images/icons/legs.png',
-      feet: 'Images/icons/feet.png',
-      material: 'Images/icons/material.png',
-      key: 'Images/icons/key.png',
-      misc: 'Images/icons/key.png'
-    };
-    const iconSrc = ICON_MAP[item.type] || 'Images/icons/key.png';
-
-    /* ---------- Caractéristiques (encarts) ---------- */
+    /* ---------- Caractéristiques (encarts bonus/tags) ---------- */
     let encartsHTML = '';
     if (typeof window.setup.renderItemEncarts === 'function') {
       encartsHTML = window.setup.renderItemEncarts(item) || '';
     }
     const hasEncarts = encartsHTML.trim().length > 0;
 
-    /* ---------- Effets (armes) ---------- */
+    /* ---------- Effets Spéciaux (Armes/Magie) ---------- */
     let effectsHTML = '';
-    if (item.type === 'weapon' && Array.isArray(item.effects) && item.effects.length > 0) {
+    if (item.effects && Array.isArray(item.effects) && item.effects.length > 0) {
       effectsHTML =
-        '<ul>' +
+        '<ul style="margin-top:0.5em; padding-left:1.2em; color:#aaa; font-style:italic;">' +
         item.effects.map(e => `<li>${window.setup.escapeHtml(e)}</li>`).join('') +
         '</ul>';
     }
 
-    /* ---------- Requirements (niveaux requis) ---------- */
+    /* ---------- Requirements (Pré-requis) ---------- */
     let requirementsHTML = '';
     if (item.requirements && typeof item.requirements === 'object') {
       const req = item.requirements;
       const requirementsLines = [];
-      if (req.levelMin) {
-        requirementsLines.push(`<div class="requirement-line">
-                        <span class="requirement-label">Niveau</span>
-                        <span class="requirement-value">${req.levelMin}</span>
-                    </div>`);
-      }
-      if (req.forceMin) {
-        requirementsLines.push(`<div class="requirement-line">
-                        <span class="requirement-label">Force</span>
-                        <span class="requirement-value">${req.forceMin}</span>
-                    </div>`);
-      }
-      if (req.dexMin) {
-        requirementsLines.push(`<div class="requirement-line">
-                        <span class="requirement-label">Dextérité</span>
-                        <span class="requirement-value">${req.dexMin}</span>
-                    </div>`);
-      }
+
+      // Fonction helper pour formater une ligne de pré-requis
+      const addReq = (label, val) => {
+          requirementsLines.push(`
+            <div style="display:flex; justify-content:space-between; font-size:0.9em; color:#ccc; border-bottom:1px dashed rgba(255,255,255,0.1); padding:2px 0;">
+                <span>${label}</span>
+                <span style="font-weight:bold; color:#fff;">${val}</span>
+            </div>
+          `);
+      };
+
+      if (req.levelMin) addReq("Niveau requis", req.levelMin);
+      if (req.forceMin) addReq("Force requise", req.forceMin);
+      if (req.dexMin)   addReq("Dextérité requise", req.dexMin);
+
       if (requirementsLines.length > 0) {
         requirementsHTML = `
-                        <div class="item-stats-divider"></div>
-                        <div>
-                            <div class="weapon-section-title">Niveaux requis :</div>
-                            <div class="requirements-container">
-                                ${requirementsLines.join('')}
-                            </div>
-                        </div>
-                    `;
+            <div class="item-stats-divider" style="margin:1em 0; border-top:1px solid rgba(255,255,255,0.2);"></div>
+            <div style="background:rgba(0,0,0,0.2); padding:0.5em; border-radius:4px;">
+                <div style="color:#f2d675; font-weight:bold; font-size:0.9em; margin-bottom:0.3em; text-transform:uppercase;">Pré-requis</div>
+                ${requirementsLines.join('')}
+            </div>
+        `;
       }
     }
 
     /* =========================================================
-       HTML FINAL — SANS EN-TÊTE INTERNE
+       ASSEMBLAGE DU CORPS DE L'OBJET
        ========================================================= */
     return `
-                <p>${safeDesc}</p>
-        
-                <div class="item-stats-divider"></div>
-        
-                <div>
-                    <div class="weapon-section-title">Caractéristiques :</div>
-                    ${
-                        hasEncarts
-                            ? encartsHTML
-                            : '<em style="opacity:0.75;">Aucune</em>'
-                    }
-                </div>
-        
-                ${requirementsHTML}
-        
-                ${
-                    effectsHTML
-                        ? `
-                        <div style="margin-top:0.9em;">
-                            <div class="weapon-section-title">Effets :</div>
-                            ${effectsHTML}
-                        </div>
-                        `
-                        : ''
-                }
-        
-                <div class="item-stats-divider"></div>
-            `;
+        <div style="font-style:italic; color:#ddd; margin-bottom:1em; line-height:1.4;">
+            ${safeDesc || "<em style='opacity:0.5'>Aucune description.</em>"}
+        </div>
+
+        ${hasEncarts ? 
+          `<div style="margin-bottom:0.5em;">${encartsHTML}</div>` : 
+          ''
+        }
+
+        ${requirementsHTML}
+
+        ${effectsHTML ? 
+          `<div class="item-stats-divider" style="margin:1em 0; border-top:1px solid rgba(255,255,255,0.2);"></div>
+           <div style="color:#f2d675; font-weight:bold; font-size:0.9em; text-transform:uppercase;">Effets</div>
+           ${effectsHTML}` 
+          : ''
+        }
+    `;
   };
 
   /* =========================================================================
      MODALE OBJET/ARME — utilise buildModalHTML() avec titre et icône corrects
      ========================================================================= */
   window.setup.showItemModal = function(item) {
-    // Sécurité
     if (!item) return;
+
+    // Nettoyage
     $('#item-modal, #modal-overlay-item').remove();
 
+    // Overlay & Conteneur
     const $overlay = $('<div id="modal-overlay-item"></div>').appendTo('body');
-    // AJOUT : style="opacity:1" pour forcer la visibilité si l'animation CSS échoue
+    // Note: opacity:1 important pour contrer d'éventuelles animations CSS lentes
     const $modal = $('<div id="item-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
 
-    // Déterminer l'icône selon le type d'item
+    // Choix de l'icône
     const ICON_MAP = {
       usable: 'Images/icons/usable.png',
       health: 'Images/icons/heal.png',
@@ -2834,29 +2804,35 @@
       key: 'Images/icons/key.png',
       misc: 'Images/icons/key.png'
     };
-    const iconSrc = ICON_MAP[item.type] || 'Images/icons/key.png';
+    // Fallback sur misc si type inconnu
+    const iconSrc = ICON_MAP[item.type] || ICON_MAP['misc'];
 
-    // Construction du contenu via buildItemModalHTML() (sans en-tête)
+    // Génération du contenu
     const innerHTML = window.setup.buildItemModalHTML(item);
 
+    // Construction finale via le builder standard
     const modalContent = window.setup.buildModalHTML({
       title: item.label || 'Objet',
-      icon: iconSrc, // Utiliser l'icône spécifique à l'item
+      icon: iconSrc,
       content: innerHTML,
       footer: '<button type="button" class="modal-close">Fermer</button>',
       className: 'item-modal'
     });
 
     $modal.append(modalContent);
-
-    // Activation mode modale
     $('body').addClass('modal-open');
-    $modal.addClass('visible');
+    $modal.addClass('visible'); // Pour les animations CSS si présentes
 
-    // Fermeture
-    $modal.find('.modal-close').on('click', () => { $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open'); });
-    $(document).one('mousedown.itemmodal', function(e) { if (!$(e.target).closest('#item-modal').length) { $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open'); } });
-};
+    // Gestion fermeture
+    const close = () => {
+        $modal.remove();
+        $overlay.remove();
+        $('body').removeClass('modal-open');
+    };
+
+    $modal.find('.modal-close').on('click', close);
+    $overlay.on('click', close); // Clic sur le fond gris ferme aussi
+  };
 
   /* ==========================================================
      FONCTION : AFFICHER MODALE PNJ - VERSION CORRIGÉE POUR VOTRE STRUCTURE JSON
@@ -2864,194 +2840,179 @@
   window.setup.showPnjModal = function(pnjId) {
     console.log(`🖼️ [showPnjModal] Ouverture modale pour: "${pnjId}"`);
 
-    // Nettoyage préalable
+    // Nettoyage préalable de toute modale existante
     $('#pnj-modal, #modal-overlay-pnj').remove();
 
-    // Création overlay
+    // Création overlay et conteneur
     const $overlay = $('<div id="modal-overlay-pnj"></div>').appendTo('body');
-    const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
+    const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
 
-    const v = V();
+    // Récupération des données dynamiques (Santé, Inventaire réel)
     const npc = npcEnsure(pnjId);
 
-    // Fonction de traitement
-    const processPnjModal = (pnjReady) => {
-      // CHARGEMENT CORRIGÉ : utiliser la nouvelle fonction sécurisée
+    // Fonction de traitement principale
+    const processPnjModal = () => {
+      // 1. RÉCUPERATION DES DONNÉES DE LORE (JSON statique)
       const pnjData = window.setup.getPnjData(pnjId);
       const identite = pnjData.identite;
 
-      console.log("📦 [showPnjModal] Données PNJ chargées:", pnjData);
-
-      // EXTRACTION SÉCURISÉE selon VOTRE JSON
-      const displayName = identite.nom_complet || identite.nom || pnjId;
+      // Extraction sécurisée des textes
+      const displayName = identite.nom_complet || identite.nom || npc.name || pnjId;
       const safeName = window.setup.escapeHtml(displayName);
+      const race = identite.peuple || "Inconnu";
+      const metier = identite.metier_principal || "Voyageur";
+      const safeDescription = window.setup.escapeHtml(pnjData.description || "Aucune description disponible.");
 
-      // EXTRACTION RACE/METIER selon VOTRE JSON (peuple et metier_principal)
-      const race = identite.peuple || null;
-      const metier = identite.metier_principal || null;
-
-      // Construction de la ligne race/métier
-      let raceJobHTML = '';
-      if (race && metier) {
-        raceJobHTML = `<div class="pnj-race-job">${race} - ${metier}</div>`;
-      } else if (race) {
-        raceJobHTML = `<div class="pnj-race-job">${race}</div>`;
-      } else if (metier) {
-        raceJobHTML = `<div class="pnj-race-job">${metier}</div>`;
-      }
-
-      // DESCRIPTION selon VOTRE JSON
-      const safeDescription = window.setup.escapeHtml(pnjData.description);
-
-      // Récupération des stats du PNJ
+      // 2. DONNÉES DYNAMIQUES (Stats actuelles)
       const strength = npc.stats?.strength || 0;
       const dexterity = npc.stats?.dexterity || 0;
       const resistance = npc.stats?.resistance || 0;
       const level = npc.stats?.level || 1;
+      const currentHP = npc.health || 0;
+      const maxHP = npc.maxHealth || 20;
 
-      // Construction de l'inventaire du PNJ
-      let inventoryHTML = '';
-      const inventory = npc.inventory || {};
-      const hasItems = Object.keys(inventory).length > 0;
+      // 3. CORPS HTML : Sous-titre (Rôle/Race)
+      const subHeaderHTML = `
+        <div style="text-align:center; margin-bottom:1.2em; padding-bottom:0.8em; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:0.95em; color:#f2d675; font-style:italic; letter-spacing:0.5px;">
+                ${window.setup.escapeHtml(race)} &bull; ${window.setup.escapeHtml(metier)}
+            </div>
+            <div style="font-size:0.8em; color:#888; margin-top:0.2em;">
+                Niveau ${level}
+            </div>
+        </div>
+      `;
 
-      if (hasItems) {
-        inventoryHTML = `
-                        <div class="pnj-inventory-section">
-                            <div class="weapon-section-title">Inventaire :</div>
-                            <div class="pnj-inventory-grid">
-                    `;
+      // 4. CORPS HTML : Description
+      const descHTML = `
+        <div style="background:rgba(255,255,255,0.03); padding:0.8em; border-radius:4px; margin-bottom:1.2em; font-size:0.9em; line-height:1.5; font-style:italic; color:#ccc; border-left:3px solid rgba(255,255,255,0.2);">
+            ${safeDescription}
+        </div>
+      `;
 
-        Object.entries(inventory).forEach(([itemId, quantity]) => {
-          const itemData = window.setup.getItemFromCache(itemId);
-          if (itemData) {
-            const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
-            const itemType = window.setup.escapeHtml(itemData.type || 'misc');
-            const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(itemData) : '';
+      // 5. CORPS HTML : Stats Grid
+      const statsHTML = `
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5em; margin-bottom:1.5em; text-align:center;">
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="${window.ICONS.health}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
+                <span style="font-weight:bold; color:#ff8888; font-size:0.9em;">${currentHP}/${maxHP}</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="${window.ICONS.strength}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
+                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${strength}</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="images/icons/dexterity.png" style="height:1.4em; display:block; margin:0 auto 0.3em;" onerror="this.style.display='none'">
+                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${dexterity}</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="${window.ICONS.defense}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
+                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${resistance}</span>
+            </div>
+        </div>
+      `;
 
-            inventoryHTML += `
-                                <div class="pnj-inventory-item" data-id="${itemId}">
-                                    <div class="pnj-item-header">
-                                        <strong>${itemLabel}</strong>
-                                        <span class="pnj-item-qty">x${quantity}</span>
-                                    </div>
-                                    <div class="pnj-item-type">${itemType}</div>
-                                    ${encartsHTML}
-                                </div>
-                            `;
-          } else {
-            // Fallback pour les items non trouvés
-            inventoryHTML += `
-                                <div class="pnj-inventory-item">
-                                    <div class="pnj-item-header">
-                                        <strong>${itemId}</strong>
-                                        <span class="pnj-item-qty">x${quantity}</span>
-                                    </div>
-                                    <div class="pnj-item-type">Objet inconnu</div>
-                                </div>
-                            `;
-          }
-        });
-
-        inventoryHTML += `
-                            </div>
-                        </div>
-                    `;
-      } else {
-        inventoryHTML = `
-                        <div class="pnj-inventory-section">
-                            <div class="weapon-section-title">Inventaire :</div>
-                            <em style="opacity:0.75;">Aucun objet</em>
-                        </div>
-                    `;
-      }
-
-      // Construction de l'équipement du PNJ
+      // 6. CORPS HTML : ÉQUIPEMENT (Style Slot Identique Joueur)
       let equipmentHTML = '';
-      const equipment = npc.equipment || {};
-      const slots = {
-        weapon: 'Arme',
-        armor: 'Armure',
-        head: 'Tête',
-        torso: 'Torse',
-        arms: 'Bras',
-        legs: 'Jambes',
-        feet: 'Pieds',
-        shield: 'Bouclier'
-      };
+      const slotNames = { weapon: 'Arme', shield: 'Bouclier', head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds' };
+      const slotsOrder = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
 
-      let hasEquipment = false;
-      Object.entries(slots).forEach(([slot, label]) => {
-        const itemId = equipment[slot];
-        if (itemId) {
-          hasEquipment = true;
-          const itemData = window.setup.getItemFromCache(itemId);
-          if (itemData) {
-            const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
-            equipmentHTML += `
-                                <div class="pnj-equipment-slot">
-                                    <strong>${label} :</strong>
-                                    <span class="pnj-equipped-item">${itemLabel}</span>
-                                </div>
-                            `;
-          } else {
-            equipmentHTML += `
-                                <div class="pnj-equipment-slot">
-                                    <strong>${label} :</strong>
-                                    <span class="pnj-equipped-item">${itemId}</span>
-                                </div>
-                            `;
-          }
-        }
+      let equipListHTML = '';
+
+      slotsOrder.forEach(slot => {
+         const itemId = npc.equipment ? npc.equipment[slot] : null;
+         let content = ' <em style="opacity:.5; font-size:0.9em;">Vide</em>';
+         let itemClass = 'empty-slot'; // Classe CSS de base
+
+         if (itemId) {
+             const itemData = window.setup.getItemFromCache(itemId);
+             const label = itemData ? itemData.label : itemId;
+             // On utilise 'filled-slot inventory-item' pour récupérer le style exact des items
+             content = ` <span class="equipped-name" style="color:#f2d675; font-weight:bold;">${window.setup.escapeHtml(label)}</span>`;
+             itemClass = 'filled-slot inventory-item';
+         }
+
+         // Construction du slot HTML identique à renderEquipment
+         equipListHTML += `
+            <div class="equipment-slot ${itemClass}" style="margin-bottom:0.4em; padding:0.4em 0.6em;">
+                <strong style="color:#aaa; text-transform:uppercase; font-size:0.8em; margin-right:0.5em;">${slotNames[slot]}:</strong>
+                ${content}
+            </div>
+         `;
       });
 
-      if (!hasEquipment) {
-        equipmentHTML = '<em style="opacity:0.75;">Aucun équipement</em>';
+      if (equipListHTML) {
+          equipmentHTML = `
+            <div class="pnj-equipment-section" style="margin-bottom:1.5em;">
+                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Équipement</div>
+                <div class="equipment-grid">
+                    ${equipListHTML}
+                </div>
+            </div>
+          `;
       }
 
-      // Construction du contenu modal
+      // 7. CORPS HTML : INVENTAIRE (Style Slot Identique Joueur)
+      let inventoryHTML = '';
+      const inventory = npc.inventory || {};
+      const invIds = Object.keys(inventory);
+
+      if (invIds.length > 0) {
+          let invItemsHTML = '';
+          const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
+
+          invIds.forEach(itemId => {
+              const qty = inventory[itemId];
+              if (qty > 0) {
+                  const itemData = window.setup.getItemFromCache(itemId);
+                  const label = itemData ? itemData.label : itemId;
+                  const type = itemData ? itemData.type : 'misc';
+
+                  // Génération des encarts (bonus stats, etc.)
+                  const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(itemData) : '';
+
+                  // Structure EXACTE de .inventory-item
+                  invItemsHTML += `
+                    <div class="inventory-item" data-id="${itemId}" data-type="${type}" style="height:100%;">
+                        <div class="item-header">
+                            <span class="item-name">${window.setup.escapeHtml(label)}</span>
+                            <span class="item-qty">x${qty}</span>
+                        </div>
+                        <span class="inventory-type">${typeLabels[type] || "Objet"}</span>
+                        ${encartsHTML}
+                    </div>
+                  `;
+              }
+          });
+
+          inventoryHTML = `
+            <div class="pnj-inventory-section">
+                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Sac</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.5em;">
+                    ${invItemsHTML}
+                </div>
+            </div>
+          `;
+      } else {
+           inventoryHTML = `
+            <div class="pnj-inventory-section">
+                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Sac</div>
+                <em style="opacity:0.5; font-size:0.85em; display:block; padding:0.5em;">Le sac est vide.</em>
+            </div>
+          `;
+      }
+
+      // 8. ASSEMBLAGE FINAL
       const modalContent = window.setup.buildModalHTML({
-        title: `Compagnon - ${safeName}`,
-        icon: ICONS.buddy,
+        title: safeName,
+        icon: window.ICONS.buddy,
         content: `
-                        <!-- Informations de base -->
-                        ${raceJobHTML}
-                        
-                        <!-- Description narrative -->
-                        <div class="pnj-description-section">
-                            <p>${safeDescription}</p>
-                        </div>
-                        
-                        <div class="item-stats-divider"></div>
-                        
-                        <!-- Statistiques -->
-                        <div class="pnj-stats-section">
-                            <div class="weapon-section-title">Statistiques :</div>
-                            <div class="pnj-stats-grid">
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="${ICONS.strength}" alt="Force">
-                                    <span class="pnj-stat-label">Force :</span>
-                                    <span class="pnj-stat-value">${strength}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="images/icons/dexterity.png" alt="Dextérité">
-                                    <span class="pnj-stat-label">Dextérité :</span>
-                                    <span class="pnj-stat-value">${dexterity}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="${ICONS.defense}" alt="Résistance">
-                                    <span class="pnj-stat-label">Résistance :</span>
-                                    <span class="pnj-stat-value">${resistance}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <span class="pnj-stat-label">Niveau :</span>
-                                    <span class="pnj-stat-value">${level}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Le reste de votre code pour l'équipement et l'inventaire -->
-                        ${/* VOTRE CODE EXISTANT POUR L'ÉQUIPEMENT ET L'INVENTAIRE */ ''}
-                    `,
+            ${subHeaderHTML}
+            ${descHTML}
+            ${statsHTML}
+            ${equipmentHTML}
+            ${inventoryHTML}
+        `,
         footer: '<button type="button" class="modal-close">Fermer</button>',
         className: 'pnj-modal'
       });
@@ -3059,29 +3020,21 @@
       $modal.append(modalContent);
       $('body').addClass('modal-open');
 
-      // Gestion de la fermeture
-      $modal.find('.modal-close').on('click', () => {
+      // Gestion fermeture
+      const close = () => {
         $modal.remove();
         $overlay.remove();
         $('body').removeClass('modal-open');
-      });
-
-      // Fermeture en cliquant hors de la modale
-      $(document).one('mousedown.pnjmodal', function(e) {
-        if (!$(e.target).closest('#pnj-modal').length) {
-          $modal.remove();
-          $overlay.remove();
-          $('body').removeClass('modal-open');
-        }
-      });
+      };
+      $modal.find('.modal-close').on('click', close);
+      $overlay.on('click', close);
     };
 
-    // Vérifier que le système PNJ est prêt
+    // Vérification disponibilité système PNJ avant affichage
     if (!window.setup.pnjState.ready) {
-      console.warn("⏳ showPnjModal en attente du système PNJ");
-      window.setup.ensurePNJReady(processPnjModal);
+       window.setup.ensurePNJReady(processPnjModal);
     } else {
-      processPnjModal(true);
+       processPnjModal();
     }
   };
   // ------------------------------------------------------
@@ -3089,6 +3042,10 @@
   // ------------------------------------------------------
   window.setup.updateHUD = (function() {
     let timeout;
+    // Variables pour détecter les changements et éviter le re-rendu inutile (Anti-Lag)
+    let lastInventoryState = "";
+    let lastEquipmentState = "";
+    let lastLocationString = "";
 
     function icon(img) {
       const src = img || 'images/icons/map.png';
@@ -3102,7 +3059,7 @@
         if (!$hud.length) return;
 
         const v = V();
-        // Récupération des valeurs (inchangé)
+        // Récupération des valeurs
         const health = v.current_player_health ?? 10;
         const maxHealth = v.max_player_health ?? 10;
         const strength = v.strength || 0;
@@ -3125,9 +3082,8 @@
              locationString = window.setup.getLocationString(pCoords, pCoords.continent);
         }
 
-        // Construction initiale (inchangée) ou Mise à jour
+        // Construction initiale
         if (!$hud.find('.hud-inner').length) {
-            // CODE DE CONSTRUCTION INITIALE DU HUD
             $hud.html(`
             <div class="hud-inner">
                 <div class="hud-row-top">
@@ -3160,15 +3116,13 @@
           `);
           $(document).trigger('hudready');
         } else {
-          // MISE À JOUR CIBLÉE (DOM Diffing léger)
-          // On ne touche au DOM que si le texte change pour éviter les reflows inutiles
+          // MISE À JOUR CIBLÉE
           const $locText = $('.hud-location .location-text');
           if($locText.text() !== locationString) {
               $locText.text(locationString);
               $('.hud-location').attr('title', locationString);
           }
 
-          // Stats helper
           const updateStat = (cls, html) => {
               const $el = $(cls);
               if($el.html() !== html) $el.html(html);
@@ -3181,12 +3135,11 @@
           updateStat('.hud-magic', `${icon(ICONS.magic)} ${magic}`);
           updateStat('.hud-gold', `${icon(ICONS.gold)} ${gold}`);
 
-          // XP
           const $expFill = $('.hud-exp-fill');
           if ($expFill.length) $expFill.css('width', `${expPercent}%`);
         }
 
-        // Gestion des boutons Toggles (inchangé, code de sécurité)
+        // Gestion des boutons Toggles
         const $toggles = $('#hud .hud-toggles');
         if (!document.getElementById('inventory-toggle')) {
           $toggles.append(`<div id="inventory-toggle" title="Inventaire">${icon(ICONS.inventory)}<span id="inventory-counter" class="counter">0</span></div>`);
@@ -3207,68 +3160,162 @@
           const $panel = $(panelSelector);
           if (!$panel.length) return;
           const isVisible = $panel.hasClass('show');
+
+          // Ferme tous les panneaux
           $('.side-panel').removeClass('show');
+
+          // Supprime les menus contextuels actifs
+          $('.context-menu').remove();
+
           if (!isVisible) {
               $panel.addClass('show');
-              // On ne rend le contenu que lors de l'ouverture explicite
-              if(panelSelector === '#inventory-panel') renderInventory();
-              if(panelSelector === '#equipment-panel') renderEquipment();
+              // Force le rendu immédiat à l'ouverture
+              if(panelSelector === '#inventory-panel') {
+                  lastInventoryState = ""; // Force refresh
+                  renderInventory();
+              }
+              if(panelSelector === '#equipment-panel') {
+                  lastEquipmentState = ""; // Force refresh
+                  renderEquipment();
+              }
               if(panelSelector === '#buddies-panel') window.renderBuddiesPanel();
           }
         };
 
-        // Binding des clics (inchangé)
+        // Binding des clics
         $('#inventory-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#inventory-panel'); v.inventoryViewed = true; window.setup.updateInventoryCounter(); window.setup.updateHUD(); });
         $('#equipment-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#equipment-panel'); });
         $('#buddy-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#buddies-panel'); });
 
+        // Fermeture au clic extérieur
         $(document).off('click.hudpanels').on('click.hudpanels', e => {
              if (!$(e.target).closest('.side-panel, #hud .hud-toggles > div, .context-menu, .modal-content').length) {
                $('.side-panel').removeClass('show');
+               $('.context-menu').remove();
              }
         });
 
-        // Fonctions de rendu internes
+        // --- FONCTION RENDU INVENTAIRE OPTIMISÉE ---
         function renderInventory() {
             const $panel = $('#inventory-panel');
+            const inventory = v.inventory || [];
+
+            // Génération d'une empreinte simple pour détecter les changements
+            // On utilise JSON.stringify pour voir si les items ou quantités ont changé
+            // Pour optimisation, on pourrait juste faire une map des IDs et Qtés
+            const currentInventoryState = JSON.stringify(inventory.map(i => ({id: i.id, qty: i.qty})));
+
+            // Si l'état n'a pas changé depuis le dernier rendu, ON NE FAIT RIEN (Stop Lag)
+            if (currentInventoryState === lastInventoryState && $panel.children().length > 0) {
+                return;
+            }
+
+            // Mise à jour de l'état
+            lastInventoryState = currentInventoryState;
             $panel.empty();
 
-            const inventory = v.inventory || [];
             if (inventory.length) {
                  const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
                  const frag = document.createDocumentFragment();
+
                  inventory.forEach(it => {
                      const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(it) : '';
                      const isNew = v.inventoryNewItems?.includes(it.id);
-                     const $item = $(`<div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}"><div>${window.setup.escapeHtml(it.label)}</div><span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>${encartsHTML}</div>`);
-                     $item.on('contextmenu', function(e) { e.preventDefault(); window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this)); });
-                     $item.on('mouseenter', function() { if($(this).hasClass('new')){ window.setup.updateInventoryCounter(); window.setup.updateHUD(); }});
+
+                     const $item = $(`
+                        <div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}">
+                            <div class="item-header">
+                                <span class="item-name">${window.setup.escapeHtml(it.label)}</span>
+                                <span class="item-qty">x${it.qty}</span>
+                            </div>
+                            <span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>
+                            ${encartsHTML}
+                        </div>
+                     `);
+
+                     // Événements directement attachés à l'élément (plus fiable que delegate pour le drag/drop futur)
+                     $item.on('contextmenu', function(e) {
+                         e.preventDefault();
+                         e.stopPropagation();
+                         window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this));
+                     });
+
+                     $item.on('mouseenter', function() {
+                         if($(this).hasClass('new')){
+                             // Retire le statut "Nouveau" visuellement
+                             $(this).removeClass('new');
+                             // Logique métier
+                             if (v.inventoryNewItems) {
+                                 v.inventoryNewItems = v.inventoryNewItems.filter(nid => nid !== it.id);
+                             }
+                             window.setup.updateInventoryCounter();
+                             window.setup.updateHUD();
+                         }
+                     });
+
                      frag.appendChild($item[0]);
                  });
                  $panel[0].appendChild(frag);
             } else {
-                 $panel.append('<em style="opacity:.6;">Aucun objet.</em>');
+                 $panel.append('<div class="empty-msg"><em style="opacity:.6;">Votre sac est vide.</em></div>');
             }
         }
 
         function renderEquipment() {
-             const $panel = $('#equipment-panel').empty();
+             const $panel = $('#equipment-panel');
+             // Check changement
+             const currentEqState = JSON.stringify(v.equipped);
+             if (currentEqState === lastEquipmentState && $panel.children().length > 0) return;
+
+             lastEquipmentState = currentEqState;
+             $panel.empty();
+
              const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+             const slotNames = { head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier' };
+
              slots.forEach(slot => {
-                $panel.append(`<div class="equipment-slot" data-slot="${slot}"><strong>${slot}:</strong>${v.equipped[slot] ? ' (Objet)' : ' <em style="opacity:.6">Vide</em>'}</div>`);
+                const itemId = v.equipped[slot];
+                let content = ' <em style="opacity:.6">Vide</em>';
+                let itemClass = 'empty-slot';
+
+                if (itemId) {
+                    // Trouve l'item dans l'inventaire ou cache pour avoir le label
+                    const itemCache = window.setup.itemCache?.[itemId];
+                    // Si l'item est équipé, il n'est parfois plus dans l'inventaire (selon votre logique),
+                    // donc on regarde le cache global, sinon l'ID
+                    const label = itemCache ? itemCache.label : itemId;
+                    content = ` <span class="equipped-name">${window.setup.escapeHtml(label)}</span>`;
+                    itemClass = 'filled-slot inventory-item'; // inventory-item pour réutiliser le style
+                }
+
+                const $slotDiv = $(`<div class="equipment-slot ${itemClass}" data-slot="${slot}" data-id="${itemId || ''}" data-type="${slot}">
+                    <strong>${slotNames[slot]}:</strong>${content}
+                </div>`);
+
+                if (itemId) {
+                    $slotDiv.on('contextmenu', function(e) {
+                        e.preventDefault();
+                        window.setup.showEquipContextMenu(e.pageX, e.pageY, itemId, "", slot, $(this));
+                    });
+                     $slotDiv.on('click', function(e) {
+                        e.preventDefault();
+                        // Affiche modale item si besoin
+                        const itemData = window.setup.itemCache?.[itemId];
+                        if(itemData) window.setup.showItemModal(itemData);
+                    });
+                }
+
+                $panel.append($slotDiv);
              });
         }
 
-        // Si le panneau compagnon est ouvert, on le met à jour intelligemment
-        // car lui a des animations en temps réel
-        if ($('#buddies-panel').hasClass('show')) {
-            window.renderBuddiesPanel();
-        }
-
-        // Si l'inventaire change, on peut forcer le refresh SI le panneau est visible
+        // LOGIQUE DE MISE À JOUR
+        // Si les panneaux sont ouverts, on vérifie s'il faut re-rendu
         if ($('#inventory-panel').hasClass('show')) renderInventory();
+        if ($('#equipment-panel').hasClass('show')) renderEquipment();
+        if ($('#buddies-panel').hasClass('show')) window.renderBuddiesPanel(); // Buddies gère son propre timer
 
-        // Mises à jour compteurs (légères)
+        // Mises à jour compteurs
         window.setup.updateMessageCounter();
         window.setup.updateQuestCounter();
         window.setup.updateInventoryCounter();
@@ -3284,11 +3331,7 @@
     const hasNewQuest = v.quests?.some(q => !q.viewed);
     const $c = $('#quest-counter');
     if ($c.length) {
-      if (hasNewQuest) {
-        $c.text('1').show();
-      } else {
-        $c.text('').hide();
-      }
+        $c.text('!').toggle(!!hasNewQuest); // Affiche '!' ou nombre
     }
   };
   window.setup.updateInventoryCounter = function() {
@@ -3296,11 +3339,7 @@
     const hasNewItem = (v.inventoryNewItems || []).length > 0 && !v.inventoryViewed;
     const $c = $('#inventory-counter');
     if ($c.length) {
-      if (hasNewItem) {
-        $c.text('1').show();
-      } else {
-        $c.text('').hide();
-      }
+       $c.text(v.inventoryNewItems.length || '!').toggle(hasNewItem);
     }
   };
   // ------------------------------------------------------
@@ -3315,18 +3354,16 @@
     const v = V();
     const item = (v.inventory || []).find(it => it.id === id);
     if (!item) return;
+
+    // Si on est en mode "choix de slot" (gestion avancée)
     const pendingSlot = v._pendingEquipSlot;
     if (pendingSlot) {
       if (item.type === pendingSlot) {
         window.setup.equipItem(id, pendingSlot);
         v._pendingEquipSlot = null;
         $('#inventory-panel').removeClass('show');
-        window.setup.updateInventoryCounter();
-        window.setup.updateHUD();
       } else {
-        window.setup.showNotification('Impossible', 'Cet objet ne peut pas être équipé dans ce slot.', 2600);
-        v._pendingEquipSlot = null;
-        $('#inventory-panel').removeClass('show');
+        window.setup.showNotification('Impossible', 'Cet objet ne peut pas être équipé ici.', 2000);
       }
       return;
     }
@@ -3354,68 +3391,75 @@
     window.setup.showItemMenu(e.pageX, e.pageY, id, label, type, $item);
   });
   window.setup.showItemMenu = function(x, y, id, label, type, $item) {
-    $('#inventory-context-menu').remove();
+    $('.context-menu').remove(); // Ferme les autres menus
+
     const menu = $('<div id="inventory-context-menu" class="context-menu"></div>').appendTo('body');
     const v = V();
     const item = (v.inventory || []).find(it => it.id === id);
     if (!item) return;
-    label = item.label;
+
+    label = item.label; // Sécurité
     const qty = item.qty || 1;
     const equipped = v.equipped || {};
-    const equipableSlots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+
+    // Ajustement position pour ne pas sortir de l'écran
+    const winW = $(window).width();
+    const winH = $(window).height();
+    let posX = x + 5;
+    let posY = y + 5;
+
+    if (posX + 160 > winW) posX = winW - 170;
+    if (posY + 200 > winH) posY = winH - 210;
+
+    menu.css({
+      position: 'absolute',
+      top: `${posY}px`,
+      left: `${posX}px`,
+      zIndex: 10000 // Très haut pour être au dessus des modales
+    });
 
     function addOption(txt, fn) {
       $('<div class="context-option"></div>')
         .text(txt)
         .on('click', function(e) {
-          e.stopPropagation();
-          fn();
+          e.stopPropagation(); // Empêche la fermeture immédiate par le document click
           menu.remove();
+          fn();
         })
         .appendTo(menu);
     }
+
+    // Logique d'équipement
+    const equipableSlots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
     const isEquipped = Object.values(equipped).includes(id);
     const equippedSlot = Object.keys(equipped).find(k => equipped[k] === id);
+
     if (isEquipped && equipableSlots.includes(type)) {
       addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
     } else if (equipableSlots.includes(type)) {
       addOption('Équiper', () => window.setup.equipItem(id, type));
     }
-    // OPTION "UTILISER" UNIQUEMENT POUR LES TYPES SPÉCIFIQUES
+
     if (['usable', 'health', 'food'].includes(type)) {
       addOption('Utiliser', () => window.setup.useItem(id, label, type, x, y));
     }
-    // OPTION "DONNER À UN COMPAGNON" POUR TOUS LES TYPES D'OBJETS (sauf quest)
+
     if (!item.isQuestItem) {
       addOption('Donner à un compagnon', () => {
-        window.setup.showGiveToBuddyMenu(x, y, id, label, type);
+        // Petit délai pour laisser le menu actuel se fermer proprement
+        setTimeout(() => window.setup.showGiveToBuddyMenu(posX, posY, id, label, type), 50);
       });
-    }
-    if (!item.isQuestItem) {
+
       addOption('Jeter', () => window.setup.showDeleteConfirm(id, label, false, $item));
       if (qty > 1) addOption('Tout jeter', () => window.setup.showDeleteConfirm(id, label, true, $item));
     }
-    menu.css({
-      position: 'absolute',
-      top: `${y + 5}px`,
-      left: `${x + 5}px`,
-      background: 'rgba(0,0,0,0.92)',
-      border: '1px solid #fff',
-      borderRadius: '8px',
-      padding: '0.4em 0',
-      minWidth: '150px',
-      zIndex: 9999,
-      fontSize: '0.9em',
-      boxShadow: '0 0 16px rgba(0,0,0,0.8)',
-      animation: 'fadeMenu 0.2s ease forwards',
-      pointerEvents: 'auto'
-    });
-    $(document).off('mousedown.inventorymenu').on('mousedown.inventorymenu', function(e) {
-      if (!$(e.target).closest('#inventory-context-menu').length) {
-        $('#inventory-context-menu').remove();
-        $(document).off('mousedown.inventorymenu');
-      }
-    });
+
+    // Fermeture au clic ailleurs (géré aussi par updateHUD mais sécurité ici)
+    setTimeout(() => {
+        $(document).one('click.closecontext', function() {
+            menu.remove();
+        });
+    }, 10);
   };
   // ------------------------------------------------------
   // MENU CONTEXTUEL ÉQUIPEMENT
@@ -3429,39 +3473,45 @@
     window.setup.showEquipContextMenu(e.pageX, e.pageY, id, label, type, $(this));
   });
   window.setup.showEquipContextMenu = function(x, y, id, label, type, $item) {
-    $('#inventory-context-menu').remove();
-    const menu = $('<div id="inventory-context-menu"></div>').appendTo('body');
+    $('.context-menu').remove();
+    const menu = $('<div id="inventory-context-menu" class="context-menu"></div>').appendTo('body');
     const v = V();
+
+    // Positionnement intelligent
+    const winW = $(window).width();
+    let posX = x + 5;
+    if (posX + 150 > winW) posX = x - 155;
+
+    menu.css({
+      top: `${y + 5}px`,
+      left: `${posX}px`,
+      zIndex: 10000
+    });
+
     const equippedSlot = Object.keys(v.equipped || {}).find(k => v.equipped[k] === id);
 
     function addOption(txt, fn) {
       $('<div class="context-option"></div>')
         .text(txt)
-        .on('mousedown', e => {
+        .on('click', e => {
           e.stopPropagation();
-          fn();
           menu.remove();
+          fn();
         })
         .appendTo(menu);
     }
-    if (equippedSlot) addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
-    menu.css({
-      position: 'absolute',
-      top: `${y + 5}px`,
-      left: `${x + 5}px`,
-      background: 'rgba(0,0,0,0.92)',
-      border: '1px solid #fff',
-      borderRadius: '8px',
-      padding: '0.4em 0',
-      minWidth: '150px',
-      zIndex: 3200,
-      fontSize: '0.9em',
-      boxShadow: '0 0 16px rgba(0,0,0,0.8)',
-      animation: 'fadeMenu 0.2s ease forwards'
-    });
-    $(document).one('mousedown.equipmentmenu', function(e) {
-      if (!$(e.target).closest('#inventory-context-menu').length) menu.remove();
-    });
+
+    if (equippedSlot) {
+        addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
+    } else {
+        addOption('Fermer', () => {});
+    }
+
+    setTimeout(() => {
+        $(document).one('click.closecontext', function() {
+            menu.remove();
+        });
+    }, 10);
   };
   // ------------------------------------------------------
   // UTILISATION D’OBJET — AJOUT DU CONTRÔLE SANTÉ COMPAGNON
@@ -4661,7 +4711,7 @@
       let locationText = window.setup.getLocationString(b.coordinates, b.continent);
       let travelHTML = '';
 
-      // Logique Voyage
+      // Logique Voyage (inchangée pour stabilité)
       if (b.status === 'traveling' && b.travelCurrentStep) {
         const step = b.travelCurrentStep;
         const isResting = step.type === 'rest';
@@ -4669,7 +4719,6 @@
             ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`
             : `<span style="color:#eee;">${step.desc}</span>`;
 
-        // Construction du bloc voyage interne (HTML String)
         travelHTML = `
           <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
                data-name="${b.name}"
@@ -4677,58 +4726,47 @@
                data-total="${step.duration}"
                data-type="${step.type}"
                data-dist="${Number(step.dist) || 0}">
-              
               <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   ${actionText}
               </div>
-              
               <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
                   <span><span class="travel-timer-text">...</span></span>
-                  ${!isResting ? '<span class="travel-dist-text">... km</span>' : ''}
+                  ${!isResting ? '<span class="travel-dist-text"></span>' : ''}
               </div>
-              
               <div class="travel-progress-bg">
                 <div class="travel-progress-fill" style="width: 0%;"></div>
               </div>
-
               <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
                    Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
               </div>
           </div>
         `;
-
-        // Surcharge du texte de location pendant le voyage
         locationText = isResting ? `S'arrête à ${step.locationName}` : `Se déplace`;
       }
 
       // === CAS 1 : MISE À JOUR (L'élément existe déjà) ===
       if ($entry.length > 0) {
-        $entry.removeClass('to-remove'); // On garde cet élément
+        $entry.removeClass('to-remove');
 
-        // Mise à jour Santé (CSS width)
+        // Mise à jour visuelle simple
         $entry.find('.buddy-healthfill')
               .removeClass('h-good h-mid h-low')
               .addClass(healthClass)
               .css('width', `${healthRatio * 100}%`);
 
-        // Mise à jour Statut (Badge)
         $entry.find('.item-badge')
               .attr('class', `item-badge buddy-${b.status}`)
               .text(b.status);
 
-        // Mise à jour Location
         const $loc = $entry.find('.buddy-location');
         if ($loc.text() !== locationText) $loc.text(locationText);
 
-        // Mise à jour Bloc Voyage
-        // On ne remplace le HTML du voyage que si la structure a changé (ex: passage de 'fixed' à 'traveling')
+        // Gestion du bloc voyage
         const $existingTravel = $entry.find('.buddy-travel-wrapper');
         if (b.status === 'traveling') {
             if ($existingTravel.length === 0) {
-                // Insérer le nouveau bloc HTML s'il manque
                 $entry.find('.buddy-healthbar').after(travelHTML);
             } else {
-                // Si le bloc existe déjà, on met juste à jour les data attributes pour que le Timer JS prenne le relais
                 const step = b.travelCurrentStep;
                 if(step) {
                     $existingTravel.attr({
@@ -4737,25 +4775,21 @@
                         'data-type': step.type,
                         'data-dist': Number(step.dist) || 0
                     });
-                    // Mise à jour du texte principal si l'étape change
+                    // Mise à jour texte si changé
                     const isResting = step.type === 'rest';
                     const newActionHTML = isResting
                         ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`
                         : `<span style="color:#eee;">${step.desc}</span>`;
-
                     if($existingTravel.find('.travel-text-primary').html() !== newActionHTML) {
                         $existingTravel.find('.travel-text-primary').html(newActionHTML);
                     }
-                    // Mise à jour classe CSS repos
                     if(isResting) $existingTravel.addClass('resting');
                     else $existingTravel.removeClass('resting');
                 }
             }
         } else {
-            // Si on ne voyage plus, on supprime le bloc voyage s'il existe
             $existingTravel.remove();
         }
-
       }
       // === CAS 2 : CRÉATION (Nouvel élément) ===
       else {
@@ -4773,90 +4807,68 @@
         `;
         const $newEl = $(newEntryHTML);
 
-        // 🚨 CORRECTION CRITIQUE : AJOUT DU CLIC GAUCHE POUR OUVRIR LA MODALE PNJ
+        // 🚨 ÉVÉNEMENT CLIC GAUCHE : OUVRIR LA MODALE
         $newEl.on('click', function(e) {
            e.preventDefault();
            e.stopPropagation();
            const name = $(this).data('name');
-           window.setup.showPnjModal(name); // <-- Réactive l'ouverture de la modale PNJ
+           window.setup.showPnjModal(name);
         });
 
-        // Attacher l'événement contextmenu (clic droit)
+        // 🚨 ÉVÉNEMENT CLIC DROIT : MENU CONTEXTUEL
         $newEl.on('contextmenu', function(e) {
            e.preventDefault();
            e.stopPropagation();
            $('#buddy-context-menu').remove();
            const name = $(this).data('name');
-           window.setup.showBuddyContextMenu(e, name); // Fonction extraite plus bas
+           window.setup.showBuddyContextMenu(e, name);
         });
 
         $panel.append($newEl);
       }
     });
 
-    // Supprimer les éléments qui ne sont plus dans la liste (compagnons partis/morts/despawn)
+    // Supprimer les obsolètes
     $panel.find('.to-remove').remove();
 
-    // --- TIMER DYNAMIQUE (Mise à jour fluide des barres de progression) ---
-    // Ce code s'exécute en boucle mais ne touche au DOM que pour changer les largeurs (width)
+    // Relancer le timer d'animation si nécessaire (barres de progression voyage)
     if ($panel.find('.buddy-travel-wrapper').length > 0) {
       const updateTimers = () => {
         const now = Date.now();
         let active = false;
-
         $panel.find('.buddy-travel-wrapper').each(function() {
           const $wrapper = $(this);
-          const name = $wrapper.data('name');
           const endTime = Number($wrapper.data('end'));
           const totalTime = Number($wrapper.data('total'));
-          const type = $wrapper.data('type');
-          const distSection = Number($wrapper.data('dist'));
-
-          const isResting = type === 'rest';
-          const currentColor = isResting ? '#4fc3f7' : '#66bb6a';
+          // Récupération de la distance de l'étape pour le calcul
+          const stepDist = Number($wrapper.data('dist')) || 0;
 
           const remaining = endTime - now;
           let percent = 0;
 
-          // Calcul pourcentage
           if (remaining <= 0) {
             percent = 100;
             $wrapper.find('.travel-timer-text').text("Fin étape");
+            // --- CORRECTION ICI : Mettre 0 km quand fini ---
+            $wrapper.find('.travel-total-km').text("0.0 km");
           } else {
             active = true;
+            // Calcul Pourcentage
             percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
+
+            // Calcul Temps texte
             const secs = Math.ceil(remaining / 1000);
-            const timeStr = `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
-            $wrapper.find('.travel-timer-text').text(timeStr);
+            $wrapper.find('.travel-timer-text').text(`${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`);
+
+            // --- CORRECTION ICI : Calcul de la distance restante ---
+            // On fait une règle de trois basée sur le temps restant
+            const ratio = remaining / totalTime;
+            const distLeft = stepDist * ratio;
+            // Mise à jour du texte qui affichait "Calcul..."
+            $wrapper.find('.travel-total-km').text(`${distLeft.toFixed(1)} km`);
           }
 
-          // APPLICATION CSS (Très léger)
-          $wrapper.find('.travel-progress-fill').css({
-            'width': `${percent}%`,
-            'background-color': currentColor,
-            'box-shadow': `0 0 5px ${currentColor}`
-          });
-
-          // Calcul KM restants (basé sur les données JS, pas le DOM)
-          const npc = v.npcs[name];
-          if (npc && npc.travelItinerary) {
-            let totalKmLeft = 0;
-            // Reste de l'étape en cours
-            if (type === 'travel' && remaining > 0) {
-              const kmLeftSection = distSection * (remaining / totalTime);
-              totalKmLeft += kmLeftSection;
-              $wrapper.find('.travel-dist-text').text(`${kmLeftSection.toFixed(1)} km`);
-            } else {
-              $wrapper.find('.travel-dist-text').text('');
-            }
-            // Somme étapes futures
-            if (npc.travelStepIndex < npc.travelItinerary.length - 1) {
-              for (let i = npc.travelStepIndex + 1; i < npc.travelItinerary.length; i++) {
-                totalKmLeft += (npc.travelItinerary[i].dist || 0);
-              }
-            }
-            $wrapper.find('.travel-total-km').text(`${totalKmLeft.toFixed(1)} km`);
-          }
+          $wrapper.find('.travel-progress-fill').css('width', `${percent}%`);
         });
 
         if (!active && window.setup.buddiesPanelInterval) {
@@ -4868,6 +4880,7 @@
       window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
     }
   };
+
 
   window.setup.showBuddyContextMenu = function(e, name) {
     const v = State.variables;
@@ -5340,12 +5353,15 @@
   window.setup.getPnjData = function(pnjId) {
     const pnjData = window.setup.loadPNJ(pnjId);
 
+    // Fallback si loadPNJ échoue
     if (!pnjData) {
-      console.error(`❌ Données PNJ non trouvées pour: ${pnjId}`);
-      return createFallbackPNJ(pnjId).pnj;
+      return {
+          identite: { nom: pnjId, peuple: 'Inconnu', metier_principal: 'Inconnu' },
+          description: "Données non trouvées."
+      };
     }
 
-    // 🔴 CORRECTION : Gestion sécurisée de la structure imbriquée
+    // Normalisation des données pour éviter les erreurs undefined
     const identite = pnjData.pnj?.identite || pnjData.identite || {};
 
     return {
@@ -5359,23 +5375,9 @@
         pnjData.description_narrative ||
         pnjData.description ||
         "Description non disponible",
-      personnalite: pnjData.pnj?.personnalite || "Personnalité inconnue",
-      contexte: pnjData.pnj?.contexte || "Origine inconnue",
-      // 🔴 CORRECTION : Gérer les réactions de manière sécurisée
-      réaction_joueur: pnjData.pnj?.réaction_joueur || pnjData.réaction_joueur || {
-        addItem: {
-          weapon: ["Merci pour cette arme.", "Je vais en prendre soin."],
-          health: ["Merci pour ces soins.", "Je me sens mieux."],
-          food: ["Merci pour la nourriture.", "J'avais faim."],
-          misc: ["Merci.", "Je garde ça."]
-        },
-        pnjmove: {
-          follow: ["Je vous suis.", "Je vous accompagne."],
-          fixed: ["Je reste ici.", "Je vous attends."],
-          goto: ["Je me déplace.", "Je vais là-bas."],
-          recall: ["Je reviens.", "Je vous rejoins."]
-        }
-      }
+      // On préserve les autres champs utiles
+      personnalite: pnjData.pnj?.personnalite || "Inconnue",
+      contexte: pnjData.pnj?.contexte || "Inconnu"
     };
   };
 

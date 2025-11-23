@@ -1,289 +1,85 @@
 # aspects_sombres_hybrid.yaml
-modele: "hybride_ia_semantique"
-description: "Aspects sombres et criminels de Velkarum - Réseaux souterrains, trafics et exploitations"
+modele: "low_fantasy_grim"
+description: "La réalité crue de Velkarum - Criminalité, Vices et Désespoir"
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# EMBEDDING SOMBRE
 embedding_optimized:
-  themes: ["criminalite", "trafics", "esclavage", "prostitution", "stupefiants", "corruption", "mercenaire"]
-  mots_cles: ["marche_noir", "clan_ombre", "poudre_brume", "chair_marchande", "mines_oubli", "sang_tribut", "corrompus"]
-  description_semantique: "Réseaux criminels, trafics illicites et exploitations sombres de Velkarum, intégrés dans l'économie souterraine des continents"
+  themes: ["crime", "torture", "trafic_humain", "drogues_sales", "peste", "corruption_totale"]
+  mots_cles: ["coupe-jarrets", "marche_noir", "esclavage", "lames_louees", "bas-fonds"]
+  description_semantique: "Il n'y a pas de 'Guilde des Voleurs' romantique. Juste des gangs brutaux, des nobles dégénérés et la survie du plus fort."
 
-# RÉSEAUX CRIMINELS ORGANISÉS
+# ORGANISATIONS CRIMINELLES (GANGS ET MAFIAS)
 organisations_criminelles:
-  - nom: "Le Clan de l'Ombre"
-    territoire: "Eldaron (principalement Ardel et Khar-Ghul)"
-    dirigeant: "Le Spectre (identité inconnue)"
-    specialites: ["Trafics d'êtres sensibles", "Contrebande d'armes", "Corruption politique"]
-    implantation:
-      - { lieu: "Ardel (60,35)", activite: "Siège principal, corruption des guildes" }
-      - { lieu: "Khar-Ghul (85,80)", activite: "Trafics frontaliers, marché noir" }
-      - { lieu: "Lorn (45,55)", activite: "Infiltration politique, chantage" }
-    influence: "Contrôle 40% du crime organisé eldarien"
-    methodes: ["Chantage", "Assassinats ciblés", "Corruption systémique"]
+  - nom: "Les Ecorcheurs"
+    territoire: "Bas-fonds de Lorn"
+    activite: "Racket, enlèvement, meurtres sur commande."
+    methode: "Ils ne laissent pas de témoins. Connus pour mutiler leurs rivaux."
+    chef: "Inconnu (probablement un noble déchu)."
 
-  - nom: "Les Naufrageurs"
-    territoire: "Côtes du Fer-Bleu et routes maritimes"
-    dirigeant: "Capitaine Morvan"
-    specialites: ["Piraterie", "Détournement de cargaisons", "Esclavage maritime"]
-    implantation:
-      - { lieu: "Embouchure du Drann (20,25)", activite: "Repaire caché dans les grottes côtières" }
-      - { lieu: "Confluence Surn-Brumes (25,20)", activite: "Embuscades maritimes" }
-      - { lieu: "Golfe de Thun'ar (70,25)", activite: "Trafics d'êtres capturés" }
-    influence: "20% des disparitions en mer leur sont attribuées"
-    methodes: ["Faux phares", "Sabotage de navires", "Complicité portuaire"]
+  - nom: "La Fraternité du Port"
+    territoire: "Lirn et côtes"
+    activite: "Contrebande, piraterie, traite des esclaves."
+    couverture: "Syndicat des dockers et marins."
 
-  - nom: "La Confrérie des Cendres"
-    territoire: "Thaurgrim et régions frontalières"
-    dirigeant: "Maître Ignis"
-    specialites: ["Contrebande de soufre", "Trafics d'armes", "Exploitation minière illégale"]
-    implantation:
-      - { lieu: "Champs de Soufre (50,25)", activite: "Extraction illégale" }
-      - { lieu: "Kaar (85,40)", activite: "Falsification de documents d'exportation" }
-      - { lieu: "Frontière Eldaron (90,35)", activite: "Passage clandestin" }
-    influence: "Détourne 15% de la production de soufre"
-    methodes: ["Falsification", "Intimidation des mineurs", "Complicité douanière"]
+  - nom: "Les Rats des Mines"
+    territoire: "Thaurgrim"
+    activite: "Vol de minerai précieux, trafic d'alcool de contrebande dans les camps de travail."
 
-  - nom: "Les Glaces Sombres"
-    territoire: "Helrün et routes polaires"
-    dirigeant: "Jarl Ragnok (clan renégat)"
-    specialites: ["Trafics de glace noire", "Contrebande de sel fossile", "Prises d'otages"]
-    implantation:
-      - { lieu: "Grottes du Drann (50,60)", activite: "Stockage illégal" }
-      - { lieu: "Nerr (25,15)", activite: "Infiltration des guildes légitimes" }
-      - { lieu: "Piste de la Toundra", activite: "Attaques de caravanes" }
-    influence: "Contrôle 25% du marché noir de la glace noire"
-    methodes: ["Corruption des gardes tribaux", "Sabotage des expéditions", "Chantage économique"]
-
-# TRAFICS D'ÊTRES SENSIBLES
+# TRAFICS ILLICITES
 trafic_etres:
-  - type: "Esclavage traditionnel"
-    regions_principales: ["Marches Orientales", "Désert de Korra", "Côtes isolées"]
-    victimes_principales: ["Prisonniers de guerre", "Détenus politiques", "Pauvres des zones rurales"]
-    prix_moyen: "200-800 couronnes selon compétences"
-    reseaux:
-      - { nom: "Marché de Khar-Ghul", coordonnees: {x: 85, y: 80}, frequence: "Nouvelle lune" }
-      - { nom: "Caravansérail des Ombres", coordonnees: {x: 45, y: 20}, frequence: "Permanente" }
-    utilisation: ["Mines clandestines", "Servitude domestique", "Main d'œuvre agricole"]
+  - type: "Main d'œuvre forcée"
+    clients: "Mines de Thaurgrim, Galères d'Iskarion."
+    victimes: "Orphelins des rues, paysans endettés, prisonniers de guerre."
+    prix: "Moins cher qu'un cheval."
 
-  - type: "Esclavage spécialisé"
-    regions_principales: ["Thaurgrim", "Iskarion", "Centres de recherche"]
-    victimes_principales: ["Savants", "Artisans qualifiés", "Manipulateurs d'énergie"]
-    prix_moyen: "2000-8000 couronnes"
-    reseaux:
-      - { nom: "Guilde des Talents", coordonnees: {x: 75, y: 55}, discret: "Extrême" }
-      - { nom: "Marché des Compétences", coordonnees: {x: 55, y: 45}, discret: "Élevée" }
-    utilisation: ["Recherche forcée", "Production artisanale de luxe", "Maintenance technologique"]
+  - type: "Servitude domestique"
+    clients: "Bourgeoisie d'Eldaron et Ardel."
+    nature: "Souvent déguisé en 'contrat d'apprentissage' à vie."
 
-  - type: "Prostitution forcée"
-    regions_principales: ["Lorn", "Ardel", "Zhaïr", "Ports majeurs"]
-    etablissements:
-      - { nom: "Maison des Plaisirs Ombragés", coordonnees: {x: 45, y: 55}, type: "Luxe", controle: "Clan de l'Ombre" }
-      - { nom: "Les Cendres Rouges", coordonnees: {x: 60, y: 35}, type: "Milieu", controle: "Confrérie des Cendres" }
-      - { nom: "Jardins de Zhaïr Cachés", coordonnees: {x: 35, y: 75}, type: "Élite", controle: "Corruption sacerdotale" }
-    victimes: ["Jeunes ruraux", "Détenus libérés", "Endettés"]
-    revenu_annuel_estime: "800,000 couronnes"
-
-# PRODUCTION ET TRAFIC DE STUPÉFIANTS
 stupefiants:
-  - nom: "Poudre de Brume"
-    origine: "Bassins Marécageux de Marael (55,45)"
-    composition: "Algues psychotropes mélangées à des cendres volcaniques"
-    effets: "Euphorie, perte de notion du temps, dépendance rapide"
-    prix_gramme: "5 couronnes"
-    reseau_distribution: ["Clan de l'Ombre", "Complicités marécageuses"]
-    zones_consommation: ["Lorn", "Ardel", "Villes portuaires"]
+  - nom: "Lait de Pavot Noir"
+    effet: "Anti-douleur puissant, rend léthargique et dépendant en quelques jours."
+    consommateurs: "Soldats blessés, pauvres cherchant l'oubli."
 
-  - nom: "Sève de Rhaal Corrompue"
-    origine: "Forêts Primaires de Rhaal (35,75)"
-    composition: "Sève d'arbres anciens fermentée avec champignons toxiques"
-    effets: "Hallucinations, force surhumaine temporaire, dommages neurologiques"
-    prix_dose: "15 couronnes"
-    reseau_distribution: ["Bûcherons corrompus", "Guilde des Sylviculteurs Noirs"]
-    zones_consommation: ["Milieux artistiques", "Guerriers", "Classes dirigeantes"]
+  - nom: "Poussière de Rhaal"
+    effet: "Hallucinogène violent, provoque des crises de rage."
+    origine: "Champignons parasites de la jungle."
+    consommateurs: "Berserkers, cultistes."
 
-  - nom: "Larmes d'Ygral"
-    origine: "Sanctuaires des Ermites du Drann (55,75)"
-    composition: "Cristaux de glace noire réduits en poudre fine"
-    effets: "Clarté mentale extrême, insensibilité à la douleur, amnésie à long terme"
-    prix_dose: "50 couronnes"
-    reseau_distribution: ["Glaces Sombres", "Ermites renégats"]
-    zones_consommation: ["Savants", "Diplomates", "Assassins"]
+  - nom: "Cendre Rouge"
+    effet: "Stimulant respiratoire (temporaire), puis nécrose des poumons."
+    consommateurs: "Mineurs de Thaurgrim (pour travailler plus longtemps)."
 
-  - nom: "Sang Volcanique"
-    origine: "Territoires du Rift Shaar (55,45)"
-    composition: "Gaz volcaniques concentrés mélangés à soufre pur"
-    effets: "Agression extrême, insensibilité, force décuplée, mort précoce"
-    prix_dose: "10 couronnes"
-    reseau_distribution: ["Confrérie des Cendres", "Guerriers mercenaires"]
-    zones_consommation: ["Armées mercenaires", "Cultures de gladiateurs"]
+# EXPLOITATIONS CLANDESTINES
+activites:
+  - "Fosses de combat illégales (animaux vs humains, ou humains vs humains à mort)."
+  - "Ateliers de fausse monnaie (punissable d'être bouilli vivant)."
+  - "Médecine de l'ombre (chirurgie sans hygiène, avortements dangereux, poisons)."
 
-# EXPLOITATION ÉCONOMIQUE SOMBRE
-exploitations_clandestines:
-  - type: "Mines des Oubliés"
-    localisation:
-      - { nom: "Mine de l'Ombre", coordonnees: {x: 88, y: 78}, region: "Marches Orientales" }
-      - { nom: "Puits des Perdus", coordonnees: {x: 52, y: 22}, region: "Désert de Korra" }
-      - { nom: "Caverne du Silence", coordonnees: {x: 48, y: 62}, region: "Grottes du Drann" }
-    main_oeuvre: "Esclaves, prisonniers, disparus"
-    production: ["Minerais rares", "Cristaux interdits", "Artefacts anciens"]
-    mortalite: "60% dans la première année"
-    controle: ["Clan de l'Ombre", "Mercenaires indépendants"]
+# CORRUPTION
+systemique:
+  - "Les Gardes de ville : Ne patrouillent que si payés par les commerçants."
+  - "Les Juges : Les sentences sont à vendre. Un noble ne sera jamais pendu, un paysan le sera pour un vol de pomme."
+  - "L'Église : Vend des indulgences et absout les péchés des riches donateurs."
 
-  - type: "Ateliers de Forge Clandestins"
-    localisation:
-      - { nom: "Forge des Ombres", coordonnees: {x: 62, y: 32}, region: "Ardel" }
-      - { nom: "Enclume Noire", coordonnees: {x: 78, y: 68}, region: "Vulkar" }
-    production: ["Armes interdites", "Outils de torture", "Équipement de siège"]
-    main_oeuvre: "Forgerons esclaves, artisans capturés"
-    clients: ["Seigneurs de guerre", "Organisations criminelles", "Mercenaires"]
+# GROUPES DE MERCENAIRES (LES CHIENS DE GUERRE)
+mercenaires:
+  - nom: "La Compagnie Noire"
+    réputation: "Disciplinés mais sans pitié. Brûlent les villages qui ne paient pas."
+    tarif: "Très élevé. Paiement en or uniquement."
 
-  - type: "Laboratoires Alchimiques Illégaux"
-    localisation:
-      - { nom: "Refuge des Brumes", coordonnees: {x: 54, y: 44}, region: "Marael" }
-      - { nom: "Caverne Acide", coordonnees: {x: 58, y: 42}, region: "Shaar-Keth" }
-    production: ["Poisons", "Stupéfiants", "Agents corrosifs"]
-    experimentation: "Sur sujets capturés, prisonniers politiques"
-    risques: "Accidents fréquents, pollution locale"
+  - nom: "Les Bâtards de Valnoria"
+    réputation: "Déséteurs et criminels. Utiles pour le sale boulot, imprévisibles."
 
-# CORRUPTION SYSTÉMIQUE
-reseaux_corruption:
-  - niveau: "Gouvernement central"
-    cibles: ["Conseillers royaux", "Hauts fonctionnaires", "Chefs militaires"]
-    methodes: ["Chantage sexuel", "Dettes truquées", "Faveurs politiques"]
-    impact: "Détournement de fonds publics, lois favorables aux criminels"
-    exemple: "3 conseillers du Roi Alaric sous influence du Clan de l'Ombre"
-
-  - niveau: "Gouvernements régionaux"
-    cibles: ["Gouverneurs", "Chefs tribaux", "Maîtres de guildes"]
-    methodes: ["Pots-de-vin", "Menaces familiales", "Partages de profits"]
-    impact: "Laxisme répressif, octroi de contrats truqués"
-    exemple: "Jarl Hrothgar ferme les yeux sur certains trafics en échange de soutien politique"
-
-  - niveau: "Forces de l'ordre"
-    cibles: ["Gardiens urbains", "Douaniers", "Officiers militaires"]
-    methodes: ["Paiements réguliers", "Protection des familles", "Avancement de carrière"]
-    impact: "Laisser-passer, avertissements préventifs, enquêtes sabotées"
-    exemple: "Garde-côtes de Lirn ignorent certains navires contre 20% des profits"
-
-  - niveau: "Système judiciaire"
-    cibles: ["Juges", "Avocats", "Greffiers"]
-    methodes: ["Corruption directe", "Chantage sur les passés", "Fausses preuves"]
-    impact: "Acquittements, réductions de peine, classements sans suite"
-    exemple: "Tribunal de commerce d'Ardel favorable aux entreprises liées au crime"
-
-# MERCENARIAT ET VIOLENCE ORGANISÉE
-groupes_mercenaires:
-  - nom: "Lames Sombres"
-    specialite: "Assassinats, protection rapprochée"
-    recrutement: "Anciens militaires, guerriers déchus"
-    tarifs: ["Assassinat simple: 2000 couronnes", "Protection mensuelle: 800 couronnes"]
-    loyautes: "Le plus offrant, actifs dans tout Eldaron"
-
-  - nom: "Gardiens des Cendres"
-    specialite: "Protection de sites illégaux, intimidation"
-    recrutement: "Guerriers thaurgrims mécontents, bannis"
-    tarifs: ["Protection site: 2500 couronnes/mois", "Intimidation: 200 couronnes/cible"]
-    loyautes: "Confrérie des Cendres, seigneurs mineurs indépendants"
-
-  - nom: "Brise-Glaces"
-    specialite: "Attaques de caravanes, protection polaire"
-    recrutement: "Chasseurs helruniens renégats, survivants endurcis"
-    tarifs: ["Attaque caravane: 30% du butin", "Escorte polaire: 1500 couronnes"]
-    loyautes: "Glaces Sombres, commerçants sans scrupules"
-
-# CULTES ET SECTES DANGEREUX
-cults_sombres:
-  - nom: "Adorateurs du Feu Pur"
-    croyance: "La purification par le feu volcanique extrême"
-    pratiques: ["Sacrifices humains dans les lacs de lave", "Automutilation par brûlures"]
-    implantation: "Régions reculées de Thaurgrim"
-    dangerosite: "Élevée - plusieurs disparitions liées"
-
-  - nom: "Enfants de l'Ombre"
-    croyance: "Adoration des forces obscures qui précédaient la création"
-    pratiques: ["Rituels de souffrance", "Consommation de chair"]
-    implantation: "Sous-sols de Lorn et Ardel"
-    dangerosite: "Extrême - liée à des meurtres rituels"
-
-  - nom: "Purificateurs de Rhala"
-    croyance: "Élimination des êtres "impurs" pour sauver la nature"
-    pratiques: ["Assassinats ciblés", "Sabotage industriel"]
-    implantation: "Forêts profondes de Varnäl"
-    dangerosite: "Moyenne-Élevée - eco-terrorisme"
-
-# SYSTÈME DE JUSTICE PARALLÈLE
-justice_criminelle:
-  - methode: "Tribunaux de l'Ombre"
-    juridiction: "Conflits entre organisations criminelles"
-    sentence_types: ["Amendes", "Mutilations", "Exécutions"]
-    localisation: "Lieux secrets changeants"
-
-  - methode: "Contrats de sang"
-    utilisation: "Règlement de dettes impayées, trahisons"
-    execution: "Mercenaires spécialisés"
-    cout: "10% de la valeur du contrat"
-
-  - methode: "Marquages criminels"
-    signification: ["Dette impayée", "Traître", "Sous protection"]
-    visibilite: "Tatouages cachés, cicatrices codées"
-    consequences: "Exclusion sociale, cible prioritaire"
-
-# IMPACT ÉCONOMIQUE GLOBAL
-economie_souterraine:
-  volume_annuel_estime: "16 millions de couronnes (9% du PIB officiel)"
-  secteurs_paralleles:
-    - "Trafics d'êtres: 3.5M couronnes"
-    - "Stupéfiants: 4.5M couronnes"
-    - "Armes illégales: 2.5M couronnes"
-    - "Corruption: 5.5M couronnes"
-  blanchiment_principal:
-    - "Commerce légitime via Lorn et Ardel"
-    - "Investissement immobilier"
-    - "Prêts usuraires déguisés"
-
-# LUTTE ANTI-CRIMINELLE (LIMITÉE)
-forces_opposition:
-  - nom: "Garde Royale Secrète"
-    juridiction: "Eldaron uniquement"
-    effectifs: "2,000 agents (dont 400 infiltrés)"
-    succes: "Démantèlement partiel du Clan de l'Ombre en -12, neutralisation de 3 réseaux majeurs"
-    limitations: "Corruption interne affectant 5% des effectifs, juridiction limitée aux crimes transrégionaux"
-    renforts: ["Unités spéciales des régions (5,000 agents)", "Coopération avec forces varnäliennes et iskariennes"]
-
-  - nom: "Chasseurs de Brumes"
-    juridiction: "Zones côtières"
-    effectifs: "50 marins expérimentés"
-    succes: "Capture de 3 navires pirates l'an dernier"
-    limitations: "Manque de ressources, vaste territoire"
-
-  - nom: "Gardiens des Forêts"
-    juridiction: "Varnäl"
-    effectifs: "300 druides et gardes"
-    succes: "Protection des zones sacrées"
-    limitations: "Pouvoir uniquement défensif"
-
-  - nom: "Brigade Anti-Crime d'Ardel"
-    juridiction: "Sud Eldaron"
-    effectifs: "800 agents spécialisés"
-    focus: "Trafic d'êtres sensibles et corruption commerciale"
-
-  - nom: "Garde Côtière Unifiée"
-    juridiction: "Ligues Côtières de Lirn et Delta du Draen"
-    effectifs: "1,200 marins et enquêteurs"
-    focus: "Piraterie et trafics maritimes"
+# JUSTICE (BRUTALE ET EXPÉDITIVE)
+peines_courantes:
+  - "Vol : Ablation d'une main ou marquage au fer rouge."
+  - "Meurtre (roturier) : Pendaison ou Roue."
+  - "Hérésie/Sorcellerie : Bûcher."
+  - "Dettes : Prison à vie ou esclavage."
 
 # MÉTA-DONNÉES IA
 meta_ia:
   date_creation: "2025-11-05"
-  version: 1.0
-  type_contenu: "aspects_sombres_complet_velkarum"
-  coherence_verifiee: ["organisations_criminelles", "trafics", "corruption", "stupefiants", "exploitation"]
-  points_entree_semantiques: [
-    "recherche_par_organisation_criminelle",
-    "recherche_par_type_trafic",
-    "recherche_par_stupefiant",
-    "recherche_par_reseau_corruption",
-    "recherche_par_mercenaire",
-    "recherche_par_culte_sombre",
-    "economie_souterraine"
-  ]
+  version: 1.0_dark
+  type_contenu: "criminalite_realiste"

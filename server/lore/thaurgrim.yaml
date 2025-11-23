@@ -1,346 +1,114 @@
 # thaurgrim.yaml
-modele: "hybride_ia_semantique"
-description: "Continent Thaurgrim - Géographie complète avec régions, villes et routes volcaniques"
+modele: "low_fantasy_grim"
+description: "Continent Thaurgrim - Terres de cendres, d'industrie primitive et de tyrannie clanique"
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# EMBEDDING SOMBRE
 embedding_optimized:
-  themes: ["continent", "volcanique", "magmatique", "geothermie", "commerce_cendres", "thaurgrims", "courant_surn"]
-  mots_cles: ["thaurgrim", "vulkar", "derna", "thunar", "ghaarn", "mer_ashraal", "cendres_fertilisantes", "coordonnees_volcaniques"]
-  description_semantique: "Thaurgrim, continent volcanique cœur magmatique de Velkarum, structuré en régions géothermiques avec villes-forges et routes de cendre"
+  themes: ["volcans", "industrie_lourde", "esclavage", "pollution", "tyrannie", "fer_et_feu"]
+  mots_cles: ["vulkar", "suie", "forçats", "clans_guerriers", "famine_noire", "souffre"]
+  description_semantique: "Un continent étouffant sous la cendre. Une société industrielle primitive basée sur la force brute, l'esclavage et la maîtrise fanatique du feu."
 
 # DONNÉES FONDAMENTALES
 nom: "Thaurgrim"
-designation: "Le Cœur de Feu"
-type: "continent volcanique actif"
+designation: "La Terre des Cendres"
+type: "Continent volcanique et industriel"
 superficie_mkm2: 34.2
-population_estimee_millions: 25
+population_estimee_millions: 25 (dont 40% d'esclaves/serfs)
 systeme_coordonnees: "grid_thaurgrimien_100x100"
 
-# RÉGIONS GÉOPOLITIQUES DÉTAILLÉES
+# RÉGIONS GÉOPOLITIQUES (ENFERS INDUSTRIELS)
 regions:
-  - nom: "Royaume Volcanique du Vulkar"
+  - nom: "Le Creuset (Royaume du Vulkar)"
     coordonnees: { x_min: 60, x_max: 90, y_min: 60, y_max: 85 }
-    biome_principal: "Montagnes volcaniques sacrées"
+    biome_principal: "Désert de basalte et volcans actifs"
     capitale: "Vulkar"
-    peuples_principaux: ["Thaurgrims (80%)", "Vulkariens (15%)", "Nains Thaurgriens (5%)"]
-    population_region: 6.2
-    description: "Cœur religieux et minier de Thaurgrim, dominé par le Mont Ghaarn"
-    ressources: ["basalte ferrique", "énergie géothermique pure", "pierre ponce", "gaz volcaniques"]
-    particularites: ["Forges sacrées du Ghaarn", "temples du Feu Profond", "observatoires volcaniques"]
+    peuples_principaux: ["Thaurgrims (Maîtres)", "Esclaves de toutes races"]
+    description: "L'air y est irrespirable sans filtre rudimentaire. Le ciel est noir en permanence."
+    ressources: ["Fer", "Obsidienne", "Main d'œuvre forcée"]
+    particularites: ["Forges monumentales à soufflets manuels", "Fosses communes", "Temples sacrificiels"]
 
-  - nom: "Plaines Fertiles du Drav"
+  - nom: "Les Plaines de Suie (Drav)"
     coordonnees: { x_min: 40, x_max: 70, y_min: 40, y_max: 60 }
-    biome_principal: "Plaines de lave refroidie"
+    biome_principal: "Steppes couvertes de cendre grise"
     capitale: "Drav"
-    peuples_principaux: ["Thaurgrims (75%)", "Derniens (20%)", "Centaures Talren (5%)"]
-    population_region: 5.1
-    description: "Région agricole spécialisée dans la culture sur cendres volcaniques"
-    ressources: ["cendres fertilisantes", "cuivre rouge", "lichens ferriques", "graminées de cendre"]
-    particularites: ["système d'irrigation géothermale", "marché aux cendres", "élevage de chevaux de scorie"]
+    peuples_principaux: ["Serfs Thaurgrims", "Parias"]
+    description: "Zone agricole misérable où l'on cultive des champignons géants et des lichens résistants sous la cendre."
+    ressources: ["Cendres fertilisantes (récoltées à la main)", "Nourriture de base infecte"]
+    particularites: ["Silos fortifiés", "Villages troglodytes pour fuir les pluies acides"]
 
-  - nom: "Hauts Plateaux de Derna"
+  - nom: "La Forêt Pétrifiée (Derna)"
     coordonnees: { x_min: 20, x_max: 50, y_min: 50, y_max: 75 }
-    biome_principal: "Forêts minéralisées"
+    biome_principal: "Arbres morts minéralisés"
     capitale: "Derna"
-    peuples_principaux: ["Derniens (70%)", "Thaurgrims (25%)", "Elfes Sylvarin (5%)"]
-    population_region: 3.8
-    description: "Plateaux tempérés abritant les forêts aux troncs minéralisés"
-    ressources: ["obsidienne noire", "bois ferrugineux", "fougères rouges", "herbes médicinales"]
-    particularites: ["artisanat de l'obsidienne", "sanctuaires des Drakens", "école de sylviculture"]
+    peuples_principaux: ["Derniens (Humains adaptés)", "Exilés"]
+    description: "Une forêt de pierre coupante. Les habitants y chassent des créatures cuirassées."
+    ressources: ["Bois de pierre (aussi dur que le fer)", "Charbon de surface"]
+    particularites: ["Fortins de bandits", "Carrières à ciel ouvert"]
 
-  - nom: "Côtes Géothermiques du Thun'ar"
+  - nom: "Les Côtes Jaunes (Thun'ar)"
     coordonnees: { x_min: 30, x_max: 60, y_min: 20, y_max: 40 }
-    biome_principal: "Côtes fissurées actives"
+    biome_principal: "Littoral sulfureux"
     capitale: "Thun'ar"
-    peuples_principaux: ["Thaurgrims (65%)", "Nautes du Draen (25%)", "Batraciens Grolka (10%)"]
-    population_region: 2.1
-    description: "Région côtière spécialisée dans l'extraction du soufre et l'énergie vapeur"
-    ressources: ["soufre natif", "vapeur géothermale", "algues ferriques", "poissons-soufre"]
-    particularites: ["geysers salins", "usines à vapeur", "laboratoires de soufre"]
+    description: "L'odeur d'œuf pourri est omniprésente. L'eau y est toxique."
+    ressources: ["Soufre (pour la poudre noire rudimentaire et l'alchimie)", "Sel acide"]
+    particularites: ["Mines de soufre (espérance de vie : 25 ans)", "Ports fortifiés contre les pirates"]
 
-  - nom: "Domaine Maritime d'Ashraal"
-    coordonnees: { x_min: 50, x_max: 80, y_min: 10, y_max: 30 }
-    biome_principal: "Mer intérieure acide"
-    capitale: "Ashraal"
-    peuples_principaux: ["Thaurgrims (60%)", "Nautes du Draen (30%)", "Batraciens Grolka (10%)"]
-    population_region: 0.8
-    description: "Mer intérieure aux eaux sulfureuses, cœur de l'industrie du soufre"
-    ressources: ["eaux sulfureuses", "soufre cristallin", "vers-lave", "raies ferriques"]
-    particularites: ["navires à coque acide", "stations de purification", "marché du soufre"]
-
-# VILLES PRINCIPALES AVEC COORDONNÉES DÉTAILLÉES
+# VILLES PRINCIPALES (CITE-USINES)
 villes_principales:
   - nom: "Vulkar"
-    region: "Royaume Volcanique du Vulkar"
-    type: "Capitale religieuse et minière"
+    type: "Capitale industrielle et religieuse"
     coordonnees: { x: 75, y: 70 }
-    population: 1900000
-    altitude_m: 1200
-    fondation: "-3200"
-    caracteristiques: ["forges sacrées", "temples du Feu Profond", "mines de basalte", "observatoire volcanique"]
-    peuples: ["Thaurgrims (70%)", "Vulkariens (20%)", "Nains Thaurgriens (10%)"]
+    population: 1900000 (Surpeuplée)
+    ambiance: "Bruit assourdissant des marteaux, chaleur étouffante, smog épais."
+    lieux_cles: ["La Grand-Forge (Palais)", "Le Gouffre des Rebuts (Quartier bas)", "Marché aux Esclaves"]
 
   - nom: "Derna"
-    region: "Hauts Plateaux de Derna"
-    type: "Cité forestière artisanale"
+    type: "Bastion frontalier"
     coordonnees: { x: 35, y: 60 }
-    population: 1200000
-    altitude_m: 850
-    fondation: "-2900"
-    caracteristiques: ["ateliers d'obsidienne", "sanctuaires des Drakens", "marché biologique", "école des forêts"]
-    peuples: ["Derniens (65%)", "Thaurgrims (25%)", "Elfes Sylvarin (10%)"]
+    ambiance: "Silencieuse, grise, méfiante. Maisons en pierre noire sans fenêtres."
 
   - nom: "Kaar"
-    region: "Royaume Volcanique du Vulkar"
-    type: "Port commercial majeur"
+    type: "Port Noir"
     coordonnees: { x: 85, y: 40 }
     population: 1000000
-    altitude_m: 150
-    fondation: "-2700"
-    caracteristiques: ["docks de basalte", "mines de charbon rouge", "marché minéral", "quartier des marins"]
-    peuples: ["Thaurgrims (75%)", "Nautes du Draen (20%)", "Divers (5%)"]
+    ambiance: "Ville de marins, de prostitution et de crimes. La suie se mélange aux embruns."
+    activite: "Exportation massive de cendres et d'armes."
 
-  - nom: "Thun'ar"
-    region: "Côtes Géothermiques du Thun'ar"
-    type: "Cité géothermique industrielle"
-    coordonnees: { x: 45, y: 30 }
-    population: 900000
-    altitude_m: 80
-    fondation: "-2600"
-    caracteristiques: ["usines à vapeur", "laboratoires de soufre", "geysers contrôlés", "marché énergétique"]
-    peuples: ["Thaurgrims (60%)", "Nautes du Draen (30%)", "Batraciens Grolka (10%)"]
-
-  - nom: "Drav"
-    region: "Plaines Fertiles du Drav"
-    type: "Cité agricole et minière"
-    coordonnees: { x: 55, y: 50 }
-    population: 800000
-    altitude_m: 450
-    fondation: "-2800"
-    caracteristiques: ["silos à cendre", "mines de cuivre", "marché agricole", "écuries de scorie"]
-    peuples: ["Thaurgrims (70%)", "Derniens (25%)", "Centaures Talren (5%)"]
-
-# RÉSEAU ROUTIER COMPLET - ADAPTÉ AU CONTEXTE VOLCANIQUE
+# RÉSEAU ROUTIER (LOGISTIQUE DE GUERRE)
 routes_principales:
-  - nom: "Voie du Ghaarn"
-    type: "Route sacrée et commerciale"
-    longueur_km: 600
-    statut: "Pavée de basalte, entretenue"
-    points_cles: [
-      { ville: "Vulkar", type: "capitale", coordonnees: {x: 75, y: 70} },
-      { ville: "Drav", type: "cité agricole", coordonnees: {x: 55, y: 50} },
-      { ville: "Thun'ar", type: "cité industrielle", coordonnees: {x: 45, y: 30} }
-    ]
-    trafic: "Élevé (pèlerins, marchandises minérales)"
-    securite: "Haute (patrouilles volcaniques)"
+  - nom: "La Voie du Fer"
+    type: "Route pavée militaire"
+    statut: "Entretenue par des forçats, patrouillée par des milices."
+    danger: "Bandits de grand chemin, éboulements, coulées de lave occasionnelles."
 
-  - nom: "Route des Cendres"
+  - nom: "La Piste des Cendres"
     type: "Route commerciale vers Eldaron"
-    longueur_km: 800
-    statut: "Pavée de scorie, balisage thermique"
-    points_cles: [
-      { ville: "Drav", type: "production cendres", coordonnees: {x: 55, y: 50} },
-      { ville: "Kaar", type: "port d'exportation", coordonnees: {x: 85, y: 40} },
-      { lieu: "Frontière Eldaron", type: "poste frontalier", coordonnees: {x: 90, y: 35} }
-    ]
-    trafic: "Commercial intense (cendres fertilisantes)"
-    securite: "Moyenne (contrôles frontaliers)"
+    statut: "Poussiéreuse, balisée par des crânes sur des piques."
+    trafic: "Convois lourds de chariots blindés."
 
-  - nom: "Chemin des Forêts"
-    type: "Route artisanale et biologique"
-    longueur_km: 450
-    statut: "Sentier forestier, entretenu magiquement"
-    points_cles: [
-      { ville: "Derna", type: "cité forestière", coordonnees: {x: 35, y: 60} },
-      { lieu: "Sanctuaires des Drakens", type: "site sacré", coordonnees: {x: 30, y: 65} },
-      { lieu: "Forêts Minéralisées", type: "zone de récolte", coordonnees: {x: 25, y: 70} }
-    ]
-    trafic: "Artisanal (obsidienne, produits forestiers)"
-    securite: "Bonne (territoire Dernien contrôlé)"
+# INTERACTIONS ET CONFLITS
+relations_internes:
+  - "Les Clans de Vulkar méprisent les agriculteurs de Drav, qu'ils considèrent comme du bétail."
+  - "Derna est en quasi-rébellion, servant de refuge aux esclaves en fuite."
 
-  - nom: "Piste du Soufre"
-    type: "Route industrielle et scientifique"
-    longueur_km: 350
-    statut: "Galeries aménagées, dangereuse"
-    points_cles: [
-      { ville: "Thun'ar", type: "base industrielle", coordonnees: {x: 45, y: 30} },
-      { lieu: "Champs de Soufre", type: "zones d'extraction", coordonnees: {x: 50, y: 25} },
-      { lieu: "Mer d'Ashraal", type: "source majeure", coordonnees: {x: 55, y: 20} }
-    ]
-    trafic: "Industriel (soufre, équipement)"
-    securite: "Dangereuse (fumées toxiques, instabilité)"
+relations_externes:
+  - "Eldaron : Client principal (dépendance alimentaire réciproque), mais ennemi historique."
+  - "Iskarion : Rivalité pour le contrôle des minerais. Escarmouches fréquentes en mer."
 
-  - nom: "Route Maritime du Surn"
-    type: "Voie maritime internationale"
-    longueur_km: 1500
-    statut: "Courants chauds, navigation difficile"
-    points_cles: [
-      { ville: "Kaar", type: "port principal", coordonnees: {x: 85, y: 40} },
-      { lieu: "Golfe de Thun'ar", type: "carrefour maritime", coordonnees: {x: 70, y: 25} },
-      { lieu: "Côtes d'Iskarion", type: "destination", coordonnees: {x: 60, y: 15} }
-    ]
-    trafic: "Commercial (minerais, cendres, soufre)"
-    securite: "Difficile (tempêtes volcaniques, courants)"
-
-# INTERACTIONS INTER-RÉGIONALES
-relations_interregionales:
-  - regions: ["Royaume Volcanique du Vulkar", "Plaines Fertiles du Drav"]
-    type: "Symbiose énergétique"
-    intensite: "Forte"
-    echanges: ["énergie géothermique ↔ cendres fertilisantes", "protection ↔ nourriture"]
-
-  - regions: ["Hauts Plateaux de Derna", "Côtes Géothermiques du Thun'ar"]
-    type: "Complémentarité économique"
-    intensite: "Moyenne"
-    echanges: ["obsidienne ↔ soufre", "produits forestiers ↔ énergie vapeur"]
-
-  - regions: ["Domaine Maritime d'Ashraal", "Toutes régions"]
-    type: "Relation de dépendance"
-    intensite: "Élevée"
-    echanges: ["soufre brut ↔ technologies de purification"]
-
-# DESCRIPTION NARRATIVE SYNTHÈSE COMPLÈTE ET COHÉRENTE
-description_narrative: |
-  Thaurgrim s'étend comme un empire de feu et de pierre, structuré en cinq régions
-  aux spécialisations volcaniques complémentaires. Au nord-est, le Royaume Volcanique 
-  du Vulkar (75,70) domine la spiritualité et l'industrie lourde, connecté par la 
-  Voie du Ghaarn (600 km) qui descend vers Drav (55,50) à 300 km au sud-ouest puis 
-  Thun'ar (45,30) à 400 km au sud.
-
-  Les Plaines Fertiles du Drav forment le grenier continental au centre, où la 
-  Route des Cendres (800 km) relie Drav au port de Kaar (85,40) à 350 km à l'est
-  puis à la frontière eldarienne. À l'ouest, les Hauts Plateaux de Derna rayonnent 
-  depuis Derna (35,60), connectés par le Chemin des Forêts (450 km) qui serpente 
-  vers les sanctuaires des Drakens.
-
-  Au sud, les Côtes Géothermiques du Thun'ar contrôlent la Piste du Soufre (350 km),
-  route industrielle vitale menant aux champs de soufre et à la Mer d'Ashraal.
-  La Route Maritime du Surn (1500 km) connecte Kaar aux côtes iskariennes via le
-  Golfe de Thun'ar.
-
-  Chaque route a sa spécificité : la Voie du Ghaarn pour les pèlerinages et le 
-  commerce sacré, la Route des Cendres pour l'exportation agricole, le Chemin des 
-  Forêts pour l'artisanat, la Piste du Soufre pour l'industrie, et la Route 
-  Maritime pour le commerce international.
-
-  Cet équilibre entre régions sacrées, agricoles, forestières, industrielles et 
-  maritimes fait de Thaurgrim le cœur magmatique de Velkarum, où chaque déplacement 
-  doit composer avec l'activité volcanique et où les voyages entre régions prennent 
-  de 4 à 20 jours selon l'activité sismique et les conditions atmosphériques.
-
-# RELATIONS INTER-CONTINENTALES - COHÉRENCE PLANÉTAIRE
-relations_continentales:
-  connexion_energetique:
-    reseau: "Surn ← Thaurgrim → Vents de Cendre"
-    points_liaison:
-      - { lieu_thaurgrim: "Kaar (85,40)", lieu_eldaron: "Ardel (60,35)", distance: 800 }
-      - { lieu_thaurgrim: "Thun'ar (45,30)", lieu_iskarion: "Asuren (15,35)", distance: 1500 }
-  commerce_principal:
-    exportations_thaurgrim: ["cendres fertilisantes", "soufre natif", "obsidienne noire", "charbon rouge"]
-    importations: ["grains eldariens", "épices varnäles", "bois iskarien", "sel helrunien"]
-  routes_commerciales:
-    - "Route des Cendres : Drav (55,50) ↔ Ardel (60,35) - 800 km"
-    - "Route Maritime du Surn : Kaar (85,40) ↔ Asuren (15,35) - 1500 km"
-    - "Voie du Soufre : Thun'ar (45,30) ↔ Varnäl (50,25) - 1200 km"
-
-# SYSTÈME VOLCANIQUE ACTIF
+# VOLCANS ET DANGERS NATURELS
 volcans_majeurs:
   Ghaarn:
-    coordonnees: { x: 80, y: 75 }
-    altitude: "6920 m"
-    statut: "Actif permanent - Cœur sacré de Thaurgrim"
-    cycle_eruptif: "Permanent avec pics tous les 7 ans"
-    influence: "Régule 40% de l'énergie géothermique continentale"
+    statut: "Dieu-Volcan Actif"
+    danger: "Eruptions fréquentes, pluies de lapilli, gaz toxiques inodores."
+    culte: "On lui sacrifie les prisonniers de guerre pour apaiser sa colère."
 
-  Valdrek:
-    coordonnees: { x: 70, y: 65 }
-    altitude: "6150 m"
-    statut: "Éruptif cyclique - Source majeure de cendres"
-    cycle_eruptif: "12 ans - Prochaine éruption dans 3 ans"
-    importance: "Production de 60% des cendres fertilisantes"
-
-# CYCLE GÉOLOGIQUE PLANÉTAIRE - NOUVELLE SECTION
-cycle_geologique_planetaire:
-  volcanisme_regulateur:
-    fonction: "Recyclage minéral planétaire et régulation pression magmatique"
-    beneficiaires:
-      - "Varnäl: cendres fertilisantes (cycle 3 ans) - 2.5 millions tonnes/an"
-      - "Eldaron: minéraux enrichis (cycle 5 ans) - 1.8 millions tonnes/an"
-      - "Iskarion: gaz géothermaux (cycle continu) - 500 GW/an"
-      - "Helrün: contrôle activité sismique (réduction 40% tremblements)"
-  activite_sismique:
-    impact: "Régulation pression magmatique mondiale et enrichissement sols continentaux"
-    monitoring: "Réseau observatoires coordonnés: Vulkar, Velkar, Zhaïr, Skarnheim, Ygral"
-    alertes: "Système prévision éruptions avec 85% précision (essentiel pour agriculture)"
-
-# SYMBIOSES INDUSTRIELLES - NOUVELLE SECTION
-reseaux_specialises:
-  - nom: "Alliance du Feu et de la Glace"
-    membres: ["Thaurgrim", "Helrün"]
-    objectif: "R&D énergie extrême et régulation climatique"
-    realisations:
-      - "Système refroidissement géothermale pour forges thaurgrimmiennes (+25% efficacité)"
-      - "Stockage énergie solaire iskarienne dans glace noire (rendement 85%)"
-      - "Contrôle éruptions volcaniques par injection glace profonde (réduction 60% dégâts)"
-
-  - nom: "Pacte Fertile"
-    membres: ["Thaurgrim", "Varnäl"]
-    objectif: "Optimisation cendres fertilisantes et production oxygène"
-    resultat: "+40% production oxygène forêt Rhaal grâce aux cendres enrichies"
-    mecanisme: "Cendres thaurgrimmiennes traitées par marais Marael = fertilisant supérieur"
-
-  - nom: "Triangle Industriel"
-    membres: ["Thaurgrim", "Iskarion", "Eldaron"]
-    fonction: "Production industrielle à l'échelle continentale"
-    flux: "Énergie solaire + vapeur géothermale + outils eldariens = production ×3"
-    impact: "Approvisionne 70% des besoins manufacturés de Velkarum"
-
-# INFRASTRUCTURES CRITIQUES - NOUVELLE SECTION
-infrastructures_intercontinentales:
-  - nom: "Complexe Industriel de Thun'ar"
-    type: "Centre de production énergétique et chimique"
-    coordonnees: { x: 45, y: 30 }
-    fonction: "Transformation soufre brut et production vapeur haute pression"
-    capacite: "Traite 80% du soufre continental - Alimente 30% de l'industrie lourde"
-    securite: "Niveau maximum - Protocoles anti-corrosion et confinement"
-
-  - nom: "Observatoire Volcanique du Ghaarn"
-    type: "Centre de surveillance sismique mondial"
-    coordonnees: { x: 80, y: 75 }
-    fonction: "Monitoring activité volcanique globale et prévisions éruptions"
-    importance: "Données vitales pour agriculture, navigation et urbanisme des 5 continents"
-    partenaires: ["Tous les observatoires continentaux"]
-
-  - nom: "Port International de Kaar"
-    type: "Hub commercial continental"
-    coordonnees: { x: 85, y: 40 }
-    fonction: "Exportation cendres fertilisantes et importation matières premières"
-    volume: "3 millions de tonnes/an - 1500 navires"
-    influence: "Approvisionne 45% des besoins agricoles d'Eldaron et Varnäl"
-
-# SYSTÈME D'ALERTE PLANÉTAIRE
-reseau_alerte_volcanique:
-  niveau_1: "Observatoire du Ghaarn - Détection précoce"
-  niveau_2: "Stations régionales - Vulkar, Drav, Thun'ar"
-  niveau_3: "Centres continentaux - Velkar, Zhaïr, Skarnheim, Lorn"
-  protocole: "Évacuation coordonnée et redirection courants aériens"
-  efficacite: "Réduction 75% des impacts des grandes éruptions"
+# INFRASTRUCTURES
+infrastructures:
+  - "Les Grands Soufflets de Vulkar : Actionnés par des centaines d'hommes, ils alimentent les fourneaux."
+  - "Les Canaux de Lave : Tranchées creusées pour diriger le magma vers les forges (extrêmement dangereux)."
 
 # MÉTA-DONNÉES IA
 meta_ia:
   date_creation: "2025-11-05"
-  version: 3.2
-  type_contenu: "continent_volcanique_complet"
-  coherence_verifiee: ["regions", "villes", "routes", "volcans", "coordonnees", "relations_continentales", "cycle_geologique"]
-  points_entree_semantiques: [
-    "recherche_par_ville_volcanique",
-    "recherche_par_route_cendres",
-    "recherche_par_region_thaurgrimmienne",
-    "navigation_volcanique",
-    "calcul_itineraire_conditions_extremes",
-    "commerce_intercontinental_cendres",
-    "surveillance_sismique"
-  ]
-  echelle_voyage: "90_km_par_jour_conditions_normales"
-  conditions_speciales: ["activite_volcanique", "cendres_en_suspension", "seismes_frequents"]
-  unite_coordonnees: "grid_100x100_thaurgrimien"
+  version: 3.2_grim
+  type_contenu: "geographie_dark_medieval"

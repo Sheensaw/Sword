@@ -1,270 +1,61 @@
 # mythes_legendes.yaml
-modele: "hybride_ia_semantique"
-description: "Mythes et légendes fondateurs de Velkarum - Récits ancestraux expliquant les conceptions du monde"
+modele: "low_fantasy_grim"
+description: "Légendes de Velkarum - Histoires de peur, d'avertissement et de monstres"
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# EMBEDDING SOMBRE
 embedding_optimized:
-  themes: ["mythes", "legendes", "fondation", "croyances", "recits_ancestraux", "explications_cosmologiques"]
-  mots_cles: ["creation_velkarum", "premiers_souffles", "guerre_des_elements", "serment_des_ancetres", "lamentation_des_glaces", "colosse_de_ghaarn"]
-  description_semantique: "Système complet des mythes et légendes de Velkarum expliquant les origines, les croyances et les conceptions du monde des différents peuples"
+  themes: ["peur", "monstres", "punition_divine", "malediction", "heros_dechus"]
+  mots_cles: ["le_roi_fou", "la_grande_peste", "les_ombres", "fin_du_monde"]
+  description_semantique: "Les mythes ne sont pas là pour inspirer, mais pour effrayer les enfants et expliquer pourquoi le monde est si dur. Pas de 'happy end'."
 
-# MYTHES DE LA CRÉATION ET ORIGINES
-mythes_fondateurs:
-  - titre: "Les Premiers Souffles de Rhala"
-    peuples_croyants: ["Varnäliens", "Elfes Sylvarin", "Maréens"]
-    origine_geographique: "Forêts Primaires de Rhaal (35,75)"
-    version_courte: "La déesse Rhala respira pour la première fois et son souffle créa l'air, les forêts et toutes les créatures vivantes"
-    recit_complet: |
-      Au commencement, il n'y avait que le silence et l'obscurité. Rhala, endormie dans le néant, fit son premier souffle.
-      De son expiration naquirent les vents et l'air pur. De son inspiration, les premières forêts surgirent, leurs racines 
-      plongeant dans la mémoire du monde. Chaque arbre devint un gardien du savoir, chaque feuille un réceptacle de vie.
-      
-      Mais le souffle de Rhala était trop puissant - il créa aussi les déserts et les terres arides là où il passait trop vite.
-      Alors elle apprit à modérer sa respiration, créant les cycles des saisons et l'équilibre des écosystèmes.
-      
-      Ce mythe explique pourquoi les Varnäliens considèrent la respiration comme sacrée et pourquoi ils protègent 
-      jalousement leurs forêts - ce sont les poumons de Rhala elle-même.
-    influence_actuelle: ["Culte du Souffle", "Respect absolu des forêts", "Médecine par la respiration"]
+# LÉGENDES FONDATRICES (VERSION SOMBRE)
+mythes_origines:
+  - titre: "Le Fratricide Divin"
+    culture: "Eldaron"
+    recit: "Au commencement, deux frères dieux se battirent pour le trône céleste. Leur sang tomba sur terre et créa les hommes, condamnés à se battre éternellement comme leurs créateurs."
+    morale: "La guerre est l'état naturel de l'homme."
 
-  - titre: "La Forge des Étoiles de Ghaarn"
-    peuples_croyants: ["Thaurgrims", "Nains Thaurgriens", "Vulkariens"]
-    origine_geographique: "Royaume Volcanique du Vulkar (75,70)"
-    version_courte: "Le dieu forgeron Ghaarn créa le monde en frappant son enclume cosmique, les étincelles devenant les étoiles et la lave devenant la terre"
-    recit_complet: |
-      Ghaarn, le premier forgeron, travaillait dans le vide infini. Son enclume était un noyau de fer brut, 
-      son marteau fait de comètes solidifiées. Chaque coup faisait jaillir des étincelles qui devinrent les étoiles.
-      
-      Excédé par la perfection du vide, il frappa si fort que l'enclume se fendit, déversant un fleuve de lave 
-      incandescente qui devint la terre. Les éclats de métal devinrent les montagnes, les vapeurs les premiers nuages.
-      
-      Mais la lave refroidissait trop vite. Alors Ghaarn souffla son propre feu dans le cœur du monde, créant 
-      les volcans pour maintenir la vie et la chaleur.
-      
-      Ce mythe fonde la culture thaurgrimmienne du travail du métal et explique pourquoi ils considèrent 
-      le volcanisme comme une bénédiction divine.
-    influence_actuelle: ["Culte du Feu Profond", "Vénération des forgerons", "Acceptation des éruptions comme volonté divine"]
+  - titre: "La Trahison du Feu"
+    culture: "Thaurgrim"
+    recit: "Les hommes volèrent le feu aux profondeurs. En représailles, la terre jura de les brûler et de les étouffer à jamais."
+    morale: "Tout progrès se paie par la souffrance."
 
-  - titre: "Le Premier Miroir de Zhaïr"
-    peuples_croyants: ["Iskari", "Shaari", "Asuriens"]
-    origine_geographique: "Royaume Solaire du Zhaïr (35,75)"
-    version_courte: "Le dieu Zhaïr créa le premier miroir pour capturer un fragment de lumière primordiale, donnant naissance au soleil"
-    recit_complet: |
-      Avant le temps, régnait une lumière aveuglante et chaotique. Zhaïr, esprit de la raison, façonna le premier miroir 
-      à partir de cristaux purs pour dompter cette lumière. Il captura le plus bel éclat et le plaça au centre du ciel.
-      
-      Mais la lumière capturée devint triste et froide. Alors Zhaïr brisa le miroir en mille morceaux, créant les étoiles,
-      et garda le plus grand fragment pour réchauffer la lumière solitaire. C'est ainsi que naquit le soleil.
-      
-      Les éclats tombèrent sur Velkarum, créant les premiers gisements de pierres solaires que les Iskari vénèrent aujourd'hui.
-      
-      Cette légende explique l'obsession iskarienne pour les miroirs et les cristaux, et leur dévotion au soleil.
-    influence_actuelle: ["Foi Solaire du Zhaïr", "Technologie des miroirs", "Valeur spirituelle des pierres solaires"]
+  - titre: "Le Soleil Dévoreur"
+    culture: "Iskarion"
+    recit: "Le Soleil est un œil affamé. S'il ne reçoit pas assez d'offrandes, il se rapprochera jusqu'à tout calciner."
+    morale: "Sacrifie ou brûle."
 
-  - titre: "La Mémoire des Glaces d'Ygral"
-    peuples_croyants: ["Helruniens", "Ermites du Drann", "Nautes du Draen"]
-    origine_geographique: "Sanctuaires des Ermites du Drann (55,75)"
-    version_courte: "L'entité Ygral grava la mémoire du monde dans la première glace éternelle pour préserver le savoir contre l'oubli"
-    recit_complet: |
-      Ygral, être de pure conscience, regardait le monde naissant et vit que tout était éphémère. Les montagnes s'effondraient,
-      les mers changeaient, les êtres naissaient et mouraient sans laisser de traces.
-      
-      Alors elle créa la première glace noire - un cristal si pur qu'il pouvait contenir toute la mémoire du monde.
-      Elle y grava l'histoire des premiers âges, les secrets de la création, et les noms de tout ce qui avait existé.
-      
-      Mais la glace commençait à fondre sous les jeunes soleils. Ygral la transporta alors aux pôles, créant Helrün 
-      comme sanctuaire de la mémoire éternelle.
-      
-      Ce mythe justifie la valeur sacrée de la glace noire et l'importance que les Helruniens accordent à la préservation.
-    influence_actuelle: ["Voiles d'Ygral", "Recherche glaciologique", "Conservation des savoirs"]
+# CRÉATURES FOLKLORIQUES (BESTIAIRE EFFRAYANT)
+creatures:
+  - nom: "Les Goules des Tranchées"
+    description: "Créatures nécrophages qui déterrent les morts des champs de bataille."
+    croyance: "Ce sont les âmes des déserteurs maudits."
 
-# LÉGENDES HISTORIQUES ET HÉROÏQUES
-legendes_heroiques:
-  - titre: "Le Serment des Cinq Couronnes"
-    periode: "Âge de l'Unité (-2800)"
-    peuples_concernes: ["Tous les peuples de Velkarum"]
-    version_courte: "Les cinq premiers souverains s'allièrent après la Guerre des Éléments pour fonder le Conseil des Royaumes"
-    recit_complet: |
-      Après la terrible Guerre des Éléments qui faillit détruire Velkarum, les cinq souverains survivants se rencontrèrent 
-      dans les ruines de ce qui deviendra Lorn. Le Roi Valnar d'Eldaron, la Grande Druidesse Rhala de Varnäl, 
-      le Grand Prêtre Zhaïr d'Iskarion, le Forgemaster Ghaarn de Thaurgrim et la Jarl Ygral d'Helrün.
-      
-      Autour d'un feu fait des dernières braises de la guerre, ils jurèrent sur leurs couronnes respectives de 
-      jamais laisser leurs différences mener à une telle destruction. Ils fondèrent le Conseil des Royaumes et 
-      établirent Lorn comme ville neutre pour leurs réunions.
-      
-      Chaque couronne fut brisée en cinq fragments, chaque souverain gardant un fragment des quatre autres, 
-      symbolisant leur interdépendance éternelle.
-    influence_actuelle: ["Conseil des Royaumes", "Diplomatie intercontinentale", "Ville neutre de Lorn"]
+  - nom: "Le Marcheur de Brume"
+    description: "Entité invisible qui enlève les voyageurs égarés dans les marais de Varnäl."
+    signe: "Un silence soudain dans la jungle."
 
-  - titre: "La Marche des Cendres"
-    periode: "Grande Éruption (-2350)"
-    peuples_concernes: ["Thaurgrims", "Eldariens"]
-    version_courte: "Le Grand Forgemaster Dvalin conduisit son peuple à travers les plaines de cendres pour sauver Eldaron de la famine"
-    recit_complet: |
-      Quand le volcan Valdrek entra en éruption, recouvrant Eldaron de cendres et détruisant les récoltes, 
-      le Grand Forgemaster Dvalin comprit que les cendres qui étouffaient les cultures pouvaient aussi les régénérer.
-      
-      Il organisa la "Marche des Cendres" - des caravanes de Thaurgrims transportant des sacs de cendres 
-      volcaniques enrichies à travers les terres dévastées. Pendant deux ans, ils parcoururent Eldaron, 
-      enseignant aux agriculteurs comment fertiliser leurs terres avec les cendres.
-      
-      Cette marche sauva des millions de vies et établit la relation symbiotique entre Thaurgrim et Eldaron.
-    influence_actuelle: ["Commerce des cendres fertilisantes", "Alliance Thaurgrim-Eldaron", "Techniques agricoles"]
+  - nom: "Les Wendigos (Helrün)"
+    description: "Hommes ayant mangé de la chair humaine, transformés en monstres insatiables."
+    réalité: "Probablement des fous rendus sauvages par la faim."
 
-  - titre: "Le Premier Voyage des Nautes"
-    periode: "Âge de la Découverte (-2600)"
-    peuples_concernes: ["Nautes du Draen", "Helruniens", "Eldariens"]
-    version_courte: "La Navigatrice Anya découvrit le Courant du Fer-Bleu en suivant les rêves prophétiques des Ermites du Drann"
-    recit_complet: |
-      Les Ermites du Drann eurent des visions répétées d'un courant chaud dans l'océan polaire, capable de 
-      rendre la navigation possible même en hiver. La Navigatrice Anya, contre l'avis de tous, équipa un 
-      unique navire et partit vers le nord.
-      
-      Pendant quarante jours, elle lutta contre les glaces et les tempêtes. Au bord du désespoir, elle 
-      découvrit le Courant du Fer-Bleu - un fleuve sous-marin d'eau tiède qui fondait la glace autour de lui.
-      
-      En le suivant, elle atteignit Helrün et établit la première route commerciale permanente avec le continent polaire.
-    influence_actuelle: ["Route du Fer-Bleu", "Commerce intercontinental", "Statut des Nautes"]
+# LÉGENDES HISTORIQUES (RÉALITÉ DÉFORMÉE)
+histoire_orale:
+  - titre: "La Peste Noire d'Ardel"
+    recit: "Une maladie envoyée par les dieux pour punir la cupidité des marchands. Elle tua la moitié du continent en un an."
+    héritage: "Peur panique des rats et des étrangers malades."
 
-  - titre: "La Nuit des Miroirs Brisés"
-    periode: "Grande Schisme (-1950)"
-    peuples_concernes: ["Iskari", "Shaari"]
-    version_courte: "La révolte des scientifiques de Shaar-Keth contre le dogmatisme des prêtres de Zhaïr"
-    recit_complet: |
-      Les prêtres de Zhaïr interdisaient toute recherche sur l'énergie géothermique, considérant que seul 
-      le soleil méritait d'être vénéré. Les scientifiques de Shaar-Keth, menés par le Docteur Kaelen, 
-      continuèrent secrètement leurs recherches.
-      
-      Découverts, ils furent condamnés pour hérésie. La nuit du jugement, Kaelen brisa symboliquement 
-      un miroir solaire devant le temple, déclarant : "La vérité a plusieurs facettes, comme ces éclats."
-      
-      Cet acte de défiance mena à la reconnaissance officielle de la recherche géothermique et à la 
-      création des Territoires du Rift Shaar comme région autonome.
-    influence_actuelle: ["Recherche géothermique", "Autonomie scientifique", "Diversité énergétique"]
+  - titre: "Le Roi Fou Valdemar"
+    recit: "Un roi qui emmurait ses femmes vivantes et parlait aux corbeaux. Il fut assassiné par sa propre garde."
+    héritage: "Méfiance envers l'autorité royale absolue."
 
-# MYTHES EXPLICATIVES DES PHÉNOMÈNES NATURELS
-mythes_naturels:
-  - titre: "Pourquoi les Volcans Crachent de la Fumée"
-    phenomene_explique: "Activité volcanique"
-    peuples_croyants: ["Thaurgrims", "Nains Thaurgriens"]
-    recit: |
-      Ghaarn, dans sa forge souterraine, travaille sans relâche à perfectionner le monde. La fumée des volcans 
-      est la vapeur de son haleine, les tremblements de terre sont les coups de son marteau, et la lave 
-      est le métal en fusion qu'il façonne pour améliorer la terre.
-      
-      Quand un volcan entre en éruption, c'est que Ghaarn est particulièrement inspiré et travaille 
-      sur une création importante. Les Thaurgrims interprètent les différents types d'éruptions comme 
-      des signes de ce que forge leur dieu.
-    influence_culturelle: "Acceptation et vénération de l'activité volcanique"
-
-  - titre: "La Lamentation des Glaces"
-    phenomene_explique: "Craquement des glaciers"
-    peuples_croyants: ["Helruniens", "Ermites du Drann"]
-    recit: |
-      Les glaciers ne fondent pas, ils pleurent. Chaque craquement est un sanglot pour une mémoire perdue, 
-      chaque iceberg qui se détache est une larme gelée contenant des fragments d'histoire.
-      
-      Les Helruniens croient que quand on entend un glacier craquer, il faut se taire et écouter, 
-      car on peut parfois entendre des échos du passé dans ces lamentations.
-      
-      Ce mythe explique leur approche respectueuse de la glace et leur conviction qu'elle contient de la mémoire.
-    influence_culturelle: "Respect sacré pour la glace et silence contemplatif près des glaciers"
-
-  - titre: "Le Chuchotement des Forêts"
-    phenomene_explique: "Bruit du vent dans les arbres"
-    peuples_croyants: ["Varnäliens", "Elfes Sylvarin"]
-    recit: |
-      Rhala n'a pas disparu après la création - elle vit dans chaque arbre, et son souffle continue 
-      de passer à travers les forêts. Le bruissement des feuilles est sa voix, qui chuchote des 
-      conseils et des avertissements à ceux qui savent écouter.
-      
-      Les Varnäliens apprennent dès l'enfance à distinguer les différents "chuchotements" - 
-      certains annoncent le mauvais temps, d'autres signalent des dangers, d'autres encore 
-      racontent des histoires anciennes.
-    influence_culturelle: "Écoute attentive des sons de la nature et croyance en sa sagesse"
-
-  - titre: "La Colère et la Clémence du Soleil"
-    phenomene_explique: "Cycles solaires et saisons"
-    peuples_croyants: ["Iskari", "Asuriens"]
-    recit: |
-      Zhaïr est un dieu d'humeur changeante. Quand il est content, il offre des jours longs et chauds 
-      pour faire mûrir les récoltes et charger les pierres solaires. Quand il est en colère, il se cache 
-      derrière les nuages ou réduit sa présence, créant l'hiver.
-      
-      Les cérémonies iskariennes sont conçues pour apaiser Zhaïr et le garder bien disposé. 
-      Ils croient que leur dévotion influence directement la clémence du soleil.
-    influence_culturelle: "Rituels solaires réguliers et interprétation météorologique comme humeur divine"
-
-# LÉGENDES PROPHÉTIQUES ET AVENIR
-propheties:
-  - titre: "La Prophétie de l'Équilibre Rompu"
-    origine: "Vision collective des Ermites du Drann"
-    statut: "Inquiétante mais incertaine"
-    recit: |
-      "Quand le souffle de Rhala s'affaiblira et que le feu de Ghaarn rugira sans contrôle,
-      quand la mémoire d'Ygral fondra et que les miroirs de Zhaïr s'obscurciront,
-      alors les cinq couronnes devront s'unir à nouveau ou le monde retombera dans le chaos primordial."
-      
-      Cette prophétie est interprétée comme un avertissement contre les déséquilibres écologiques 
-      et énergétiques croissants entre les continents.
-    influence_actuelle: "Renforce les efforts de coopération intercontinentale"
-
-  - titre: "Le Rêve du Dernier Navigateur"
-    origine: "Anya, première des Nautes du Draen"
-    statut: "Symbolique"
-    recit: |
-      Sur son lit de mort, Anya rêva d'un monde où les courants s'arrêteraient et les mers deviendraient 
-      immobiles. Dans ce rêve, un seul navire pouvait encore naviguer - celui qui porterait toutes 
-      les voiles des cinq continents cousues ensemble.
-      
-      Cette légende est citée pour encourager la coopération maritime et le partage des connaissances 
-      nautiques entre tous les peuples.
-    influence_actuelle: "Échange des techniques de navigation entre Nautes et autres marins"
-
-  - titre: "La Dernière Forge"
-    origine: "Chant traditionnel thaurgrimmien"
-    statut: "Apocalyptique mais lointaine"
-    recit: |
-      "Quand Ghaarn posera son marteau pour la dernière fois et que les forges s'éteindront,
-      le monde retombera dans le froid et l'obscurité. Mais de la dernière étincelle,
-      un nouveau feu pourra renaître, plus pur et plus fort."
-      
-      Cette légende exprime à la fois la crainte de l'épuisement des ressources volcaniques 
-      et l'espoir en une renaissance future.
-    influence_actuelle: "Recherche de sources d'énergie alternatives et durables"
-
-# CRYPTOZOOLOGIE ET CRÉATURES LÉGENDAIRES
-creatures_legendaires:
-  - nom: "Les Gardiens de Rhaal"
-    type: "Esprits forestiers"
-    description: "Entités faites de bois vivant et de brume qui protègent les forêts anciennes"
-    croyance: "Les Varnäliens croient qu'ils punissent ceux qui abattent les arbres sans respect"
-    observations: "Aucune observation confirmée, mais de nombreux récits de disparitions mystérieuses"
-
-  - nom: "Les Dragons de Cendre"
-    type: "Êtres volcaniques"
-    description: "Créatures faites de lave et de fumée qui vivraient dans les chambres magmatiques"
-    croyance: "Les Thaurgrims les considèrent comme les enfants de Ghaarn"
-    observations: "Formations rocheuses interprétées comme leurs restes fossilisés"
-
-  - nom: "Les Murmures des Glaces"
-    type: "Esprits polaires"
-    description: "Entités invisibles qui habiteraient les profondeurs glaciaires"
-    croyance: "Les Helruniens pensent qu'ils chuchotent les secrets du passé à ceux qui écoutent"
-    observations: "Phénomènes acoustiques inexpliqués dans les grottes de glace"
+# PROPHÉTIES (FIN DU MONDE)
+eschatologie:
+  - "L'Hiver Éternel : Un jour, le soleil s'éteindra et le froid d'Helrün recouvrira tout Velkarum."
+  - "Le Réveil du Grand Ver : Un monstre sous terre qui fera s'effondrer les continents."
 
 # MÉTA-DONNÉES IA
 meta_ia:
   date_creation: "2025-11-05"
-  version: 1.0
-  type_contenu: "mythes_legendes_complet_velkarum"
-  coherence_verifiee: ["mythes_fondateurs", "legendes_historiques", "explications_naturelles", "propheties", "creatures"]
-  points_entree_semantiques: [
-    "recherche_par_mythe_fondateur",
-    "recherche_par_legende_heroique",
-    "recherche_par_explication_naturelle",
-    "recherche_par_prophetie",
-    "recherche_par_creature_legendaire",
-    "croyances_peuples",
-    "influences_culturelles"
-  ]
+  version: 1.0_grim
+  type_contenu: "folklore_horreur"

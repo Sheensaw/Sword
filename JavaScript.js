@@ -1,8 +1,12 @@
 (function() {
   'use strict';
 
-  //#region Initialisation
+  /* =========================================================================
+     1. INITIALISATION & CONFIGURATION
+     ========================================================================= */
   window.setup = window.setup || {};
+
+  // Configuration des Icônes (Source de vérité)
   const ICONS = {
     health: 'images/icons/health.png',
     strength: 'images/icons/strength.png',
@@ -14,22 +18,17 @@
     speak: 'images/icons/speak.png',
     quest: 'images/icons/quest.png',
     buddy: 'images/icons/buddy.png',
-    map: 'images/icons/map.png' // AJOUT DE L'ICÔNE DE CARTE
+    map: 'images/icons/map.png',
+    misc: 'images/icons/key.png' // Fallback
   };
   window.ICONS = ICONS;
 
-  // État du chargement PNJ
-  window.setup.pnjState = {
-    ready: false,
-    loading: false,
-    attempted: false,
-    fallbackCache: {}
-  };
-
+  // Helper pour accéder aux variables SugarCube
   function V() {
     return State.variables;
   }
 
+  // Initialisation des stats de base (Sécurité anti-undefined)
   window.setup.ensureBaseStats = function() {
     const v = V();
     v.strength = Number(v.strength || 0);
@@ -42,6 +41,12 @@
     v.expToNextLevel = Number(v.expToNextLevel || 100);
     v.current_player_health = Number(v.current_player_health || 10);
     v.max_player_health = Number(v.max_player_health || 10);
+
+    // Initialisation structures
+    v.inventory = v.inventory || [];
+    v.equipped = v.equipped || {};
+    v.npcs = v.npcs || {};
+    v.quests = v.quests || [];
   };
   //#endregion
 
@@ -1505,10 +1510,36 @@
   window.setup.MS_PER_KM = 200; // 200ms de temps réel = 1 km parcouru (Ajustez pour accélérer/ralentir le jeu)
   window.setup.REST_DURATION = 30000; // 10 secondes de pause par auberge/relais
 
+  // MULTIPLICATEURS DE VITESSE PAR TYPE DE ROUTE
+  // Plus le facteur est élevé, plus le trajet est RAPIDE (divise le temps)
+  window.setup.TRAVEL_SPEEDS = {
+      'road': 1.0,          // Marche
+      'path': 0.8,          // Sentier (plus lent)
+      'forest_path': 0.8,
+      'mountain_path': 0.7,
+      'swamp_path': 0.6,
+      'badlands': 0.6,
+      'desert_path': 0.7,
+      'wild_path': 0.6,
+      'tunnel': 0.8,
+
+      // Véhicules & Montures (Plus rapides)
+      'carriage': 2.5,      // Diligence / Chariot (x2.5 vitesse)
+      'boat': 2.0,          // Bateau fluvial
+      'sea': 3.0,           // Navire haute mer
+      'sled': 3.5,          // Traîneau sur glace (très rapide)
+      'sand_skiff': 4.0,    // Char à voile (très rapide)
+      'beetle': 2.0,        // Scarabée géant (Varnäl)
+      'cable_car': 2.0,     // Téléphérique
+      'air': 8.0,           // Dirigeable / Vol (Ultra rapide)
+      'ice_road': 1.2       // Route glacée (marche difficile)
+  };
+
   // Exemple : 300km = 60 secondes d'attente réelle avec ce réglage.
 
   // Cache pour le graphe de navigation
   window.setup.navGraph = null;
+
 
   // -------------------------------------------------------------------------
   // 1. CONSTRUCTION DU GRAPHE DE NAVIGATION
@@ -1540,6 +1571,9 @@
         const dy = n1.y - n2.y;
         dist = Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
       }
+
+      // Utiliser le cost_multiplier du JSON pour le pathfinding (Dijkstra)
+      // Si cost_multiplier < 1 (ex: 0.5 pour carriage), le chemin sera privilégié
       const cost = dist * (route.cost_multiplier || 1.0);
 
       // Connexions bidirectionnelles
@@ -1644,7 +1678,7 @@
         startCoords: pathResult.path[0],
         endCoords: pathResult.path[1],
         dist: pathResult.totalDistance,
-        duration: window.setup.calculateTravelTime(pathResult.totalDistance),
+        duration: window.setup.calculateTravelTime(pathResult.totalDistance, 1.0), // Vitesse marche par défaut
         locationName: "Terres Sauvages"
       }];
     }
@@ -1667,6 +1701,11 @@
       const dist = nextNode.segmentDist;
 
       // --- A. ÉTAPE DE VOYAGE (De A vers B) ---
+
+      // Détermination de la vitesse et du type de route
+      const rType = routeInfo ? routeInfo.type : 'road';
+      const speedMult = window.setup.TRAVEL_SPEEDS[rType] || 1.0;
+
       const travelStep = {
         type: 'travel',
         startCoords: {
@@ -1678,8 +1717,9 @@
           y: nextNode.coords.y
         },
         dist: dist,
-        duration: window.setup.calculateTravelTime(dist),
-        routeType: routeInfo ? routeInfo.type : 'road',
+        // Calcul du temps basé sur le type de route (Plus speedMult est haut, plus duration est court)
+        duration: window.setup.calculateTravelTime(dist, speedMult),
+        routeType: rType,
         routeName: routeInfo ? routeInfo.name : 'Piste inconnue',
         targetName: nextNode.coords.name || nextNode.nodeId,
         locationName: "En route"
@@ -1692,15 +1732,26 @@
       if (Math.abs(dy) > Math.abs(dx)) dir = dy > 0 ? "le Sud" : "le Nord";
       else dir = dx > 0 ? "l'Est" : "l'Ouest";
 
-      // Verbe narratif selon le terrain
+      // Verbe narratif selon le terrain et le moyen de transport
       let verb = "Marche vers";
-      if (['sea', 'river'].includes(travelStep.routeType)) verb = "Navigue vers";
-      if (['air'].includes(travelStep.routeType)) verb = "Vole vers";
-      if (['mountain_path'].includes(travelStep.routeType)) verb = "Grimpe vers";
-      if (['tunnel'].includes(travelStep.routeType)) verb = "S'enfonce vers";
-      if (['ice_road'].includes(travelStep.routeType)) verb = "Glisse vers";
 
-      travelStep.desc = `${verb} ${dir} via ${travelStep.routeName}`;
+      // Vocabulaire spécifique selon le type de route
+      if (['sea', 'boat'].includes(rType)) verb = "Navigue vers";
+      if (['air'].includes(rType)) verb = "Vole vers";
+      if (['mountain_path'].includes(rType)) verb = "Grimpe vers";
+      if (['tunnel'].includes(rType)) verb = "S'enfonce vers";
+      if (['ice_road', 'sled'].includes(rType)) verb = "Glisse vers";
+      if (['sand_skiff'].includes(rType)) verb = "File vers";
+      if (['carriage'].includes(rType)) verb = "Roule vers";
+      if (['beetle'].includes(rType)) verb = "Chevauche vers";
+
+      // Si c'est une route rapide et qu'on quitte une station, c'est plus immersif
+      if (routeInfo && routeInfo.name) {
+          travelStep.desc = `${verb} ${dir} via ${travelStep.routeName}`;
+      } else {
+          travelStep.desc = `${verb} ${dir}`;
+      }
+
       steps.push(travelStep);
 
       // --- B. ÉTAPE DE REPOS (Arrivé à B) ---
@@ -1717,6 +1768,7 @@
         if (['Bivouac', 'Refuge'].includes(nodeType)) restVerb = "Monte le camp";
         if (['Ville', 'Capitale', 'Village'].includes(nodeType)) restVerb = "Fait une halte";
         if (nodeType === 'Sanctuaire') restVerb = "Prie";
+        if (nodeType === 'Station') restVerb = "Change de monture";
         if (nodeType === 'Caravanserail') restVerb = "Ravitaille";
 
         steps.push({
@@ -1883,6 +1935,13 @@
 
     Object.keys(graph).forEach(key => {
       const node = graph[key].data;
+      // IMPORTANT : Vérifier que le nœud est sur le même continent que la coordonnée cible
+      // Sinon le pathfinding essaiera de connecter des points impossibles
+      // (Bien que le pathfinding de graphe gère les connexions, la recherche du nœud le plus proche doit être pertinente)
+
+      // On compare aussi le continent si disponible dans les coords
+      // if (startCoords.continent && node.continent && startCoords.continent !== node.continent) return;
+
       const dStart = Math.sqrt(Math.pow(node.x - startCoords.x, 2) + Math.pow(node.y - startCoords.y, 2));
       if (dStart < minStartDist) {
         minStartDist = dStart;
@@ -1920,9 +1979,13 @@
     };
   };
 
-  window.setup.calculateTravelTime = function(distanceKm) {
+  window.setup.calculateTravelTime = function(distanceKm, speedMultiplier = 1.0) {
     // Minimum 2 secondes pour éviter les glitches sur courtes distances
-    return Math.floor(Math.max(2000, distanceKm * window.setup.MS_PER_KM));
+    // Le temps est divisé par le multiplicateur de vitesse
+    const baseTime = distanceKm * window.setup.MS_PER_KM;
+    const finalTime = baseTime / speedMultiplier;
+
+    return Math.floor(Math.max(2000, finalTime));
   };
 
   window.setup.completePNJTravel = function(pnjId) {
@@ -2119,8 +2182,6 @@
     console.log("📍 Coordonnées passage actuel:", v.passageCoords?.[State.passage]);
     console.groupEnd();
   };
-
-  // À appeler dans la console : setup.debugPNJTravel()
 
   // À appeler dans la console : setup.debugPNJTravel()
 
@@ -2674,16 +2735,10 @@
      FONCTION UNIFIÉE — CONSTRUCTION MODALE STANDARD
      ========================================================================= */
   window.setup.buildModalHTML = function(options) {
-    const {
-      title,
-      icon = ICONS.misc,
-      content,
-      footer = '',
-      className = ''
-    } = options;
-
+    const { title, icon, content, footer = '', className = '' } = options;
     const safeTitle = window.setup.escapeHtml(title || '');
-    const iconHTML = icon ? `<img class="icon-1em" src="${icon}" alt="">` : '';
+    // Gestion de l'icône : on s'assure qu'elle existe avant de créer la balise img
+    const iconHTML = icon ? `<img class="icon-1em" src="${icon}" alt="" onerror="this.style.display='none'">` : '';
 
     return `
         <div class="modal-content border-medieval ${className}">
@@ -2694,143 +2749,104 @@
             <div class="modal-body">
                 ${content}
             </div>
-            ${footer ? `
-            <div class="modal-footer">
-                ${footer}
-            </div>
-            ` : ''}
+            ${footer ? `<div class="modal-footer">${footer}</div>` : ''}
         </div>
     `;
   };
+
 
   /* =========================================================================
      FONCTION UNIFIÉE — CONSTRUCTION MODALE ITEM (SANS EN-TÊTE INTERNE)
      ========================================================================= */
   window.setup.buildItemModalHTML = function(item) {
-    const safeLabel = window.setup.escapeHtml(item.label || '');
     const safeDesc = window.setup.escapeHtml(item.description || '');
 
-    /* ---------- Icône ---------- */
-    const ICON_MAP = {
-      usable: 'Images/icons/usable.png',
-      health: 'Images/icons/heal.png',
-      food: 'Images/icons/food.png',
-      weapon: 'Images/icons/weapon.png',
-      shield: 'Images/icons/shield.png',
-      head: 'Images/icons/head.png',
-      torso: 'Images/icons/torso.png',
-      arms: 'Images/icons/arms.png',
-      legs: 'Images/icons/legs.png',
-      feet: 'Images/icons/feet.png',
-      material: 'Images/icons/material.png',
-      key: 'Images/icons/key.png',
-      misc: 'Images/icons/key.png'
-    };
-    const iconSrc = ICON_MAP[item.type] || 'Images/icons/key.png';
-
-    /* ---------- Caractéristiques (encarts) ---------- */
+    /* ---------- Caractéristiques (encarts bonus/tags) ---------- */
     let encartsHTML = '';
     if (typeof window.setup.renderItemEncarts === 'function') {
       encartsHTML = window.setup.renderItemEncarts(item) || '';
     }
     const hasEncarts = encartsHTML.trim().length > 0;
 
-    /* ---------- Effets (armes) ---------- */
+    /* ---------- Effets Spéciaux (Armes/Magie) ---------- */
     let effectsHTML = '';
-    if (item.type === 'weapon' && Array.isArray(item.effects) && item.effects.length > 0) {
+    if (item.effects && Array.isArray(item.effects) && item.effects.length > 0) {
       effectsHTML =
-        '<ul>' +
+        '<ul style="margin-top:0.5em; padding-left:1.2em; color:#aaa; font-style:italic;">' +
         item.effects.map(e => `<li>${window.setup.escapeHtml(e)}</li>`).join('') +
         '</ul>';
     }
 
-    /* ---------- Requirements (niveaux requis) ---------- */
+    /* ---------- Requirements (Pré-requis) ---------- */
     let requirementsHTML = '';
     if (item.requirements && typeof item.requirements === 'object') {
       const req = item.requirements;
       const requirementsLines = [];
-      if (req.levelMin) {
-        requirementsLines.push(`<div class="requirement-line">
-                        <span class="requirement-label">Niveau</span>
-                        <span class="requirement-value">${req.levelMin}</span>
-                    </div>`);
-      }
-      if (req.forceMin) {
-        requirementsLines.push(`<div class="requirement-line">
-                        <span class="requirement-label">Force</span>
-                        <span class="requirement-value">${req.forceMin}</span>
-                    </div>`);
-      }
-      if (req.dexMin) {
-        requirementsLines.push(`<div class="requirement-line">
-                        <span class="requirement-label">Dextérité</span>
-                        <span class="requirement-value">${req.dexMin}</span>
-                    </div>`);
-      }
+
+      // Fonction helper pour formater une ligne de pré-requis
+      const addReq = (label, val) => {
+          requirementsLines.push(`
+            <div style="display:flex; justify-content:space-between; font-size:0.9em; color:#ccc; border-bottom:1px dashed rgba(255,255,255,0.1); padding:2px 0;">
+                <span>${label}</span>
+                <span style="font-weight:bold; color:#fff;">${val}</span>
+            </div>
+          `);
+      };
+
+      if (req.levelMin) addReq("Niveau requis", req.levelMin);
+      if (req.forceMin) addReq("Force requise", req.forceMin);
+      if (req.dexMin)   addReq("Dextérité requise", req.dexMin);
+
       if (requirementsLines.length > 0) {
         requirementsHTML = `
-                        <div class="item-stats-divider"></div>
-                        <div>
-                            <div class="weapon-section-title">Niveaux requis :</div>
-                            <div class="requirements-container">
-                                ${requirementsLines.join('')}
-                            </div>
-                        </div>
-                    `;
+            <div class="item-stats-divider" style="margin:1em 0; border-top:1px solid rgba(255,255,255,0.2);"></div>
+            <div style="background:rgba(0,0,0,0.2); padding:0.5em; border-radius:4px;">
+                <div style="color:#f2d675; font-weight:bold; font-size:0.9em; margin-bottom:0.3em; text-transform:uppercase;">Pré-requis</div>
+                ${requirementsLines.join('')}
+            </div>
+        `;
       }
     }
 
     /* =========================================================
-       HTML FINAL — SANS EN-TÊTE INTERNE
+       ASSEMBLAGE DU CORPS DE L'OBJET
        ========================================================= */
     return `
-                <p>${safeDesc}</p>
-        
-                <div class="item-stats-divider"></div>
-        
-                <div>
-                    <div class="weapon-section-title">Caractéristiques :</div>
-                    ${
-                        hasEncarts
-                            ? encartsHTML
-                            : '<em style="opacity:0.75;">Aucune</em>'
-                    }
-                </div>
-        
-                ${requirementsHTML}
-        
-                ${
-                    effectsHTML
-                        ? `
-                        <div style="margin-top:0.9em;">
-                            <div class="weapon-section-title">Effets :</div>
-                            ${effectsHTML}
-                        </div>
-                        `
-                        : ''
-                }
-        
-                <div class="item-stats-divider"></div>
-            `;
+        <div style="font-style:italic; color:#ddd; margin-bottom:1em; line-height:1.4;">
+            ${safeDesc || "<em style='opacity:0.5'>Aucune description.</em>"}
+        </div>
+
+        ${hasEncarts ? 
+          `<div style="margin-bottom:0.5em;">${encartsHTML}</div>` : 
+          ''
+        }
+
+        ${requirementsHTML}
+
+        ${effectsHTML ? 
+          `<div class="item-stats-divider" style="margin:1em 0; border-top:1px solid rgba(255,255,255,0.2);"></div>
+           <div style="color:#f2d675; font-weight:bold; font-size:0.9em; text-transform:uppercase;">Effets</div>
+           ${effectsHTML}` 
+          : ''
+        }
+    `;
   };
 
   /* =========================================================================
      MODALE OBJET/ARME — utilise buildModalHTML() avec titre et icône corrects
      ========================================================================= */
   window.setup.showItemModal = function(item) {
-    // Sécurité
     if (!item) return;
 
-    // Supprimer l'ancienne modale si elle existe
+    // Nettoyage
     $('#item-modal, #modal-overlay-item').remove();
 
-    // Overlay
+    // Overlay & Conteneur
     const $overlay = $('<div id="modal-overlay-item"></div>').appendTo('body');
+    // Note: opacity:1 important pour contrer d'éventuelles animations CSS lentes
+    const $modal = $('<div id="item-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
 
-    // Conteneur principal
-    const $modal = $('<div id="item-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
-
-    // Déterminer l'icône selon le type d'item
+    // Choix de l'icône
     const ICON_MAP = {
       usable: 'Images/icons/usable.png',
       health: 'Images/icons/heal.png',
@@ -2846,39 +2862,34 @@
       key: 'Images/icons/key.png',
       misc: 'Images/icons/key.png'
     };
-    const iconSrc = ICON_MAP[item.type] || 'Images/icons/key.png';
+    // Fallback sur misc si type inconnu
+    const iconSrc = ICON_MAP[item.type] || ICON_MAP['misc'];
 
-    // Construction du contenu via buildItemModalHTML() (sans en-tête)
+    // Génération du contenu
     const innerHTML = window.setup.buildItemModalHTML(item);
 
+    // Construction finale via le builder standard
     const modalContent = window.setup.buildModalHTML({
       title: item.label || 'Objet',
-      icon: iconSrc, // Utiliser l'icône spécifique à l'item
+      icon: iconSrc,
       content: innerHTML,
       footer: '<button type="button" class="modal-close">Fermer</button>',
       className: 'item-modal'
     });
 
     $modal.append(modalContent);
-
-    // Activation mode modale
     $('body').addClass('modal-open');
+    $modal.addClass('visible'); // Pour les animations CSS si présentes
 
-    // Fermeture
-    $modal.find('.modal-close').on('click', () => {
-      $modal.remove();
-      $overlay.remove();
-      $('body').removeClass('modal-open');
-    });
-
-    // Clic hors modale → fermer
-    $(document).one('mousedown.itemmodal', function(e) {
-      if (!$(e.target).closest('#item-modal').length) {
+    // Gestion fermeture
+    const close = () => {
         $modal.remove();
         $overlay.remove();
         $('body').removeClass('modal-open');
-      }
-    });
+    };
+
+    $modal.find('.modal-close').on('click', close);
+    $overlay.on('click', close); // Clic sur le fond gris ferme aussi
   };
 
   /* ==========================================================
@@ -2887,194 +2898,179 @@
   window.setup.showPnjModal = function(pnjId) {
     console.log(`🖼️ [showPnjModal] Ouverture modale pour: "${pnjId}"`);
 
-    // Nettoyage préalable
+    // Nettoyage préalable de toute modale existante
     $('#pnj-modal, #modal-overlay-pnj').remove();
 
-    // Création overlay
+    // Création overlay et conteneur
     const $overlay = $('<div id="modal-overlay-pnj"></div>').appendTo('body');
-    const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
+    const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
 
-    const v = V();
+    // Récupération des données dynamiques (Santé, Inventaire réel)
     const npc = npcEnsure(pnjId);
 
-    // Fonction de traitement
-    const processPnjModal = (pnjReady) => {
-      // CHARGEMENT CORRIGÉ : utiliser la nouvelle fonction sécurisée
+    // Fonction de traitement principale
+    const processPnjModal = () => {
+      // 1. RÉCUPERATION DES DONNÉES DE LORE (JSON statique)
       const pnjData = window.setup.getPnjData(pnjId);
       const identite = pnjData.identite;
 
-      console.log("📦 [showPnjModal] Données PNJ chargées:", pnjData);
-
-      // EXTRACTION SÉCURISÉE selon VOTRE JSON
-      const displayName = identite.nom_complet || identite.nom || pnjId;
+      // Extraction sécurisée des textes
+      const displayName = identite.nom_complet || identite.nom || npc.name || pnjId;
       const safeName = window.setup.escapeHtml(displayName);
+      const race = identite.peuple || "Inconnu";
+      const metier = identite.metier_principal || "Voyageur";
+      const safeDescription = window.setup.escapeHtml(pnjData.description || "Aucune description disponible.");
 
-      // EXTRACTION RACE/METIER selon VOTRE JSON (peuple et metier_principal)
-      const race = identite.peuple || null;
-      const metier = identite.metier_principal || null;
-
-      // Construction de la ligne race/métier
-      let raceJobHTML = '';
-      if (race && metier) {
-        raceJobHTML = `<div class="pnj-race-job">${race} - ${metier}</div>`;
-      } else if (race) {
-        raceJobHTML = `<div class="pnj-race-job">${race}</div>`;
-      } else if (metier) {
-        raceJobHTML = `<div class="pnj-race-job">${metier}</div>`;
-      }
-
-      // DESCRIPTION selon VOTRE JSON
-      const safeDescription = window.setup.escapeHtml(pnjData.description);
-
-      // Récupération des stats du PNJ
+      // 2. DONNÉES DYNAMIQUES (Stats actuelles)
       const strength = npc.stats?.strength || 0;
       const dexterity = npc.stats?.dexterity || 0;
       const resistance = npc.stats?.resistance || 0;
       const level = npc.stats?.level || 1;
+      const currentHP = npc.health || 0;
+      const maxHP = npc.maxHealth || 20;
 
-      // Construction de l'inventaire du PNJ
-      let inventoryHTML = '';
-      const inventory = npc.inventory || {};
-      const hasItems = Object.keys(inventory).length > 0;
+      // 3. CORPS HTML : Sous-titre (Rôle/Race)
+      const subHeaderHTML = `
+        <div style="text-align:center; margin-bottom:1.2em; padding-bottom:0.8em; border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:0.95em; color:#f2d675; font-style:italic; letter-spacing:0.5px;">
+                ${window.setup.escapeHtml(race)} &bull; ${window.setup.escapeHtml(metier)}
+            </div>
+            <div style="font-size:0.8em; color:#888; margin-top:0.2em;">
+                Niveau ${level}
+            </div>
+        </div>
+      `;
 
-      if (hasItems) {
-        inventoryHTML = `
-                        <div class="pnj-inventory-section">
-                            <div class="weapon-section-title">Inventaire :</div>
-                            <div class="pnj-inventory-grid">
-                    `;
+      // 4. CORPS HTML : Description
+      const descHTML = `
+        <div style="background:rgba(255,255,255,0.03); padding:0.8em; border-radius:4px; margin-bottom:1.2em; font-size:0.9em; line-height:1.5; font-style:italic; color:#ccc; border-left:3px solid rgba(255,255,255,0.2);">
+            ${safeDescription}
+        </div>
+      `;
 
-        Object.entries(inventory).forEach(([itemId, quantity]) => {
-          const itemData = window.setup.getItemFromCache(itemId);
-          if (itemData) {
-            const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
-            const itemType = window.setup.escapeHtml(itemData.type || 'misc');
-            const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(itemData) : '';
+      // 5. CORPS HTML : Stats Grid
+      const statsHTML = `
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5em; margin-bottom:1.5em; text-align:center;">
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="${window.ICONS.health}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
+                <span style="font-weight:bold; color:#ff8888; font-size:0.9em;">${currentHP}/${maxHP}</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="${window.ICONS.strength}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
+                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${strength}</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="images/icons/dexterity.png" style="height:1.4em; display:block; margin:0 auto 0.3em;" onerror="this.style.display='none'">
+                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${dexterity}</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
+                <img src="${window.ICONS.defense}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
+                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${resistance}</span>
+            </div>
+        </div>
+      `;
 
-            inventoryHTML += `
-                                <div class="pnj-inventory-item" data-id="${itemId}">
-                                    <div class="pnj-item-header">
-                                        <strong>${itemLabel}</strong>
-                                        <span class="pnj-item-qty">x${quantity}</span>
-                                    </div>
-                                    <div class="pnj-item-type">${itemType}</div>
-                                    ${encartsHTML}
-                                </div>
-                            `;
-          } else {
-            // Fallback pour les items non trouvés
-            inventoryHTML += `
-                                <div class="pnj-inventory-item">
-                                    <div class="pnj-item-header">
-                                        <strong>${itemId}</strong>
-                                        <span class="pnj-item-qty">x${quantity}</span>
-                                    </div>
-                                    <div class="pnj-item-type">Objet inconnu</div>
-                                </div>
-                            `;
-          }
-        });
-
-        inventoryHTML += `
-                            </div>
-                        </div>
-                    `;
-      } else {
-        inventoryHTML = `
-                        <div class="pnj-inventory-section">
-                            <div class="weapon-section-title">Inventaire :</div>
-                            <em style="opacity:0.75;">Aucun objet</em>
-                        </div>
-                    `;
-      }
-
-      // Construction de l'équipement du PNJ
+      // 6. CORPS HTML : ÉQUIPEMENT (Style Slot Identique Joueur)
       let equipmentHTML = '';
-      const equipment = npc.equipment || {};
-      const slots = {
-        weapon: 'Arme',
-        armor: 'Armure',
-        head: 'Tête',
-        torso: 'Torse',
-        arms: 'Bras',
-        legs: 'Jambes',
-        feet: 'Pieds',
-        shield: 'Bouclier'
-      };
+      const slotNames = { weapon: 'Arme', shield: 'Bouclier', head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds' };
+      const slotsOrder = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
 
-      let hasEquipment = false;
-      Object.entries(slots).forEach(([slot, label]) => {
-        const itemId = equipment[slot];
-        if (itemId) {
-          hasEquipment = true;
-          const itemData = window.setup.getItemFromCache(itemId);
-          if (itemData) {
-            const itemLabel = window.setup.escapeHtml(itemData.label || itemId);
-            equipmentHTML += `
-                                <div class="pnj-equipment-slot">
-                                    <strong>${label} :</strong>
-                                    <span class="pnj-equipped-item">${itemLabel}</span>
-                                </div>
-                            `;
-          } else {
-            equipmentHTML += `
-                                <div class="pnj-equipment-slot">
-                                    <strong>${label} :</strong>
-                                    <span class="pnj-equipped-item">${itemId}</span>
-                                </div>
-                            `;
-          }
-        }
+      let equipListHTML = '';
+
+      slotsOrder.forEach(slot => {
+         const itemId = npc.equipment ? npc.equipment[slot] : null;
+         let content = ' <em style="opacity:.5; font-size:0.9em;">Vide</em>';
+         let itemClass = 'empty-slot'; // Classe CSS de base
+
+         if (itemId) {
+             const itemData = window.setup.getItemFromCache(itemId);
+             const label = itemData ? itemData.label : itemId;
+             // On utilise 'filled-slot inventory-item' pour récupérer le style exact des items
+             content = ` <span class="equipped-name" style="color:#f2d675; font-weight:bold;">${window.setup.escapeHtml(label)}</span>`;
+             itemClass = 'filled-slot inventory-item';
+         }
+
+         // Construction du slot HTML identique à renderEquipment
+         equipListHTML += `
+            <div class="equipment-slot ${itemClass}" style="margin-bottom:0.4em; padding:0.4em 0.6em;">
+                <strong style="color:#aaa; text-transform:uppercase; font-size:0.8em; margin-right:0.5em;">${slotNames[slot]}:</strong>
+                ${content}
+            </div>
+         `;
       });
 
-      if (!hasEquipment) {
-        equipmentHTML = '<em style="opacity:0.75;">Aucun équipement</em>';
+      if (equipListHTML) {
+          equipmentHTML = `
+            <div class="pnj-equipment-section" style="margin-bottom:1.5em;">
+                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Équipement</div>
+                <div class="equipment-grid">
+                    ${equipListHTML}
+                </div>
+            </div>
+          `;
       }
 
-      // Construction du contenu modal
+      // 7. CORPS HTML : INVENTAIRE (Style Slot Identique Joueur)
+      let inventoryHTML = '';
+      const inventory = npc.inventory || {};
+      const invIds = Object.keys(inventory);
+
+      if (invIds.length > 0) {
+          let invItemsHTML = '';
+          const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
+
+          invIds.forEach(itemId => {
+              const qty = inventory[itemId];
+              if (qty > 0) {
+                  const itemData = window.setup.getItemFromCache(itemId);
+                  const label = itemData ? itemData.label : itemId;
+                  const type = itemData ? itemData.type : 'misc';
+
+                  // Génération des encarts (bonus stats, etc.)
+                  const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(itemData) : '';
+
+                  // Structure EXACTE de .inventory-item
+                  invItemsHTML += `
+                    <div class="inventory-item" data-id="${itemId}" data-type="${type}" style="height:100%;">
+                        <div class="item-header">
+                            <span class="item-name">${window.setup.escapeHtml(label)}</span>
+                            <span class="item-qty">x${qty}</span>
+                        </div>
+                        <span class="inventory-type">${typeLabels[type] || "Objet"}</span>
+                        ${encartsHTML}
+                    </div>
+                  `;
+              }
+          });
+
+          inventoryHTML = `
+            <div class="pnj-inventory-section">
+                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Sac</div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.5em;">
+                    ${invItemsHTML}
+                </div>
+            </div>
+          `;
+      } else {
+           inventoryHTML = `
+            <div class="pnj-inventory-section">
+                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Sac</div>
+                <em style="opacity:0.5; font-size:0.85em; display:block; padding:0.5em;">Le sac est vide.</em>
+            </div>
+          `;
+      }
+
+      // 8. ASSEMBLAGE FINAL
       const modalContent = window.setup.buildModalHTML({
-        title: `Compagnon - ${safeName}`,
-        icon: ICONS.buddy,
+        title: safeName,
+        icon: window.ICONS.buddy,
         content: `
-                        <!-- Informations de base -->
-                        ${raceJobHTML}
-                        
-                        <!-- Description narrative -->
-                        <div class="pnj-description-section">
-                            <p>${safeDescription}</p>
-                        </div>
-                        
-                        <div class="item-stats-divider"></div>
-                        
-                        <!-- Statistiques -->
-                        <div class="pnj-stats-section">
-                            <div class="weapon-section-title">Statistiques :</div>
-                            <div class="pnj-stats-grid">
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="${ICONS.strength}" alt="Force">
-                                    <span class="pnj-stat-label">Force :</span>
-                                    <span class="pnj-stat-value">${strength}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="images/icons/dexterity.png" alt="Dextérité">
-                                    <span class="pnj-stat-label">Dextérité :</span>
-                                    <span class="pnj-stat-value">${dexterity}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <img class="icon-08em" src="${ICONS.defense}" alt="Résistance">
-                                    <span class="pnj-stat-label">Résistance :</span>
-                                    <span class="pnj-stat-value">${resistance}</span>
-                                </div>
-                                <div class="pnj-stat">
-                                    <span class="pnj-stat-label">Niveau :</span>
-                                    <span class="pnj-stat-value">${level}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Le reste de votre code pour l'équipement et l'inventaire -->
-                        ${/* VOTRE CODE EXISTANT POUR L'ÉQUIPEMENT ET L'INVENTAIRE */ ''}
-                    `,
+            ${subHeaderHTML}
+            ${descHTML}
+            ${statsHTML}
+            ${equipmentHTML}
+            ${inventoryHTML}
+        `,
         footer: '<button type="button" class="modal-close">Fermer</button>',
         className: 'pnj-modal'
       });
@@ -3082,29 +3078,21 @@
       $modal.append(modalContent);
       $('body').addClass('modal-open');
 
-      // Gestion de la fermeture
-      $modal.find('.modal-close').on('click', () => {
+      // Gestion fermeture
+      const close = () => {
         $modal.remove();
         $overlay.remove();
         $('body').removeClass('modal-open');
-      });
-
-      // Fermeture en cliquant hors de la modale
-      $(document).one('mousedown.pnjmodal', function(e) {
-        if (!$(e.target).closest('#pnj-modal').length) {
-          $modal.remove();
-          $overlay.remove();
-          $('body').removeClass('modal-open');
-        }
-      });
+      };
+      $modal.find('.modal-close').on('click', close);
+      $overlay.on('click', close);
     };
 
-    // Vérifier que le système PNJ est prêt
+    // Vérification disponibilité système PNJ avant affichage
     if (!window.setup.pnjState.ready) {
-      console.warn("⏳ showPnjModal en attente du système PNJ");
-      window.setup.ensurePNJReady(processPnjModal);
+       window.setup.ensurePNJReady(processPnjModal);
     } else {
-      processPnjModal(true);
+       processPnjModal();
     }
   };
   // ------------------------------------------------------
@@ -3112,6 +3100,10 @@
   // ------------------------------------------------------
   window.setup.updateHUD = (function() {
     let timeout;
+    // Variables pour détecter les changements et éviter le re-rendu inutile (Anti-Lag)
+    let lastInventoryState = "";
+    let lastEquipmentState = "";
+    let lastLocationString = "";
 
     function icon(img) {
       const src = img || 'images/icons/map.png';
@@ -3125,6 +3117,7 @@
         if (!$hud.length) return;
 
         const v = V();
+        // Récupération des valeurs
         const health = v.current_player_health ?? 10;
         const maxHealth = v.max_player_health ?? 10;
         const strength = v.strength || 0;
@@ -3137,7 +3130,7 @@
         const expToNextLevel = v.expToNextLevel || 100;
         const expPercent = Math.min(100, (exp / expToNextLevel) * 100);
 
-        // --- CALCUL DE LA LOCALISATION JOUEUR ---
+        // Calcul localisation
         let locationString = "Position inconnue";
         if (v.playerCoordinates) {
              locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
@@ -3147,13 +3140,11 @@
              locationString = window.setup.getLocationString(pCoords, pCoords.continent);
         }
 
+        // Construction initiale
         if (!$hud.find('.hud-inner').length) {
-          $hud.html(`
+            $hud.html(`
             <div class="hud-inner">
-                <!-- BARRE PRINCIPALE : STATS + XP + TOGGLES (Grid Layout) -->
                 <div class="hud-row-top">
-                    
-                    <!-- GAUCHE : Stats -->
                     <div class="hud-stats">
                         <div class="hud-block hud-health">${icon(ICONS.health)} ${health}/${maxHealth}</div>
                         <div class="hud-block hud-strength">${icon(ICONS.strength)} ${strength}</div>
@@ -3162,8 +3153,6 @@
                         <div class="hud-block hud-magic">${icon(ICONS.magic)} ${magic}</div>
                         <div class="hud-block hud-gold">${icon(ICONS.gold)} ${gold}</div>
                     </div>
-
-                    <!-- CENTRE : XP Bar -->
                     <div class="hud-exp-bar">
                         <span class="hud-level">${level}</span>
                         <div class="hud-exp-container">
@@ -3171,18 +3160,12 @@
                         </div>
                         <span class="hud-level">${level + 1}</span>
                     </div>
-
-                    <!-- DROITE : Toggles -->
                     <div class="hud-toggles"></div>
                 </div>
-
-                <!-- L'ENCART PENDANT (Hors du flux de la barre, positionné en absolu) -->
                 <div class="hud-location" title="${window.setup.escapeHtml(locationString)}">
                     ${icon(ICONS.map)} <span class="location-text">${locationString}</span>
                 </div>
             </div>
-            
-            <!-- Panneaux latéraux -->
             <div id="inventory-panel" class="side-panel"></div>
             <div id="equipment-panel" class="side-panel"></div>
             <div id="messages-panel" class="side-panel"></div>
@@ -3191,132 +3174,206 @@
           `);
           $(document).trigger('hudready');
         } else {
-          // MISE À JOUR DYNAMIQUE
-          // Localisation
-          $('.hud-location .location-text').text(locationString);
-          $('.hud-location').attr('title', locationString);
+          // MISE À JOUR CIBLÉE
+          const $locText = $('.hud-location .location-text');
+          if($locText.text() !== locationString) {
+              $locText.text(locationString);
+              $('.hud-location').attr('title', locationString);
+          }
 
-          // Stats
-          $('.hud-health').html(`${icon(ICONS.health)} ${health}/${maxHealth}`);
-          $('.hud-strength').html(`${icon(ICONS.strength)} ${strength}`);
-          $('.hud-dexterity').html(`${icon('images/icons/dexterity.png')} ${dexterity}`);
-          $('.hud-resistance').html(`${icon(ICONS.defense)} ${resistance}`);
-          $('.hud-magic').html(`${icon(ICONS.magic)} ${magic}`);
-          $('.hud-gold').html(`${icon(ICONS.gold)} ${gold}`);
+          const updateStat = (cls, html) => {
+              const $el = $(cls);
+              if($el.html() !== html) $el.html(html);
+          };
 
-          // XP
-          const $firstLevel = $('.hud-exp-bar .hud-level:first');
-          const $lastLevel = $('.hud-exp-bar .hud-level:last');
+          updateStat('.hud-health', `${icon(ICONS.health)} ${health}/${maxHealth}`);
+          updateStat('.hud-strength', `${icon(ICONS.strength)} ${strength}`);
+          updateStat('.hud-dexterity', `${icon('images/icons/dexterity.png')} ${dexterity}`);
+          updateStat('.hud-resistance', `${icon(ICONS.defense)} ${resistance}`);
+          updateStat('.hud-magic', `${icon(ICONS.magic)} ${magic}`);
+          updateStat('.hud-gold', `${icon(ICONS.gold)} ${gold}`);
+
           const $expFill = $('.hud-exp-fill');
-          if ($firstLevel.length) $firstLevel.text(`Niv. ${level}`);
-          if ($lastLevel.length) $lastLevel.text(`Niv. ${level + 1}`);
           if ($expFill.length) $expFill.css('width', `${expPercent}%`);
         }
 
-        // Gestion des boutons (toggles)
+        // Gestion des boutons Toggles
         const $toggles = $('#hud .hud-toggles');
         if (!document.getElementById('inventory-toggle')) {
-          $toggles.append(`
-            <div id="inventory-toggle" title="Inventaire">
-                ${icon(ICONS.inventory)}
-                <span id="inventory-counter" class="counter">0</span>
-            </div>
-          `);
+          $toggles.append(`<div id="inventory-toggle" title="Inventaire">${icon(ICONS.inventory)}<span id="inventory-counter" class="counter">0</span></div>`);
         }
         if (!document.getElementById('equipment-toggle')) {
           $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(ICONS.equipment)}</div>`);
         }
-        // BUDDIES
+
         const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned).length;
         if (!document.getElementById('buddy-toggle')) {
-          $toggles.prepend(`
-            <div id="buddy-toggle" title="Compagnons" style="display:none;">
-                <img class="icon-1em" src="${ICONS.buddy}" alt="Compagnons">
-                <span id="buddy-counter" class="counter">0</span>
-            </div>
-          `);
+          $toggles.prepend(`<div id="buddy-toggle" title="Compagnons" style="display:none;"><img class="icon-1em" src="${ICONS.buddy}" alt=""><span id="buddy-counter" class="counter">0</span></div>`);
         }
         $('#buddy-toggle').toggle(buddiesCount > 0);
-        const $buddyCounter = $('#buddy-counter');
-        if ($buddyCounter.length) {
-          $buddyCounter.text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
-        }
+        $('#buddy-counter').text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
 
-        // Gestionnaire panneaux
+        // --- ÉVÉNEMENTS PANNEAUX ---
         window.setup.togglePanel = function(panelSelector) {
           const $panel = $(panelSelector);
           if (!$panel.length) return;
           const isVisible = $panel.hasClass('show');
+
+          // Ferme tous les panneaux
           $('.side-panel').removeClass('show');
-          if (!isVisible) $panel.addClass('show');
+
+          // Supprime les menus contextuels actifs
+          $('.context-menu').remove();
+
+          if (!isVisible) {
+              $panel.addClass('show');
+              // Force le rendu immédiat à l'ouverture
+              if(panelSelector === '#inventory-panel') {
+                  lastInventoryState = ""; // Force refresh
+                  renderInventory();
+              }
+              if(panelSelector === '#equipment-panel') {
+                  lastEquipmentState = ""; // Force refresh
+                  renderEquipment();
+              }
+              if(panelSelector === '#buddies-panel') window.renderBuddiesPanel();
+          }
         };
 
-        // Evénements
-        $('#inventory-toggle').off('click').on('click', (e) => {
-          e.stopPropagation();
-          window.setup.togglePanel('#inventory-panel');
-          v.inventoryViewed = true;
-          window.setup.updateInventoryCounter();
-          renderInventory();
-        });
-        $('#equipment-toggle').off('click').on('click', (e) => {
-          e.stopPropagation();
-          window.setup.togglePanel('#equipment-panel');
-          renderEquipment();
-        });
-        $('#buddy-toggle').off('click').on('click', (e) => {
-          e.stopPropagation();
-          window.setup.togglePanel('#buddies-panel');
-          window.renderBuddiesPanel();
-        });
+        // Binding des clics
+        $('#inventory-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#inventory-panel'); v.inventoryViewed = true; window.setup.updateInventoryCounter(); window.setup.updateHUD(); });
+        $('#equipment-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#equipment-panel'); });
+        $('#buddy-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#buddies-panel'); });
 
-        // Fermeture panels
+        // Fermeture au clic extérieur
         $(document).off('click.hudpanels').on('click.hudpanels', e => {
-             const $target = $(e.target);
-             const isInsidePanel = $target.closest('.side-panel').length > 0;
-             const isToggle = $target.closest('#hud .hud-toggles > div').length > 0;
-             const isContextMenu = $target.closest('.context-menu, #inventory-context-menu, #delete-confirm').length > 0;
-             const isModal = $target.closest('.modal-content').length > 0;
-
-             if (!isInsidePanel && !isToggle && !isContextMenu && !isModal) {
+             if (!$(e.target).closest('.side-panel, #hud .hud-toggles > div, .context-menu, .modal-content').length) {
                $('.side-panel').removeClass('show');
+               $('.context-menu').remove();
              }
         });
 
+        // --- FONCTION RENDU INVENTAIRE OPTIMISÉE ---
         function renderInventory() {
-            const $panel = $('#inventory-panel').empty();
+            const $panel = $('#inventory-panel');
             const inventory = v.inventory || [];
-            const equipped = v.equipped || {};
+
+            // Génération d'une empreinte simple pour détecter les changements
+            // On utilise JSON.stringify pour voir si les items ou quantités ont changé
+            // Pour optimisation, on pourrait juste faire une map des IDs et Qtés
+            const currentInventoryState = JSON.stringify(inventory.map(i => ({id: i.id, qty: i.qty})));
+
+            // Si l'état n'a pas changé depuis le dernier rendu, ON NE FAIT RIEN (Stop Lag)
+            if (currentInventoryState === lastInventoryState && $panel.children().length > 0) {
+                return;
+            }
+
+            // Mise à jour de l'état
+            lastInventoryState = currentInventoryState;
+            $panel.empty();
+
             if (inventory.length) {
                  const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
                  const frag = document.createDocumentFragment();
+
                  inventory.forEach(it => {
                      const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(it) : '';
                      const isNew = v.inventoryNewItems?.includes(it.id);
-                     const $item = $(`<div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}"><div>${window.setup.escapeHtml(it.label)}</div><span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>${encartsHTML}</div>`);
-                     $item.on('contextmenu', function(e) { e.preventDefault(); window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this)); });
-                     $item.on('mouseenter', function() { if($(this).hasClass('new')){ window.setup.updateInventoryCounter(); window.setup.updateHUD(); }});
+
+                     const $item = $(`
+                        <div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}">
+                            <div class="item-header">
+                                <span class="item-name">${window.setup.escapeHtml(it.label)}</span>
+                                <span class="item-qty">x${it.qty}</span>
+                            </div>
+                            <span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>
+                            ${encartsHTML}
+                        </div>
+                     `);
+
+                     // Événements directement attachés à l'élément (plus fiable que delegate pour le drag/drop futur)
+                     $item.on('contextmenu', function(e) {
+                         e.preventDefault();
+                         e.stopPropagation();
+                         window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this));
+                     });
+
+                     $item.on('mouseenter', function() {
+                         if($(this).hasClass('new')){
+                             // Retire le statut "Nouveau" visuellement
+                             $(this).removeClass('new');
+                             // Logique métier
+                             if (v.inventoryNewItems) {
+                                 v.inventoryNewItems = v.inventoryNewItems.filter(nid => nid !== it.id);
+                             }
+                             window.setup.updateInventoryCounter();
+                             window.setup.updateHUD();
+                         }
+                     });
+
                      frag.appendChild($item[0]);
                  });
                  $panel[0].appendChild(frag);
             } else {
-                 $panel.append('<em style="opacity:.6;">Aucun objet.</em>');
+                 $panel.append('<div class="empty-msg"><em style="opacity:.6;">Votre sac est vide.</em></div>');
             }
         }
 
         function renderEquipment() {
-             const $panel = $('#equipment-panel').empty();
+             const $panel = $('#equipment-panel');
+             // Check changement
+             const currentEqState = JSON.stringify(v.equipped);
+             if (currentEqState === lastEquipmentState && $panel.children().length > 0) return;
+
+             lastEquipmentState = currentEqState;
+             $panel.empty();
+
              const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+             const slotNames = { head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier' };
+
              slots.forEach(slot => {
-                $panel.append(`<div class="equipment-slot" data-slot="${slot}"><strong>${slot}:</strong>${v.equipped[slot] ? ' (Objet)' : ' <em style="opacity:.6">Vide</em>'}</div>`);
+                const itemId = v.equipped[slot];
+                let content = ' <em style="opacity:.6">Vide</em>';
+                let itemClass = 'empty-slot';
+
+                if (itemId) {
+                    // Trouve l'item dans l'inventaire ou cache pour avoir le label
+                    const itemCache = window.setup.itemCache?.[itemId];
+                    // Si l'item est équipé, il n'est parfois plus dans l'inventaire (selon votre logique),
+                    // donc on regarde le cache global, sinon l'ID
+                    const label = itemCache ? itemCache.label : itemId;
+                    content = ` <span class="equipped-name">${window.setup.escapeHtml(label)}</span>`;
+                    itemClass = 'filled-slot inventory-item'; // inventory-item pour réutiliser le style
+                }
+
+                const $slotDiv = $(`<div class="equipment-slot ${itemClass}" data-slot="${slot}" data-id="${itemId || ''}" data-type="${slot}">
+                    <strong>${slotNames[slot]}:</strong>${content}
+                </div>`);
+
+                if (itemId) {
+                    $slotDiv.on('contextmenu', function(e) {
+                        e.preventDefault();
+                        window.setup.showEquipContextMenu(e.pageX, e.pageY, itemId, "", slot, $(this));
+                    });
+                     $slotDiv.on('click', function(e) {
+                        e.preventDefault();
+                        // Affiche modale item si besoin
+                        const itemData = window.setup.itemCache?.[itemId];
+                        if(itemData) window.setup.showItemModal(itemData);
+                    });
+                }
+
+                $panel.append($slotDiv);
              });
         }
 
-        // Rafraîchissement final
+        // LOGIQUE DE MISE À JOUR
+        // Si les panneaux sont ouverts, on vérifie s'il faut re-rendu
         if ($('#inventory-panel').hasClass('show')) renderInventory();
         if ($('#equipment-panel').hasClass('show')) renderEquipment();
-        if ($('#buddies-panel').hasClass('show')) window.renderBuddiesPanel();
+        if ($('#buddies-panel').hasClass('show')) window.renderBuddiesPanel(); // Buddies gère son propre timer
 
+        // Mises à jour compteurs
         window.setup.updateMessageCounter();
         window.setup.updateQuestCounter();
         window.setup.updateInventoryCounter();
@@ -3332,11 +3389,7 @@
     const hasNewQuest = v.quests?.some(q => !q.viewed);
     const $c = $('#quest-counter');
     if ($c.length) {
-      if (hasNewQuest) {
-        $c.text('1').show();
-      } else {
-        $c.text('').hide();
-      }
+        $c.text('!').toggle(!!hasNewQuest); // Affiche '!' ou nombre
     }
   };
   window.setup.updateInventoryCounter = function() {
@@ -3344,11 +3397,7 @@
     const hasNewItem = (v.inventoryNewItems || []).length > 0 && !v.inventoryViewed;
     const $c = $('#inventory-counter');
     if ($c.length) {
-      if (hasNewItem) {
-        $c.text('1').show();
-      } else {
-        $c.text('').hide();
-      }
+       $c.text(v.inventoryNewItems.length || '!').toggle(hasNewItem);
     }
   };
   // ------------------------------------------------------
@@ -3363,18 +3412,16 @@
     const v = V();
     const item = (v.inventory || []).find(it => it.id === id);
     if (!item) return;
+
+    // Si on est en mode "choix de slot" (gestion avancée)
     const pendingSlot = v._pendingEquipSlot;
     if (pendingSlot) {
       if (item.type === pendingSlot) {
         window.setup.equipItem(id, pendingSlot);
         v._pendingEquipSlot = null;
         $('#inventory-panel').removeClass('show');
-        window.setup.updateInventoryCounter();
-        window.setup.updateHUD();
       } else {
-        window.setup.showNotification('Impossible', 'Cet objet ne peut pas être équipé dans ce slot.', 2600);
-        v._pendingEquipSlot = null;
-        $('#inventory-panel').removeClass('show');
+        window.setup.showNotification('Impossible', 'Cet objet ne peut pas être équipé ici.', 2000);
       }
       return;
     }
@@ -3402,68 +3449,75 @@
     window.setup.showItemMenu(e.pageX, e.pageY, id, label, type, $item);
   });
   window.setup.showItemMenu = function(x, y, id, label, type, $item) {
-    $('#inventory-context-menu').remove();
+    $('.context-menu').remove(); // Ferme les autres menus
+
     const menu = $('<div id="inventory-context-menu" class="context-menu"></div>').appendTo('body');
     const v = V();
     const item = (v.inventory || []).find(it => it.id === id);
     if (!item) return;
-    label = item.label;
+
+    label = item.label; // Sécurité
     const qty = item.qty || 1;
     const equipped = v.equipped || {};
-    const equipableSlots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+
+    // Ajustement position pour ne pas sortir de l'écran
+    const winW = $(window).width();
+    const winH = $(window).height();
+    let posX = x + 5;
+    let posY = y + 5;
+
+    if (posX + 160 > winW) posX = winW - 170;
+    if (posY + 200 > winH) posY = winH - 210;
+
+    menu.css({
+      position: 'absolute',
+      top: `${posY}px`,
+      left: `${posX}px`,
+      zIndex: 10000 // Très haut pour être au dessus des modales
+    });
 
     function addOption(txt, fn) {
       $('<div class="context-option"></div>')
         .text(txt)
         .on('click', function(e) {
-          e.stopPropagation();
-          fn();
+          e.stopPropagation(); // Empêche la fermeture immédiate par le document click
           menu.remove();
+          fn();
         })
         .appendTo(menu);
     }
+
+    // Logique d'équipement
+    const equipableSlots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
     const isEquipped = Object.values(equipped).includes(id);
     const equippedSlot = Object.keys(equipped).find(k => equipped[k] === id);
+
     if (isEquipped && equipableSlots.includes(type)) {
       addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
     } else if (equipableSlots.includes(type)) {
       addOption('Équiper', () => window.setup.equipItem(id, type));
     }
-    // OPTION "UTILISER" UNIQUEMENT POUR LES TYPES SPÉCIFIQUES
+
     if (['usable', 'health', 'food'].includes(type)) {
       addOption('Utiliser', () => window.setup.useItem(id, label, type, x, y));
     }
-    // OPTION "DONNER À UN COMPAGNON" POUR TOUS LES TYPES D'OBJETS (sauf quest)
+
     if (!item.isQuestItem) {
       addOption('Donner à un compagnon', () => {
-        window.setup.showGiveToBuddyMenu(x, y, id, label, type);
+        // Petit délai pour laisser le menu actuel se fermer proprement
+        setTimeout(() => window.setup.showGiveToBuddyMenu(posX, posY, id, label, type), 50);
       });
-    }
-    if (!item.isQuestItem) {
+
       addOption('Jeter', () => window.setup.showDeleteConfirm(id, label, false, $item));
       if (qty > 1) addOption('Tout jeter', () => window.setup.showDeleteConfirm(id, label, true, $item));
     }
-    menu.css({
-      position: 'absolute',
-      top: `${y + 5}px`,
-      left: `${x + 5}px`,
-      background: 'rgba(0,0,0,0.92)',
-      border: '1px solid #fff',
-      borderRadius: '8px',
-      padding: '0.4em 0',
-      minWidth: '150px',
-      zIndex: 9999,
-      fontSize: '0.9em',
-      boxShadow: '0 0 16px rgba(0,0,0,0.8)',
-      animation: 'fadeMenu 0.2s ease forwards',
-      pointerEvents: 'auto'
-    });
-    $(document).off('mousedown.inventorymenu').on('mousedown.inventorymenu', function(e) {
-      if (!$(e.target).closest('#inventory-context-menu').length) {
-        $('#inventory-context-menu').remove();
-        $(document).off('mousedown.inventorymenu');
-      }
-    });
+
+    // Fermeture au clic ailleurs (géré aussi par updateHUD mais sécurité ici)
+    setTimeout(() => {
+        $(document).one('click.closecontext', function() {
+            menu.remove();
+        });
+    }, 10);
   };
   // ------------------------------------------------------
   // MENU CONTEXTUEL ÉQUIPEMENT
@@ -3477,39 +3531,45 @@
     window.setup.showEquipContextMenu(e.pageX, e.pageY, id, label, type, $(this));
   });
   window.setup.showEquipContextMenu = function(x, y, id, label, type, $item) {
-    $('#inventory-context-menu').remove();
-    const menu = $('<div id="inventory-context-menu"></div>').appendTo('body');
+    $('.context-menu').remove();
+    const menu = $('<div id="inventory-context-menu" class="context-menu"></div>').appendTo('body');
     const v = V();
+
+    // Positionnement intelligent
+    const winW = $(window).width();
+    let posX = x + 5;
+    if (posX + 150 > winW) posX = x - 155;
+
+    menu.css({
+      top: `${y + 5}px`,
+      left: `${posX}px`,
+      zIndex: 10000
+    });
+
     const equippedSlot = Object.keys(v.equipped || {}).find(k => v.equipped[k] === id);
 
     function addOption(txt, fn) {
       $('<div class="context-option"></div>')
         .text(txt)
-        .on('mousedown', e => {
+        .on('click', e => {
           e.stopPropagation();
-          fn();
           menu.remove();
+          fn();
         })
         .appendTo(menu);
     }
-    if (equippedSlot) addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
-    menu.css({
-      position: 'absolute',
-      top: `${y + 5}px`,
-      left: `${x + 5}px`,
-      background: 'rgba(0,0,0,0.92)',
-      border: '1px solid #fff',
-      borderRadius: '8px',
-      padding: '0.4em 0',
-      minWidth: '150px',
-      zIndex: 3200,
-      fontSize: '0.9em',
-      boxShadow: '0 0 16px rgba(0,0,0,0.8)',
-      animation: 'fadeMenu 0.2s ease forwards'
-    });
-    $(document).one('mousedown.equipmentmenu', function(e) {
-      if (!$(e.target).closest('#inventory-context-menu').length) menu.remove();
-    });
+
+    if (equippedSlot) {
+        addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
+    } else {
+        addOption('Fermer', () => {});
+    }
+
+    setTimeout(() => {
+        $(document).one('click.closecontext', function() {
+            menu.remove();
+        });
+    }, 10);
   };
   // ------------------------------------------------------
   // UTILISATION D’OBJET — AJOUT DU CONTRÔLE SANTÉ COMPAGNON
@@ -4676,202 +4736,223 @@
   // — version stable : le menu reste ouvert même avec filtres / interactions UI
   // ==========================================================
   window.renderBuddiesPanel = function() {
-  const v = State.variables;
-  const $panel = $('#buddies-panel');
+    const v = State.variables;
+    const $panel = $('#buddies-panel');
 
-  // Nettoyage timer
-  if (window.setup.buddiesPanelInterval) {
-    clearInterval(window.setup.buddiesPanelInterval);
-    window.setup.buddiesPanelInterval = null;
-  }
+    // Nettoyage timer existant pour éviter les doublons de logique
+    if (window.setup.buddiesPanelInterval) {
+      clearInterval(window.setup.buddiesPanelInterval);
+      window.setup.buddiesPanelInterval = null;
+    }
 
-  const $existingMenu = $('#buddy-context-menu');
-  const savedMenu = $existingMenu.length > 0 ? $existingMenu.detach() : null;
+    // Filtrage
+    const all = Object.values(v.npcs || {});
+    const list = all.filter(n => n.isSpawned && n.isBuddy);
 
-  $panel.empty();
+    if (!list.length) {
+      $panel.html('<em style="opacity:.6; font-style:italic;">Aucun compagnon.</em>');
+      return;
+    }
 
-  // Filtrage
-  const all = Object.values(v.npcs || {});
-  const list = all.filter(n => n.isSpawned && n.isBuddy);
+    // Marquer les entrées existantes pour détecter celles à supprimer
+    $panel.find('.buddy-entry').addClass('to-remove');
 
-  if (!list.length) {
-    $panel.append('<em style="opacity:.6; font-style:italic;">Aucun compagnon.</em>');
-    if (savedMenu) $('body').append(savedMenu);
-    return;
-  }
+    list.forEach(b => {
+      // Sélecteur sécurisé pour le nom (échappement basique pour jQuery selector)
+      const safeId = b.name.replace(/["\\]/g, '\\$&');
+      let $entry = $panel.find(`.buddy-entry[data-name="${safeId}"]`);
 
-  list.forEach(b => {
-    const healthRatio = (b.health || 0) / (b.maxHealth || 1);
-    const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
+      const healthRatio = (b.health || 0) / (b.maxHealth || 1);
+      const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
 
-    let statusHTML = '';
-    let locationText = window.setup.getLocationString(b.coordinates, b.continent);
+      // Calcul des textes de statut
+      let locationText = window.setup.getLocationString(b.coordinates, b.continent);
+      let travelHTML = '';
 
-    // --- BLOC VOYAGE ---
-    if (b.status === 'traveling' && b.travelCurrentStep) {
-      const step = b.travelCurrentStep;
-      const isResting = step.type === 'rest';
+      // Logique Voyage (inchangée pour stabilité)
+      if (b.status === 'traveling' && b.travelCurrentStep) {
+        const step = b.travelCurrentStep;
+        const isResting = step.type === 'rest';
+        const actionText = isResting
+            ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`
+            : `<span style="color:#eee;">${step.desc}</span>`;
 
-      const endTime = step.endTime;
-      const totalDuration = step.duration;
-      const distSection = Number(step.dist) || 0;
-
-      // 🛠️ CORRECTION ICI : On définit la couleur finale AVANT le HTML
-      // Cela évite l'erreur "Mismatched property value" dans l'éditeur
-      const baseColor = isResting ? '#4fc3f7' : '#66bb6a';
-      const finalColor = baseColor || '#66bb6a';
-
-      let actionText = "";
-      let subText = "";
-
-      if (isResting) {
-        actionText = `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`;
-        subText = "Pause nécessaire";
-        locationText = `S'arrête à ${step.locationName}`;
-      } else {
-        actionText = `<span style="color:#eee;">${step.desc}</span>`;
-        subText = "En mouvement";
-        locationText = `Se déplace`;
-      }
-
-      // On utilise ${finalColor} qui est une variable simple, ce qui ne casse pas le linter CSS
-      statusHTML = `
+        travelHTML = `
           <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
                data-name="${b.name}"
-               data-end="${endTime}" 
-               data-total="${totalDuration}"
+               data-end="${step.endTime}" 
+               data-total="${step.duration}"
                data-type="${step.type}"
-               data-dist="${distSection}">
-              
+               data-dist="${Number(step.dist) || 0}">
               <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   ${actionText}
               </div>
-              
               <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
                   <span><span class="travel-timer-text">...</span></span>
-                  ${!isResting ? '<span class="travel-dist-text">... km</span>' : ''}
+                  ${!isResting ? '<span class="travel-dist-text"></span>' : ''}
               </div>
-              
               <div class="travel-progress-bg">
-                <div class="travel-progress-fill" style="width: 0%;">
-                </div>
+                <div class="travel-progress-fill" style="width: 0%;"></div>
               </div>
-
               <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
                    Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
               </div>
           </div>
-      `;
-    }
+        `;
+        locationText = isResting ? `S'arrête à ${step.locationName}` : `Se déplace`;
+      }
 
-    const $entry = $(`
-          <div class="buddy-entry" data-name="${b.name}">
+      // === CAS 1 : MISE À JOUR (L'élément existe déjà) ===
+      if ($entry.length > 0) {
+        $entry.removeClass('to-remove');
+
+        // Mise à jour visuelle simple
+        $entry.find('.buddy-healthfill')
+              .removeClass('h-good h-mid h-low')
+              .addClass(healthClass)
+              .css('width', `${healthRatio * 100}%`);
+
+        $entry.find('.item-badge')
+              .attr('class', `item-badge buddy-${b.status}`)
+              .text(b.status);
+
+        const $loc = $entry.find('.buddy-location');
+        if ($loc.text() !== locationText) $loc.text(locationText);
+
+        // Gestion du bloc voyage
+        const $existingTravel = $entry.find('.buddy-travel-wrapper');
+        if (b.status === 'traveling') {
+            if ($existingTravel.length === 0) {
+                $entry.find('.buddy-healthbar').after(travelHTML);
+            } else {
+                const step = b.travelCurrentStep;
+                if(step) {
+                    $existingTravel.attr({
+                        'data-end': step.endTime,
+                        'data-total': step.duration,
+                        'data-type': step.type,
+                        'data-dist': Number(step.dist) || 0
+                    });
+                    // Mise à jour texte si changé
+                    const isResting = step.type === 'rest';
+                    const newActionHTML = isResting
+                        ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`
+                        : `<span style="color:#eee;">${step.desc}</span>`;
+                    if($existingTravel.find('.travel-text-primary').html() !== newActionHTML) {
+                        $existingTravel.find('.travel-text-primary').html(newActionHTML);
+                    }
+                    if(isResting) $existingTravel.addClass('resting');
+                    else $existingTravel.removeClass('resting');
+                }
+            }
+        } else {
+            $existingTravel.remove();
+        }
+      }
+      // === CAS 2 : CRÉATION (Nouvel élément) ===
+      else {
+        const newEntryHTML = `
+          <div class="buddy-entry" data-name="${window.setup.escapeHtml(b.name)}">
               <div class="msg-header">
                   <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
                   <strong>${window.setup.escapeHtml(b.name)}</strong>
                   <span class="item-badge buddy-${b.status}">${b.status}</span>
               </div>
               <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
-              ${statusHTML}
+              ${travelHTML}
               <div class="buddy-location">${locationText}</div>
           </div>
-      `);
-    $panel.append($entry);
-  });
+        `;
+        const $newEl = $(newEntryHTML);
 
-  // --- TIMER DYNAMIQUE ---
-  if ($panel.find('.buddy-travel-wrapper').length > 0) {
-    const updateTimers = () => {
-      const now = Date.now();
-      let active = false;
-
-      $panel.find('.buddy-travel-wrapper').each(function() {
-        const $wrapper = $(this);
-        const name = $wrapper.data('name');
-        const endTime = Number($wrapper.data('end'));
-        const totalTime = Number($wrapper.data('total'));
-        const type = $wrapper.data('type');
-        const distSection = Number($wrapper.data('dist'));
-
-        // Recalculer l'état pour la mise à jour visuelle
-        const isResting = type === 'rest';
-        const currentColor = isResting ? '#4fc3f7' : '#66bb6a';
-
-        const remaining = endTime - now;
-        let percent = 0;
-
-        if (remaining <= 0) {
-          percent = 100;
-          $wrapper.find('.travel-timer-text').text("Fin étape");
-        } else {
-          active = true;
-          percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
-          const secs = Math.ceil(remaining / 1000);
-          const timeStr = `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
-          $wrapper.find('.travel-timer-text').text(timeStr);
-        }
-
-        // MISE À JOUR CSS COMPLÈTE
-        $wrapper.find('.travel-progress-fill').css({
-          'width': `${percent}%`,
-          'background-color': currentColor,
-          'box-shadow': `0 0 5px ${currentColor}`
+        // 🚨 ÉVÉNEMENT CLIC GAUCHE : OUVRIR LA MODALE
+        $newEl.on('click', function(e) {
+           e.preventDefault();
+           e.stopPropagation();
+           const name = $(this).data('name');
+           window.setup.showPnjModal(name);
         });
 
-        // --- CALCUL DES KM RESTANTS (GLOBAL) ---
-        const npc = v.npcs[name];
-        if (npc && npc.travelItinerary) {
-          let totalKmLeft = 0;
+        // 🚨 ÉVÉNEMENT CLIC DROIT : MENU CONTEXTUEL
+        $newEl.on('contextmenu', function(e) {
+           e.preventDefault();
+           e.stopPropagation();
+           $('#buddy-context-menu').remove();
+           const name = $(this).data('name');
+           window.setup.showBuddyContextMenu(e, name);
+        });
 
-          // 1. Reste de l'étape en cours
-          if (type === 'travel' && remaining > 0) {
-            const kmLeftSection = distSection * (remaining / totalTime);
-            totalKmLeft += kmLeftSection;
-            $wrapper.find('.travel-dist-text').text(`${kmLeftSection.toFixed(1)} km`);
-          } else {
-            $wrapper.find('.travel-dist-text').text('');
-          }
-
-          // 2. Somme des étapes futures
-          if (npc.travelStepIndex < npc.travelItinerary.length - 1) {
-            for (let i = npc.travelStepIndex + 1; i < npc.travelItinerary.length; i++) {
-              totalKmLeft += (npc.travelItinerary[i].dist || 0);
-            }
-          }
-
-          $wrapper.find('.travel-total-km').text(`${totalKmLeft.toFixed(1)} km`);
-        }
-      });
-
-      if (!active && window.setup.buddiesPanelInterval) {
-        clearInterval(window.setup.buddiesPanelInterval);
-        window.setup.buddiesPanelInterval = null;
+        $panel.append($newEl);
       }
-    };
-    updateTimers();
-    window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
-  }
+    });
 
-  if (savedMenu) $('body').append(savedMenu);
+    // Supprimer les obsolètes
+    $panel.find('.to-remove').remove();
 
-  // Gestion du clic droit
-  $panel.find('.buddy-entry').on('contextmenu', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $('#buddy-context-menu').remove();
-    const name = $(this).data('name');
+    // Relancer le timer d'animation si nécessaire (barres de progression voyage)
+    if ($panel.find('.buddy-travel-wrapper').length > 0) {
+      const updateTimers = () => {
+        const now = Date.now();
+        let active = false;
+        $panel.find('.buddy-travel-wrapper').each(function() {
+          const $wrapper = $(this);
+          const endTime = Number($wrapper.data('end'));
+          const totalTime = Number($wrapper.data('total'));
+          // Récupération de la distance de l'étape pour le calcul
+          const stepDist = Number($wrapper.data('dist')) || 0;
+
+          const remaining = endTime - now;
+          let percent = 0;
+
+          if (remaining <= 0) {
+            percent = 100;
+            $wrapper.find('.travel-timer-text').text("Fin étape");
+            // --- CORRECTION ICI : Mettre 0 km quand fini ---
+            $wrapper.find('.travel-total-km').text("0.0 km");
+          } else {
+            active = true;
+            // Calcul Pourcentage
+            percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
+
+            // Calcul Temps texte
+            const secs = Math.ceil(remaining / 1000);
+            $wrapper.find('.travel-timer-text').text(`${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`);
+
+            // --- CORRECTION ICI : Calcul de la distance restante ---
+            // On fait une règle de trois basée sur le temps restant
+            const ratio = remaining / totalTime;
+            const distLeft = stepDist * ratio;
+            // Mise à jour du texte qui affichait "Calcul..."
+            $wrapper.find('.travel-total-km').text(`${distLeft.toFixed(1)} km`);
+          }
+
+          $wrapper.find('.travel-progress-fill').css('width', `${percent}%`);
+        });
+
+        if (!active && window.setup.buddiesPanelInterval) {
+          clearInterval(window.setup.buddiesPanelInterval);
+          window.setup.buddiesPanelInterval = null;
+        }
+      };
+      updateTimers();
+      window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
+    }
+  };
+
+
+  window.setup.showBuddyContextMenu = function(e, name) {
+    const v = State.variables;
     const npc = v.npcs[name];
+    if(!npc) return;
+
     const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
 
-    function addOption(text, fn, disabled = false) {
-      const $opt = $('<div class="context-option"></div>').text(text);
-      if (disabled) $opt.addClass('disabled');
-      else $opt.on('click', ev => {
+    function addOption(text, fn) {
+      $('<div class="context-option"></div>').text(text).on('click', ev => {
         ev.stopPropagation();
         fn();
         $menu.remove();
-      });
-      $menu.append($opt);
+      }).appendTo($menu);
     }
 
     if (npc.status === 'traveling') {
@@ -4886,15 +4967,12 @@
       addOption('Attendre ici', () => {
         npc.status = 'fixed';
         npc.passage = State.passage;
-        npc.coordinates = { ...window.setup.ensurePassageCoords(State.passage)
-        };
+        npc.coordinates = { ...window.setup.ensurePassageCoords(State.passage) };
         window.renderBuddiesPanel();
       });
       addOption('Parler', () => window.setup.openChatModal(name));
 
-      const currentHP = Number(npc.health) || 0;
-      const maxHP = Number(npc.maxHealth) || 1;
-      if (currentHP < maxHP) {
+      if ((npc.health || 0) < (npc.maxHealth || 20)) {
         addOption('Soigner (+5 PV)', () => window.setup.healBuddy(name, 5));
       }
       addOption('Faire partir', () => {
@@ -4905,19 +4983,13 @@
 
     const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
     const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
-    $menu.css({
-      top: `${posY}px`,
-      left: `${posX}px`
-    });
+    $menu.css({ top: `${posY}px`, left: `${posX}px` });
 
-    $(document).off('mousedown.buddymenuclose').on('mousedown.buddymenuclose', ev => {
-      if (!$(ev.target).closest('#buddy-context-menu').length) {
-        $('#buddy-context-menu').remove();
-        $(document).off('mousedown.buddymenuclose');
-      }
+    $(document).one('mousedown.buddymenuclose', ev => {
+      if (!$(ev.target).closest('#buddy-context-menu').length) $menu.remove();
     });
-  });
-};
+  };
+
   // ------------------------------------------------------
   // MENU "DONNER À UN COMPAGNON" — VERSION AMÉLIORÉE ET UNIFIÉE
   // ------------------------------------------------------
@@ -5305,73 +5377,6 @@
     return availablePNJs;
   }
 
-  // FONCTION DE RECHERCHE PNJ CORRIGÉE POUR VOTRE STRUCTURE
-  window.setup.loadPNJ = function(id) {
-    if (!id || typeof id !== 'string') {
-      console.warn("❌ ID PNJ manquant ou invalide:", id);
-      return createFallbackPNJ('inconnu');
-    }
-
-    // Si le système PNJ n'est pas prêt, utiliser le cache de fallback
-    if (!window.setup.pnjState.ready) {
-      console.warn("⚠️ Système PNJ pas prêt, utilisation du fallback pour:", id);
-      const fallbackId = id.toLowerCase();
-      return window.setup.fallbackPNJs[fallbackId] || createFallbackPNJ(id);
-    }
-
-    const searchId = id.toLowerCase().trim();
-    console.log(`🔍 RECHERCHE PNJ: "${searchId}"`);
-
-    // 1. Recherche directe par ID exact
-    if (window.pnjData[searchId]) {
-      console.log(`✅ PNJ trouvé par ID exact: ${searchId}`);
-      return window.pnjData[searchId];
-    }
-
-    // 2. Recherche avancée dans tous les PNJs
-    for (const [pnjId, pnjData] of Object.entries(window.pnjData)) {
-      const searchStrings = [];
-
-      // Extraction depuis VOTRE STRUCTURE JSON
-      if (pnjData.pnj?.identite) {
-        const identite = pnjData.pnj.identite;
-        if (identite.nom) searchStrings.push(identite.nom.toLowerCase());
-        if (identite.nom_complet) searchStrings.push(identite.nom_complet.toLowerCase());
-        if (identite.peuple) searchStrings.push(identite.peuple.toLowerCase());
-        if (identite.metier_principal) searchStrings.push(identite.metier_principal.toLowerCase());
-      }
-
-      // ID du PNJ
-      searchStrings.push(pnjId.toLowerCase());
-
-      // Recherche avec tolérance
-      for (const searchString of searchStrings) {
-        if (!searchString) continue;
-
-        // Correspondance exacte
-        if (searchString === searchId) {
-          console.log(`✅ PNJ trouvé par correspondance exacte: ${pnjId} (${searchString})`);
-          return pnjData;
-        }
-
-        // Correspondance partielle
-        const normalizedSearch = searchId.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const normalizedString = searchString.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-        if (normalizedString.includes(normalizedSearch) || normalizedSearch.includes(normalizedString)) {
-          console.log(`✅ PNJ trouvé par correspondance partielle: ${pnjId} (${searchString})`);
-          return pnjData;
-        }
-      }
-    }
-
-    // 3. Aucun PNJ trouvé
-    console.warn(`❌ AUCUN PNJ TROUVÉ POUR: "${id}"`);
-    console.log("📋 PNJs disponibles:", Object.keys(window.pnjData));
-
-    return createFallbackPNJ(id);
-  };
-
   // FONCTION FALLBACK AMÉLIORÉE
   function createFallbackPNJ(id) {
     const name = id.split('_')
@@ -5406,12 +5411,15 @@
   window.setup.getPnjData = function(pnjId) {
     const pnjData = window.setup.loadPNJ(pnjId);
 
+    // Fallback si loadPNJ échoue
     if (!pnjData) {
-      console.error(`❌ Données PNJ non trouvées pour: ${pnjId}`);
-      return createFallbackPNJ(pnjId).pnj;
+      return {
+          identite: { nom: pnjId, peuple: 'Inconnu', metier_principal: 'Inconnu' },
+          description: "Données non trouvées."
+      };
     }
 
-    // 🔴 CORRECTION : Gestion sécurisée de la structure imbriquée
+    // Normalisation des données pour éviter les erreurs undefined
     const identite = pnjData.pnj?.identite || pnjData.identite || {};
 
     return {
@@ -5425,23 +5433,9 @@
         pnjData.description_narrative ||
         pnjData.description ||
         "Description non disponible",
-      personnalite: pnjData.pnj?.personnalite || "Personnalité inconnue",
-      contexte: pnjData.pnj?.contexte || "Origine inconnue",
-      // 🔴 CORRECTION : Gérer les réactions de manière sécurisée
-      réaction_joueur: pnjData.pnj?.réaction_joueur || pnjData.réaction_joueur || {
-        addItem: {
-          weapon: ["Merci pour cette arme.", "Je vais en prendre soin."],
-          health: ["Merci pour ces soins.", "Je me sens mieux."],
-          food: ["Merci pour la nourriture.", "J'avais faim."],
-          misc: ["Merci.", "Je garde ça."]
-        },
-        pnjmove: {
-          follow: ["Je vous suis.", "Je vous accompagne."],
-          fixed: ["Je reste ici.", "Je vous attends."],
-          goto: ["Je me déplace.", "Je vais là-bas."],
-          recall: ["Je reviens.", "Je vous rejoins."]
-        }
-      }
+      // On préserve les autres champs utiles
+      personnalite: pnjData.pnj?.personnalite || "Inconnue",
+      contexte: pnjData.pnj?.contexte || "Inconnu"
     };
   };
 

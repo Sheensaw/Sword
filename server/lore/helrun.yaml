@@ -1,311 +1,81 @@
 # helrun.yaml
-modele: "hybride_ia_semantique"
-description: "Continent Helrun - Géographie complète avec régions, villes et routes polaires"
+modele: "low_fantasy_grim"
+description: "Continent Helrun - Survie polaire, tribus barbares et désolation"
 
-# SECTION OPTIMISÉE POUR L'EMBEDDING SEMANTIQUE
+# EMBEDDING SOMBRE
 embedding_optimized:
-  themes: ["continent", "polaire", "glaciaire", "vents_catabatiques", "commerce_glace", "helruniens", "reseau_drann"]
-  mots_cles: ["helrun", "skarnheim", "nerr", "drann", "glace_noire", "voiles_ygral", "courant_fer_bleu", "coordonnees_polaires"]
-  description_semantique: "Helrun, continent polaire régulateur thermique de Velkarum, structuré en régions glaciaires avec villes troglodytiques et routes de glace saisonnières"
+  themes: ["froid_mortel", "survie", "cannibalisme_de_survie", "raids", "vikings_inuit_dark"]
+  mots_cles: ["skarnheim", "glace_noire", "drakkars", "famine_hivernale", "chamanisme_sanglant"]
+  description_semantique: "Un enfer blanc. La civilisation ici se résume à ne pas mourir de froid ou de faim. Les faibles sont abandonnés."
 
 # DONNÉES FONDAMENTALES
 nom: "Helrun"
-designation: "Le Royaume du Froid et des Brumes"
-type: "continent polaire"
+designation: "Le Tombeau Blanc"
+type: "Continent polaire"
 superficie_mkm2: 29.4
-population_estimee_millions: 3.8
+population_estimee_millions: 3.8 (Faible densité)
 systeme_coordonnees: "grid_helrunien_100x100"
 
-# RÉGIONS GÉOPOLITIQUES DÉTAILLÉES
+# RÉGIONS GÉOPOLITIQUES
 regions:
-  - nom: "Territoire des Clans du Nerr"
+  - nom: "La Côte des Os (Nerr)"
     coordonnees: { x_min: 10, x_max: 40, y_min: 5, y_max: 30 }
-    biome_principal: "Côtes et fjords polaires"
+    biome_principal: "Fjords glacés"
     capitale: "Nerr"
-    peuples_principaux: ["Helruniens (90%)", "Nautes du Draen (10%)"]
-    population_region: 1.2
-    description: "Région côtière spécialisée dans le commerce du sel fossile et de la glace"
-    ressources: ["sel fossile", "glace noire", "poissons froids", "cristaux d'Ygral"]
-    particularites: ["port de commerce majeur", "mines de sel", "turbines à vapeur gelée"]
+    activite: "Pêche (baleine, phoque), départ des raids."
+    ambiance: "Villages fortifiés, odeur de graisse de phoque et de fumée."
 
-  - nom: "Domaine des Tribus du Nar"
+  - nom: "Le Désert Blanc (Nar)"
     coordonnees: { x_min: 35, x_max: 75, y_min: 15, y_max: 45 }
-    biome_principal: "Toundra du Nar"
-    capitale: "Narvik"
-    peuples_principaux: ["Helruniens (85%)", "Humains Valnari (10%)", "Divers (5%)"]
-    population_region: 1.5
-    description: "Vastes plaines gelées consacrées à l'élevage et à la chasse"
-    ressources: ["fourrures", "viande séchée", "herbes ferreuses", "lichens"]
-    particularites: ["élevage de rennes", "chasse sélective", "sanctuaires naturels"]
+    biome_principal: "Toundra et inlandsis"
+    population: "Nomades suivant les troupeaux de rennes."
+    danger: "Blizzards capables de tuer en une heure. Meutes de loups géants."
 
-  - nom: "Royaume Montagnard du Skarnheim"
+  - nom: "Les Pics du Vent (Skarnheim)"
     coordonnees: { x_min: 60, x_max: 95, y_min: 40, y_max: 70 }
-    biome_principal: "Montagnes et glaciers"
+    biome_principal: "Hautes montagnes"
     capitale: "Skarnheim"
-    peuples_principaux: ["Helruniens (80%)", "Nains Thaurgriens (15%)", "Ermites du Drann (5%)"]
-    population_region: 0.8
-    description: "Région montagneuse dominée par le culte des Voiles et l'énergie éolienne"
-    ressources: ["granite bleu", "vent catabatique", "glace pure", "pierres runiques"]
-    particularites: ["centre religieux", "turbines éoliennes", "observatoires polaires"]
+    description: "Forteresse taillée dans la roche et la glace. Siège du Jarl."
+    ressources: ["Mines de fer froid", "Glace Noire (extraite des glaciers profonds)"]
 
-  - nom: "Territoires des Nautes du Draen"
-    coordonnees: { x_min: 5, x_max: 25, y_min: 40, y_max: 60 }
-    biome_principal: "Côtes du Fer-Bleu"
-    capitale: "Aucune (nomadisme maritime)"
-    peuples_principaux: ["Nautes du Draen (70%)", "Helruniens (25%)", "Divers (5%)"]
-    population_region: 0.2
-    description: "Région maritime des navigateurs spécialisés dans le commerce avec Eldaron"
-    ressources: ["voies maritimes", "courants", "brumes navigables", "vents favorables"]
-    particularites: ["navigation experte", "cartes courants", "échanges avec Eldaron"]
-
-  - nom: "Sanctuaires des Ermites du Drann"
+  - nom: "Les Grottes du Drann"
     coordonnees: { x_min: 45, x_max: 65, y_min: 65, y_max: 85 }
-    biome_principal: "Grottes et réseaux sous-glaciaires"
-    capitale: "Ygral"
-    peuples_principaux: ["Ermites du Drann (60%)", "Helruniens (30%)", "Nains Thaurgriens (10%)"]
-    population_region: 0.1
-    description: "Région souterraine dédiée à l'étude de la Mémoire de la Glace"
-    ressources: ["connaissances glaciologiques", "archives de glace", "sources géothermiques"]
-    particularites: ["stations scientifiques", "bibliothèques de glace", "recherche mystique"]
+    biome_principal: "Réseau souterrain"
+    population: "Ermites, parias, 'Ceux qui vivent dessous'."
+    reputation: "On dit qu'ils mangent leurs morts pour survivre."
 
-# VILLES PRINCIPALES AVEC COORDONNÉES DÉTAILLÉES
+# VILLES PRINCIPALES (ABRIS DE FORTUNE)
 villes_principales:
   - nom: "Skarnheim"
-    region: "Royaume Montagnard du Skarnheim"
-    type: "Cité montagneuse sacrée"
+    type: "Citadelle du Jarl"
     coordonnees: { x: 75, y: 55 }
-    population: 320000
-    altitude_m: 1250
-    fondation: "-2800"
-    caracteristiques: ["architecture semi-enterrée", "turbines éoliennes", "temple des Voiles", "observatoire"]
-    peuples: ["Helruniens (75%)", "Nains Thaurgriens (15%)", "Ermites du Drann (10%)"]
+    population: 300000
+    description: "Sombre, enfumée, chauffée par des feux de tourbe. Les murs sont couverts de peaux."
 
   - nom: "Nerr"
-    region: "Territoire des Clans du Nerr"
-    type: "Port commercial majeur"
+    type: "Port de Raid"
     coordonnees: { x: 25, y: 15 }
-    population: 210000
-    altitude_m: 50
-    fondation: "-2600"
-    caracteristiques: ["docks de glace", "mines de sel", "marché aux fourrures", "quartier des Nautes"]
-    peuples: ["Helruniens (80%)", "Nautes du Draen (15%)", "Humains Valnari (5%)"]
+    activite: "Commerce avec les contrebandiers du sud. Vente d'esclaves capturés."
 
-  - nom: "Narvik"
-    region: "Domaine des Tribus du Nar"
-    type: "Colonie côtière"
-    coordonnees: { x: 55, y: 30 }
-    population: 95000
-    altitude_m: 200
-    fondation: "-2300"
-    caracteristiques: ["élevages de rennes", "tanneries", "entrepôts de fourrures", "sanctuaire tribal"]
-    peuples: ["Helruniens (85%)", "Humains Valnari (10%)", "Divers (5%)"]
+# CULTURE ET SURVIE
+coutumes_brutales:
+  - "Le Grand Sommeil : Les vieillards qui ne peuvent plus travailler partent volontairement dans le blizzard pour ne pas être une charge."
+  - "Le Partage du Sang : Lors des chasses, boire le sang chaud de la proie est un rituel vital."
+  - "Loi du Fer : Tout conflit se règle par le duel."
 
-  - nom: "Ygral"
-    region: "Sanctuaires des Ermites du Drann"
-    type: "Station scientifique"
-    coordonnees: { x: 55, y: 75 }
-    population: 1500
-    altitude_m: 1800
-    fondation: "-1200"
-    caracteristiques: ["laboratoires glaciologiques", "bibliothèque de glace", "observatoire souterrain", "sanctuaires"]
-    peuples: ["Ermites du Drann (70%)", "Helruniens (20%)", "Nains Thaurgriens (10%)"]
+# RESSOURCES
+ressources:
+  - "Glace Noire : Glace extrêmement dense qui ne fond pas facilement. Vendue à prix d'or au sud pour conserver les aliments des rois."
+  - "Fourrures : Vitales pour le commerce."
+  - "Huile de baleine : Combustible."
 
-# RÉSEAU ROUTIER COMPLET - ADAPTÉ AU CONTEXTE POLAIRE
-routes_principales:
-  - nom: "Voie des Fjords"
-    type: "Route côtière commerciale"
-    longueur_km: 800
-    statut: "Saisonnière (glace navigable)"
-    points_cles: [
-      { ville: "Nerr", type: "port principal", coordonnees: {x: 25, y: 15} },
-      { lieu: "Embouchure du Drann", type: "connexion souterraine", coordonnees: {x: 20, y: 25} },
-      { ville: "Narvik", type: "colonie côtière", coordonnees: {x: 55, y: 30} }
-    ]
-    trafic: "Moyen (marchandises, sel, glace)"
-    securite: "Variable (dépend des conditions glaciaires)"
-
-  - nom: "Piste de la Toundra"
-    type: "Route terrestre saisonnière"
-    longueur_km: 600
-    statut: "Traces dans la neige, balisage runique"
-    points_cles: [
-      { ville: "Narvik", type: "départ", coordonnees: {x: 55, y: 30} },
-      { lieu: "Plaines de Nar", type: "zone de chasse", coordonnees: {x: 50, y: 40} },
-      { ville: "Skarnheim", type: "terminus montagnard", coordonnees: {x: 75, y: 55} }
-    ]
-    trafic: "Faible (chasseurs, tribus nomades)"
-    securite: "Bonne (territoire tribal contrôlé)"
-
-  - nom: "Chemin des Montagnes"
-    type: "Route religieuse et énergétique"
-    longueur_km: 450
-    statut: "Sentier montagnard, partiellement aménagé"
-    points_cles: [
-      { ville: "Skarnheim", type: "cité sacrée", coordonnees: {x: 75, y: 55} },
-      { lieu: "Sanctuaires d'Ygral", type: "stations scientifiques", coordonnees: {x: 55, y: 75} },
-      { lieu: "Sources du Drann", type: "site mystique", coordonnees: {x: 65, y: 80} }
-    ]
-    trafic: "Très faible (pèlerins, chercheurs)"
-    securite: "Élevée (territoire sacré protégé)"
-
-  - nom: "Route du Fer-Bleu"
-    type: "Voie maritime internationale"
-    longueur_km: 1200
-    statut: "Maritime, courants chauds"
-    points_cles: [
-      { lieu: "Côtes du Fer-Bleu", type: "départ maritime", coordonnees: {x: 10, y: 50} },
-      { ville: "Nerr", type: "port d'escale", coordonnees: {x: 25, y: 15} },
-      { lieu: "Confluence Draen", type: "connexion avec Eldaron", coordonnees: {x: 15, y: 10} }
-    ]
-    trafic: "Commercial (échanges avec Eldaron)"
-    securite: "Moyenne (risques de tempêtes polaires)"
-
-  - nom: "Canal du Drann"
-    type: "Réseau souterrain"
-    longueur_km: 2100
-    statut: "Souterrain, eaux pressurisées"
-    points_cles: [
-      { lieu: "Sources du Drann", type: "origine sous-glaciaire", coordonnees: {x: 65, y: 80} },
-      { lieu: "Grottes du Drann", type: "réseau intermédiaire", coordonnees: {x: 50, y: 60} },
-      { lieu: "Embouchure du Drann", type: "sortie vers Eldaron", coordonnees: {x: 20, y: 25} }
-    ]
-    trafic: "Scientifique (recherche), limité"
-    securite: "Dangereuse (sous-glaciaire instable)"
-
-# INTERACTIONS INTER-RÉGIONALES
-relations_interregionales:
-  - regions: ["Clans du Nerr", "Nautes du Draen"]
-    type: "Symbiose commerciale"
-    intensite: "Forte"
-    echanges: ["sel ↔ navigation", "glace ↔ produits étrangers"]
-
-  - regions: ["Tribus du Nar", "Montagnards du Skarnheim"]
-    type: "Échange complémentaire"
-    intensite: "Moyenne"
-    echanges: ["fourrures ↔ énergie éolienne", "viande ↔ protection"]
-
-  - regions: ["Ermites du Drann", "Toutes régions"]
-    type: "Relation de conseil"
-    intensite: "Faible mais respectée"
-    echanges: ["savoir glaciologique ↔ protection et ressources"]
-
-# DESCRIPTION NARRATIVE SYNTHÈSE COMPLÈTE ET COHÉRENTE
-description_narrative: |
-  Helrun s'étend comme un royaume de glace et de brumes, structuré en cinq régions 
-  aux spécialisations complémentaires. Au sud-ouest, le Territoire des Clans du Nerr (25,15) 
-  domine le commerce du sel fossile et de la glace noire, connecté par la Voie des Fjords 
-  (800 km) qui serpente le long des côtes jusqu'à Narvik (55,30) à 400 km au nord-est.
-  
-  Les vastes Domaine des Tribus du Nar s'étendent au centre, où la Piste de la Toundra 
-  (600 km) relie Narvik aux contreforts du Royaume Montagnard du Skarnheim (75,55) 
-  sur 300 km vers l'est. Skarnheim, perchée à 1250m d'altitude, commande le Chemin des Montagnes 
-  (450 km) qui mène aux Sanctuaires des Ermites du Drann à Ygral (55,75), à 250 km au nord.
-  
-  À l'ouest, les Territoires des Nautes du Draen contrôlent la Route du Fer-Bleu (1200 km), 
-  voie maritime vitale qui connecte Helrun à Eldaron via le Canal du Drann (2100 km) 
-  prenant sa source près d'Ygral et émergeant près de Nerr.
-  
-  Chaque route a sa spécificité : la Voie des Fjords pour le commerce côtier, 
-  la Piste de la Toundra pour les échanges tribaux, le Chemin des Montagnes pour 
-  les pèlerinages, la Route du Fer-Bleu pour le commerce international, et le 
-  Canal du Drann pour la recherche scientifique.
-  
-  Cet équilibre entre régions côtières, intérieures et montagnardes fait d'Helrun 
-  le régulateur thermique de Velkarum, où chaque déplacement doit composer avec 
-  les conditions polaires et où les voyages entre régions prennent de 3 à 15 jours 
-  selon les saisons et les conditions glaciaires.
-
-# RELATIONS AVEC ELDARON - COHÉRENCE INTER-CONTINENTALE
-relations_eldaron:
-  connexion_hydrologique:
-    reseau: "Drann → Draen"
-    points_liaison:
-      - { lieu_helrun: "Embouchure du Drann (20,25)", lieu_eldaron: "Source du Draen (40,95)", distance: 1200 }
-  commerce_principal:
-    exportations_helrun: ["sel fossile", "glace noire", "fourrures", "cristaux d'Ygral"]
-    importations_eldaron: ["outils métalliques", "céréales", "textiles", "argile cuite"]
-  routes_commerciales:
-    - "Voie Maritime du Fer-Bleu : Nerr (25,15) ↔ Lirn (15,45) - 600 km"
-    - "Canal du Drann-Draen : Sources (65,80) ↔ Lorn (45,55) - 2100 km total"
-
-# SYSTÈME GLACIOLOGIQUE PLANÉTAIRE - NOUVELLE SECTION
-impact_glaciologique_planetaire:
-  regulation_thermique:
-    contribution: "Absorbe 35% de l'excès thermique iskarien"
-    mecanisme: "Fonte saisonnière contrôlée et courants froids dirigés"
-    beneficiaires: ["Varnäl (rafraîchissement estival)", "Thaurgrim (contrôle activité volcanique)"]
-  ressources_critiques:
-    glace_noire:
-      utilisation: "Exportée vers Varnäl pour conservation biologique et recherche"
-      quantite: "5000 tonnes/an vers les laboratoires de Marael"
-    sel_fossile:
-      utilisation: "Essentiel pour l'industrie thaurgrimmienne de purification"
-      importance: "Permet traitement 70% du soufre continental"
-  recherche_polaire:
-    cooperation: "Station Ygral collabore avec Velkar (Varnäl) et Shaar-Keth (Iskarion)"
-    decouvertes: ["Stockage énergie dans glace noire", "Contrôle climat par brumes polaires"]
-
-# ALLIANCES ÉNERGÉTIQUES - NOUVELLE SECTION
-nouvelles_routes_commerciales:
-  - nom: "Circuit des Énergies Polaires"
-    type: "Échange énergétique triangulaire"
-    partenaires: ["Helrün", "Iskarion", "Thaurgrim"]
-    description: "Glace pour refroidissement ↔ Énergie solaire ↔ Vapeur géothermale"
-    benefice: "Équilibre thermique continental et optimisation production"
-    mise_en_oeuvre: "Système canaux thermiques gérés depuis Skarnheim"
-
-  - nom: "Alliance du Feu et de la Glace"
-    type: "Recherche et développement"
-    membres: ["Helrün", "Thaurgrim"]
-    objectif: "R&D énergies extrêmes et régulation climatique"
-    realisations:
-      - "Système refroidissement géothermale pour forges thaurgrimmiennes"
-      - "Stockage énergie solaire dans glace noire (rendement 85%)"
-      - "Contrôle éruptions volcaniques par injection glace profonde"
-
-# INFRASTRUCTURES INTERCONTINENTALES - NOUVELLE SECTION
-infrastructures_critiques:
-  - nom: "Station Polaire Internationale d'Ygral"
-    type: "Centre de recherche climatique"
-    coordonnees: { x: 55, y: 75 }
-    fonction: "Coordination études glaciologiques et modélisation climat planétaire"
-    partenaires: ["Observatoire de Velkar", "Académie Solaire de Zhaïr", "Laboratoires de Shaar-Keth"]
-    importance: "Données essentielles pour agriculture et navigation continentales"
-
-  - nom: "Port International de Nerr"
-    type: "Hub commercial polaire"
-    coordonnees: { x: 25, y: 15 }
-    fonction: "Gestion 60% du commerce maritime nord et redistribution ressources polaires"
-    capacite: "1000 navires/an - 50000 tonnes de glace noire"
-    securite: "Forces helruniennes et gardes internationaux"
-
-# SYSTÈME HYDROLOGIQUE CONTINENTAL
-reseau_hydrologique:
-  canal_drann:
-    longueur: "2100 km (souterrain et surface)"
-    debit: "500 m³/seconde (variable saisonnièrement)"
-    fonction: "Approvisionnement 40% des besoins en eau douce d'Eldaron"
-    monitoring: "Stations de contrôle aux Sources, Grottes et Embouchure"
-  courants_polaires:
-    - "Courant du Fer-Bleu : Transport chaleur vers Eldaron"
-    - "Courant Glaciaire : Équilibre thermique avec Iskarion"
-    - "Courant Profond : Échanges avec Thaurgrim"
+# CLIMAT
+conditions:
+  - "Hiver : Dure 9 mois. Nuit perpétuelle."
+  - "Été : 3 mois de boue et de fonte des glaces. Saison de la guerre."
 
 # MÉTA-DONNÉES IA
 meta_ia:
   date_creation: "2025-11-05"
-  version: 3.2
-  type_contenu: "continent_polaire_complet"
-  coherence_verifiee: ["regions", "villes", "routes", "peuplements", "coordonnees", "relations_eldaron", "impact_glaciologique"]
-  points_entree_semantiques: [
-    "recherche_par_ville_polaire",
-    "recherche_par_route_glaciaire",
-    "recherche_par_region_helrunienne",
-    "navigation_polaire",
-    "calcul_itineraire_conditions_extremes",
-    "relations_intercontinentales",
-    "recherche_glaciologique"
-  ]
-  echelle_voyage: "80_km_par_jour_conditions_normales"
-  conditions_speciales: ["vents_catabatiques", "glace_navigable", "brumes_polaires"]
-  unite_coordonnees: "grid_100x100_helrunien"
+  version: 3.2_grim
+  type_contenu: "continent_polaire_dark"

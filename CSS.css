@@ -31,7 +31,7 @@
     --text-soft: #f0f0f0;
     --shadow-strong: 0 0 22px rgba(0,0,0,0.85);
     --shadow-soft: 0 0 14px rgba(0,0,0,0.55);
-    --panel-width: 16.5em;
+    --panel-width: 18em; /* Légèrement élargi pour éviter les retours à la ligne intempestifs */
     --badge-size: 0.7em;
     --badge-padding: 0.1em 0.4em;
     --modal-width: 600px;
@@ -43,14 +43,21 @@
 /* =========================================
    RESET & BASE
 ========================================= */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after {
+    margin: 0; padding: 0; box-sizing: border-box;
+    /* Anti-jitter pour les transformations */
+    -webkit-font-smoothing: antialiased;
+}
+
 html, body { height: 100%; overflow: hidden; }
+
 body {
     position: relative; font-family: 'Underdog', serif; font-size: 20px;
-    color: var(--text-soft); line-height: 1.35; -webkit-font-smoothing: antialiased;
+    color: var(--text-soft); line-height: 1.35;
     text-rendering: optimizeLegibility; background: #000;
     transition: background-image .6s ease-in-out;
 }
+
 .icon-1em { height: 1em; vertical-align: middle; filter: drop-shadow(0 0 3px #000); }
 .icon-08em { height: .8em; vertical-align: middle; margin-right: .2em; filter: drop-shadow(0 0 2px #000); }
 
@@ -268,6 +275,8 @@ body {
 }
 .passage-content {
     overflow-y: auto; max-height: 70vh; scroll-behavior: smooth;
+    /* STABILITÉ : Evite le layout shift quand la scrollbar apparait */
+    scrollbar-gutter: stable;
 }
 .passage-content p { margin: 0; line-height: 1.48; text-shadow: 0 0 5px rgba(0,0,0,.65); }
 .fade-paragraph { display: inline-block; opacity: 0; min-height: 1em; transition: opacity 1s ease-in-out; }
@@ -275,10 +284,10 @@ body {
 @keyframes fadeSlideReveal { 0% { clip-path: inset(0 100% 0 0); } 100% { clip-path: inset(0 0 0 0); } }
 
 /* Scrollbar */
-.passage-content::-webkit-scrollbar, .modal-body::-webkit-scrollbar { width: 10px; }
-.passage-content::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 5px; }
-.passage-content::-webkit-scrollbar-thumb, .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 5px; }
-.passage-content::-webkit-scrollbar-thumb:hover, .modal-body::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+.passage-content::-webkit-scrollbar, .modal-body::-webkit-scrollbar, .side-panel::-webkit-scrollbar { width: 10px; }
+.passage-content::-webkit-scrollbar-track, .modal-body::-webkit-scrollbar-track, .side-panel::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 5px; }
+.passage-content::-webkit-scrollbar-thumb, .modal-body::-webkit-scrollbar-thumb, .side-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 5px; }
+.passage-content::-webkit-scrollbar-thumb:hover, .modal-body::-webkit-scrollbar-thumb:hover, .side-panel::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
 /* CHOIX */
 #choices-container a, #passages a.link-internal {
@@ -308,8 +317,15 @@ body {
     position: fixed; top: 3.8em; right: 0; width: var(--panel-width);
     max-height: calc(100% - 2.5em); background: var(--glass); border-left: 2px solid #444;
     border-top: 1px solid #333; box-shadow: var(--shadow-soft); overflow-y: auto;
-    transform: translateX(100%); opacity: 0; transition: transform .42s cubic-bezier(.77,0,.175,1), opacity .42s;
-    z-index: 1200; display: flex; flex-direction: column; gap: .45em; padding: .85em; font-size: .86em;
+    transform: translateX(100%); opacity: 0;
+    /* STABILITÉ : Transition optimisée et GPU acceleration */
+    transition: transform .42s cubic-bezier(.77,0,.175,1), opacity .42s;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    z-index: 1200;
+    display: flex; flex-direction: column; gap: .45em; padding: .85em; font-size: .86em;
+    /* Empêcher le scroll du body quand on scroll le panneau */
+    overscroll-behavior: contain;
 }
 .side-panel.show { transform: translateX(0); opacity: 1; }
 
@@ -365,7 +381,11 @@ body {
 #dialogue-modal, #quest-modal, #quest-proposal-modal, #item-modal, #pnj-modal, #chat-modal {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: var(--modal-width); height: var(--modal-height); max-width: 90vw; max-height: 90vh;
     background: var(--modal-bg); border: var(--modal-border); border-radius: 12px; z-index: 2100; box-shadow: var(--shadow-strong); overflow: hidden;
-    font-size: 0.96em; color: var(--text-soft); opacity: 0; animation: modalSlideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    font-size: 0.96em; color: var(--text-soft); opacity: 0;
+    animation: modalSlideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    /* STABILITÉ */
+    will-change: transform, opacity;
+    backface-visibility: hidden;
 }
 @keyframes modalSlideIn { 0% { opacity: 0; transform: translate(-50%, -55%) scale(0.95); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 .modal-content { position: absolute; top: 11%; left: 9%; right: 9%; bottom: 13%; display: flex; flex-direction: column; justify-content: space-between; padding: 0.7em; overflow: hidden; }
@@ -383,6 +403,7 @@ body {
 .modal-close:hover::after, .accept-quest:hover::after, .modal-btn:hover::after, button:hover::after, .give-btn:hover::after, #chat-send:hover::after, #chat-close:hover::after { width: 100%; }
 
 /* CONTEXT MENUS */
+/* STABILITÉ : z-index très élevé pour passer au dessus des modales */
 .context-menu, #inventory-context-menu, #buddy-context-menu, #give-buddy-menu, #give-item-context-menu {
     position: absolute; background: rgba(0,0,0,0.92); border: 1px solid #fff; border-radius: 8px; padding: 0.5em 0; min-width: 160px; z-index: 9999; font-size: 0.88em; line-height: 1.4; box-shadow: 0 0 16px rgba(0,0,0,0.8); animation: fadeMenu 0.2s ease forwards; pointer-events: auto;
 }

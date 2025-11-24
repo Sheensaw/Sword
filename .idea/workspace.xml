@@ -5,28 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9346811d-2528-42e9-8c44-1b49d7d36b23" name="Changes" comment="COmmit2">
-      <change afterPath="$PROJECT_DIR$/deathstalker.srt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/lore/bestiaire.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/lore/eldaron.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/lore/helrun.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/lore/iskarion.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/lore/thaurgim.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/lore/varnal.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/srt_clean.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaScript.js" beforeDir="false" afterPath="$PROJECT_DIR$/JavaScript.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/aspets_sombres.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/aspets_sombres.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/economie.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/economie.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/eldaron.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/eldaron.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/geopolitique.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/geopolitique.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/helrun.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/helrun.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/iskarion.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/iskarion.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/modele_generation_personnages.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/modele_generation_personnages.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/mythes_legendes.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/mythes_legendes.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/thaurgrim.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/thaurgrim.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/us_coutumes_peuples.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/us_coutumes_peuples.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/varnal.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/varnal.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/lore/velkarum.json" beforeDir="false" afterPath="$PROJECT_DIR$/server/lore/velkarum.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +59,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "C:/Users/garwi/Documents/Twine/Stories/Sword/loot",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -88,6 +69,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "preferences.keymap",
+    "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -153,6 +135,7 @@
       <workItem from="1763741870090" duration="10961000" />
       <workItem from="1763798914311" duration="1650000" />
       <workItem from="1763893256957" duration="18993000" />
+      <workItem from="1763989352521" duration="328000" />
     </task>
     <task id="LOCAL-00001" summary="COmmit">
       <option name="closed" value="true" />

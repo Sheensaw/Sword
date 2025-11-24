@@ -1359,68 +1359,38 @@
   window.setup.fallbackGeography = {
     continents: {
       "Eldaron": {
-        regions: [{
-          name: "Royaume Central de Valnoria",
-          bounds: {
-            x_min: 30,
-            x_max: 60,
-            y_min: 40,
-            y_max: 70
-          },
-          capital: "Lorn"
-        }],
-        cities: [{
-          name: "Lorn",
-          coords: {
-            x: 45,
-            y: 55
-          }
-        }],
-        points_of_interest: [{
-          name: "Académie du Draen",
-          type: "Centre de recherche",
-          coords: {
-            x: 45,
-            y: 55
-          }
-        }]
+        id: "eldaron",
+        name: "Eldaron (Secours)",
+        regions: [],
+        bounds: { x_min: 0, x_max: 100, y_min: 0, y_max: 100 }
       }
-    }
+    },
+    nodes: {},
+    routes: []
   };
 
   // REMPLACER loadGeography complètement
   async function loadGeography() {
-    if (window.setup.geographyState.loading) {
-      console.log("⚠️ Chargement géographie déjà en cours");
-      return;
-    }
+    if (window.setup.geographyState.loading) return;
 
     window.setup.geographyState.loading = true;
     window.setup.geographyState.attempted = true;
 
     console.log("🗺️ DÉBUT CHARGEMENT GÉOGRAPHIE MULTI-ÉCHELLES...");
 
-    // Liste exhaustive des fichiers de lore générés
+    // Ordre de chargement : Macro -> Micro (Le dernier écrase les détails du premier)
     const geoFiles = [
-      'velkarum.json', // Carte Mondiale (Niveau 0)
-      'eldaron.json',  // Détail Eldaron (Niveau 1)
+      'velkarum.json', // Niveau 0 : Monde
+      'eldaron.json',  // Niveau 1 : Continents & Villes
       'thaurgrim.json',
       'iskarion.json',
       'helrun.json',
       'varnal.json'
     ];
 
-    // Chemins possibles (pour compatibilité locale/serveur)
-    const basePaths = [
-      './server/lore/',
-      'server/lore/',
-      './lore/',
-      'lore/',
-      './',
-      ''
-    ];
+    const basePaths = ['./server/lore/', 'server/lore/', './lore/', 'lore/', './', ''];
 
-    // Conteneur de fusion
+    // Structure de données fusionnée
     let mergedData = {
       continents: {},
       nodes: {},
@@ -1429,61 +1399,64 @@
 
     let successCount = 0;
 
-    // Helper de chargement unitaire
     const loadFile = async (filename) => {
       for (const basePath of basePaths) {
-        const path = basePath + filename;
         try {
-          const response = await fetch(path);
+          const response = await fetch(basePath + filename);
           if (response.ok) {
             const json = await response.json();
-            console.log(`✅ Chargé: ${filename} (${Object.keys(json.nodes || {}).length} noeuds)`);
-            return json;
+            return { filename, json };
           }
-        } catch (e) {
-          // On continue vers le chemin suivant silencieusement
-        }
+        } catch (e) { /* continue */ }
       }
-      console.warn(`❌ Impossible de charger ${filename} (introuvable sur tous les chemins)`);
+      console.warn(`❌ Fichier introuvable : ${filename}`);
       return null;
     };
 
-    // Chargement parallèle sécurisé
-    const promises = geoFiles.map(file => loadFile(file).catch(err => {
-        console.error(`Erreur critique sur ${file}:`, err);
-        return null;
-    }));
+    // Chargement parallèle
+    const results = await Promise.all(geoFiles.map(f => loadFile(f)));
 
-    const results = await Promise.all(promises);
+    results.forEach(res => {
+      if (!res) return;
+      const { filename, json } = res;
+      successCount++;
 
-    results.forEach((data) => {
-      if (data) {
-        successCount++;
-        // Fusion des Continents
-        if (data.continents) Object.assign(mergedData.continents, data.continents);
+      // 1. Fusion Continents
+      if (json.continents) Object.assign(mergedData.continents, json.continents);
 
-        // Fusion des Noeuds (Les clés identiques dans les fichiers détaillés écrasent celles de velkarum, ce qui permet d'enrichir les descriptions)
-        if (data.nodes) Object.assign(mergedData.nodes, data.nodes);
-
-        // Concaténation des Routes
-        if (data.routes && Array.isArray(data.routes)) {
-          mergedData.routes = mergedData.routes.concat(data.routes);
-        }
+      // 2. Fusion Noeuds (Micro écrase Macro pour le même ID)
+      if (json.nodes) {
+        Object.entries(json.nodes).forEach(([id, node]) => {
+          // On marque la source pour le debug
+          node._sourceFile = filename;
+          mergedData.nodes[id] = node;
+        });
       }
+
+      // 3. Aggrégation Routes (On garde tout, pas d'écrasement)
+      if (json.routes && Array.isArray(json.routes)) {
+        // On évite les doublons par ID de route
+        const existingIds = new Set(mergedData.routes.map(r => r.id));
+        json.routes.forEach(r => {
+          if (!existingIds.has(r.id)) {
+            mergedData.routes.push(r);
+          }
+        });
+      }
+      console.log(`✅ Chargé: ${filename} (${Object.keys(json.nodes || {}).length} lieux)`);
     });
 
     if (successCount > 0) {
       window.setup.geographyState.data = mergedData;
       window.setup.geographyState.ready = true;
-      console.log(`✅ GÉOGRAPHIE PRÊTE : ${successCount}/${geoFiles.length} fichiers fusionnés.`);
-      console.log(`📊 Stats Globales : ${Object.keys(mergedData.nodes).length} lieux, ${mergedData.routes.length} connexions.`);
+      console.log(`✅ GÉOGRAPHIE PRÊTE. Total: ${Object.keys(mergedData.nodes).length} lieux.`);
 
-      // Reconstruire le graphe immédiatement après le chargement
+      // Reconstruire le graphe immédiatement
       if (window.setup.buildNavigationGraph) {
           window.setup.buildNavigationGraph();
       }
     } else {
-      console.warn("⚠️ ÉCHEC TOTAL chargement géographie. Activation du fallback de secours.");
+      console.error("⚠️ ÉCHEC CRITIQUE GÉOGRAPHIE. Fallback activé.");
       window.setup.geographyState.data = JSON.parse(JSON.stringify(window.setup.fallbackGeography));
       window.setup.geographyState.ready = true;
     }
@@ -1493,40 +1466,22 @@
 
   // REMPLACER window.setup.getGeographyData
   window.setup.getGeographyData = function() {
-    // 🔴 CORRECTION : Toujours retourner une copie sécurisée
     if (!window.setup.geographyState.ready || !window.setup.geographyState.data) {
-      console.warn("⚠️ Géographie pas prêt, utilisation du fallback");
       return JSON.parse(JSON.stringify(window.setup.fallbackGeography));
     }
-
     return window.setup.geographyState.data;
   };
 
   // Vérification périodique de l'état de la géographie
-  window.setup.ensureGeographyReady = function(callback, maxAttempts = 10) {
+  window.setup.ensureGeographyReady = function(callback, maxAttempts = 20) {
     let attempts = 0;
-
-    function check() {
+    const check = () => {
       attempts++;
-
-      if (window.setup.geographyState.ready) {
-        callback(true);
-        return;
-      }
-
-      if (attempts >= maxAttempts) {
-        console.warn("❌ Timeout attente système géographie");
-        callback(false);
-        return;
-      }
-
-      if (!window.setup.geographyState.attempted) {
-        loadGeography();
-      }
-
+      if (window.setup.geographyState.ready) return callback(true);
+      if (attempts >= maxAttempts) return callback(false);
+      if (!window.setup.geographyState.attempted) loadGeography();
       setTimeout(check, 200);
-    }
-
+    };
     check();
   };
 
@@ -1591,53 +1546,59 @@
   // -------------------------------------------------------------------------
   window.setup.buildNavigationGraph = function() {
     const geo = window.setup.getGeographyData();
-    if (!geo || !geo.nodes || !geo.routes) return null;
+    if (!geo || !geo.nodes) return null;
 
     const graph = {};
-    Object.keys(geo.nodes).forEach(nodeKey => {
-      graph[nodeKey] = {
-        data: geo.nodes[nodeKey],
-        connections: []
+    let isolatedNodes = 0;
+
+    // 1. Initialisation des noeuds
+    Object.entries(geo.nodes).forEach(([id, node]) => {
+      graph[id] = {
+        id: id,
+        data: node,
+        connections: [],
+        continent: node.continent || "Inconnu"
       };
     });
 
+    // 2. Création des arcs (routes)
     geo.routes.forEach(route => {
       const from = route.start;
       const to = route.end;
 
-      if (!graph[from] || !graph[to]) return;
+      if (graph[from] && graph[to]) {
+        let dist = route.distance_km;
 
-      let dist = route.distance_km;
-      // Calcul de distance à vol d'oiseau si non spécifiée
-      if (!dist) {
-        const n1 = geo.nodes[from];
-        const n2 = geo.nodes[to];
-        const dx = n1.x - n2.x;
-        const dy = n1.y - n2.y;
-        dist = Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
+        // Calcul automatique distance si manquante (Vol d'oiseau)
+        if (typeof dist !== 'number') {
+          const n1 = geo.nodes[from];
+          const n2 = geo.nodes[to];
+          const dx = n1.x - n2.x;
+          const dy = n1.y - n2.y;
+          dist = Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
+        }
+
+        // Coût du trajet (Distance * Multiplicateur terrain)
+        // Les liens "Link" (Macro->Micro) ont souvent 0km, coût minime pour Dijkstra
+        const cost = Math.max(0.1, dist * (route.cost_multiplier || 1.0));
+
+        graph[from].connections.push({ target: to, cost, dist, routeData: route });
+        graph[to].connections.push({ target: from, cost, dist, routeData: route });
+      } else {
+        console.warn(`⚠️ Route brisée: ${route.id} (${from} -> ${to}). Un noeud manque.`);
       }
+    });
 
-      // Utiliser le cost_multiplier du JSON pour le pathfinding (Dijkstra)
-      // Si cost_multiplier < 1 (ex: 0.5 pour carriage), le chemin sera privilégié
-      const cost = dist * (route.cost_multiplier || 1.0);
-
-      // Connexions bidirectionnelles
-      graph[from].connections.push({
-        target: to,
-        cost: cost,
-        dist: dist,
-        routeData: route
-      });
-      graph[to].connections.push({
-        target: from,
-        cost: cost,
-        dist: dist,
-        routeData: route
-      });
+    // 3. Diagnostic Orphelins (Micro zones non reliées)
+    Object.values(graph).forEach(node => {
+      if (node.connections.length === 0) {
+        // console.debug(`🔍 Info: Noeud isolé (Orphelin) : ${node.id}`);
+        isolatedNodes++;
+      }
     });
 
     window.setup.navGraph = graph;
-    console.log("🗺️ Graphe de navigation construit : " + Object.keys(graph).length + " nœuds.");
+    console.log(`🗺️ Graphe construit: ${Object.keys(graph).length} noeuds, ${isolatedNodes} isolés.`);
     return graph;
   };
 
@@ -1647,21 +1608,30 @@
   window.setup.findPathInGraph = function(startNodeId, endNodeId) {
     if (!window.setup.navGraph) window.setup.buildNavigationGraph();
     const graph = window.setup.navGraph;
-    if (!graph[startNodeId] || !graph[endNodeId]) return null;
+
+    if (!graph[startNodeId] || !graph[endNodeId]) {
+      console.error(`❌ Pathfinding impossible: Noeud inconnu (${startNodeId} ou ${endNodeId})`);
+      return null;
+    }
 
     const distances = {};
     const previous = {};
-    const pq = new Set(); // File de priorité simplifiée
+    const pq = new Set(); // File de priorité simple
 
-    Object.keys(graph).forEach(node => {
-      distances[node] = Infinity;
-      pq.add(node);
+    // Init
+    Object.keys(graph).forEach(id => {
+      distances[id] = Infinity;
+      pq.add(id);
     });
     distances[startNodeId] = 0;
 
     while (pq.size > 0) {
+      // Extraction min
       let minNode = null;
       let minDist = Infinity;
+
+      // Optimisation: ne scanner que si nécessaire (limite recherche ?)
+      // Pour <2000 noeuds, le scan complet est acceptable en JS moderne (~2ms)
       for (const node of pq) {
         if (distances[node] < minDist) {
           minDist = distances[node];
@@ -1669,45 +1639,44 @@
         }
       }
 
-      if (minNode === null || minNode === endNodeId) break;
+      if (minNode === null || minNode === endNodeId) break; // Trouvé ou inaccessible
+      if (minDist === Infinity) break; // Reste inaccessible
+
       pq.delete(minNode);
 
-      for (const neighbor of graph[minNode].connections) {
-        const alt = distances[minNode] + neighbor.cost;
-        if (alt < distances[neighbor.target]) {
-          distances[neighbor.target] = alt;
-          previous[neighbor.target] = {
-            prevNode: minNode,
-            routeInfo: neighbor
-          };
+      // Relâchement des voisins
+      for (const edge of graph[minNode].connections) {
+        const alt = distances[minNode] + edge.cost;
+        if (alt < distances[edge.target]) {
+          distances[edge.target] = alt;
+          previous[edge.target] = { prevNode: minNode, edge };
         }
       }
     }
 
-    // Reconstruction du chemin
+    // Reconstruction
+    if (distances[endNodeId] === Infinity) return null;
+
     const path = [];
     let current = endNodeId;
-    if (distances[current] === Infinity) return null;
-
     while (current !== startNodeId) {
       const step = previous[current];
-      if (!step) break;
-
       path.unshift({
         nodeId: current,
         coords: graph[current].data,
-        route: step.routeInfo.routeData,
-        segmentDist: step.routeInfo.dist
+        route: step.edge.routeData,
+        segmentDist: step.edge.dist
       });
       current = step.prevNode;
     }
-    // Ajouter le point de départ
+    // Ajout départ
     path.unshift({
       nodeId: startNodeId,
       coords: graph[startNodeId].data,
-      route: null,
+      route: null, // Pas de route pour arriver au départ
       segmentDist: 0
     });
+
     return path;
   };
 
@@ -1969,89 +1938,73 @@
   // 7. UTILITAIRES DE ROUTAGE
   // -------------------------------------------------------------------------
   window.setup.calculateComplexRoute = function(startCoords, endCoords, startContinent, endContinent) {
-    // S'assurer que le graphe est construit
     if (!window.setup.navGraph) window.setup.buildNavigationGraph();
     const graph = window.setup.navGraph;
 
-    // Normalisation des continents pour la recherche
-    const sCont = (startContinent || "Eldaron").toLowerCase().trim();
-    const eCont = (endContinent || "Eldaron").toLowerCase().trim();
+    // Normalisation
+    const sCont = (startContinent || "Eldaron").trim();
+    const eCont = (endContinent || "Eldaron").trim();
 
-    let startNode = null, endNode = null;
-    let minStartDist = Infinity, minEndDist = Infinity;
+    // Trouver les noeuds d'ancrage les plus proches
+    const getClosestNode = (coords, continent) => {
+      let bestNode = null;
+      let bestDist = Infinity;
 
-    // --- ÉTAPE 1 : Trouver les points d'ancrage sur le graphe ---
-    Object.keys(graph).forEach(key => {
-      const node = graph[key].data;
-      const nodeCont = (node.continent || "Eldaron").toLowerCase().trim();
+      Object.values(graph).forEach(node => {
+        // Filtre par continent pour éviter de lier Eldaron à Varnal par magie
+        if (node.continent !== continent && continent !== 'Ocean') return;
 
-      // Recherche du nœud de départ le plus proche
-      // On privilégie les nœuds du même continent pour éviter de "sauter" la mer par erreur
-      if (nodeCont === sCont || (sCont === 'ocean' && node.type.includes('Ocean'))) {
-          const dx = node.x - startCoords.x;
-          const dy = node.y - startCoords.y;
-          const dStart = dx*dx + dy*dy; // Distance euclidienne au carré (plus rapide)
+        const dx = node.data.x - coords.x;
+        const dy = node.data.y - coords.y;
+        const d2 = dx*dx + dy*dy;
 
-          if (dStart < minStartDist) {
-            minStartDist = dStart;
-            startNode = key;
-          }
-      }
+        // Priorité aux noeuds "exacts" (Micro) si on est dessus (dist < 0.01)
+        if (d2 < 0.0001) {
+           bestDist = d2;
+           bestNode = node.id;
+           return; // Trouvé exact !
+        }
 
-      // Recherche du nœud d'arrivée le plus proche
-      if (nodeCont === eCont || (eCont === 'ocean' && node.type.includes('Ocean'))) {
-          const dx = node.x - endCoords.x;
-          const dy = node.y - endCoords.y;
-          const dEnd = dx*dx + dy*dy;
+        if (d2 < bestDist) {
+          bestDist = d2;
+          bestNode = node.id;
+        }
+      });
+      return { id: bestNode, dist: Math.sqrt(bestDist) * window.setup.GEO_SCALE };
+    };
 
-          if (dEnd < minEndDist) {
-            minEndDist = dEnd;
-            endNode = key;
-          }
-      }
-    });
+    const startAnchor = getClosestNode(startCoords, sCont);
+    const endAnchor = getClosestNode(endCoords, eCont);
 
-    // Conversion des distances carrées en réelles pour le calcul final
-    minStartDist = Math.sqrt(minStartDist);
-    minEndDist = Math.sqrt(minEndDist);
-
-    // --- ÉTAPE 2 : Vérification de faisabilité ---
-    // Si aucun nœud n'est trouvé (ex: coordonnées invalides ou continent inconnu)
-    if (!startNode || !endNode) {
-       console.warn(`⚠️ Pathfinding: Nœuds introuvables pour ${startContinent}->${endContinent}`);
-       // Fallback : vol d'oiseau direct
-       const dist = Math.sqrt(Math.pow(endCoords.x - startCoords.x, 2) + Math.pow(endCoords.y - startCoords.y, 2)) * window.setup.GEO_SCALE;
-       return {
+    // Si pas de noeuds trouvés (ex: au milieu de l'océan sans waypoints)
+    if (!startAnchor.id || !endAnchor.id) {
+      console.warn("⚠️ Hors réseau: Voyage direct forcé.");
+      return {
         type: 'direct',
-        path: [startCoords, endCoords],
-        totalDistance: dist + 50 // Pénalité
+        pathNodes: [],
+        totalDistance: window.setup.calculateDistance(startCoords, endCoords)
       };
     }
 
-    // --- ÉTAPE 3 : Calcul Dijkstra sur le réseau ---
-    const graphPath = window.setup.findPathInGraph(startNode, endNode);
+    // Calcul itinéraire réseau
+    const graphPath = window.setup.findPathInGraph(startAnchor.id, endAnchor.id);
 
-    // Si pas de chemin réseau trouvé (ex: îles non connectées)
     if (!graphPath) {
-      // Si on est sur le même continent, on autorise le hors-piste
+      // Si même continent, on autorise le "Hors Piste" (Direct)
       if (sCont === eCont) {
-          const dist = Math.sqrt(Math.pow(endCoords.x - startCoords.x, 2) + Math.pow(endCoords.y - startCoords.y, 2)) * window.setup.GEO_SCALE;
-          return {
-            type: 'direct',
-            path: [startCoords, endCoords],
-            totalDistance: dist + 100 // Forte pénalité pour encourager les routes
-          };
+        return {
+          type: 'direct',
+          pathNodes: [],
+          totalDistance: window.setup.calculateDistance(startCoords, endCoords) * 1.5 // Pénalité terrain
+        };
       }
-      console.warn(`❌ Aucun chemin trouvé entre ${startNode} (${sCont}) et ${endNode} (${eCont}).`);
-      return { type: 'error', pathNodes: [], totalDistance: 0 };
+      console.error(`❌ Aucun chemin entre ${sCont} et ${eCont}`);
+      return { type: 'error', totalDistance: 0 };
     }
 
-    // --- ÉTAPE 4 : Finalisation ---
-    let totalDist = 0;
-    graphPath.forEach(p => totalDist += (p.segmentDist || 0));
-
-    // On ajoute la distance de marche pour rejoindre le premier nœud et quitter le dernier
-    totalDist += (minStartDist + minEndDist) * window.setup.GEO_SCALE;
+    // Calcul distance totale (Marche vers Ancre A + Trajet Réseau + Marche depuis Ancre B)
+    let totalDist = startAnchor.dist + endAnchor.dist;
+    graphPath.forEach(step => totalDist += (step.segmentDist || 0));
 
     return {
       type: 'network',
@@ -2171,16 +2124,11 @@
     if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
   };
 
-    window.setup.calculateDistance = function(c1, c2, cont1, cont2) {
-        if (!c1 || !c2) return 0;
-        // Si les continents sont différents, on ne peut pas calculer à vol d'oiseau simplement
-        // On retourne une distance immense pour forcer l'usage du pathfinding réseau (bateau/dirigeable)
-        if (cont1 && cont2 && cont1 !== cont2) return 99999;
-
-        const dx = (Number(c1.x) || 0) - (Number(c2.x) || 0);
-        const dy = (Number(c1.y) || 0) - (Number(c2.y) || 0);
-        return Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
-    };
+    window.setup.calculateDistance = function(c1, c2) {
+    const dx = c1.x - c2.x;
+    const dy = c1.y - c2.y;
+    return Math.sqrt(dx*dx + dy*dy) * window.setup.GEO_SCALE;
+  };
 
   // 6. SÉCURITÉ COORDONNÉES
   window.setup.ensurePassageCoords = function(passageName) {
@@ -4820,124 +4768,129 @@
     const v = State.variables;
     const $panel = $('#buddies-panel');
 
-    // Nettoyage timer existant pour éviter les doublons de logique
+    // Nettoyage timer existant
     if (window.setup.buddiesPanelInterval) {
       clearInterval(window.setup.buddiesPanelInterval);
       window.setup.buddiesPanelInterval = null;
     }
 
-    // Filtrage
+    // Filtrage des compagnons actifs
     const all = Object.values(v.npcs || {});
     const list = all.filter(n => n.isSpawned && n.isBuddy);
 
     if (!list.length) {
-      $panel.html('<em style="opacity:.6; font-style:italic;">Aucun compagnon.</em>');
+      $panel.html('<em style="opacity:.6; font-style:italic; padding:10px; display:block;">Aucun compagnon.</em>');
       return;
     }
 
-    // Marquer les entrées existantes pour détecter celles à supprimer
+    // Marquer les entrées existantes pour nettoyage
     $panel.find('.buddy-entry').addClass('to-remove');
 
     list.forEach(b => {
-      // Sélecteur sécurisé pour le nom (échappement basique pour jQuery selector)
       const safeId = b.name.replace(/["\\]/g, '\\$&');
       let $entry = $panel.find(`.buddy-entry[data-name="${safeId}"]`);
 
       const healthRatio = (b.health || 0) / (b.maxHealth || 1);
       const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
 
-      // Calcul des textes de statut
+      // Textes de base
       let locationText = window.setup.getLocationString(b.coordinates, b.continent);
       let travelHTML = '';
 
-      // Logique Voyage (inchangée pour stabilité)
-      if (b.status === 'traveling' && b.travelCurrentStep) {
+      // --- LOGIQUE VOYAGE AVANCÉE ---
+      if (b.status === 'traveling' && b.travelCurrentStep && b.travelItinerary) {
         const step = b.travelCurrentStep;
         const isResting = step.type === 'rest';
-        const actionText = isResting
-            ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`
-            : `<span style="color:#eee;">${step.desc}</span>`;
 
+        // Calcul des étapes et distances futures pour un affichage global
+        const currentStepIdx = (b.travelStepIndex || 0) + 1;
+        const totalSteps = b.travelItinerary.length;
+
+        // Calcul distance restante FUTURE (hors étape en cours)
+        let futureDist = 0;
+        for(let i = (b.travelStepIndex || 0) + 1; i < totalSteps; i++) {
+            futureDist += (b.travelItinerary[i].dist || 0);
+        }
+
+        const actionText = isResting
+            ? `<span style="color:#ffd700; font-weight:bold;">💤 ${window.setup.escapeHtml(step.desc)}</span>`
+            : `<span style="color:#eee;">🏃 ${window.setup.escapeHtml(step.desc)}</span>`;
+
+        // Construction du bloc Voyage
         travelHTML = `
           <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
-               data-name="${b.name}"
+               data-name="${window.setup.escapeHtml(b.name)}"
                data-end="${step.endTime}" 
                data-total="${step.duration}"
                data-type="${step.type}"
-               data-dist="${Number(step.dist) || 0}">
+               data-dist="${Number(step.dist) || 0}"
+               data-future="${futureDist}">
+              
+              <div class="travel-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <span class="travel-step-badge" style="background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:3px; font-size:0.7em; color:#aaa;">
+                      Étape ${currentStepIdx}/${totalSteps}
+                  </span>
+                  <span class="travel-timer-text" style="font-size:0.8em; font-family:monospace; color:#f2d675;">--:--</span>
+              </div>
+
               <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                   ${actionText}
               </div>
-              <div class="travel-info-line" style="display:flex; justify-content:space-between; font-size:0.8em; color:#ccc;">
-                  <span><span class="travel-timer-text">...</span></span>
-                  ${!isResting ? '<span class="travel-dist-text"></span>' : ''}
-              </div>
+              
               <div class="travel-progress-bg">
                 <div class="travel-progress-fill" style="width: 0%;"></div>
               </div>
-              <div class="travel-total-line" style="margin-top:3px; padding-top:3px; border-top:1px solid rgba(255,255,255,0.1); font-size:0.7em; color:#888; text-align:right;">
-                   Reste : <span class="travel-total-km" style="color:#fff; font-weight:bold;">Calcul...</span>
+              
+              <div class="travel-total-line" style="margin-top:2px; font-size:0.75em; color:#888; text-align:right;">
+                   Reste : <span class="travel-total-km" style="color:#fff;">Calcul...</span>
               </div>
           </div>
         `;
-        locationText = isResting ? `S'arrête à ${step.locationName}` : `Se déplace`;
+        locationText = isResting ? `Pause à ${step.locationName}` : `En transit`;
       }
 
-      // === CAS 1 : MISE À JOUR (L'élément existe déjà) ===
+      // === MISE À JOUR DOM (DIFF) ===
       if ($entry.length > 0) {
         $entry.removeClass('to-remove');
 
-        // Mise à jour visuelle simple
+        // Update Health
         $entry.find('.buddy-healthfill')
               .removeClass('h-good h-mid h-low')
               .addClass(healthClass)
               .css('width', `${healthRatio * 100}%`);
 
+        // Update Status Badge
         $entry.find('.item-badge')
               .attr('class', `item-badge buddy-${b.status}`)
-              .text(b.status);
+              .text(b.status === 'traveling' ? 'Voyage' : b.status);
 
+        // Update Location Text
         const $loc = $entry.find('.buddy-location');
         if ($loc.text() !== locationText) $loc.text(locationText);
 
-        // Gestion du bloc voyage
+        // Update Travel Block
         const $existingTravel = $entry.find('.buddy-travel-wrapper');
         if (b.status === 'traveling') {
             if ($existingTravel.length === 0) {
+                // Insertion si nouveau voyage
                 $entry.find('.buddy-healthbar').after(travelHTML);
             } else {
-                const step = b.travelCurrentStep;
-                if(step) {
-                    $existingTravel.attr({
-                        'data-end': step.endTime,
-                        'data-total': step.duration,
-                        'data-type': step.type,
-                        'data-dist': Number(step.dist) || 0
-                    });
-                    // Mise à jour texte si changé
-                    const isResting = step.type === 'rest';
-                    const newActionHTML = isResting
-                        ? `<span style="color:#ffd700; font-weight:bold;">💤 ${step.desc}</span>`
-                        : `<span style="color:#eee;">${step.desc}</span>`;
-                    if($existingTravel.find('.travel-text-primary').html() !== newActionHTML) {
-                        $existingTravel.find('.travel-text-primary').html(newActionHTML);
-                    }
-                    if(isResting) $existingTravel.addClass('resting');
-                    else $existingTravel.removeClass('resting');
-                }
+                // Mise à jour attributs si voyage en cours
+                // On remplace tout le HTML du wrapper pour être sûr de mettre à jour les textes d'étapes
+                $existingTravel.replaceWith(travelHTML);
             }
         } else {
             $existingTravel.remove();
         }
       }
-      // === CAS 2 : CRÉATION (Nouvel élément) ===
+      // === CRÉATION ===
       else {
         const newEntryHTML = `
           <div class="buddy-entry" data-name="${window.setup.escapeHtml(b.name)}">
               <div class="msg-header">
                   <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
                   <strong>${window.setup.escapeHtml(b.name)}</strong>
-                  <span class="item-badge buddy-${b.status}">${b.status}</span>
+                  <span class="item-badge buddy-${b.status}">${b.status === 'traveling' ? 'Voyage' : b.status}</span>
               </div>
               <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
               ${travelHTML}
@@ -4946,65 +4899,62 @@
         `;
         const $newEl = $(newEntryHTML);
 
-        // 🚨 ÉVÉNEMENT CLIC GAUCHE : OUVRIR LA MODALE
+        // Events
         $newEl.on('click', function(e) {
-           e.preventDefault();
-           e.stopPropagation();
-           const name = $(this).data('name');
-           window.setup.showPnjModal(name);
+           e.preventDefault(); e.stopPropagation();
+           window.setup.showPnjModal($(this).data('name'));
         });
-
-        // 🚨 ÉVÉNEMENT CLIC DROIT : MENU CONTEXTUEL
         $newEl.on('contextmenu', function(e) {
-           e.preventDefault();
-           e.stopPropagation();
-           $('#buddy-context-menu').remove();
-           const name = $(this).data('name');
-           window.setup.showBuddyContextMenu(e, name);
+           e.preventDefault(); e.stopPropagation();
+           window.setup.showBuddyContextMenu(e, $(this).data('name'));
         });
 
         $panel.append($newEl);
       }
     });
 
-    // Supprimer les obsolètes
+    // Nettoyage éléments supprimés
     $panel.find('.to-remove').remove();
 
-    // Relancer le timer d'animation si nécessaire (barres de progression voyage)
+    // === ANIMATION TIMER (Intervalle) ===
     if ($panel.find('.buddy-travel-wrapper').length > 0) {
       const updateTimers = () => {
         const now = Date.now();
         let active = false;
+
         $panel.find('.buddy-travel-wrapper').each(function() {
           const $wrapper = $(this);
           const endTime = Number($wrapper.data('end'));
           const totalTime = Number($wrapper.data('total'));
-          // Récupération de la distance de l'étape pour le calcul
           const stepDist = Number($wrapper.data('dist')) || 0;
+          const futureDist = Number($wrapper.data('future')) || 0; // Distance des étapes SUIVANTES
 
           const remaining = endTime - now;
           let percent = 0;
 
           if (remaining <= 0) {
             percent = 100;
-            $wrapper.find('.travel-timer-text').text("Fin étape");
-            // --- CORRECTION ICI : Mettre 0 km quand fini ---
-            $wrapper.find('.travel-total-km').text("0.0 km");
+            $wrapper.find('.travel-timer-text').text("Fin...");
+            $wrapper.find('.travel-total-km').text(futureDist > 0 ? `${futureDist.toFixed(1)} km` : "Arrivé");
           } else {
             active = true;
-            // Calcul Pourcentage
+            // Progression barre (Step actuel)
             percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
 
-            // Calcul Temps texte
+            // Temps restant (Step actuel)
             const secs = Math.ceil(remaining / 1000);
-            $wrapper.find('.travel-timer-text').text(`${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`);
+            const timeStr = secs > 60
+                ? `${Math.floor(secs / 60)}m ${(secs % 60).toString().padStart(2, '0')}s`
+                : `${secs}s`;
+            $wrapper.find('.travel-timer-text').text(timeStr);
 
-            // --- CORRECTION ICI : Calcul de la distance restante ---
-            // On fait une règle de trois basée sur le temps restant
+            // Distance restante TOTALE (Reste du step + Futur)
+            // Règle de trois sur le temps pour la distance du step courant
             const ratio = remaining / totalTime;
-            const distLeft = stepDist * ratio;
-            // Mise à jour du texte qui affichait "Calcul..."
-            $wrapper.find('.travel-total-km').text(`${distLeft.toFixed(1)} km`);
+            const distLeftInStep = stepDist * ratio;
+            const totalDistLeft = distLeftInStep + futureDist;
+
+            $wrapper.find('.travel-total-km').text(`${totalDistLeft.toFixed(1)} km`);
           }
 
           $wrapper.find('.travel-progress-fill').css('width', `${percent}%`);
@@ -5015,7 +4965,8 @@
           window.setup.buddiesPanelInterval = null;
         }
       };
-      updateTimers();
+
+      updateTimers(); // Premier appel immédiat
       window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
     }
   };

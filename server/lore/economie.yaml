@@ -1,67 +1,136 @@
 # economie.yaml
-# AUDIT STATUS: OPTIMIZED (Conforme au Canon de l'Architecte v1.0)
-modele: "low_fantasy_grim_realistic"
-description: "Système économique de Velkarum - Un réseau mondial de dépendance mutuelle, gangrené par la dette, l'inflation et des logistiques mortelles."
+# AUDIT STATUS: ULTRA-COHERENT (Version 3.0 - Fusion Intégrale Lore & Mécanique)
+modele: "low_fantasy_grim_realistic_economics"
+description: "Système économique intégral de Velkarum. Fusionne la narration géopolitique avec une mécanique de taux de change, d'inflation et d'échelles de valeur rigoureuses."
 
-# 1. EMBEDDING SOMBRE & RÉALISTE
+# 1. EMBEDDING SOMBRE & PHILOSOPHIE
+# -----------------------------------------------------------------------------
 embedding_optimized:
   themes: ["interdépendance_critique", "capitalisme_prédateur", "famine_logistique", "dette_souveraine", "monopoles_naturels"]
   mots_cles: ["lettre_de_change", "inflation_calorique", "guerre_des_prix", "usure_bancaire", "servage_pour_dette"]
-  description_semantique: "L'argent est le véritable dieu de ce monde. Les royaumes ne s'effondrent pas à cause des dragons, mais parce qu'ils ne peuvent plus payer les intérêts de leurs emprunts aux banques d'Iskarion."
-  tonalite_audit: "Grimdark Consistent - La pauvreté n'est pas un accident, c'est un outil de contrôle social. Si les gens n'avaient pas faim, ils se révolteraient."
+  description_semantique: "L'argent est le véritable dieu de ce monde. Les royaumes ne s'effondrent pas à cause des dragons, mais parce qu'ils ne peuvent plus payer les intérêts de leurs emprunts aux banques d'Iskarion. La pauvreté n'est pas un accident, c'est un outil de contrôle social."
 
-# 2. SYSTÈME MONÉTAIRE (CHAOS MÉTALLIQUE)
+principes_fondamentaux:
+  - "La Calorie est la vraie monnaie : L'Or ne se mange pas, le Fer ne chauffe pas. Tout prix final se ramène au coût de survie immediate."
+  - "La Dette est une arme de siège : Iskarion ne conquiert pas les villes avec des soldats, mais en montant les taux d'intérêt."
+  - "La Rareté Logistique : Un objet vaut 10x son prix s'il a dû traverser le Détroit du Fer ou le Désert sans être volé."
+
+# 2. SYSTÈME MONÉTAIRE MONDIAL (LES 5 DEVISES)
+# -----------------------------------------------------------------------------
 monnaies_mondiales:
   - nom: "Le Tola Solaire (Iskarion)"
+    code: "TOL"
     type: "Étalon-Or (Réserve Mondiale)"
-    valeur_ref: "1 Tola = 20 Couronnes (Taux officiel, mais 35 au marché noir)"
-    statut: "Monnaie des Rois et des Assassins. Sa pureté est garantie par le clergé. Falsifier un Tola est une hérésie punie par le plomb fondu."
-    usage: "Grosses transactions internationales, achat d'esclaves de luxe, paiement des mercenaires d'élite."
+    description: "Pièce d'or pur octogonale, frappée par le clergé. Inaltérable. Falsifier un Tola est une hérésie punie par le plomb fondu."
+    statut: "Monnaie de référence (Safe Haven). Utilisée pour les dots royales, les rançons, et l'achat d'esclaves de luxe."
+    stabilite: "Absolue. Elle ne perd jamais de valeur."
 
   - nom: "La Couronne de Fer (Eldaron)"
-    type: "Monnaie Fiat Dévaluée"
-    probleme: "Le Roi réduit la teneur en argent des pièces à chaque guerre. Une 'Vielle Couronne' (avant-guerre) vaut 3 'Nouvelles Couronnes'."
-    consequence: "Les marchands pèsent chaque pièce. L'inflation galope : le prix du pain change le matin et le soir."
+    code: "CRN"
+    type: "Monnaie Fiat Dévaluée (Argent/Cuivre)"
+    description: "Pièce ronde dont la teneur en argent baisse à chaque guerre. Une 'Vielle Couronne' (avant-guerre) vaut 3 'Nouvelles Couronnes'."
+    statut: "Monnaie du peuple et du commerce courant. Sujette à une hyper-inflation galopante (le prix du pain change matin et soir)."
+    stabilite: "Faible. Perd environ 10% de pouvoir d'achat par an."
 
-  - nom: "La Plaque (Thaurgrim)"
+  - nom: "La Plaque Industrielle (Thaurgrim)"
+    code: "PLQ"
     type: "Monnaie-Marchandise (Poids)"
-    forme: "Carrés de métal industriel standardisé (Fer, Cuivre, Acier) estampillés par les Clans."
-    usage: "On ne paie pas avec, on troque du poids de métal utile. C'est lourd, sale, mais ça a une valeur réelle indiscutable. Accepté partout par les forgerons."
+    description: "Carrés de métal industriel standardisé (100g d'acier ou de fer). Pas de visage de roi, juste le sceau de la Fonderie et le poids."
+    statut: "Monnaie des ouvriers. On ne la dépense pas, on la troque au poids. Elle a une utilité intrinsèque (on peut la fondre pour en faire un outil)."
+    stabilite: "Forte (Indexée sur le cours mondial des métaux)."
 
-  - nom: "Le Baril (Helrün)"
-    type: "Étalon-Énergie"
-    valeur: "Basée sur l'huile de baleine (Lumière/Chauffage). Au Nord, l'or ne vaut rien s'il ne peut pas être brûlé pour se chauffer."
+  - nom: "Le Baril-Standard (Helrün)"
+    code: "BRL"
+    type: "Étalon-Énergie (Huile)"
+    description: "Titre de propriété sur un baril d'huile de baleine (150 litres) stocké à Nerr. Au Nord, l'or ne vaut rien s'il ne peut pas être brûlé pour se chauffer."
+    statut: "Monnaie saisonnière. Sert de référence pour les contrats d'éclairage urbain du monde entier."
+    stabilite: "Volatile (Vaut une fortune en hiver, s'effondre en été)."
 
-# 3. INDICES DES PRIX (L'ÉCHELLE DE LA MISÈRE)
-# Note : Salaire journalier moyen d'un ouvrier non qualifié (Bras-Nu) = 2 Couronnes.
+  - nom: "La Graine Noire (Varnäl)"
+    code: "GRN"
+    type: "Monnaie Biologique (Opium/Poison)"
+    description: "Une capsule de pavot noir scellée dans de la cire. Contient une dose pure."
+    statut: "Monnaie de l'ombre et de la contrebande. Une Graine peut acheter le silence d'un garde ou soulager une amputation."
+    stabilite: "Inélastique (La demande pour l'oubli et l'anti-douleur ne baisse jamais)."
 
+# 3. MATRICE DE CHANGE (FOREX & CROSS-RATES)
+# -----------------------------------------------------------------------------
+# Base de référence : 1 Tola (Or) = Le standard de richesse
+taux_de_change_moyen:
+  TOL_vs_CRN: "1 Tola = 25 Couronnes (Taux Officiel) / 40 Couronnes (Marché Noir/Changeurs de rue)"
+  TOL_vs_PLQ: "1 Tola = 100 Plaques d'Acier (soit 10kg de métal utile)"
+  TOL_vs_BRL: "1 Tola = 2 Barils d'Huile (Été) / 0.5 Baril (Hiver rude)"
+  TOL_vs_GRN: "1 Tola = 5 Graines Noires (La drogue raffinée vaut plus cher que l'acier)"
+
+  exemples_pratiques_RP:
+    La_Biere: "0.2 CRN (Eldaron) vs 0.01 PLQ (Thaurgrim) vs Gratuit mais mortel (Varnäl)"
+    L_Epee_Soldat: "500 CRN = 20 PLQ + Main d'œuvre"
+    La_Vie_Serf: "Dette de 100 CRN = 4 Tolas = 20 Graines Noires"
+
+# 4. ÉCONOMIE AUX DIFFÉRENTES ÉCHELLES
+# -----------------------------------------------------------------------------
+echelle_micro:
+  acteur: "Le Paysan / L'Ouvrier"
+  preoccupation: "Survie Calorique Immediate"
+  donnee_cle: "Le Panier de la Ménagère"
+  details:
+    - "Salaire moyen : 2 Couronnes/jour (Eldaron), 3 Plaques/jour (Thaurgrim)."
+    - "Coût de survie : 1.5 Couronne/jour (Pain + Taxe + Toit)."
+    - "Marge : Quasi-nulle. La moindre maladie force à emprunter, déclenchant la spirale de servitude."
+
+echelle_meso:
+  acteur: "Le Marchand / Le Capitaine Mercenaire / La Guilde"
+  preoccupation: "Marge Commerciale vs Risque Logistique"
+  donnee_cle: "Le Multiplicateur de Distance"
+  details:
+    - "Une épée fabriquée à Thaurgrim coûte 20 Plaques."
+    - "Vendue à Eldaron, elle vaut 500 Couronnes (soit ~25 Plaques)."
+    - "Profit brut : 25%. Mais il faut déduire : 10% Péage, 5% Corruption, 5% Risque perte."
+    - "C'est sur ces marges fines que se bâtissent les fortunes bourgeoises d'Ardel."
+
+echelle_macro:
+  acteur: "Le Roi / Le Synode / Le Jarl"
+  preoccupation: "Dette Souveraine vs Puissance Militaire"
+  donnee_cle: "Le Taux d'Intérêt Directeur (Fixé par Iskarion)"
+  details:
+    - "Eldaron doit 12 Millions de Tolas à Iskarion."
+    - "Intérêts annuels (5%) = 600,000 Tolas."
+    - "Revenu annuel du Royaume (Impôts) = 550,000 Tolas."
+    - "Déficit structurel. Eldaron doit emprunter pour payer les intérêts. C'est un piège mathématique sans issue autre que la guerre ou la faillite."
+
+# 5. INDICES DES PRIX & COÛT DE LA VIE
+# -----------------------------------------------------------------------------
 cout_de_la_vie:
   pain_1kg:
-    Eldaron (Été): "0.5 Couronne (Abordable)"
-    Eldaron (Hiver): "4 Couronnes (Famine des pauvres)"
-    Thaurgrim: "8 Couronnes (Luxe importé)"
-    Iskarion: "3 Couronnes (Subventionné pour les citoyens, 10 pour les autres)"
+    Eldaron (Été): "0.5 CRN (Abordable - Temps des moissons)"
+    Eldaron (Hiver): "4 CRN (Famine des pauvres - Soudure)"
+    Thaurgrim: "8 CRN (Luxe importé, les ouvriers mangent de la pâte fongique)"
+    Iskarion: "3 CRN (Subventionné pour les citoyens, 10 pour les étrangers)"
 
   eau_1L:
     Eldaron: "Gratuit (Puits/Rivière)"
-    Iskarion: "2 Couronnes (Plus cher que le vin médiocre). Rationnée."
-    Thaurgrim: "1 Couronne (L'eau gratuite est toxique/acide)."
+    Iskarion: "0.1 TOL / 2 CRN (Plus cher que le vin médiocre). Rationnée strictement."
+    Thaurgrim: "1 CRN (L'eau gratuite est toxique/acide)."
 
   vie_humaine (Esclave de labeur):
-    Thaurgrim: "50 Plaques (Moins cher qu'une bonne pelle). L'homme est jetable."
-    Iskarion: "200 Tolas (Cher, symbole de statut. Un esclave assoiffé est un mauvais investissement)."
-    Eldaron: "Illégal (Mais on peut acheter la 'Dette' d'un serf pour 100 Couronnes, ce qui revient au même)."
+    Thaurgrim: "50 PLQ (Moins cher qu'une bonne pelle). L'homme est jetable."
+    Iskarion: "200 TOL (Cher, symbole de statut. Un esclave qui boit est un investissement lourd)."
+    Eldaron: "Illégal (Mais racheter la 'Dette' d'un serf coûte ~100 CRN)."
 
-  equipement_militaire:
-    Epee_acier_correct: "500 Couronnes (250 jours de salaire d'un paysan). Explique pourquoi les paysans se battent avec des fourches."
-    Armure_complete: "50 Tolas (Le prix d'un village). Seuls les nobles en ont."
+  equipement_et_services:
+    Nuit_Auberge_Sale: "1 CRN"
+    Passage_Bateau_Eldaron: "5 CRN"
+    Soins_Medecin_Varnal: "2 GRN (Ou un service en nature dangereux)"
+    Assassinat_Noble: "500 TOL + Frais"
+    Armure_Complete_Noble: "50 TOL (Le prix d'un hameau entier)"
 
-# 4. INSTITUTIONS FINANCIÈRES (LES VRAIS MAÎTRES)
+# 6. INSTITUTIONS FINANCIÈRES (LES MAÎTRES DU JEU)
+# -----------------------------------------------------------------------------
 banques_et_guildes:
   - nom: "La Banque du Zénith (Siège : Asuren)"
     type: "Créancier Mondial"
-    pouvoir: "Détient la dette souveraine d'Eldaron (12 Millions de Tolas). Peut déclencher une famine en refusant une lettre de crédit pour l'achat de semences."
-    bras_arme: "Les Huissiers Gris (Assassins-Comptables qui 'liquident' les mauvais payeurs)."
+    pouvoir: "Détient la dette souveraine d'Eldaron. Peut déclencher une famine en refusant une lettre de crédit pour l'achat de semences."
+    bras_arme: "Les Huissiers Gris (Assassins-Comptables qui 'liquident' les mauvais payeurs et saisissent les actifs)."
 
   - nom: "La Ligue des Nautes (Siège : Lirn)"
     type: "Cartel Logistique"
@@ -72,43 +141,49 @@ banques_et_guildes:
     type: "Syndicat Industriel"
     fonction: "Fixe les quotas de production d'acier. Vend des armes aux deux camps de chaque guerre pour maximiser les profits."
 
-# 5. FLUX COMMERCIAUX (LES ARTÈRES DU MONDE)
+# 7. FLUX COMMERCIAUX & LOGISTIQUE
+# -----------------------------------------------------------------------------
 chaines_valeur:
   - nom: "Le Cycle de la Faim (Eldaron -> Thaurgrim)"
     flux: "Blé contre Engrais/Acier."
-    risque: "Si le flux s'arrête, double famine (Eldaron manque de pain l'année suivante faute d'engrais, Thaurgrim meurt de faim le mois même)."
+    risque: "Symbiose toxique. Si le flux s'arrête, double famine immédiate."
 
   - nom: "Le Cycle du Froid (Helrün -> Iskarion)"
     flux: "Glace Noire contre Or."
-    risque: "Vital pour Iskarion. Sans glace, les stocks de médicaments de Zhaïr pourrissent en 3 jours."
+    risque: "Vital pour Iskarion. Sans glace, les stocks de médicaments pourrissent en 3 jours."
 
   - nom: "Le Cycle de la Douleur (Varnäl -> Monde)"
     flux: "Opium/Poisons contre Or/Verre."
-    risque: "Monopole absolu. Varnäl fixe les prix. L'addiction de la noblesse mondiale assure une demande inélastique."
+    risque: "Monopole absolu. L'addiction de la noblesse mondiale assure une demande inélastique."
 
-# 6. CRISES ÉCONOMIQUES (STRESS-TESTS)
+logistique_transport:
+  cout_transport: "Le transport terrestre double le prix d'une marchandise tous les 300km (taxes, gardes, pertes). Le maritime est 10x moins cher."
+  pertes_moyennes: "20% des cargaisons sont perdues (Pirates, Tempêtes, Monstres). C'est intégré dans le prix de vente."
+  assurance: "Seule la Ligue des Nautes assure les cargaisons. Taux usuraire : 30% de la valeur déclarée."
+
+# 8. SCÉNARIOS DE CRISE (STRESS-TESTS ÉCONOMIQUES)
+# -----------------------------------------------------------------------------
 scenarios_catastrophe:
   - nom: "L'Inflation du Charbon"
-    cause: "Une grève minière ou un effondrement de tunnel à Thaurgrim."
-    effet: "Le prix du chauffage triple à Eldaron. Les pauvres meurent de froid ou brûlent leurs meubles (puis leurs maisons)."
+    cause: "Grève ou effondrement minier à Thaurgrim."
+    effet: "Le prix du chauffage triple à Eldaron. Les pauvres brûlent leurs meubles puis leurs maisons. Le cours de la Plaque (PLQ) explose."
 
   - nom: "La Panique des Tulipes Noires"
     cause: "Spéculation sur un remède miracle venant de Varnäl."
-    effet: "Bulle financière qui éclate, ruinant la classe marchande d'Ardel. Suicide de masse des banquiers."
+    effet: "Bulle financière. Ruine de la classe marchande d'Ardel. Suicide de masse des banquiers. La Graine Noire (GRN) se raréfie."
 
   - nom: "La Crise de Liquidité Royale"
     cause: "Le Roi d'Eldaron ne peut plus payer les mercenaires."
-    effet: "Les mercenaires se paient 'sur la bête' (pillage des propres villes d'Eldaron). Chaos social."
+    effet: "Pillage interne ('Se payer sur la bête'). La Couronne (CRN) perd 50% de sa valeur en une semaine."
 
-# 7. LOGISTIQUE & RISQUES
-transport:
-  cout_transport: "Le transport terrestre double le prix d'une marchandise tous les 300km (taxes, gardes, pertes). Le transport maritime est 10x moins cher (d'où l'importance des ports)."
-  pertes_moyennes: "20% des cargaisons sont perdues (Pirates de Lirn, Tempêtes, Monstres). C'est intégré dans le prix de vente."
-  assurance: "Seule la Ligue des Nautes assure les cargaisons. Taux usuraire : 30% de la valeur déclarée."
+  - nom: "Hiver Long / Blocus des Glaces"
+    cause: "Tempête perpétuelle au Nord."
+    effet: "Le Baril (BRL) devient la seule monnaie refuge. Tout le monde vend ses Couronnes pour acheter de l'Huile et survivre."
 
-# 8. MÉTA-DONNÉES IA
+# 9. MÉTA-DONNÉES IA
+# -----------------------------------------------------------------------------
 meta_ia:
-  date_creation: "2025-11-23"
-  version: 4.0_optimized_audit
-  type_contenu: "manuel_economie_politique_dark"
-  note_intention: "Montrer que l'économie est une arme. La pauvreté structurelle est nécessaire au système pour forcer les gens à faire les travaux dangereux (mines, armée, colonisation)."
+  date_creation: "2025-11-25"
+  version: "3.0_definitive_merged"
+  type_contenu: "systeme_economique_complet"
+  note_intention: "Version finale unifiée. Combine le lore riche de la v1 avec la mécanique précise de la v2. L'économie est désormais jouable et narrativement cohérente."

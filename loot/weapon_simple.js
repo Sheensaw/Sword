@@ -1,207 +1,394 @@
 window.lootCategories = window.lootCategories || {};
 window.lootCategories['weapon_simple'] = [
   {
+    "id": "eclat_obsidienne",
+    "label": "Éclat d'obsidienne brute",
+    "type": "weapon",
+    "subtype": "dagger",
+    "description": "Une pierre volcanique grossièrement taillée provenant des déchets miniers de Thaurgrim. Coupant comme un rasoir, mais cassant au moindre choc.",
+    "requirements": { "forceMin": 0, "dexMin": 1, "levelMin": 1 },
+    "damage": { "min": 1, "max": 3 },
+    "coeff": 1.0, "speed": 1.4, "critChance": 10, "critMultiplier": 2.0,
+    "effects": { "bleed": 5 }
+  },
+  {
+    "id": "surin_bas_fonds",
+    "label": "Surin de la Fosse",
+    "type": "weapon",
+    "subtype": "dagger",
+    "description": "Lame rouillée bricolée dans les bidonvilles de Lorn (Eldaron). Plus dangereuse par le tétanos qu'elle inflige que par sa coupe.",
+    "requirements": { "forceMin": 1, "dexMin": 1, "levelMin": 1 },
+    "damage": { "min": 2, "max": 4 },
+    "coeff": 1.0, "speed": 1.3, "critChance": 5, "critMultiplier": 1.5,
+    "effects": { "poison": 2 }
+  },
+  {
     "id": "dague_de_vagabond",
     "label": "Dague de vagabond",
     "type": "weapon",
-    "description": "Lame courte forgée dans les bas-fours d’Eldaron, équilibrée et pratique. Souvent utilisée par les voyageurs ou les voleurs en quête de discrétion.",
-    "requirements": {
-      "forceMin": 2,
-      "dexMin": 0,
-      "levelMin": 1
-    },
-    "damage": {
-      "min": 2,
-      "max": 4
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "subtype": "dagger",
+    "description": "Lame courte standard forgée dans les bas-fours d’Eldaron. L'arme de prédilection de ceux qui ne peuvent pas se payer une épée.",
+    "requirements": { "forceMin": 2, "dexMin": 2, "levelMin": 1 },
+    "damage": { "min": 2, "max": 5 },
+    "coeff": 1.1, "speed": 1.2, "critChance": 6, "critMultiplier": 1.4,
+    "effects": {}
+  },
+  {
+    "id": "couteau_depecer_helrun",
+    "label": "Couteau à graisse Helrunien",
+    "type": "weapon",
+    "subtype": "dagger",
+    "description": "Outil large et plat utilisé pour dépecer les baleines sur la Côte des Graisses. La poignée est en os pour ne pas glisser avec le sang.",
+    "requirements": { "forceMin": 3, "dexMin": 2, "levelMin": 2 },
+    "damage": { "min": 3, "max": 6 },
+    "coeff": 1.0, "speed": 1.1, "critChance": 4, "critMultiplier": 1.3,
+    "effects": { "bleed": 2 }
+  },
+  {
+    "id": "kris_varnal",
+    "label": "Kris en chitine",
+    "type": "weapon",
+    "subtype": "dagger",
+    "description": "Dague ondulée taillée dans la carapace d'une Fourmi-Taureau de Varnal. Légère, imputrescible et naturellement dentelée.",
+    "requirements": { "forceMin": 2, "dexMin": 4, "levelMin": 3 },
+    "damage": { "min": 4, "max": 7 },
+    "coeff": 1.2, "speed": 1.5, "critChance": 8, "critMultiplier": 1.6,
+    "effects": { "poison": 4 }
+  },
+  {
+    "id": "stylet_verre_iskarion",
+    "label": "Stylet de verre d'Asuren",
+    "type": "weapon",
+    "subtype": "dagger",
+    "description": "Une tige de verre trempé triangulaire, conçue pour percer les cotes de mailles. Arme favorite des assassins de la Banque du Zénith.",
+    "requirements": { "forceMin": 2, "dexMin": 5, "levelMin": 4 },
+    "damage": { "min": 2, "max": 9 }, // Dégâts très variables
+    "coeff": 1.3, "speed": 1.6, "critChance": 15, "critMultiplier": 2.5,
+    "effects": { "bleed": 10 }
+  },
+  {
+    "id": "epee_rouillee",
+    "label": "Épée de serf",
+    "type": "weapon",
+    "subtype": "sword",
+    "description": "Un morceau de métal aplati et aiguisé. Le fer est de mauvaise qualité et piqueté de rouille, typique de l'équipement des milices paysannes d'Eldaron.",
+    "requirements": { "forceMin": 3, "dexMin": 1, "levelMin": 1 },
+    "damage": { "min": 3, "max": 6 },
+    "coeff": 1.0, "speed": 1.0, "critChance": 2, "critMultiplier": 1.1,
+    "effects": {}
   },
   {
     "id": "epee_courte",
     "label": "Épée courte d’Eldaron",
     "type": "weapon",
-    "description": "Arme légère et équilibrée, forgée dans les ateliers côtiers d’Eldaron. Sa lame bleutée est trempée dans le sel marin pour la renstrengthr.",
-    "requirements": {
-      "forceMin": 5,
-      "dexMin": 1,
-      "levelMin": 1
-    },
-    "damage": {
-      "min": 5,
-      "max": 10
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "subtype": "sword",
+    "description": "Arme légère et équilibrée, forgée dans les ateliers côtiers. Sa lame bleutée est trempée dans le sel marin pour la durcir superficiellement.",
+    "requirements": { "forceMin": 5, "dexMin": 3, "levelMin": 2 },
+    "damage": { "min": 5, "max": 9 },
+    "coeff": 1.1, "speed": 1.1, "critChance": 5, "critMultiplier": 1.3,
+    "effects": {}
   },
   {
-    "id": "masse_villageoise",
-    "label": "Masse villageoise",
+    "id": "cimeterre_sables",
+    "label": "Cimeterre des Sables",
     "type": "weapon",
-    "description": "Instrument grossier converti en arme, forgé dans les hameaux d’Helrun. Sa tête lourde brise aisément os et armures légères.",
-    "requirements": {
-      "forceMin": 6,
-      "dexMin": 1,
-      "levelMin": 2
-    },
-    "damage": {
-      "min": 6,
-      "max": 12
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "subtype": "sword",
+    "description": "Lame courbe Iskarienne permettant de trancher sans se coincer dans les os. L'acier est gravé de prières solaires pour aveugler l'adversaire.",
+    "requirements": { "forceMin": 4, "dexMin": 5, "levelMin": 3 },
+    "damage": { "min": 6, "max": 10 },
+    "coeff": 1.2, "speed": 1.3, "critChance": 7, "critMultiplier": 1.4,
+    "effects": {}
   },
   {
-    "id": "lance_de_piquet",
-    "label": "Lance de piquet",
+    "id": "coupe_chou_thaurgrim",
+    "label": "Lame-Scie industrielle",
     "type": "weapon",
+    "subtype": "sword",
+    "description": "Une lame d'acier Thaurgrimien lourd, dentelée comme une scie. Brutale, laide, et conçue pour déchirer autant que pour couper.",
+    "requirements": { "forceMin": 7, "dexMin": 2, "levelMin": 3 },
+    "damage": { "min": 7, "max": 11 },
+    "coeff": 1.0, "speed": 0.9, "critChance": 3, "critMultiplier": 1.5,
+    "effects": { "bleed": 5 }
+  },
+  {
+    "id": "epee_noble_ruine",
+    "label": "Épée de Chevalier-Brigand",
+    "type": "weapon",
+    "subtype": "sword",
+    "description": "Une arme de belle facture ancienne, mais dont la poignée a été remplacée par du cuir grossier. Vestige d'une maison noble d'Eldaron tombée dans la misère.",
+    "requirements": { "forceMin": 6, "dexMin": 4, "levelMin": 4 },
+    "damage": { "min": 8, "max": 13 },
+    "coeff": 1.1, "speed": 1.1, "critChance": 6, "critMultiplier": 1.4,
+    "effects": {}
+  },
+  {
+    "id": "epee_batarde_gardien",
+    "label": "Épée bâtarde des Gardiens",
+    "type": "weapon",
+    "subtype": "longsword",
     "isTwoHanded": true,
-    "description": "Lance rudimentaire façonnée à partir de tiges d’acier récupérées. Utilisée par les gardes de Varnal pour défendre les routes.",
-    "requirements": {
-      "forceMin": 7,
-      "dexMin": 1,
-      "levelMin": 2
-    },
-    "damage": {
-      "min": 7,
-      "max": 14
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "description": "Arme de dotation des gardes royaux d'Eldaron. Trop lourde pour être maniée à une main par un conscrit, mais dévastatrice si on a l'espace.",
+    "requirements": { "forceMin": 8, "dexMin": 3, "levelMin": 2 },
+    "damage": { "min": 8, "max": 15 },
+    "coeff": 1.0, "speed": 0.9, "critChance": 4, "critMultiplier": 1.4,
+    "effects": {}
+  },
+  {
+    "id": "espadon_iskarion",
+    "label": "Espadon du Zénith",
+    "type": "weapon",
+    "subtype": "longsword",
+    "isTwoHanded": true,
+    "description": "Immense lame droite utilisée par les exécuteurs d'Iskarion. La garde est ornée de verre poli. Elle tranche un homme en deux sous le soleil de midi.",
+    "requirements": { "forceMin": 10, "dexMin": 4, "levelMin": 4 },
+    "damage": { "min": 10, "max": 20 },
+    "coeff": 1.1, "speed": 0.8, "critChance": 5, "critMultiplier": 1.6,
+    "effects": {}
+  },
+  {
+    "id": "flamberge_mercenaire",
+    "label": "Flamberge de la Compagnie Noire",
+    "type": "weapon",
+    "subtype": "longsword",
+    "isTwoHanded": true,
+    "description": "Lame ondulée conçue pour briser les piques adverses. Prisée par les mercenaires d'élite qui vendent leurs services à Eldaron.",
+    "requirements": { "forceMin": 12, "dexMin": 5, "levelMin": 5 },
+    "damage": { "min": 12, "max": 22 },
+    "coeff": 1.2, "speed": 0.9, "critChance": 6, "critMultiplier": 1.5,
+    "effects": { "bleed": 3 }
   },
   {
     "id": "hachette_forestiere",
     "label": "Hachette forestière",
     "type": "weapon",
-    "description": "Outil de bûcheron varnalien modifié pour le combat. Solide, maniable et dangereuse à courte portée.",
-    "requirements": {
-      "forceMin": 6,
-      "dexMin": 1,
-      "levelMin": 2
-    },
-    "damage": {
-      "min": 6,
-      "max": 12
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "subtype": "axe",
+    "description": "Outil de bûcheron varnalien. Le fer est noirci pour éviter la rouille verte. Simple, brutale, efficace.",
+    "requirements": { "forceMin": 4, "dexMin": 2, "levelMin": 1 },
+    "damage": { "min": 4, "max": 8 },
+    "coeff": 1.0, "speed": 1.0, "critChance": 3, "critMultiplier": 1.5,
+    "effects": {}
   },
   {
-    "id": "epee_batarde",
-    "label": "Épée bâtarde des Gardiens",
+    "id": "hache_abordage",
+    "label": "Hache d'abordage Helrunienne",
     "type": "weapon",
-    "isTwoHanded": true,
-    "description": "Arme équilibrée utilisée par les Gardiens d’Eldaron. Sa lame permet autant les coups précis que les frappes lourdes.",
-    "requirements": {
-      "forceMin": 8,
-      "dexMin": 2,
-      "levelMin": 2
-    },
-    "damage": {
-      "min": 8,
-      "max": 16
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "subtype": "axe",
+    "description": "Hache courte à fer lourd, utilisée pour couper les cordages gelés et les têtes lors des raids vikings.",
+    "requirements": { "forceMin": 6, "dexMin": 2, "levelMin": 2 },
+    "damage": { "min": 6, "max": 11 },
+    "coeff": 1.0, "speed": 1.0, "critChance": 4, "critMultiplier": 1.6,
+    "effects": { "bleed": 2 }
   },
   {
-    "id": "grosse_hache",
+    "id": "grosse_hache_thaurgrim",
     "label": "Grande hache de Thaurgrim",
     "type": "weapon",
+    "subtype": "axe",
     "isTwoHanded": true,
-    "description": "Arme forgée dans les forges profondes de Thaurgrim. Les runes sur son manche s’illuminent faiblement au contact du sang.",
-    "requirements": {
-      "forceMin": 9,
-      "dexMin": 2,
-      "levelMin": 3
-    },
-    "damage": {
-      "min": 9,
-      "max": 18
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "description": "Une plaque d'acier industriel aiguisée, montée sur un manche en fer. Elle pèse le poids d'un homme mort et frappe avec la force d'une presse hydraulique.",
+    "requirements": { "forceMin": 11, "dexMin": 1, "levelMin": 3 },
+    "damage": { "min": 10, "max": 20 },
+    "coeff": 1.0, "speed": 0.7, "critChance": 8, "critMultiplier": 2.0,
+    "effects": {}
   },
   {
-    "id": "espadon",
-    "label": "Espadon royal d’Iskarion",
+    "id": "labrys_minier",
+    "label": "Labrys de mineur",
     "type": "weapon",
+    "subtype": "axe",
     "isTwoHanded": true,
-    "description": "Lame massive maniée par les chevaliers d’Iskarion. Elle exige strength et maîtrise, mais sa portée en fait une arme d’exception.",
-    "requirements": {
-      "forceMin": 10,
-      "dexMin": 2,
-      "levelMin": 3
-    },
-    "damage": {
-      "min": 10,
-      "max": 20
-    },
-    "coeff": 1.1,
-    "speed": 1.1,
-    "critChance": 5,
-    "critMultiplier": 1.3,
-    "effects": {
-      "bleed": 0,
-      "poison": 0,
-      "fire": 0,
-      "frost": 0
-    }
+    "description": "Double hache utilisée pour étayer les galeries profondes. Les mineurs s'en servent lors des émeutes pour briser les portes des contremaîtres.",
+    "requirements": { "forceMin": 13, "dexMin": 2, "levelMin": 4 },
+    "damage": { "min": 12, "max": 24 },
+    "coeff": 1.0, "speed": 0.6, "critChance": 5, "critMultiplier": 1.8,
+    "effects": {}
+  },
+  {
+    "id": "gourdin_ferre",
+    "label": "Gourdin ferré",
+    "type": "weapon",
+    "subtype": "mace",
+    "description": "Une branche de chêne solide avec des clous en fer. L'arme du pauvre, mais un coup à la tête reste mortel.",
+    "requirements": { "forceMin": 3, "dexMin": 0, "levelMin": 1 },
+    "damage": { "min": 3, "max": 5 },
+    "coeff": 1.0, "speed": 1.0, "critChance": 2, "critMultiplier": 1.2,
+    "effects": {}
+  },
+  {
+    "id": "masse_villageoise",
+    "label": "Masse villageoise",
+    "type": "weapon",
+    "subtype": "mace",
+    "description": "Outil agricole renforcé. Sa tête lourde brise aisément les os. Populaire dans les Marches du Nord pour se défendre des loups.",
+    "requirements": { "forceMin": 6, "dexMin": 1, "levelMin": 2 },
+    "damage": { "min": 5, "max": 10 },
+    "coeff": 1.0, "speed": 0.9, "critChance": 4, "critMultiplier": 1.3,
+    "effects": {}
+  },
+  {
+    "id": "casse_tete_fanon",
+    "label": "Casse-tête en fanon",
+    "type": "weapon",
+    "subtype": "mace",
+    "description": "Masse sculptée dans l'os de mâchoire d'une baleine. Incroyablement dense et froide au toucher. Arme traditionnelle d'Helrun.",
+    "requirements": { "forceMin": 7, "dexMin": 2, "levelMin": 3 },
+    "damage": { "min": 7, "max": 12 },
+    "coeff": 1.1, "speed": 1.0, "critChance": 5, "critMultiplier": 1.4,
+    "effects": { "frost": 2 }
+  },
+  {
+    "id": "cle_molette_combat",
+    "label": "Clé de force Thaurgrimienne",
+    "type": "weapon",
+    "subtype": "mace",
+    "description": "Une clé à molette de 8kg utilisée pour réparer les locomotives. Entre les mains d'un ouvrier en colère, elle devient une arme terrifiante.",
+    "requirements": { "forceMin": 9, "dexMin": 1, "levelMin": 3 },
+    "damage": { "min": 8, "max": 14 },
+    "coeff": 1.0, "speed": 0.8, "critChance": 3, "critMultiplier": 1.5,
+    "effects": {}
+  },
+  {
+    "id": "marteau_forge_lourd",
+    "label": "Marteau de la Roue",
+    "type": "weapon",
+    "subtype": "mace",
+    "isTwoHanded": true,
+    "description": "Marteau à deux mains utilisé par le Clan de la Roue. La tête est un bloc d'acier cubique capable d'enfoncer un casque dans la poitrine de son porteur.",
+    "requirements": { "forceMin": 14, "dexMin": 1, "levelMin": 5 },
+    "damage": { "min": 14, "max": 26 },
+    "coeff": 1.0, "speed": 0.6, "critChance": 10, "critMultiplier": 2.0,
+    "effects": {}
+  },
+  {
+    "id": "fourche_guerre",
+    "label": "Fourche de guerre",
+    "type": "weapon",
+    "subtype": "pike",
+    "isTwoHanded": true,
+    "description": "Une fourche à foin dont les pointes ont été redressées et durcies au feu. Symbole des révoltes paysannes d'Eldaron.",
+    "requirements": { "forceMin": 4, "dexMin": 2, "levelMin": 1 },
+    "damage": { "min": 4, "max": 9 },
+    "coeff": 1.0, "speed": 1.0, "critChance": 3, "critMultiplier": 1.3,
+    "effects": {}
+  },
+  {
+    "id": "lance_de_piquet",
+    "label": "Lance de garde",
+    "type": "weapon",
+    "subtype": "pike",
+    "isTwoHanded": true,
+    "description": "Lance standard en bois de frêne avec une pointe en fer doux. Produite par milliers pour l'armée d'Eldaron.",
+    "requirements": { "forceMin": 6, "dexMin": 3, "levelMin": 2 },
+    "damage": { "min": 6, "max": 12 },
+    "coeff": 1.1, "speed": 1.1, "critChance": 4, "critMultiplier": 1.4,
+    "effects": {}
+  },
+  {
+    "id": "harpon_baleinier",
+    "label": "Harpon barbelé",
+    "type": "weapon",
+    "subtype": "pike",
+    "isTwoHanded": true,
+    "description": "Lance lourde destinée à percer la graisse épaisse des léviathans. Les barbes cruelles infligent des blessures qui ne se ferment pas.",
+    "requirements": { "forceMin": 8, "dexMin": 3, "levelMin": 3 },
+    "damage": { "min": 9, "max": 16 },
+    "coeff": 1.0, "speed": 0.9, "critChance": 5, "critMultiplier": 1.6,
+    "effects": { "bleed": 5 }
+  },
+  {
+    "id": "lance_dunes_iskarion",
+    "label": "Lance des Dunes",
+    "type": "weapon",
+    "subtype": "pike",
+    "isTwoHanded": true,
+    "description": "Lance longue et fine, flexible comme un roseau, utilisée par les chameliers pour frapper depuis leur monture. La pointe est en acier damassé.",
+    "requirements": { "forceMin": 6, "dexMin": 7, "levelMin": 4 },
+    "damage": { "min": 8, "max": 14 },
+    "coeff": 1.3, "speed": 1.3, "critChance": 8, "critMultiplier": 1.5,
+    "effects": {}
+  },
+  {
+    "id": "arc_chasse_court",
+    "label": "Arc de braconnier",
+    "type": "weapon",
+    "subtype": "bow",
+    "isTwoHanded": true,
+    "description": "Arc simple en bois d'if, facile à dissimuler. Utilisé par les paysans d'Eldaron pour chasser le gibier du Roi en secret.",
+    "requirements": { "forceMin": 2, "dexMin": 3, "levelMin": 1 },
+    "damage": { "min": 3, "max": 7 },
+    "coeff": 1.2, "speed": 1.2, "critChance": 5, "critMultiplier": 1.5,
+    "effects": {}
+  },
+  {
+    "id": "arc_composite_helrun",
+    "label": "Arc en os de baleine",
+    "type": "weapon",
+    "subtype": "bow",
+    "isTwoHanded": true,
+    "description": "Arc composite fait de fanons et de tendons. Très résistant au froid et à l'humidité, il a une puissance de tension redoutable.",
+    "requirements": { "forceMin": 5, "dexMin": 4, "levelMin": 3 },
+    "damage": { "min": 6, "max": 11 },
+    "coeff": 1.1, "speed": 1.0, "critChance": 6, "critMultiplier": 1.6,
+    "effects": {}
+  },
+  {
+    "id": "arc_long_gardien",
+    "label": "Grand arc des Marches",
+    "type": "weapon",
+    "subtype": "longbow",
+    "isTwoHanded": true,
+    "description": "Arc de guerre de 2 mètres de haut. Il faut une vie d'entraînement pour bander sa corde. Les flèches percent les armures à 100 pas.",
+    "requirements": { "forceMin": 7, "dexMin": 6, "levelMin": 4 },
+    "damage": { "min": 8, "max": 16 },
+    "coeff": 1.0, "speed": 0.8, "critChance": 10, "critMultiplier": 1.8,
+    "effects": {}
+  },
+  {
+    "id": "sarbacane_varnal",
+    "label": "Sarbacane toxique",
+    "type": "weapon",
+    "subtype": "bow", // Subtype 'bow' pour compatibilité gameplay, mais flavor text différent
+    "isTwoHanded": true,
+    "description": "Long tube de bambou noirci. Projette des dards silencieux. Les dégâts physiques sont faibles, mais la pointe est enduite de venin paralysant.",
+    "requirements": { "forceMin": 1, "dexMin": 8, "levelMin": 3 },
+    "damage": { "min": 1, "max": 3 },
+    "coeff": 1.5, "speed": 1.5, "critChance": 20, "critMultiplier": 1.2,
+    "effects": { "poison": 8 }
+  },
+  {
+    "id": "arbalete_legere",
+    "label": "Arbalète de milice",
+    "type": "weapon",
+    "subtype": "crossbow",
+    "isTwoHanded": true,
+    "description": "Mécanisme simple en bois et fer. Facile à utiliser par n'importe quel conscrit après une journée de formation.",
+    "requirements": { "forceMin": 3, "dexMin": 2, "levelMin": 1 },
+    "damage": { "min": 6, "max": 10 },
+    "coeff": 1.0, "speed": 0.7, "critChance": 5, "critMultiplier": 1.5,
+    "effects": {}
+  },
+  {
+    "id": "arbalete_lourde_thaurgrim",
+    "label": "Arbalète à treuil",
+    "type": "weapon",
+    "subtype": "crossbow",
+    "isTwoHanded": true,
+    "description": "Arme d'acier trempé Thaurgrimien. Nécessite une manivelle pour être armée. Le carreau peut traverser un bouclier de chêne et l'homme derrière.",
+    "requirements": { "forceMin": 6, "dexMin": 3, "levelMin": 3 },
+    "damage": { "min": 12, "max": 22 },
+    "coeff": 1.0, "speed": 0.4, "critChance": 10, "critMultiplier": 2.0,
+    "effects": {}
+  },
+  {
+    "id": "arbalete_poing_iskarion",
+    "label": "Arbalète de poing",
+    "type": "weapon",
+    "subtype": "crossbow",
+    "isTwoHanded": false, // Rare cas d'arbalète à une main
+    "description": "Petit mécanisme en laiton et bois précieux, dissimulable sous une cape. L'arme favorite des marchands d'Iskarion pour les 'négociations difficiles'.",
+    "requirements": { "forceMin": 2, "dexMin": 6, "levelMin": 3 },
+    "damage": { "min": 4, "max": 8 },
+    "coeff": 1.2, "speed": 1.0, "critChance": 15, "critMultiplier": 1.5,
+    "effects": {}
   }
 ];

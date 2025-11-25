@@ -107,7 +107,7 @@ body {
     border-radius: 0 0 10px 10px; padding: 0.3em 1.5em; min-width: 200px; max-width: 500px;
     text-align: center; margin-top: -2px; box-shadow: 0 5px 10px rgba(0,0,0,0.5);
     z-index: 999; display: flex; align-items: center; justify-content: center;
-    gap: 0.5em; color: #f2d675; font-weight: bold; font-size: 0.9em;
+    gap: 0.5em; color: #b1a270; font-weight: bold; font-size: 0.9em;
     white-space: nowrap; pointer-events: auto;
 }
 #hud .hud-location:hover {
@@ -143,9 +143,16 @@ body {
 }
 
 #hud .hud-toggles > div {
-    display: flex; align-items: center; gap: .45em; cursor: pointer;
-    padding: .35em .6em; border-radius: 6px; background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.12); transition: all .22s ease;
+    position: relative !important;
+    display: flex;
+    align-items: center;
+    gap: .45em;
+    cursor: pointer;
+    padding: .35em .6em;
+    border-radius: 6px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    transition: all .22s ease;
 }
 #hud .hud-toggles > div:hover {
     background: rgba(255,255,255,.18); transform: scale(1.09); border-color: var(--accent);
@@ -155,11 +162,41 @@ body {
 /* =========================================
    COMPTEURS HUD
 ========================================= */
-#messages-counter, #quest-counter, #inventory-counter, #buddy-counter {
-    position: absolute; top: -5px; right: -5px; width: 1.3em; height: 1.3em;
-    line-height: 1.3em; text-align: center; background: rgba(0,0,0,0.9);
-    color: #fff; font-size: 0.7em; border: 1px solid #fff; border-radius: 50%;
+#messages-counter, #quest-counter, #inventory-counter {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 1.4em;
+    height: 1.4em;
+    line-height: 1.4em;
+    text-align: center;
+    background: #9c5959; /* Rouge plus vif pour visibilité */
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 1px solid #fff;
+    border-radius: 50%;
     pointer-events: none;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+#buddy-counter {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 1.4em;
+    height: 1.4em;
+    line-height: 1.4em;
+    text-align: center;
+    background: #656565; /* Gris */
+    color: #fff;
+    font-size: 0.75em;
+    font-weight: bold;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 #messages-counter:empty, #quest-counter:empty, #inventory-counter:empty, #buddy-counter:empty { display: none; }
 
@@ -171,8 +208,6 @@ body {
     top: 5.5em; left: 0; right: 0; bottom: 0;
     overflow: hidden; padding: 1em 4.2em 3em 4.2em;
     z-index: 200;
-
-    /* Correction Anti-Flicker : On gère l'opacité via CSS Transition */
     opacity: 1;
     transition: opacity 0.25s ease-in-out;
     will-change: opacity; /* Optimisation GPU */
@@ -217,66 +252,209 @@ body {
     transition: opacity .8s ease, color .3s ease;
 }
 #choices-container a.visible, #passages a.link-internal.visible { opacity: 1; }
-#choices-container a:hover, #passages a.link-internal:hover { color: #f2d675 !important; }
+#choices-container a:hover, #passages a.link-internal:hover { color: #b1a270 !important; }
 #choices-container a img, #passages a.link-internal img {
     height: 1em; width: auto; vertical-align: middle; margin-right: 0.25em; filter: drop-shadow(0 0 2px #000);
 }
 
-/* INVENTAIRE / PANNEAUX */
-.inventory-item, .equipment-slot > div, .message-entry, .quest-entry, .buddy-entry {
-    position: relative; background: rgba(255,255,255,.07);
-    border: 1px solid rgba(255,255,255,.16); border-radius: 7px;
-    padding: .45em .65em; margin-bottom: .45em; color: #fff;
-    cursor: pointer; transition: all .22s ease; font-size: .94em; line-height: 1.22;
+/* =========================================
+   INVENTAIRE / PANNEAUX / EQUIPEMENT
+========================================= */
+.inventory-item {
+    position: relative;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 7px;
+    padding: .55em .75em;
+    margin-bottom: .45em;
+    color: #fff;
+    cursor: pointer;
+    transition: all .22s ease;
+    font-size: .94em;
+    line-height: 1.25;
+    overflow: visible; /* Important pour que les badges dépassent */
 }
-.inventory-item:hover, .equipment-slot > div:hover, .message-entry:hover, .quest-entry:hover, .buddy-entry:hover {
-    background: rgba(255,255,255,.14); border-color: #fff; transform: translateX(-2px);
+
+.inventory-item:hover {
+    background: rgba(255,255,255,.14);
+    border-color: #fff;
+    transform: translateX(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* Items inutilisables (stats) */
+.inventory-item.item-unusable {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+    background: rgba(20, 10, 10, 0.3);
+    border-color: #5a2e2e;
+    cursor: not-allowed;
+}
+.inventory-item.item-unusable:hover {
+    transform: none;
+    border-color: #ff5555;
+    background: rgba(40, 10, 10, 0.4);
 }
 .inventory-type { display: block; font-size: .76em; opacity: .62; margin-top: .12em; font-style: italic; color: #e0e0e0; }
 
+/* SLOTS D'ÉQUIPEMENT (Unifié pour Joueur ET PNJ) */
+.equipment-slot {
+    position: relative;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.6em 0.8em;
+    border-radius: 6px;
+    margin-bottom: 0.4em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+.equipment-slot strong {
+    color: #aaa;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    margin-right: 0.5em;
+}
+.equipment-slot.filled-slot {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.2);
+    cursor: pointer;
+}
+.equipment-slot.filled-slot:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.4);
+}
+.equipped-name {
+    color: #b1a270;
+    font-weight: bold;
+}
+
+/* PANNEAU LATÉRAL GÉNÉRIQUE */
 .side-panel {
     position: fixed; top: 3.8em; right: 0; width: var(--panel-width);
     max-height: calc(100% - 2.5em); background: var(--glass); border-left: 2px solid #444;
     border-top: 1px solid #333; box-shadow: var(--shadow-soft); overflow-y: auto;
     transform: translateX(100%); opacity: 0;
-    /* STABILITÉ : Transition optimisée et GPU acceleration */
     transition: transform .42s cubic-bezier(.77,0,.175,1), opacity .42s;
     will-change: transform, opacity;
     backface-visibility: hidden;
     z-index: 1200;
     display: flex; flex-direction: column; gap: .45em; padding: .85em; font-size: .86em;
-    /* Empêcher le scroll du body quand on scroll le panneau */
     overscroll-behavior: contain;
 }
 .side-panel.show { transform: translateX(0); opacity: 1; }
 
-/* STYLE ARME COMPAGNON */
-.buddy-weapon-display {
-    display: flex; align-items: center; font-size: 0.85em; color: #ccc;
-    margin-top: 4px; margin-bottom: 2px; padding-top: 4px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+/* =========================================
+   COMPAGNONS (BUDDIES) - Styles unifiés
+========================================= */
+.buddy-entry {
+    position: relative;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 7px;
+    padding: 0.6em;
+    margin-bottom: 0.5em;
+    color: #fff;
+    cursor: pointer;
+    transition: all .22s ease;
+    overflow: visible;
 }
-.buddy-weapon-display span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buddy-entry:hover {
+    background: rgba(255,255,255,.12);
+    border-color: #fff;
+    transform: translateX(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+.buddy-entry .msg-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 0.4em;
+    font-size: 0.95em;
+}
+.buddy-healthbar {
+    height: 6px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.buddy-healthfill {
+    height: 100%;
+    transition: width 0.4s ease-in-out;
+}
+.h-good { background: linear-gradient(90deg, #5a8067, #5a8067); }
+.h-mid  { background: linear-gradient(90deg, #b1a270, #b1a270); }
+.h-low  { background: linear-gradient(90deg, #9c5959, #9c5959); }
+.h-dead { background: #3a1a1a; }
 
-/* BADGES */
-.item-new, .inventory-equipped, .quest-status-active, .quest-status-ready,
-.item-badge, .buddy-follow, .buddy-fixed, .buddy-dead, .buddy-gone, .buddy-traveling {
-    position: absolute; top: -6px; right: -6px; font-size: var(--badge-size);
-    font-weight: bold; padding: var(--badge-padding); border-radius: 4px;
-    text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 0 5px rgba(0,0,0,.7); z-index: 2;
+.buddy-location {
+    font-size: 0.75em;
+    color: #aaa;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
-.item-new { background: #ff6b6b; color: #fff; }
-.inventory-equipped { background: #4a9eff; color: #fff; }
-.quest-status-active { background: #666; color: #fff; }
-.quest-status-ready { background: #fff; color: #000; }
-.buddy-follow { background: #d3ffe9; color: #0a2b1a; }
-.buddy-fixed  { background: #cabccc; color: #1c141e; }
+.buddy-location::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #666;
+}
+
+.buddy-travel-wrapper {
+    margin-top: 6px; margin-bottom: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px; padding: 5px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.travel-progress-bg {
+    background: rgba(0,0,0,0.6); height: 4px; border-radius: 2px; margin-top: 3px; overflow: hidden;
+}
+.travel-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #67566e, #67566e);
+    width: 0%;
+    transition: width 1s linear;
+}
+
+/* BADGES & STATUTS */
+.item-badge-container {
+    position: absolute; top: -8px; right: -6px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px; z-index: 5;
+}
+.badge-pill {
+    font-size: 0.65em; padding: 2px 6px; border-radius: 4px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+.badge-new { background: #9c5959; color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+.badge-equipped { background: #536783; color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+
+.item-badge.buddy-status {
+    position: absolute; top: -6px; right: -6px; font-size: 0.65em; padding: 2px 6px;
+    border-radius: 4px; font-weight: 800; text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6); z-index: 5;
+}
+.buddy-follow { background: #536783; color: #fff; }
+.buddy-fixed  { background: #555; color: #ccc; }
+.buddy-traveling { background: #67566e; color: #fff; }
 .buddy-dead   { background: #503a3a; color: #f2dede; }
-.buddy-gone   { background: #777; color: #fff; }
-.buddy-traveling { background: #544163; color: #fff; }
-.inventory-item.new, .quest-entry.new, .message-entry.new { border: 1.5px solid #ff6b6b; box-shadow: 0 0 8px rgba(255,107,107,.5); }
 
-/* NOTIFICATIONS */
+/* Avertissement stats */
+.req-warning {
+    display: block; color: #9c5959; font-size: 0.75em; font-weight: bold;
+    margin-top: 4px; font-style: italic; background: rgba(0,0,0,0.6);
+    padding: 2px 4px; border-radius: 3px; border: 1px solid #9c5959;
+}
+
+/* =========================================
+   NOTIFICATIONS & MODALES (Standard)
+========================================= */
 #notification-container {
     position: fixed; top: 1.6em; left: 1.6em; display: flex; flex-direction: column; gap: 1.1em; z-index: 1050; pointer-events: none; align-items: flex-start;
 }
@@ -290,106 +468,79 @@ body {
 .notification.hide { animation: notifSlideOut 0.45s ease forwards; }
 @keyframes notifSlideIn { 0% { opacity: 0; transform: translateX(-180%); } 100% { opacity: 1; transform: translateX(0); } }
 @keyframes notifSlideOut { 0% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(-180%); } }
-.notification-content { display: flex; align-items: flex-start; gap: 0.6em; }
-.notification-content img { height: 1.4em; flex-shrink: 0; margin-top: 0.1em; filter: drop-shadow(0 0 2px #000); }
-.notification-text { display: flex; flex-direction: column; gap: 0.55em; flex: 1; }
-.notification-title { font-weight: 700; font-size: 0.96em; color: #fff; text-shadow: 0 0 4px #000; line-height: 1.3; }
-.notification-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); opacity: 0.9; }
-.notification-message { font-size: 0.86em; line-height: 1.45; color: #f0f0f0; text-shadow: 0 0 3px #000; }
-.notification .notif-btn {
-    align-self: flex-end; margin-top: 0.45em; padding: 0.25em 0.7em; font-size: 0.7em; text-transform: uppercase; font-weight: bold;
-    color: #fff; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.35); border-radius: 4px; cursor: pointer; transition: all 0.25s ease;
-}
-.notification .notif-btn:hover { background: rgba(255,255,255,0.25); border-color: #fff; transform: scale(1.05); }
 
-/* OVERLAY & MODALES */
-#modal-overlay-msg, #modal-overlay-quest, #modal-overlay-quest-proposal, #modal-overlay-item, #modal-overlay-pnj, #modal-overlay-chat {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; cursor: default; animation: overlayFadeIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+/* Overlays (Fonds gris) */
+#modal-overlay-msg,
+#modal-overlay-quest,
+#modal-overlay-quest-proposal,
+#modal-overlay-item,
+#modal-overlay-pnj,
+#modal-overlay-chat {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85); z-index: 2000; cursor: default;
+    animation: overlayFadeIn 0.4s forwards;
 }
 @keyframes overlayFadeIn { to { opacity: 1; } }
-#dialogue-modal, #quest-modal, #quest-proposal-modal, #item-modal, #pnj-modal, #chat-modal {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: var(--modal-width); height: var(--modal-height); max-width: 90vw; max-height: 90vh;
-    background: var(--modal-bg); border: var(--modal-border); border-radius: 12px; z-index: 2100; box-shadow: var(--shadow-strong); overflow: hidden;
-    font-size: 0.96em; color: var(--text-soft); opacity: 0;
-    animation: modalSlideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    /* STABILITÉ */
-    will-change: transform, opacity;
-    backface-visibility: hidden;
+
+/* STYLE UNIFIÉ POUR TOUTES LES MODALES */
+/* Ajout de #item-modal, #quest-modal, #chat-modal, etc. qui manquaient */
+#pnj-modal,
+#item-modal,
+#quest-modal,
+#quest-proposal-modal,
+#chat-modal,
+#msg-modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: var(--modal-width); height: var(--modal-height);
+    background: var(--modal-bg); border: var(--modal-border);
+    border-radius: 12px; z-index: 2100; box-shadow: var(--shadow-strong);
+    display: flex; flex-direction: column;
 }
-@keyframes modalSlideIn { 0% { opacity: 0; transform: translate(-50%, -55%) scale(0.95); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-.modal-content { position: absolute; top: 11%; left: 9%; right: 9%; bottom: 13%; display: flex; flex-direction: column; justify-content: space-between; padding: 0.7em; overflow: hidden; }
-.modal-header { display: flex; align-items: center; gap: 0.6em; padding: 0.5em 1em; font-weight: bold; color: #fff; font-size: 1.12em; text-shadow: 0 0 6px #000; margin-bottom: 0.4em; border-bottom: 1.2px solid #fff; text-transform: uppercase; letter-spacing: 0.5px; }
-.modal-body { flex: 1; padding: 0.6em 1em; overflow-y: auto; color: #f0f0f0; font-size: 0.94em; line-height: 1.5; text-shadow: 0 0 3px #000; }
-.modal-body hr { border: none; border-top: 1px dashed #666; margin: 0.8em 0; }
-.modal-body strong { color: #fff; font-weight: bold; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 0.8em; padding: 0.4em 0.8em; margin-top: 0.4em; }
-.modal-close, .accept-quest, .modal-btn, button, .give-btn, #chat-send, #chat-close {
-    background: transparent !important; outline: none !important; border: none !important; position: relative; color: #fff; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.4em 1.2em; cursor: pointer; font-size: 0.92em; transition: color 0.2s ease;
+
+/* Ajustements spécifiques par type de modale */
+#item-modal, #quest-modal, #quest-proposal-modal, #msg-modal {
+    height: auto;
+    max-height: 85vh; /* Évite que la modale sorte de l'écran si trop longue */
 }
-.modal-close::after, .accept-quest::after, .modal-btn::after, button::after, .give-btn::after, #chat-send::after, #chat-close::after {
-    content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1.5px; background: #fff; transition: width 0.3s ease;
+#chat-modal {
+    height: 70vh; /* Hauteur fixe pour le chat */
 }
-.modal-close:hover::after, .accept-quest:hover::after, .modal-btn:hover::after, button:hover::after, .give-btn:hover::after, #chat-send:hover::after, #chat-close:hover::after { width: 100%; }
+
+/* Styles internes Modale PNJ pour matcher l'inventaire */
+.pnj-equipment-section, .pnj-inventory-section {
+    margin-top: 1em; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);
+}
+.section-title {
+    color: #b1a270; font-weight: bold; font-size: 0.85em; text-transform: uppercase;
+    margin-bottom: 0.6em; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 4px;
+}
+.pnj-inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5em; }
+
+/* Styles pour le Chat PNJ */
+#chat-log {
+    flex: 1; overflow-y: auto; padding: 1em; background: rgba(0,0,0,0.3);
+    border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1em;
+    display: flex; flex-direction: column; gap: 0.8em;
+}
+.chat-player { align-self: flex-end; background: rgba(74, 98, 117, 0.4); padding: 0.5em 0.8em; border-radius: 8px 8px 0 8px; max-width: 80%; }
+.chat-pnj { align-self: flex-start; background: rgba(255, 255, 255, 0.1); padding: 0.5em 0.8em; border-radius: 8px 8px 8px 0; max-width: 80%; }
+#chat-input {
+    width: 100%; background: rgba(0,0,0,0.5); border: 1px solid #555; color: #fff;
+    padding: 0.8em; border-radius: 4px; resize: none; height: 3em; font-family: inherit;
+}
 
 /* CONTEXT MENUS */
-/* STABILITÉ : z-index très élevé pour passer au dessus des modales */
-.context-menu, #inventory-context-menu, #buddy-context-menu, #give-buddy-menu, #give-item-context-menu {
-    position: absolute; background: rgba(0,0,0,0.92); border: 1px solid #fff; border-radius: 8px; padding: 0.5em 0; min-width: 160px; z-index: 9999; font-size: 0.88em; line-height: 1.4; box-shadow: 0 0 16px rgba(0,0,0,0.8); animation: fadeMenu 0.2s ease forwards; pointer-events: auto;
+.context-menu {
+    position: absolute; background: rgba(0,0,0,0.95); border: 1px solid #fff; border-radius: 8px; padding: 0.5em 0; min-width: 160px; z-index: 9999; font-size: 0.88em; box-shadow: 0 0 16px rgba(0,0,0,0.8); animation: fadeMenu 0.2s ease forwards;
 }
 @keyframes fadeMenu { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-.context-option { position: relative; padding: 0.6em 1.1em; color: #fff; cursor: pointer; transition: background 0.2s; pointer-events: auto; display: flex; align-items: center; }
-.context-option:hover { background: rgba(255,255,255,0.14); }
-.item-bonus { display: flex; align-items: center; flex-wrap: nowrap; gap: 0.3em; margin-top: 0.4em; justify-content: flex-start; }
-.bonus-tag, .twohanded-tag { display: inline-flex; align-items: center; justify-content: center; gap: 0.25em; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.22); border-radius: 5px; padding: 0.15em 0.45em; font-size: 0.78em; font-weight: 600; color: #fff; text-shadow: 0 0 3px #000; box-shadow: inset 0 0 4px rgba(0,0,0,0.6); transition: all 0.2s ease; min-height: 1.3em; }
-.bonus-tag img { height: 0.9em; filter: drop-shadow(0 0 1px #000); flex-shrink: 0; }
-.twohanded-tag { font-weight: 700; letter-spacing: 0.5px; margin-left: auto; align-self: center; }
-.buddy-filter-bar { display: flex; align-items: center; justify-content: center; gap: 0.8em; margin-bottom: 0.6em; text-align: center; }
-.buddy-healthbar { height: 6px; background: rgba(80,80,80,0.4); border-radius: 4px; overflow: hidden; margin-top: 4px; }
-.buddy-healthfill { height: 100%; border-radius: 4px; transition: width 0.4s ease-in-out; }
-.h-good { background: linear-gradient(90deg, #ffffff, #fffadc); }
-.h-mid  { background: linear-gradient(90deg, #faedbe, #fcecac); }
-.h-low  { background: linear-gradient(90deg, #ffc1c1, #fc9d93); }
-.h-dead { background: #3a1a1a; }
-.buddy-travel-wrapper { margin-top: 6px; margin-bottom: 4px; background: rgba(0, 0, 0, 0.2); border-radius: 4px; padding: 4px 6px; border: 1px solid rgba(255, 255, 255, 0.05); }
-.travel-progress-fill { height: 100%; background: linear-gradient(90deg, #9b59b6, #8e44ad); width: 0%; transition: width 1s linear; box-shadow: 0 0 4px rgba(155, 89, 182, 0.4); }
+.context-option { padding: 0.6em 1.1em; color: #fff; cursor: pointer; display: flex; align-items: center; }
+.context-option:hover { background: rgba(255,255,255,0.15); }
+.context-title { padding: 0.4em 0.8em; font-size: 0.8em; color: #aaa; border-bottom: 1px solid #444; margin-bottom: 2px; }
 
-/* CHAT */
-#chat-modal { min-width: 420px; min-height: 520px; }
-#chat-modal .modal-content { top: 8%; bottom: 10%; }
-#chat-log { background: rgba(255,255,255,0.045) !important; border: 1.8px solid rgba(255,255,255,0.16) !important; border-radius: 14px !important; padding: 1.2em !important; font-size: 0.96em !important; }
-.chat-player { align-self: flex-end !important; background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%) !important; color: #000 !important; border-bottom-right-radius: 8px !important; box-shadow: 0 5px 16px rgba(74,222,128,0.35) !important; padding: 1em 1.2em !important; border-radius: 20px !important; max-width: 88% !important; }
-.chat-pnj { align-self: flex-start !important; background: linear-gradient(135deg, #eab308 0%, #f59e0b 100%) !important; color: #000 !important; border-bottom-left-radius: 8px !important; box-shadow: 0 5px 16px rgba(234,179,8,0.35) !important; padding: 1em 1.2em !important; border-radius: 20px !important; max-width: 88% !important; }
-#chat-input { background: rgba(18,18,22,0.98) !important; border: 2.2px solid rgba(255,255,255,0.22) !important; border-radius: 14px !important; padding: 1.1em 1.4em !important; color: var(--text) !important; }
-
-/* RESPONSIVE (Mobile) */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    #hud { height: auto; padding: 0.4em 0.8em; flex-wrap: wrap; overflow: visible; }
-    .hud-row-top { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8em; height: auto; }
-    #hud .hud-stats { justify-content: center; order: 1; }
-    #hud .hud-exp-bar { order: 2; width: 100%; min-width: unset; margin: 0.5em 0; }
-    #hud .hud-toggles { order: 3; justify-content: center; }
-    #hud .hud-location { position: relative; top: 0; left: 0; transform: none; margin-top: 0.5em; width: 100%; border-top: 2px solid var(--hud-border); border-radius: 6px; }
+    #hud { height: auto; flex-wrap: wrap; }
+    .side-panel { width: 100%; top: 8em; }
     #passages { top: 12em; }
 }
-
-/* =========================================
-   STYLES MODALE PNJ (INCLUS)
-========================================= */
-.pnj-section-title { font-family: 'Underdog', serif; font-size: 0.95em; font-weight: bold; color: #f2d675; margin-bottom: 0.5em; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.2em; }
-.pnj-section-divider { margin: 1em 0; border-top: 1px dashed rgba(255,255,255,0.15); }
-.pnj-race-job { font-style: italic; color: #aaa; font-size: 0.9em; margin-bottom: 0.8em; }
-.pnj-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.5em; margin-bottom: 0.5em; }
-.pnj-stat { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 0.3em 0.5em; display: flex; align-items: center; gap: 0.4em; font-size: 0.85em; color: #fff; }
-.pnj-equipment-grid { display: flex; flex-direction: column; gap: 0.4em; }
-.pnj-equipment-slot { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); padding: 0.4em 0.6em; border-radius: 5px; font-size: 0.9em; }
-.slot-label { color: #ccc; font-weight: bold; font-size: 0.85em; }
-.slot-value { color: #fff; }
-.pnj-inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.6em; max-height: 200px; overflow-y: auto; padding-right: 5px; }
-.pnj-inventory-grid::-webkit-scrollbar { width: 6px; }
-.pnj-inventory-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
-.pnj-inventory-item { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); border-radius: 6px; padding: 0.5em; font-size: 0.85em; transition: background 0.2s; display: flex; flex-direction: column; gap: 0.2em; }
-.pnj-inventory-item:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); }
-.pnj-item-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.item-name { color: #fff; line-height: 1.2; }
-.item-qty { font-size: 0.8em; color: #f2d675; background: rgba(0,0,0,0.4); padding: 0 4px; border-radius: 3px; }
-.pnj-item-type { font-size: 0.75em; font-style: italic; color: #888; }

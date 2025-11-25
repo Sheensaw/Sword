@@ -122,8 +122,7 @@ Par instants, un souffle d’air traverse les barreaux et vous effleure le visag
 &lt;&lt;setcoords 12 82 &quot;Helrün&quot;&gt;&gt;\
 &lt;&lt;set $visitesGeole to ($visitesGeole or 0) + 1&gt;&gt;\
 &lt;&lt;if $visitesGeole == 1&gt;&gt;\
-&lt;&lt;addItem &quot;dague_de_vagabond&quot; 1&gt;&gt;\
-&lt;&lt;addItem &quot;essence_phoenix&quot; 1&gt;&gt;\
+&lt;&lt;addItems `[{ &quot;id&quot;: &quot;arc_composite_helrun&quot;, &quot;qty&quot;: 1 }, { &quot;id&quot;: &quot;eclat_obsidienne&quot;, &quot;qty&quot;: 1 }, { &quot;id&quot;: &quot;coupe_chou_thaurgrim&quot;, &quot;qty&quot;: 1 }, { &quot;id&quot;: &quot;sang_de_titan&quot;, &quot;qty&quot;: 1 }]`&gt;&gt;\
 &lt;&lt;spawn pnj &quot;Cyndra&quot;&gt;&gt;\
 &lt;&lt;pnj &quot;Cyndra&quot; &quot;buddy&quot;&gt;&gt;\
 &lt;&lt;pnjCoords &quot;Cyndra&quot; 20 10 &quot;Eldaron&quot;&gt;&gt;\

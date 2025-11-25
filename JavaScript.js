@@ -63,34 +63,13 @@
 
   // Cache d'objets par défaut pour les objets manquants
   window.setup.fallbackItems = {
-    'viande_salee': {
-      id: 'viande_salee',
-      label: 'Viande Salée',
-      type: 'food',
-      bonus: {
-        health: 5
-      },
-      description: 'De la viande séchée et salée pour survivre en voyage.',
-      isQuestItem: false
-    },
-    'essence_phoenix': {
-      id: 'essence_phoenix',
-      label: 'Essence de Phénix',
-      type: 'usable',
-      bonus: {
-        health: 20
-      },
-      description: 'Une essence rare aux propriétés régénératives.',
-      isQuestItem: false
-    }
+    'viande_salee': { id: 'viande_salee', label: 'Viande Salée', type: 'food', bonus: { health: 5 }, description: 'De la viande séchée et salée.', isQuestItem: false },
+    'essence_phoenix': { id: 'essence_phoenix', label: 'Essence de Phénix', type: 'usable', bonus: { health: 20 }, description: 'Une essence rare.', isQuestItem: false }
   };
 
   // Chargement séquentiel robuste avec fallback
   async function loadLootsSequentially() {
-    if (window.setup.lootState.loading) {
-      console.log("⚠️ Chargement loot déjà en cours");
-      return;
-    }
+    if (window.setup.lootState.loading) return;
 
     window.setup.lootState.loading = true;
     window.setup.lootState.attempted = true;
@@ -100,97 +79,95 @@
     const lootFiles = [
       "loot/health.js",
       "loot/food.js",
-      "loot/weapon_simple.js",
+      "loot/weapon_simple.js", // C'est ici que vos objets se trouvent
       "loot/weapon_mythique.js"
     ];
 
     let loadedCount = 0;
-    let failedCount = 0;
 
     for (const path of lootFiles) {
       try {
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve) => {
           const script = document.createElement("script");
 
-          // CORRECTION : Chemins alternatifs
+          // Calcul du nom de fichier seul (ex: "weapon_simple.js") pour tester à la racine
+          const filename = path.split('/').pop();
+
+          // Liste des chemins à tester : Dossier loot, Serveur, ou Racine du projet
           const possiblePaths = [
-            path,
-            `./${path}`,
-            `/server/${path}`,
-            `./server/${path}`
+            path,                       // ex: loot/weapon_simple.js
+            `./${path}`,                // ex: ./loot/weapon_simple.js
+            filename,                   // ex: weapon_simple.js (RACINE - Souvent la solution)
+            `./${filename}`,            // ex: ./weapon_simple.js
+            `/server/${path}`
           ];
 
           let currentPathIndex = 0;
 
           function tryNextPath() {
             if (currentPathIndex >= possiblePaths.length) {
-              console.warn(`❌ Tous les chemins échoués pour: ${path}`);
-              loadedCount++;
-              resolve();
+              console.warn(`❌ Échec chargement loot après toutes tentatives : ${filename}`);
+              resolve(); // On continue même si échec pour ne pas bloquer le jeu
               return;
             }
 
             const currentPath = possiblePaths[currentPathIndex];
-            script.src = currentPath;
-            script.async = false;
 
-            script.onload = () => {
-              console.log(`✅ LOOT CHARGÉ: ${currentPath}`);
+            // Création d'un nouveau script pour chaque tentative pour éviter les conflits d'état
+            const attemptScript = document.createElement("script");
+            attemptScript.src = currentPath;
+            attemptScript.async = false;
+
+            attemptScript.onload = () => {
+              console.log(`✅ LOOT CHARGÉ : ${currentPath}`);
               loadedCount++;
               resolve();
             };
 
-            script.onerror = () => {
-              console.warn(`⚠️ Échec: ${currentPath}`);
+            attemptScript.onerror = () => {
+              // console.log(`... échec sur ${currentPath}, essai suivant...`); // Décommenter pour debug
               currentPathIndex++;
               tryNextPath();
             };
 
-            document.head.appendChild(script);
+            document.head.appendChild(attemptScript);
           }
 
           tryNextPath();
         });
-
-        await new Promise(resolve => setTimeout(resolve, 50));
-
       } catch (error) {
-        console.warn("Erreur lors du chargement:", path, error);
-        failedCount++;
+        console.warn("Erreur script:", path, error);
       }
     }
 
-    console.log(`📊 ${loadedCount}/${lootFiles.length} fichiers traités, ${failedCount} échecs`);
-
-    // INITIALISATION MALGRÉ LES ÉCHECS
+    console.log(`📊 Bilan Loot : ${loadedCount}/${lootFiles.length} fichiers chargés.`);
     initLootSystem();
   }
 
   // Initialisation robuste du système de loot
   function initLootSystem() {
-    console.log("🔄 INITIALISATION CACHE LOOT...");
+    console.log("🔄 CONSTRUCTION DU CACHE D'OBJETS...");
 
     const categories = window.lootCategories || {};
     window.setup.itemCache = window.setup.itemCache || {};
     window.setup.randomLoot = window.setup.randomLoot || {};
 
-    // Fusion avec les objets de fallback
+    // Fusion avec fallback
     Object.assign(window.setup.itemCache, window.setup.fallbackItems);
 
     let totalItems = 0;
-    let categoryCount = 0;
 
-    // Parcours sécurisé des catégories
+    // Parcours des catégories chargées (ex: weapon_simple)
     Object.keys(categories).forEach(cat => {
       if (Array.isArray(categories[cat])) {
-        categoryCount++;
         categories[cat].forEach(item => {
-          if (item && item.id && item.label) {
+          if (item && item.id) {
             window.setup.itemCache[item.id] = item;
             totalItems++;
-            console.log(`📝 Item chargé: ${item.id} (${cat})`);
           }
         });
+        // Log pour confirmer que weapon_simple est bien traité
+        console.log(`📁 Catégorie intégrée : ${cat} (${categories[cat].length} objets)`);
       }
     });
 
@@ -200,75 +177,55 @@
       if (Array.isArray(arr) && arr.length > 0) {
         const randomItem = arr[Math.floor(Math.random() * arr.length)];
         window.setup.randomLoot[type] = randomItem.id;
-        console.log(`🎲 Random ${type}: ${randomItem.id}`);
       }
     });
 
     window.setup.lootState.ready = true;
     window.setup.lootState.loading = false;
-
-    console.log(`✅ SYSTÈME LOOT PRÊT: ${totalItems} objets, ${categoryCount} catégories`);
-    console.log("📋 Cache complet:", Object.keys(window.setup.itemCache));
+    console.log(`✅ SYSTÈME LOOT PRÊT : ${totalItems} objets en mémoire.`);
   }
 
   // Fonction pour obtenir un item de façon sécurisée
   window.setup.getItemFromCache = function(itemId) {
-    if (!itemId) {
-      console.warn("❌ Item ID manquant");
-      return null;
+    if (!itemId) return null;
+
+    // Si l'objet est dans le cache, on le retourne tout de suite
+    if (window.setup.itemCache && window.setup.itemCache[itemId]) {
+        return window.setup.itemCache[itemId];
     }
 
-    // Si le système de loot n'est pas prêt, utiliser le cache de fallback
+    // Si le système n'est pas prêt, on retourne null (cela déclenchera le chargement dans addItems)
     if (!window.setup.lootState.ready) {
-      console.warn("⚠️ Loot system pas prêt, utilisation du fallback pour:", itemId);
-      return window.setup.fallbackItems[itemId] || null;
+        return null;
     }
 
-    const item = window.setup.itemCache[itemId];
-
-    if (!item) {
-      console.warn(`❌ Item non trouvé: ${itemId}`);
-      console.log("📋 Cache disponible:", Object.keys(window.setup.itemCache));
-
-      // Créer un item de fallback dynamique
-      return {
-        id: itemId,
-        label: itemId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        type: 'misc',
-        description: `Objet ${itemId} - chargement en cours...`,
-        bonus: {},
-        isQuestItem: false
-      };
-    }
-
-    return item;
+    console.warn(`❌ Item introuvable dans le cache final : ${itemId}`);
+    return null;
   };
 
   // Vérification périodique de l'état du loot
-  window.setup.ensureLootReady = function(callback, maxAttempts = 10) {
+  window.setup.ensureLootReady = function(callback, maxAttempts = 20) {
     let attempts = 0;
 
     function check() {
       attempts++;
-
       if (window.setup.lootState.ready) {
         callback(true);
         return;
       }
-
       if (attempts >= maxAttempts) {
-        console.warn("❌ Timeout attente système loot");
+        console.error("❌ TIMEOUT CRITIQUE : Le système de loot ne répond pas.");
         callback(false);
         return;
       }
 
-      if (!window.setup.lootState.attempted) {
+      // Si le chargement n'a jamais été lancé, on le force
+      if (!window.setup.lootState.attempted && !window.setup.lootState.loading) {
         loadLootsSequentially();
       }
 
-      setTimeout(check, 200);
+      setTimeout(check, 250); // Vérification toutes les 250ms
     }
-
     check();
   };
   //#endregion
@@ -606,8 +563,9 @@
       this.output.appendChild(document.createTextNode(locationString));
     }
   });
+
   /* ---- MACRO : addItem ---- */
-  Macro.add('addItem', {
+Macro.add('addItem', {
     handler: function() {
       const id = this.args[0];
       let qty = Number(this.args[1] || 1);
@@ -715,9 +673,90 @@
     }
   });
 
+Macro.add('addItems', {
+    handler: function() {
+      if (this.args.length === 0) return this.error('Usage: <<addItems [liste]>> ou <<addItems "id" qty ...>>');
+
+      const args = this.args;
+      let itemsToAdd = [];
+
+      // Parsing des arguments (inchangé, fonctionne bien)
+      for (let i = 0; i < args.length; i++) {
+        const arg = args[i];
+        if (Array.isArray(arg)) {
+            arg.forEach(item => { if (item?.id) itemsToAdd.push({ id: item.id, qty: Number(item.qty) || 1 }); });
+            continue;
+        }
+        if (typeof arg === 'object' && arg?.id) {
+            itemsToAdd.push({ id: arg.id, qty: Number(arg.qty) || 1 });
+            continue;
+        }
+        if (typeof arg === 'string') {
+            let qty = 1;
+            if (i + 1 < args.length && typeof args[i+1] === 'number') { qty = args[i+1]; i++; }
+            itemsToAdd.push({ id: arg, qty: qty });
+        }
+      }
+
+      if (itemsToAdd.length === 0) return;
+
+      // La fonction de traitement différé
+      const processBulkAdd = () => {
+        const v = State.variables;
+        const summary = [];
+        let missingItems = [];
+
+        // Forcer la ré-initialisation si le cache est vide mais qu'on a des catégories
+        if (Object.keys(window.setup.itemCache || {}).length < 5 && window.lootCategories) {
+            initLootSystem();
+        }
+
+        for (const item of itemsToAdd) {
+            // Tentative d'ajout
+            const success = window.setup.addItemDirect(item.id, item.qty);
+
+            if (success) {
+                v.inventoryNewItems = v.inventoryNewItems || [];
+                if (!v.inventoryNewItems.includes(item.id)) v.inventoryNewItems.push(item.id);
+
+                const itemData = window.setup.getItemFromCache(item.id);
+                const label = itemData ? (itemData.label || item.id) : item.id;
+                summary.push(`${label} x${item.qty}`);
+            } else {
+                missingItems.push(item.id);
+                console.error(`❌ ADDITEMS : Impossible de trouver l'ID "${item.id}" dans le cache.`);
+            }
+        }
+
+        // Notification de succès
+        if (summary.length > 0) {
+            window.setup.showNotification('Objets reçus', summary.join('<br>'), 4000);
+            v.inventoryViewed = false;
+            window.setup.updateInventoryCounter();
+            window.setup.updateHUD();
+        }
+
+        // Notification d'erreur technique (pour le débug)
+        if (missingItems.length > 0) {
+            console.warn("⚠️ Objets manquants :", missingItems);
+            // Optionnel : Afficher une notif d'erreur à l'écran
+            // window.setup.showNotification('Erreur technique', `Items introuvables: ${missingItems.join(', ')}`, 5000, null, null, 'red');
+        }
+      };
+
+      // Logique d'attente
+      if (!window.setup.lootState.ready) {
+          console.log(`⏳ ADDITEMS : En attente du chargement pour ajouter ${itemsToAdd.length} objets...`);
+          window.setup.ensureLootReady(processBulkAdd);
+      } else {
+          processBulkAdd();
+      }
+    }
+  });
+
   // Version directe pour usage interne (sans notification)
   window.setup.addItemDirect = function(id, qty = 1) {
-    const v = V();
+    const v = State.variables;
     const itemData = window.setup.getItemFromCache(id);
 
     if (!itemData) {
@@ -737,17 +776,25 @@
         id: itemData.id,
         label: itemData.label,
         type: itemData.type,
+        subtype: itemData.subtype, // <--- AJOUT CRITIQUE
         qty: qty,
         bonus: itemData.bonus || {},
         description: itemData.description || '',
         isQuestItem: Boolean(itemData.isQuestItem),
-        isTwoHanded: Boolean(itemData.isTwoHanded)
+        isTwoHanded: Boolean(itemData.isTwoHanded),
+        // On copie aussi les stats de combat pour être sûr
+        damage: itemData.damage,
+        coeff: itemData.coeff,
+        speed: itemData.speed,
+        critChance: itemData.critChance,
+        effects: itemData.effects
       });
     }
 
     v.has[id] = (v.has[id] || 0) + qty;
     return true;
-  };
+};
+
   /* ---- MACRO : removeItem ---- */
   Macro.add('removeItem', {
     handler: function() {
@@ -2258,10 +2305,36 @@
   FONCTION UNIQUE — ENCARTS D’OBJETS (ARMES, SOINS, BONUS)
   Compatible CSS existant (bonus-tag, effect-tag, twohanded-tag)
   ========================================================== */
+  window.setup.weaponSubtypes = {
+    // Melee
+    'dagger': 'Dague',
+    'sword': 'Épée',
+    'longsword': 'Épée longue',
+    'axe': 'Hache',
+    'mace': 'Masse',
+    'pike': 'Pique',
+    // Ranged
+    'bow': 'Arc',
+    'longbow': 'Arc long',
+    'crossbow': 'Arbalète'
+  };
   window.setup.renderItemEncarts = function(item) {
     if (!item) return "";
     const ICONS = window.ICONS || {};
     const tags = [];
+
+    /* ------------------------------------------------------
+       0) SOUS-TYPE D'ARME (NOUVEAU)
+       ------------------------------------------------------ */
+    if (item.type === "weapon" && item.subtype) {
+        const subtypeLabel = window.setup.weaponSubtypes[item.subtype] || item.subtype;
+        // On utilise une couleur distincte ou un style neutre
+        tags.push(`
+            <span class="bonus-tag" style="background:rgba(100,100,100,0.3); color:#ddd; border:1px solid #666;">
+                ${subtypeLabel}
+            </span>
+        `);
+    }
 
     /* ------------------------------------------------------
        1) BONUS CLASSIQUES (force, santé, magie, résistance…)
@@ -2305,7 +2378,7 @@
         }
         tags.push(`
                         <span class="bonus-tag">
-                            <img class="icon-08em" src="images/icons/damages.png" alt="Dégâts">
+                            <img class="icon-08em" src="images/icons/damages.png" alt="Dégâts" onerror="this.style.display='none'">
                             ${dmgText}
                         </span>
                     `);
@@ -2315,7 +2388,7 @@
       if (typeof item.coeff !== "undefined") {
         tags.push(`
                         <span class="bonus-tag">
-                            <img class="icon-08em" src="images/icons/dexterity.png" alt="Rapidité">
+                            <img class="icon-08em" src="images/icons/dexterity.png" alt="Rapidité" onerror="this.style.display='none'">
                             ${item.coeff}
                         </span>
                     `);
@@ -2325,7 +2398,7 @@
       if (typeof item.speed !== "undefined" && typeof item.coeff === "undefined") {
         tags.push(`
                         <span class="bonus-tag">
-                            <img class="icon-08em" src="images/icons/dexterity.png" alt="Vitesse">
+                            <img class="icon-08em" src="images/icons/dexterity.png" alt="Vitesse" onerror="this.style.display='none'">
                             ${item.speed}
                         </span>
                     `);
@@ -2337,7 +2410,7 @@
         const cm = typeof item.critMultiplier !== "undefined" ? ` x${item.critMultiplier}` : '';
         tags.push(`
                         <span class="bonus-tag">
-                            <img class="icon-08em" src="images/icons/critical.png" alt="Critique">
+                            <img class="icon-08em" src="images/icons/critical.png" alt="Critique" onerror="this.style.display='none'">
                             ${cc}%${cm}
                         </span>
                     `);
@@ -2925,180 +2998,97 @@
      FONCTION : AFFICHER MODALE PNJ - VERSION CORRIGÉE POUR VOTRE STRUCTURE JSON
      ========================================================== */
   window.setup.showPnjModal = function(pnjId) {
-    console.log(`🖼️ [showPnjModal] Ouverture modale pour: "${pnjId}"`);
-
-    // Nettoyage préalable de toute modale existante
     $('#pnj-modal, #modal-overlay-pnj').remove();
-
-    // Création overlay et conteneur
     const $overlay = $('<div id="modal-overlay-pnj"></div>').appendTo('body');
     const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
 
-    // Récupération des données dynamiques (Santé, Inventaire réel)
-    const npc = npcEnsure(pnjId);
+    const npc = window.npcEnsure(pnjId);
 
-    // Fonction de traitement principale
     const processPnjModal = () => {
-      // 1. RÉCUPERATION DES DONNÉES DE LORE (JSON statique)
       const pnjData = window.setup.getPnjData(pnjId);
       const identite = pnjData.identite;
+      const safeName = window.setup.escapeHtml(identite.nom_complet || identite.nom || npc.name);
 
-      // Extraction sécurisée des textes
-      const displayName = identite.nom_complet || identite.nom || npc.name || pnjId;
-      const safeName = window.setup.escapeHtml(displayName);
-      const race = identite.peuple || "Inconnu";
-      const metier = identite.metier_principal || "Voyageur";
-      const safeDescription = window.setup.escapeHtml(pnjData.description || "Aucune description disponible.");
-
-      // 2. DONNÉES DYNAMIQUES (Stats actuelles)
-      const strength = npc.stats?.strength || 0;
-      const dexterity = npc.stats?.dexterity || 0;
-      const resistance = npc.stats?.resistance || 0;
-      const level = npc.stats?.level || 1;
-      const currentHP = npc.health || 0;
-      const maxHP = npc.maxHealth || 20;
-
-      // 3. CORPS HTML : Sous-titre (Rôle/Race)
-      const subHeaderHTML = `
-        <div style="text-align:center; margin-bottom:1.2em; padding-bottom:0.8em; border-bottom:1px solid rgba(255,255,255,0.1);">
-            <div style="font-size:0.95em; color:#f2d675; font-style:italic; letter-spacing:0.5px;">
-                ${window.setup.escapeHtml(race)} &bull; ${window.setup.escapeHtml(metier)}
-            </div>
-            <div style="font-size:0.8em; color:#888; margin-top:0.2em;">
-                Niveau ${level}
-            </div>
-        </div>
-      `;
-
-      // 4. CORPS HTML : Description
-      const descHTML = `
-        <div style="background:rgba(255,255,255,0.03); padding:0.8em; border-radius:4px; margin-bottom:1.2em; font-size:0.9em; line-height:1.5; font-style:italic; color:#ccc; border-left:3px solid rgba(255,255,255,0.2);">
-            ${safeDescription}
-        </div>
-      `;
-
-      // 5. CORPS HTML : Stats Grid
+      // Stats en-tête
       const statsHTML = `
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5em; margin-bottom:1.5em; text-align:center;">
-            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
-                <img src="${window.ICONS.health}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
-                <span style="font-weight:bold; color:#ff8888; font-size:0.9em;">${currentHP}/${maxHP}</span>
-            </div>
-            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
-                <img src="${window.ICONS.strength}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
-                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${strength}</span>
-            </div>
-            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
-                <img src="images/icons/dexterity.png" style="height:1.4em; display:block; margin:0 auto 0.3em;" onerror="this.style.display='none'">
-                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${dexterity}</span>
-            </div>
-            <div style="background:rgba(0,0,0,0.3); padding:0.5em; border-radius:4px; border:1px solid #444;">
-                <img src="${window.ICONS.defense}" style="height:1.4em; display:block; margin:0 auto 0.3em;">
-                <span style="font-weight:bold; color:#fff; font-size:0.9em;">${resistance}</span>
-            </div>
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5em; margin-bottom:1em; text-align:center;">
+            <div class="hud-block"><img src="${window.ICONS.health}" class="icon-1em"> ${npc.health}/${npc.maxHealth}</div>
+            <div class="hud-block"><img src="${window.ICONS.strength}" class="icon-1em"> ${npc.stats?.strength||0}</div>
+            <div class="hud-block"><img src="images/icons/dexterity.png" class="icon-1em"> ${npc.stats?.dexterity||0}</div>
+            <div class="hud-block"><img src="${window.ICONS.defense}" class="icon-1em"> ${npc.stats?.resistance||0}</div>
         </div>
       `;
 
-      // 6. CORPS HTML : ÉQUIPEMENT (Style Slot Identique Joueur)
-      let equipmentHTML = '';
-      const slotNames = { weapon: 'Arme', shield: 'Bouclier', head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds' };
+      // SECTION ÉQUIPEMENT (Style unifié)
+      const slotNames = { head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier' };
       const slotsOrder = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
 
       let equipListHTML = '';
-
       slotsOrder.forEach(slot => {
          const itemId = npc.equipment ? npc.equipment[slot] : null;
-         let content = ' <em style="opacity:.5; font-size:0.9em;">Vide</em>';
-         let itemClass = 'empty-slot'; // Classe CSS de base
+         let content = ' <em style="opacity:.4; font-size:0.9em;">Vide</em>';
+         let slotClass = 'equipment-slot';
 
          if (itemId) {
              const itemData = window.setup.getItemFromCache(itemId);
              const label = itemData ? itemData.label : itemId;
-             // On utilise 'filled-slot inventory-item' pour récupérer le style exact des items
-             content = ` <span class="equipped-name" style="color:#f2d675; font-weight:bold;">${window.setup.escapeHtml(label)}</span>`;
-             itemClass = 'filled-slot inventory-item';
+             slotClass += ' filled-slot';
+             content = ` <span class="equipped-name">${window.setup.escapeHtml(label)}</span>`;
          }
 
-         // Construction du slot HTML identique à renderEquipment
          equipListHTML += `
-            <div class="equipment-slot ${itemClass}" style="margin-bottom:0.4em; padding:0.4em 0.6em;">
-                <strong style="color:#aaa; text-transform:uppercase; font-size:0.8em; margin-right:0.5em;">${slotNames[slot]}:</strong>
+            <div class="${slotClass}">
+                <strong>${slotNames[slot]}:</strong>
                 ${content}
             </div>
          `;
       });
 
-      if (equipListHTML) {
-          equipmentHTML = `
-            <div class="pnj-equipment-section" style="margin-bottom:1.5em;">
-                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Équipement</div>
-                <div class="equipment-grid">
-                    ${equipListHTML}
-                </div>
-            </div>
-          `;
-      }
-
-      // 7. CORPS HTML : INVENTAIRE (Style Slot Identique Joueur)
-      let inventoryHTML = '';
-      const inventory = npc.inventory || {};
-      const invIds = Object.keys(inventory);
-
+      // SECTION INVENTAIRE (Style unifié)
+      let itemsHTML = '';
+      const invIds = Object.keys(npc.inventory || {});
       if (invIds.length > 0) {
-          let invItemsHTML = '';
-          const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
-
           invIds.forEach(itemId => {
-              const qty = inventory[itemId];
+              const qty = npc.inventory[itemId];
               if (qty > 0) {
                   const itemData = window.setup.getItemFromCache(itemId);
-                  const label = itemData ? itemData.label : itemId;
-                  const type = itemData ? itemData.type : 'misc';
+                  const displayItem = Object.assign({}, itemData, { qty: qty });
+                  const encarts = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(displayItem) : '';
 
-                  // Génération des encarts (bonus stats, etc.)
-                  const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(itemData) : '';
-
-                  // Structure EXACTE de .inventory-item
-                  invItemsHTML += `
-                    <div class="inventory-item" data-id="${itemId}" data-type="${type}" style="height:100%;">
+                  itemsHTML += `
+                    <div class="inventory-item">
                         <div class="item-header">
-                            <span class="item-name">${window.setup.escapeHtml(label)}</span>
+                            <span class="item-name">${window.setup.escapeHtml(displayItem.label || itemId)}</span>
                             <span class="item-qty">x${qty}</span>
                         </div>
-                        <span class="inventory-type">${typeLabels[type] || "Objet"}</span>
-                        ${encartsHTML}
+                        ${encarts}
                     </div>
                   `;
               }
           });
-
-          inventoryHTML = `
-            <div class="pnj-inventory-section">
-                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Sac</div>
-                <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.5em;">
-                    ${invItemsHTML}
-                </div>
-            </div>
-          `;
+          itemsHTML = `<div class="pnj-inventory-grid">${itemsHTML}</div>`;
       } else {
-           inventoryHTML = `
-            <div class="pnj-inventory-section">
-                <div class="section-title" style="color:#f2d675; font-weight:bold; font-size:0.85em; text-transform:uppercase; margin-bottom:0.4em; border-bottom:1px solid #444; padding-bottom:2px;">Sac</div>
-                <em style="opacity:0.5; font-size:0.85em; display:block; padding:0.5em;">Le sac est vide.</em>
-            </div>
-          `;
+          itemsHTML = '<em style="opacity:0.5; display:block; padding:10px;">Sac vide.</em>';
       }
 
-      // 8. ASSEMBLAGE FINAL
+      // Assemblage
       const modalContent = window.setup.buildModalHTML({
         title: safeName,
         icon: window.ICONS.buddy,
         content: `
-            ${subHeaderHTML}
-            ${descHTML}
+            <div style="text-align:center; font-style:italic; color:#f2d675; margin-bottom:1em;">${identite.peuple || ''} &bull; ${identite.metier_principal || ''}</div>
+            <div style="font-size:0.9em; color:#ccc; margin-bottom:1em; padding:0.5em; background:rgba(255,255,255,0.05); border-radius:4px;">
+                ${window.setup.escapeHtml(pnjData.description || "...")}
+            </div>
             ${statsHTML}
-            ${equipmentHTML}
-            ${inventoryHTML}
+            <div class="pnj-equipment-section">
+                <div class="section-title">Équipement</div>
+                <div class="pnj-equipment-grid">${equipListHTML}</div>
+            </div>
+            <div class="pnj-inventory-section">
+                <div class="section-title">Sac</div>
+                ${itemsHTML}
+            </div>
         `,
         footer: '<button type="button" class="modal-close">Fermer</button>',
         className: 'pnj-modal'
@@ -3106,38 +3096,28 @@
 
       $modal.append(modalContent);
       $('body').addClass('modal-open');
-
-      // Gestion fermeture
-      const close = () => {
-        $modal.remove();
-        $overlay.remove();
-        $('body').removeClass('modal-open');
-      };
+      const close = () => { $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open'); };
       $modal.find('.modal-close').on('click', close);
       $overlay.on('click', close);
     };
 
-    // Vérification disponibilité système PNJ avant affichage
-    if (!window.setup.pnjState.ready) {
-       window.setup.ensurePNJReady(processPnjModal);
-    } else {
-       processPnjModal();
-    }
-  };
+    if (!window.setup.pnjState.ready) window.setup.ensurePNJReady(processPnjModal);
+    else processPnjModal();
+};
   // ------------------------------------------------------
   // HUD + INVENTAIRE + ÉQUIPEMENT + (BUDDIES) - VERSION CORRIGÉE
   // ------------------------------------------------------
   window.setup.updateHUD = (function() {
     let timeout;
-    // Variables pour détecter les changements et éviter le re-rendu inutile (Anti-Lag)
     let lastInventoryState = "";
     let lastEquipmentState = "";
-    let lastLocationString = "";
 
     function icon(img) {
       const src = img || 'images/icons/map.png';
       return `<img class="icon-1em" src="${src}" alt="" onerror="this.style.display='none';">`;
     }
+
+    function V() { return State.variables; }
 
     return function() {
       clearTimeout(timeout);
@@ -3146,7 +3126,7 @@
         if (!$hud.length) return;
 
         const v = V();
-        // Récupération des valeurs
+        // --- Récupération des stats ---
         const health = v.current_player_health ?? 10;
         const maxHealth = v.max_player_health ?? 10;
         const strength = v.strength || 0;
@@ -3159,40 +3139,31 @@
         const expToNextLevel = v.expToNextLevel || 100;
         const expPercent = Math.min(100, (exp / expToNextLevel) * 100);
 
-        // Calcul localisation
-        let locationString = "Position inconnue";
-        if (v.playerCoordinates) {
-             locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
-        } else {
-             const currentPassage = State.variables.currentPassage || State.passage;
-             const pCoords = window.setup.ensurePassageCoords(currentPassage);
-             locationString = window.setup.getLocationString(pCoords, pCoords.continent);
-        }
-
-        // Construction initiale
+        // --- Construction HUD (HTML) ---
         if (!$hud.find('.hud-inner').length) {
+            let locationString = "Position inconnue";
+            if (v.playerCoordinates) locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
+
             $hud.html(`
             <div class="hud-inner">
                 <div class="hud-row-top">
                     <div class="hud-stats">
-                        <div class="hud-block hud-health">${icon(ICONS.health)} ${health}/${maxHealth}</div>
-                        <div class="hud-block hud-strength">${icon(ICONS.strength)} ${strength}</div>
+                        <div class="hud-block hud-health">${icon(window.ICONS.health)} ${health}/${maxHealth}</div>
+                        <div class="hud-block hud-strength">${icon(window.ICONS.strength)} ${strength}</div>
                         <div class="hud-block hud-dexterity">${icon('images/icons/dexterity.png')} ${dexterity}</div>
-                        <div class="hud-block hud-resistance">${icon(ICONS.defense)} ${resistance}</div>
-                        <div class="hud-block hud-magic">${icon(ICONS.magic)} ${magic}</div>
-                        <div class="hud-block hud-gold">${icon(ICONS.gold)} ${gold}</div>
+                        <div class="hud-block hud-resistance">${icon(window.ICONS.defense)} ${resistance}</div>
+                        <div class="hud-block hud-magic">${icon(window.ICONS.magic)} ${magic}</div>
+                        <div class="hud-block hud-gold">${icon(window.ICONS.gold)} ${gold}</div>
                     </div>
                     <div class="hud-exp-bar">
                         <span class="hud-level">${level}</span>
-                        <div class="hud-exp-container">
-                            <div class="hud-exp-fill" style="width: ${expPercent}%;"></div>
-                        </div>
+                        <div class="hud-exp-container"><div class="hud-exp-fill" style="width: ${expPercent}%;"></div></div>
                         <span class="hud-level">${level + 1}</span>
                     </div>
                     <div class="hud-toggles"></div>
                 </div>
                 <div class="hud-location" title="${window.setup.escapeHtml(locationString)}">
-                    ${icon(ICONS.map)} <span class="location-text">${locationString}</span>
+                    ${icon(window.ICONS.map)} <span class="location-text">${locationString}</span>
                 </div>
             </div>
             <div id="inventory-panel" class="side-panel"></div>
@@ -3203,213 +3174,211 @@
           `);
           $(document).trigger('hudready');
         } else {
-          // MISE À JOUR CIBLÉE
-          const $locText = $('.hud-location .location-text');
-          if($locText.text() !== locationString) {
-              $locText.text(locationString);
-              $('.hud-location').attr('title', locationString);
-          }
-
-          const updateStat = (cls, html) => {
-              const $el = $(cls);
-              if($el.html() !== html) $el.html(html);
-          };
-
-          updateStat('.hud-health', `${icon(ICONS.health)} ${health}/${maxHealth}`);
-          updateStat('.hud-strength', `${icon(ICONS.strength)} ${strength}`);
-          updateStat('.hud-dexterity', `${icon('images/icons/dexterity.png')} ${dexterity}`);
-          updateStat('.hud-resistance', `${icon(ICONS.defense)} ${resistance}`);
-          updateStat('.hud-magic', `${icon(ICONS.magic)} ${magic}`);
-          updateStat('.hud-gold', `${icon(ICONS.gold)} ${gold}`);
-
-          const $expFill = $('.hud-exp-fill');
-          if ($expFill.length) $expFill.css('width', `${expPercent}%`);
+             // Mise à jour simple
+             $('.hud-health').html(`${icon(window.ICONS.health)} ${health}/${maxHealth}`);
+             $('.hud-strength').html(`${icon(window.ICONS.strength)} ${strength}`);
+             $('.hud-dexterity').html(`${icon('images/icons/dexterity.png')} ${dexterity}`);
+             $('.hud-exp-fill').css('width', `${expPercent}%`);
         }
 
-        // Gestion des boutons Toggles
+        // --- GESTION DES BOUTONS (TOGGLES) ---
         const $toggles = $('#hud .hud-toggles');
-        if (!document.getElementById('inventory-toggle')) {
-          $toggles.append(`<div id="inventory-toggle" title="Inventaire">${icon(ICONS.inventory)}<span id="inventory-counter" class="counter">0</span></div>`);
-        }
-        if (!document.getElementById('equipment-toggle')) {
-          $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(ICONS.equipment)}</div>`);
-        }
 
+        // 1. Bouton Compagnons (Buddy) - RESTAURÉ
         const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned).length;
         if (!document.getElementById('buddy-toggle')) {
-          $toggles.prepend(`<div id="buddy-toggle" title="Compagnons" style="display:none;"><img class="icon-1em" src="${ICONS.buddy}" alt=""><span id="buddy-counter" class="counter">0</span></div>`);
+            // On l'ajoute en premier (prepend) ou après selon préférence
+            $toggles.prepend(`<div id="buddy-toggle" title="Compagnons" style="display:none;">${icon(window.ICONS.buddy)}<span id="buddy-counter">0</span></div>`);
+
+            // Binding du clic Buddy
+            $('#buddy-toggle').on('click', (e) => {
+                e.stopPropagation();
+                window.setup.togglePanel('#buddies-panel');
+            });
         }
+        // Visibilité dynamique du bouton Buddy
         $('#buddy-toggle').toggle(buddiesCount > 0);
         $('#buddy-counter').text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
 
-        // --- ÉVÉNEMENTS PANNEAUX ---
+        // 2. Bouton Inventaire
+        if (!document.getElementById('inventory-toggle')) {
+          $toggles.append(`<div id="inventory-toggle" title="Inventaire">${icon(window.ICONS.inventory)}<span id="inventory-counter">0</span></div>`);
+          $('#inventory-toggle').on('click', (e) => {
+              e.stopPropagation();
+              window.setup.togglePanel('#inventory-panel');
+              v.inventoryViewed = true;
+              window.setup.updateInventoryCounter();
+              window.setup.updateHUD();
+          });
+        }
+
+        // 3. Bouton Équipement
+        if (!document.getElementById('equipment-toggle')) {
+          $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(window.ICONS.equipment)}</div>`);
+          $('#equipment-toggle').on('click', (e) => {
+              e.stopPropagation();
+              window.setup.togglePanel('#equipment-panel');
+          });
+        }
+
+        // --- Logique d'ouverture des panneaux ---
         window.setup.togglePanel = function(panelSelector) {
-          const $panel = $(panelSelector);
-          if (!$panel.length) return;
-          const isVisible = $panel.hasClass('show');
+            const $panel = $(panelSelector);
+            const isVisible = $panel.hasClass('show');
+            $('.side-panel').removeClass('show');
+            $('.context-menu').remove();
 
-          // Ferme tous les panneaux
-          $('.side-panel').removeClass('show');
-
-          // Supprime les menus contextuels actifs
-          $('.context-menu').remove();
-
-          if (!isVisible) {
-              $panel.addClass('show');
-              // Force le rendu immédiat à l'ouverture
-              if(panelSelector === '#inventory-panel') {
-                  lastInventoryState = ""; // Force refresh
-                  renderInventory();
-              }
-              if(panelSelector === '#equipment-panel') {
-                  lastEquipmentState = ""; // Force refresh
-                  renderEquipment();
-              }
-              if(panelSelector === '#buddies-panel') window.renderBuddiesPanel();
-          }
+            if (!isVisible) {
+                $panel.addClass('show');
+                if(panelSelector === '#inventory-panel') { lastInventoryState = ""; renderInventory(); }
+                if(panelSelector === '#equipment-panel') { lastEquipmentState = ""; renderEquipment(); }
+                if(panelSelector === '#buddies-panel') { if(window.renderBuddiesPanel) window.renderBuddiesPanel(); }
+            }
         };
 
-        // Binding des clics
-        $('#inventory-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#inventory-panel'); v.inventoryViewed = true; window.setup.updateInventoryCounter(); window.setup.updateHUD(); });
-        $('#equipment-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#equipment-panel'); });
-        $('#buddy-toggle').off('click').on('click', (e) => { e.stopPropagation(); window.setup.togglePanel('#buddies-panel'); });
-
-        // Fermeture au clic extérieur
-        $(document).off('click.hudpanels').on('click.hudpanels', e => {
-             if (!$(e.target).closest('.side-panel, #hud .hud-toggles > div, .context-menu, .modal-content').length) {
-               $('.side-panel').removeClass('show');
-               $('.context-menu').remove();
-             }
-        });
-
-        // --- FONCTION RENDU INVENTAIRE OPTIMISÉE ---
+        // --- FONCTION RENDU INVENTAIRE ---
         function renderInventory() {
             const $panel = $('#inventory-panel');
             const inventory = v.inventory || [];
+            const equippedIds = Object.values(v.equipped || {});
 
-            // Génération d'une empreinte simple pour détecter les changements
-            // On utilise JSON.stringify pour voir si les items ou quantités ont changé
-            // Pour optimisation, on pourrait juste faire une map des IDs et Qtés
-            const currentInventoryState = JSON.stringify(inventory.map(i => ({id: i.id, qty: i.qty})));
+            // Hash incluant les stats pour rafraîchir le grisage si la force change
+            const currentHash = JSON.stringify(inventory) + JSON.stringify(equippedIds) + `S:${v.strength}D:${v.dexterity}L:${v.level}`;
+            if (currentHash === lastInventoryState && $panel.children().length > 0) return;
 
-            // Si l'état n'a pas changé depuis le dernier rendu, ON NE FAIT RIEN (Stop Lag)
-            if (currentInventoryState === lastInventoryState && $panel.children().length > 0) {
-                return;
-            }
-
-            // Mise à jour de l'état
-            lastInventoryState = currentInventoryState;
+            lastInventoryState = currentHash;
             $panel.empty();
 
-            if (inventory.length) {
-                 const typeLabels = { usable: "Objet", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Casque", torso: "Armure", arms: "Gants", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Objet" };
-                 const frag = document.createDocumentFragment();
-
-                 inventory.forEach(it => {
-                     const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(it) : '';
-                     const isNew = v.inventoryNewItems?.includes(it.id);
-
-                     const $item = $(`
-                        <div class="inventory-item${isNew?' new':''}" data-id="${it.id}" data-type="${it.type}">
-                            <div class="item-header">
-                                <span class="item-name">${window.setup.escapeHtml(it.label)}</span>
-                                <span class="item-qty">x${it.qty}</span>
-                            </div>
-                            <span class="inventory-type">${typeLabels[it.type]||"Objet"}</span>
-                            ${encartsHTML}
-                        </div>
-                     `);
-
-                     // Événements directement attachés à l'élément (plus fiable que delegate pour le drag/drop futur)
-                     $item.on('contextmenu', function(e) {
-                         e.preventDefault();
-                         e.stopPropagation();
-                         window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this));
-                     });
-
-                     $item.on('mouseenter', function() {
-                         if($(this).hasClass('new')){
-                             // Retire le statut "Nouveau" visuellement
-                             $(this).removeClass('new');
-                             // Logique métier
-                             if (v.inventoryNewItems) {
-                                 v.inventoryNewItems = v.inventoryNewItems.filter(nid => nid !== it.id);
-                             }
-                             window.setup.updateInventoryCounter();
-                             window.setup.updateHUD();
-                         }
-                     });
-
-                     frag.appendChild($item[0]);
-                 });
-                 $panel[0].appendChild(frag);
-            } else {
+            if (inventory.length === 0) {
                  $panel.append('<div class="empty-msg"><em style="opacity:.6;">Votre sac est vide.</em></div>');
+                 return;
             }
+
+            const typeLabels = { usable: "Conso", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Tête", torso: "Torse", arms: "Bras", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Divers" };
+            const frag = document.createDocumentFragment();
+
+            inventory.forEach(it => {
+                const cachedData = window.setup.getItemFromCache(it.id) || {};
+                const displayItem = Object.assign({}, cachedData, it);
+
+                const isNew = v.inventoryNewItems && v.inventoryNewItems.includes(it.id);
+                const isEquipped = equippedIds.includes(it.id);
+
+                // --- CHECK STATS ---
+                let isUnusable = false;
+                let reqTextParts = [];
+                const equipTypes = ['weapon', 'shield', 'head', 'torso', 'arms', 'legs', 'feet'];
+                if (equipTypes.includes(displayItem.type)) {
+                    const req = displayItem.requirements || {};
+                    if (req.forceMin && v.strength < req.forceMin) { isUnusable = true; reqTextParts.push(`Force ${req.forceMin}`); }
+                    if (req.dexMin && v.dexterity < req.dexMin) { isUnusable = true; reqTextParts.push(`Dex ${req.dexMin}`); }
+                    if (req.levelMin && v.level < req.levelMin) { isUnusable = true; reqTextParts.push(`Niv ${req.levelMin}`); }
+                }
+
+                // Badges
+                let badgesHTML = '<div class="item-badge-container">';
+                if (isEquipped) badgesHTML += '<span class="badge-pill badge-equipped">Équipé</span>';
+                if (isNew) badgesHTML += '<span class="badge-pill badge-new">Nouveau</span>';
+                badgesHTML += '</div>';
+
+                // Warning Stats
+                let warningHTML = '';
+                if (isUnusable) warningHTML = `<div class="req-warning">⚠️ Manque: ${reqTextParts.join(', ')}</div>`;
+
+                // Encarts
+                const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(displayItem) : '';
+                const itemClass = `inventory-item ${isUnusable ? 'item-unusable' : ''} ${isNew ? 'new' : ''}`;
+
+                const $item = $(`
+                    <div class="${itemClass}" data-id="${it.id}" data-type="${it.type}">
+                        ${badgesHTML}
+                        <div class="item-header">
+                            <span class="item-name">${window.setup.escapeHtml(it.label)}</span>
+                            <span class="item-qty">x${it.qty}</span>
+                        </div>
+                        <span class="inventory-type">${typeLabels[it.type] || "Objet"}</span>
+                        ${warningHTML}
+                        ${encartsHTML}
+                    </div>
+                `);
+
+                // Events
+                $item.on('click', function(e) {
+                    e.preventDefault(); e.stopPropagation();
+                    if (v._pendingEquipSlot) {
+                        if (it.type === v._pendingEquipSlot) {
+                            if (isUnusable) { window.setup.showNotification('Impossible', `Stats insuffisantes`, 3000); return; }
+                            window.setup.equipItem(it.id, v._pendingEquipSlot);
+                            v._pendingEquipSlot = null;
+                            $('#inventory-panel').removeClass('show');
+                        } else { window.setup.showNotification('Erreur', 'Mauvais emplacement.', 2000); }
+                        return;
+                    }
+                    window.setup.showItemModal(displayItem);
+                });
+
+                $item.on('contextmenu', function(e) {
+                    e.preventDefault(); e.stopPropagation();
+                    window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this), isUnusable);
+                });
+
+                $item.on('mouseenter', function() {
+                    if ($(this).hasClass('new')) {
+                        $(this).removeClass('new');
+                        $(this).find('.badge-new').fadeOut();
+                        if (v.inventoryNewItems) v.inventoryNewItems = v.inventoryNewItems.filter(nid => nid !== it.id);
+                        window.setup.updateInventoryCounter();
+                    }
+                });
+
+                frag.appendChild($item[0]);
+            });
+            $panel[0].appendChild(frag);
         }
 
         function renderEquipment() {
              const $panel = $('#equipment-panel');
-             // Check changement
              const currentEqState = JSON.stringify(v.equipped);
              if (currentEqState === lastEquipmentState && $panel.children().length > 0) return;
-
              lastEquipmentState = currentEqState;
              $panel.empty();
-
              const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
              const slotNames = { head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier' };
 
              slots.forEach(slot => {
                 const itemId = v.equipped[slot];
-                let content = ' <em style="opacity:.6">Vide</em>';
+                let content = ' <em style="opacity:.5; font-size:0.9em">Vide</em>';
                 let itemClass = 'empty-slot';
-
                 if (itemId) {
-                    // Trouve l'item dans l'inventaire ou cache pour avoir le label
-                    const itemCache = window.setup.itemCache?.[itemId];
-                    // Si l'item est équipé, il n'est parfois plus dans l'inventaire (selon votre logique),
-                    // donc on regarde le cache global, sinon l'ID
-                    const label = itemCache ? itemCache.label : itemId;
-                    content = ` <span class="equipped-name">${window.setup.escapeHtml(label)}</span>`;
-                    itemClass = 'filled-slot inventory-item'; // inventory-item pour réutiliser le style
+                    const itemData = window.setup.getItemFromCache(itemId);
+                    const label = itemData ? itemData.label : itemId;
+                    content = ` <span class="equipped-name" style="color:#f2d675; font-weight:bold;">${window.setup.escapeHtml(label)}</span>`;
+                    itemClass = 'filled-slot inventory-item';
                 }
-
                 const $slotDiv = $(`<div class="equipment-slot ${itemClass}" data-slot="${slot}" data-id="${itemId || ''}" data-type="${slot}">
-                    <strong>${slotNames[slot]}:</strong>${content}
+                    <strong style="text-transform:uppercase; font-size:0.8em; color:#aaa;">${slotNames[slot]}:</strong>${content}
                 </div>`);
-
                 if (itemId) {
-                    $slotDiv.on('contextmenu', function(e) {
-                        e.preventDefault();
-                        window.setup.showEquipContextMenu(e.pageX, e.pageY, itemId, "", slot, $(this));
-                    });
-                     $slotDiv.on('click', function(e) {
-                        e.preventDefault();
-                        // Affiche modale item si besoin
-                        const itemData = window.setup.itemCache?.[itemId];
-                        if(itemData) window.setup.showItemModal(itemData);
-                    });
+                    $slotDiv.on('click', () => { const d = window.setup.getItemFromCache(itemId); if(d) window.setup.showItemModal(d); });
+                    $slotDiv.on('contextmenu', (e) => { e.preventDefault(); window.setup.showEquipContextMenu(e.pageX, e.pageY, itemId, "", slot, $slotDiv); });
                 }
-
                 $panel.append($slotDiv);
              });
         }
 
-        // LOGIQUE DE MISE À JOUR
-        // Si les panneaux sont ouverts, on vérifie s'il faut re-rendu
+        // Rafraîchissement des panneaux actifs
         if ($('#inventory-panel').hasClass('show')) renderInventory();
         if ($('#equipment-panel').hasClass('show')) renderEquipment();
-        if ($('#buddies-panel').hasClass('show')) window.renderBuddiesPanel(); // Buddies gère son propre timer
+        if ($('#buddies-panel').hasClass('show') && window.renderBuddiesPanel) window.renderBuddiesPanel();
 
-        // Mises à jour compteurs
+        // Update compteurs
         window.setup.updateMessageCounter();
         window.setup.updateQuestCounter();
         window.setup.updateInventoryCounter();
 
       }, 40);
     };
-  })();
+})();
   // ------------------------------------------------------
   // COMPTEURS — NOUVEAUX COMPORTEMENTS
   // ------------------------------------------------------
@@ -3737,65 +3706,78 @@
     const v = State.variables;
     const inv = v.inventory || [];
     const item = inv.find(it => it.id === id);
-    if (!item || item.type.toLowerCase() !== slot.toLowerCase()) {
-      return window.setup.showNotification('Erreur', 'Incompatible.');
+
+    if (!item) return window.setup.showNotification('Erreur', 'Objet introuvable.');
+
+    // Vérification Type
+    // (Note: on accepte si le type correspond, ou règle spéciale 2 mains)
+    if (item.type.toLowerCase() !== slot.toLowerCase()) {
+         return window.setup.showNotification('Impossible', 'Cet objet ne va pas dans cet emplacement.');
     }
-    // Initialiser les statistiques de base (force, dextérité, niveau, etc.)
+
+    // --- VÉRIFICATION DES STATS (CRITIQUE) ---
+    // On s'assure que les stats de base sont initialisées
     window.setup.ensureBaseStats();
-    v.equipped = v.equipped || {};
+
+    // Récupération des requirements depuis le cache pour être sûr (pas modifiable par le joueur)
+    const cachedItem = window.setup.getItemFromCache(id) || item;
+    const req = cachedItem.requirements || {};
+
+    const errors = [];
+    if (req.forceMin && v.strength < req.forceMin) errors.push(`Force ${req.forceMin}`);
+    if (req.dexMin && v.dexterity < req.dexMin) errors.push(`Dextérité ${req.dexMin}`);
+    if (req.levelMin && v.level < req.levelMin) errors.push(`Niveau ${req.levelMin}`);
+
+    if (errors.length > 0) {
+        // Bloque l'équipement
+        return window.setup.showNotification('Impossible', `Pré-requis : ${errors.join(', ')}`, 3500);
+    }
+
+    // --- Gestion Main Gauche / Deux Mains ---
     const equippedWeaponId = v.equipped.weapon;
     const equippedShieldId = v.equipped.shield;
-    const equippedWeapon = equippedWeaponId ? inv.find(it => it.id === equippedWeaponId) : null;
-    const equippedShield = equippedShieldId ? inv.find(it => it.id === equippedShieldId) : null;
-    // --- Gestion des contraintes d’armes à deux mains ---
-    if (slot === 'weapon' && item.isTwoHanded && equippedShield) {
-      return window.setup.showNotification('Impossible', 'Impossible d’équiper : arme à deux mains.', 3000);
+
+    // Si on équipe une arme à 2 mains, on retire le bouclier
+    if (slot === 'weapon' && cachedItem.isTwoHanded) {
+        if (equippedShieldId) {
+             window.setup.unequipItem(equippedShieldId, 'shield', false);
+             window.setup.showNotification('Info', 'Bouclier retiré (Arme à 2 mains).', 2000);
+        }
     }
-    if (slot === 'shield' && equippedWeapon && equippedWeapon.isTwoHanded) {
-      return window.setup.showNotification('Impossible', 'Impossible d’équiper : arme à deux mains.', 3000);
+    // Si on équipe un bouclier alors qu'on a une arme à 2 mains
+    if (slot === 'shield') {
+        if (equippedWeaponId) {
+            const currentWeapon = window.setup.getItemFromCache(equippedWeaponId);
+            if (currentWeapon && currentWeapon.isTwoHanded) {
+                window.setup.unequipItem(equippedWeaponId, 'weapon', false);
+                window.setup.showNotification('Info', 'Arme retirée (Nécessite 2 mains).', 2000);
+            }
+        }
     }
-    // --- Requirements (forceMin, dexMin, levelMin) si présents sur l’objet ---
-    // Ces champs sont censés venir des loot JS (weapon_simple / weapon_mythique)
-    if (item.requirements && typeof item.requirements === 'object') {
-      const req = item.requirements;
-      const reqForce = Number(req.forceMin || 0);
-      const reqDex = Number(req.dexMin || 0);
-      const reqLevel = Number(req.levelMin || 0);
-      const missing = [];
-      if (reqForce && v.strength < reqForce) {
-        missing.push(`Force ${v.strength}/${reqForce}`);
-      }
-      if (reqDex && v.dexterity < reqDex) {
-        missing.push(`Dextérité ${v.dexterity}/${reqDex}`);
-      }
-      if (reqLevel && v.level < reqLevel) {
-        missing.push(`Niveau ${v.level}/${reqLevel}`);
-      }
-      if (missing.length) {
-        const msg = `Conditions non remplies : ${missing.join(' • ')}`;
-        return window.setup.showNotification('Impossible', msg, 3500);
-      }
-    }
-    const bonus = item.bonus || {};
-    const equipped = v.equipped || {};
-    // --- Équipement normal (on déséquipe l’ancien objet du slot si nécessaire) ---
+
+    // --- EXECUTION ---
+    // 1. Déséquiper l'existant
     if (v.equipped[slot]) {
-      window.setup.unequipItem(v.equipped[slot], slot, true);
+        window.setup.unequipItem(v.equipped[slot], slot, true); // silent
     }
+
+    // 2. Assigner le nouveau
     v.equipped[slot] = id;
-    // Application du bonus (force, résistance, etc.) avec protection
-    // ensureBaseStats a déjà initialisé v.strength / v.resistance / v.magic / v.health
+
+    // 3. Appliquer les bonus
+    const bonus = cachedItem.bonus || {};
     for (const k in bonus) {
-      v[k] = Number(v[k] || 0) + Number(bonus[k]);
+        v[k] = (v[k] || 0) + (Number(bonus[k]) || 0);
     }
-    // --- Mise à jour statut d’arme ---
-    if (slot === 'weapon') {
-      v.hasWeapon = true;
-    }
-    const bonusText = Object.keys(bonus).map(k => `+${bonus[k]} ${k}`).join(' ');
-    window.setup.showNotification('Équipé', `${item.label} (${slot}) ${bonusText}`);
+
+    if (slot === 'weapon') v.hasWeapon = true;
+
+    // 4. Feedback
+    const bonusTxt = Object.keys(bonus).map(k => `+${bonus[k]} ${k}`).join(' ');
+    window.setup.showNotification('Équipé', `${cachedItem.label} ${bonusTxt ? '('+bonusTxt+')' : ''}`);
+
     window.setup.updateHUD();
-  };
+};
   // ==========================================================
   // DÉSÉQUIPER OBJET — VERSION CORRIGÉE AVEC PROTECTION
   // ==========================================================
@@ -4516,211 +4498,213 @@
   // ==========================================================
   // FONCTIONS DE GESTION D'INVENTAIRE PNJ - VERSION CORRIGÉE
   // ==========================================================
-  window.setup.giveItemToPnj = function(pnjId, itemId, quantity = 1) {
-    const v = V();
-    const npc = npcEnsure(pnjId);
-    if (!npc.isSpawned || !npc.isActive) {
-      console.warn(`PNJ ${pnjId} non disponible pour recevoir des items`);
-      window.setup.showNotification('Impossible', `${npc.name} ne peut pas recevoir d'objets`, 3000);
-      return false;
-    }
-    const playerInventory = v.inventory || [];
-    const playerItem = playerInventory.find(item => item.id === itemId);
-    if (!playerItem || playerItem.qty < quantity) {
-      console.warn(`Item ${itemId} non disponible en quantité ${quantity} dans l'inventaire du joueur`);
-      window.setup.showNotification('Erreur', `Vous n'avez pas assez de ${playerItem?.label || itemId}`, 3000);
-      return false;
-    }
-    // CORRECTION : RETIRER L'OBJET DE L'INVENTAIRE DU JOUEUR
-    playerItem.qty -= quantity;
-    if (playerItem.qty <= 0) {
-      v.inventory = playerInventory.filter(item => item.id !== itemId);
-      // Déséquiper l'objet si il était équipé
-      const equipped = v.equipped || {};
-      Object.keys(equipped).forEach(slot => {
-        if (equipped[slot] === itemId) {
-          window.setup.unequipItem(itemId, slot, true);
-        }
-      });
-    }
-    // Mettre à jour le dictionnaire "has" du joueur
-    v.has = v.has || {};
-    v.has[itemId] = Math.max(0, (v.has[itemId] || 0) - quantity);
-    if (v.has[itemId] === 0) delete v.has[itemId];
-    // Ajouter à l'inventaire du PNJ
-    if (npc.inventory[itemId]) {
-      npc.inventory[itemId] += quantity;
-    } else {
-      npc.inventory[itemId] = quantity;
-    }
-    // Équipement automatique si c'est une arme et que le PNJ n'en a pas
-    const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
-    if (itemData && itemData.type === 'weapon' && !npc.equipment.weapon) {
-      // Vérifier d'abord si le PNJ peut équiper l'arme
-      if (window.setup.canPnjEquipItem(pnjId, itemId)) {
-        const success = window.setup.equipItemForPnj(pnjId, itemId, 'weapon');
-        if (success) {
-          console.log(`Arme ${itemId} équipée automatiquement sur ${pnjId}`);
-          window.setup.showNotification('Équipement', `${npc.name} équipe ${itemData.label}`, 3000);
-        }
-      } else {
-        // Afficher notification d'erreur pour requirements non remplis
-        const req = itemData.requirements || {};
-        const missing = [];
-        if (req.forceMin && (npc.stats.strength || 0) < req.forceMin) {
-          missing.push(`Force ${npc.stats.strength || 0}/${req.forceMin}`);
-        }
-        if (req.dexMin && (npc.stats.dexterity || 0) < req.dexMin) {
-          missing.push(`Dextérité ${npc.stats.dexterity || 0}/${req.dexMin}`);
-        }
-        if (req.levelMin && (npc.stats.level || 1) < req.levelMin) {
-          missing.push(`Niveau ${npc.stats.level || 1}/${req.levelMin}`);
-        }
-        const msg = `${npc.name} ne peut pas équiper ${itemData.label} : ${missing.join(' • ')}`;
-        window.setup.showNotification('Requirements non remplis', msg, 3500);
-        console.log(`PNJ ${pnjId} ne peut pas équiper ${itemId} - requirements non remplis: ${missing.join(', ')}`);
-      }
-    }
-    console.log(`Item donné à ${pnjId}: ${itemId} x${quantity}`);
-    // Notification de succès
-    const itemName = itemData?.label || itemId;
-    window.setup.showNotification('Don réussi', `${quantity} ${itemName} donné à ${npc.name}`, 3000);
-    // Mettre à jour l'interface
-    window.setup.updateHUD();
-    if (window.renderBuddiesPanel) window.renderBuddiesPanel();
-    return true;
+  // 0. NOUVEAU : Vérifie si le PNJ accepte ce TYPE d'arme (ex: Cyndra n'accepte que les arcs)
+  window.setup.checkPnjWeaponCompatibility = function(pnjId, itemData) {
+      // Si ce n'est pas une arme, pas de restriction de ce type
+      if (itemData.type !== 'weapon') return true;
+
+      const pnjData = window.setup.loadPNJ(pnjId);
+      // Accès sécurisé aux préférences d'armes dans le JSON (tableau ou string)
+      const allowedTypes = pnjData.pnj?.identite?.type_arme;
+
+      // Si le PNJ n'a pas de restriction définie dans son JSON, il accepte tout
+      if (!allowedTypes) return true;
+
+      // Normalisation en tableau pour la comparaison (gère "bow" ou ["bow", "dagger"])
+      const allowedArray = Array.isArray(allowedTypes) ? allowedTypes : [allowedTypes];
+
+      // Le sous-type de l'arme (ex: 'dagger', 'sword', 'bow') défini dans weapon_simple.js
+      const itemSubtype = itemData.subtype;
+
+      // Si l'arme n'a pas de sous-type, on autorise (ou bloquer selon votre design)
+      if (!itemSubtype) return true;
+
+      // Vérification : est-ce que le sous-type est dans la liste autorisée ?
+      return allowedArray.includes(itemSubtype);
   };
-  // Vérifie si le PNJ peut équiper l'arme (avec notification d'erreur)
-  window.setup.canPnjEquipItem = function(pnjId, itemId) {
+
+  // 1. VÉRIFICATEUR GLOBAL (Force, Dex, Niveau ET Type d'arme)
+  window.setup.checkPnjEquipRequirements = function(pnjId, itemId, verbose = true) {
     const npc = npcEnsure(pnjId);
     const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
-    if (!itemData || !itemData.requirements) {
-      return true; // Pas de requirements, équipable
+
+    if (!itemData) {
+        if (verbose) console.warn(`⚠️ Item ${itemId} introuvable dans le cache (Check ignoré)`);
+        return false;
     }
+
+    // --- A. VÉRIFICATION DU TYPE D'ARME (Compatibilité Lore) ---
+    if (itemData.type === 'weapon') {
+        if (!window.setup.checkPnjWeaponCompatibility(pnjId, itemData)) {
+            if (verbose) {
+                // Génération d'un dialogue de refus pour le mauvais type d'arme
+                const pnjData = window.setup.loadPNJ(pnjId);
+                const npcName = npc.name;
+
+                // On cherche la catégorie "wrongType" dans le JSON
+                // Attention aux accents : réaction_joueur vs reaction_joueur
+                const weaponChecks = pnjData.pnj?.réaction_joueur?.weapon_checks || pnjData.pnj?.reaction_joueur?.weapon_checks;
+                const reactions = weaponChecks?.wrongType;
+
+                // === DEBUG AJOUTÉ ===
+                console.group(`🔍 DEBUG DIALOGUE REFUS [${pnjId}]`);
+                console.log("Données PNJ complètes:", pnjData);
+                console.log("Section réaction_joueur:", pnjData.pnj?.réaction_joueur);
+                console.log("Section weapon_checks:", weaponChecks);
+                console.log("Messages 'wrongType' trouvés:", reactions);
+                console.groupEnd();
+                // ====================
+
+                let dialogueText = "";
+
+                if (reactions && Array.isArray(reactions) && reactions.length > 0) {
+                     // Choix d'une phrase spécifique "wrongType"
+                     dialogueText = reactions[Math.floor(Math.random() * reactions.length)];
+                } else {
+                     // Phrase par défaut si pas de JSON spécifique ou si fallback PNJ
+                     dialogueText = `Ce n'est pas mon style d'arme. Je préfère : ${pnjData.pnj?.identite?.type_arme || 'autre chose'}.`;
+                     console.warn(`⚠️ Pas de dialogue 'wrongType' trouvé pour ${pnjId}, utilisation du fallback.`);
+                }
+
+                window.setup.showDialogueNotificationShort(npcName, dialogueText, dialogueText, false);
+                console.log(`⛔ REFUS TYPE ARME [${pnjId}] : "${itemData.subtype}" n'est pas dans [${pnjData.pnj?.identite?.type_arme}]`);
+            }
+            return false;
+        }
+    }
+
+    // --- B. VÉRIFICATION DES STATS (Force, Dex, Level) ---
+    // Si l'objet n'a pas de pré-requis de stats, c'est validé pour cette partie
+    if (!itemData.requirements) return true;
+
     const req = itemData.requirements;
-    const missing = [];
-    // Vérifier les requirements
-    if (req.forceMin && (npc.stats.strength || 0) < req.forceMin) {
-      missing.push(`Force ${npc.stats.strength || 0}/${req.forceMin}`);
+    const stats = npc.stats || { strength: 0, dexterity: 0, level: 1 };
+
+    let failureReason = null;
+
+    // Vérification stricte
+    if (req.levelMin && (stats.level || 1) < req.levelMin) {
+        failureReason = 'insufficientLevel';
+    } else if (req.forceMin && (stats.strength || 0) < req.forceMin) {
+        failureReason = 'insufficientStrength';
+    } else if (req.dexMin && (stats.dexterity || 0) < req.dexMin) {
+        failureReason = 'insufficientDexterity';
     }
-    if (req.dexMin && (npc.stats.dexterity || 0) < req.dexMin) {
-      missing.push(`Dextérité ${npc.stats.dexterity || 0}/${req.dexMin}`);
+
+    // Si succès stats
+    if (!failureReason) {
+        if (verbose) {
+            console.log(`✅ CONDITIONS VALIDÉES pour ${npc.name} avec ${itemId}`);
+            console.log(`   Stats: [F:${stats.strength}|D:${stats.dexterity}|L:${stats.level}] VS Req: [F:${req.forceMin || 0}|D:${req.dexMin || 0}|L:${req.levelMin || 0}]`);
+        }
+        return true;
     }
-    if (req.levelMin && (npc.stats.level || 1) < req.levelMin) {
-      missing.push(`Niveau ${npc.stats.level || 1}/${req.levelMin}`);
+
+    // Si échec stats
+    if (verbose) {
+        const pnjData = window.setup.loadPNJ(pnjId);
+        // Gestion des accents (réaction vs reaction)
+        const reactionsData = pnjData.pnj?.réaction_joueur || pnjData.pnj?.reaction_joueur || {};
+
+        const isWeapon = itemData.type === 'weapon';
+        const checkCategory = isWeapon ? 'weapon_checks' : 'equipment_checks';
+
+        const dialogueList = reactionsData[checkCategory]?.[failureReason];
+        let dialogueText = "";
+
+        if (dialogueList && Array.isArray(dialogueList) && dialogueList.length > 0) {
+            const randomIndex = Math.floor(Math.random() * dialogueList.length);
+            dialogueText = dialogueList[randomIndex];
+        } else {
+            // Fallback générique si le JSON ne contient pas la catégorie d'erreur
+            const itemLabel = itemData.label || "cet objet";
+            if (failureReason === 'insufficientStrength') dialogueText = `C'est trop lourd pour moi.`;
+            else if (failureReason === 'insufficientDexterity') dialogueText = `Je ne suis pas assez agile pour utiliser ${itemLabel}.`;
+            else dialogueText = `Je n'ai pas assez d'expérience pour utiliser ${itemLabel}.`;
+        }
+
+        window.setup.showDialogueNotificationShort(npc.name, dialogueText, dialogueText, false);
+        console.log(`⛔ REFUS D'ÉQUIPEMENT [${pnjId}] : ${failureReason} (Stats: F${stats.strength}/D${stats.dexterity}) vs (Req: F${req.forceMin}/D${req.dexMin})`);
     }
-    if (missing.length > 0) {
-      console.warn(`PNJ ${pnjId} ne remplit pas les requirements pour ${itemId}: ${missing.join(', ')}`);
-      return false;
-    }
-    return true;
+
+    return false;
   };
+
+  // Wrapper pour compatibilité
+  window.setup.giveItemToPnj = function(pnjId, itemId, quantity = 1) {
+    return window.setup.giveItemToBuddy(pnjId, itemId, quantity);
+  };
+
+  // Vérification silencieuse (pour l'UI, griser les boutons, etc.)
+  window.setup.canPnjEquipItem = function(pnjId, itemId) {
+    return window.setup.checkPnjEquipRequirements(pnjId, itemId, false);
+  };
+
+  // Utilitaire de détection d'arme
   window.setup.isWeaponItem = function(itemId) {
-    // Vérifier d'abord dans le cache d'items
     const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
-    if (itemData) {
-      return itemData.type === 'weapon';
-    }
-    // Fallback: vérifier par le nom de l'ID
-    return itemId.includes('weapon_') ||
-      itemId.includes('sword_') ||
-      itemId.includes('axe_') ||
-      itemId.includes('bow_') ||
-      itemId.includes('dagger_') ||
-      itemId.includes('mace_') ||
-      itemId.includes('spear_');
+    if (itemData) return itemData.type === 'weapon';
+    return itemId.includes('weapon_') || itemId.includes('sword_') || itemId.includes('axe_') || itemId.includes('bow_');
   };
+
+  // 2. FONCTION D'ÉQUIPEMENT (Interne)
   window.setup.equipItemForPnj = function(pnjId, itemId, slot) {
     const npc = npcEnsure(pnjId);
-    // Vérifier que l'item est bien dans l'inventaire du PNJ
+
+    // A. L'objet est-il dans le sac ?
     if (!npc.inventory[itemId] || npc.inventory[itemId] <= 0) {
       console.warn(`PNJ ${pnjId} ne possède pas l'item ${itemId} dans son inventaire`);
       return false;
     }
-    // Vérifier les requirements (force, dextérité, niveau)
-    const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
-    if (itemData && itemData.requirements) {
-      const req = itemData.requirements;
-      const missing = [];
-      if (req.forceMin && (npc.stats.strength || 0) < req.forceMin) {
-        missing.push(`Force ${npc.stats.strength || 0}/${req.forceMin}`);
-      }
-      if (req.dexMin && (npc.stats.dexterity || 0) < req.dexMin) {
-        missing.push(`Dextérité ${npc.stats.dexterity || 0}/${req.dexMin}`);
-      }
-      if (req.levelMin && (npc.stats.level || 1) < req.levelMin) {
-        missing.push(`Niveau ${npc.stats.level || 1}/${req.levelMin}`);
-      }
-      if (missing.length > 0) {
-        console.warn(`PNJ ${pnjId} ne remplit pas les requirements pour ${itemId}: ${missing.join(', ')}`);
-        // Afficher notification d'erreur
-        const msg = `Conditions non remplies : ${missing.join(' • ')}`;
-        window.setup.showNotification('Impossible d\'équiper', msg, 3500);
+
+    // B. VÉRIFICATION STRICTE (Stats + Type)
+    // Si checkPnjEquipRequirements renvoie false, ON ARRÊTE TOUT ICI.
+    if (!window.setup.checkPnjEquipRequirements(pnjId, itemId, true)) {
         return false;
-      }
     }
-    // Déséquiper l'item actuel si présent
+
+    // C. Déséquiper l'item actuel si présent
     if (npc.equipment[slot]) {
       window.setup.unequipItemForPnj(pnjId, slot);
     }
-    // Équiper le nouvel item
+
+    // D. Appliquer l'équipement (Succès)
     npc.equipment[slot] = itemId;
+
     // Mettre à jour hasWeapon si c'est une arme
     if (slot === 'weapon') {
       npc.hasWeapon = true;
     }
-    console.log(`PNJ ${pnjId} équipe ${itemId} dans le slot ${slot}`);
+
+    console.log(`✅ PNJ ${pnjId} a équipé ${itemId} dans le slot ${slot}`);
+
     // Mettre à jour l'affichage
     if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+
     return true;
   };
+
   window.setup.unequipItemForPnj = function(pnjId, slot) {
     const npc = npcEnsure(pnjId);
     const currentItem = npc.equipment[slot];
     if (!currentItem) return false;
-    // Retirer l'item de l'équipement du PNJ
+
+    // Retirer l'item de l'équipement
     npc.equipment[slot] = null;
-    // Remettre l'item dans l'inventaire du joueur
-    const v = V();
-    const inv = v.inventory || [];
-    const existingItem = inv.find(it => it.id === currentItem);
-    if (existingItem) {
-      existingItem.qty = (existingItem.qty || 1) + 1;
-    } else {
-      const itemData = window.setup.itemCache && window.setup.itemCache[currentItem];
-      if (itemData) {
-        const newItem = {
-          id: currentItem,
-          label: itemData.label,
-          type: itemData.type,
-          qty: 1,
-          bonus: itemData.bonus,
-          isQuestItem: Boolean(itemData.isQuestItem),
-          description: itemData.description,
-          isTwoHanded: itemData.isTwoHanded,
-          requirements: itemData.requirements,
-          damage: itemData.damage,
-          coeff: itemData.coeff,
-          speed: itemData.speed,
-          critChance: itemData.critChance,
-          critMultiplier: itemData.critMultiplier,
-          effects: itemData.effects
-        };
-        inv.push(newItem);
-      }
-    }
-    // Mettre à jour le dictionnaire "has" du joueur
-    v.has = v.has || {};
-    v.has[currentItem] = (v.has[currentItem] || 0) + 1;
+
+    // NOTE : L'item reste dans l'inventaire du PNJ (inventory).
     if (slot === 'weapon') {
       npc.hasWeapon = false;
     }
-    console.log(`PNJ ${pnjId} déséquipe ${currentItem} du slot ${slot} - item retourné au joueur`);
-    // Mettre à jour l'interface
+
+    console.log(`PNJ ${pnjId} déséquipe ${currentItem}`);
+
     window.setup.updateHUD();
     if (window.renderBuddiesPanel) window.renderBuddiesPanel();
     return true;
   };
+
+
   // ------------------------------
   // Relations / Loyauté / Humeur — APIs + Macros
   // ------------------------------
@@ -4783,193 +4767,96 @@
       return;
     }
 
-    // Marquer les entrées existantes pour nettoyage
-    $panel.find('.buddy-entry').addClass('to-remove');
+    // On vide pour reconstruire proprement
+    $panel.empty();
 
     list.forEach(b => {
-      const safeId = b.name.replace(/["\\]/g, '\\$&');
-      let $entry = $panel.find(`.buddy-entry[data-name="${safeId}"]`);
-
+      // Santé
       const healthRatio = (b.health || 0) / (b.maxHealth || 1);
       const healthClass = healthRatio > 0.6 ? 'h-good' : healthRatio > 0.3 ? 'h-mid' : 'h-low';
 
-      // Textes de base
+      // Statut
+      let statusClass = 'buddy-fixed';
+      let statusLabel = 'Attend';
+      if (b.status === 'follow') { statusClass = 'buddy-follow'; statusLabel = 'Suit'; }
+      if (b.status === 'traveling') { statusClass = 'buddy-traveling'; statusLabel = 'Voyage'; }
+      if (!b.isAlive) { statusClass = 'buddy-dead'; statusLabel = 'Mort'; }
+
+      // Localisation
       let locationText = window.setup.getLocationString(b.coordinates, b.continent);
+
+      // Bloc Voyage
       let travelHTML = '';
-
-      // --- LOGIQUE VOYAGE AVANCÉE ---
-      if (b.status === 'traveling' && b.travelCurrentStep && b.travelItinerary) {
-        const step = b.travelCurrentStep;
-        const isResting = step.type === 'rest';
-
-        // Calcul des étapes et distances futures pour un affichage global
-        const currentStepIdx = (b.travelStepIndex || 0) + 1;
-        const totalSteps = b.travelItinerary.length;
-
-        // Calcul distance restante FUTURE (hors étape en cours)
-        let futureDist = 0;
-        for(let i = (b.travelStepIndex || 0) + 1; i < totalSteps; i++) {
-            futureDist += (b.travelItinerary[i].dist || 0);
-        }
-
-        const actionText = isResting
-            ? `<span style="color:#ffd700; font-weight:bold;">💤 ${window.setup.escapeHtml(step.desc)}</span>`
-            : `<span style="color:#eee;">🏃 ${window.setup.escapeHtml(step.desc)}</span>`;
-
-        // Construction du bloc Voyage
-        travelHTML = `
-          <div class="buddy-travel-wrapper ${isResting ? 'resting' : ''}" 
-               data-name="${window.setup.escapeHtml(b.name)}"
-               data-end="${step.endTime}" 
-               data-total="${step.duration}"
-               data-type="${step.type}"
-               data-dist="${Number(step.dist) || 0}"
-               data-future="${futureDist}">
-              
-              <div class="travel-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                  <span class="travel-step-badge" style="background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:3px; font-size:0.7em; color:#aaa;">
-                      Étape ${currentStepIdx}/${totalSteps}
-                  </span>
-                  <span class="travel-timer-text" style="font-size:0.8em; font-family:monospace; color:#f2d675;">--:--</span>
-              </div>
-
-              <div class="travel-text-primary" style="font-size:0.85em; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                  ${actionText}
-              </div>
-              
-              <div class="travel-progress-bg">
-                <div class="travel-progress-fill" style="width: 0%;"></div>
-              </div>
-              
-              <div class="travel-total-line" style="margin-top:2px; font-size:0.75em; color:#888; text-align:right;">
-                   Reste : <span class="travel-total-km" style="color:#fff;">Calcul...</span>
-              </div>
-          </div>
-        `;
-        locationText = isResting ? `Pause à ${step.locationName}` : `En transit`;
+      if (b.status === 'traveling' && b.travelCurrentStep) {
+          const step = b.travelCurrentStep;
+          locationText = `En route vers ${step.targetName || 'destination'}`;
+          travelHTML = `
+            <div class="buddy-travel-wrapper" 
+                 data-end="${step.endTime}" 
+                 data-total="${step.duration}">
+                <div style="display:flex; justify-content:space-between; font-size:0.75em; margin-bottom:2px; color:#ccc;">
+                    <span>${window.setup.escapeHtml(step.desc)}</span>
+                    <span class="travel-timer-text">--s</span>
+                </div>
+                <div class="travel-progress-bg">
+                    <div class="travel-progress-fill" style="width:0%;"></div>
+                </div>
+            </div>`;
       }
 
-      // === MISE À JOUR DOM (DIFF) ===
-      if ($entry.length > 0) {
-        $entry.removeClass('to-remove');
+      // Construction HTML
+      const $entry = $(`
+        <div class="buddy-entry" data-name="${window.setup.escapeHtml(b.name)}">
+            <span class="item-badge buddy-status ${statusClass}">${statusLabel}</span>
+            <div class="msg-header">
+                <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
+                <strong>${window.setup.escapeHtml(b.name)}</strong>
+            </div>
+            <div class="buddy-healthbar">
+                <div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div>
+            </div>
+            ${travelHTML}
+            <div class="buddy-location">${locationText}</div>
+        </div>
+      `);
 
-        // Update Health
-        $entry.find('.buddy-healthfill')
-              .removeClass('h-good h-mid h-low')
-              .addClass(healthClass)
-              .css('width', `${healthRatio * 100}%`);
+      // Clic -> Modale Détails
+      $entry.on('click', function(e) {
+         e.preventDefault(); e.stopPropagation();
+         window.setup.showPnjModal($(this).data('name'));
+      });
 
-        // Update Status Badge
-        $entry.find('.item-badge')
-              .attr('class', `item-badge buddy-${b.status}`)
-              .text(b.status === 'traveling' ? 'Voyage' : b.status);
+      // Clic Droit -> Menu Contextuel
+      $entry.on('contextmenu', function(e) {
+         e.preventDefault(); e.stopPropagation();
+         window.setup.showBuddyContextMenu(e, $(this).data('name'));
+      });
 
-        // Update Location Text
-        const $loc = $entry.find('.buddy-location');
-        if ($loc.text() !== locationText) $loc.text(locationText);
-
-        // Update Travel Block
-        const $existingTravel = $entry.find('.buddy-travel-wrapper');
-        if (b.status === 'traveling') {
-            if ($existingTravel.length === 0) {
-                // Insertion si nouveau voyage
-                $entry.find('.buddy-healthbar').after(travelHTML);
-            } else {
-                // Mise à jour attributs si voyage en cours
-                // On remplace tout le HTML du wrapper pour être sûr de mettre à jour les textes d'étapes
-                $existingTravel.replaceWith(travelHTML);
-            }
-        } else {
-            $existingTravel.remove();
-        }
-      }
-      // === CRÉATION ===
-      else {
-        const newEntryHTML = `
-          <div class="buddy-entry" data-name="${window.setup.escapeHtml(b.name)}">
-              <div class="msg-header">
-                  <img class="icon-1em" src="${window.ICONS.buddy}" alt="">
-                  <strong>${window.setup.escapeHtml(b.name)}</strong>
-                  <span class="item-badge buddy-${b.status}">${b.status === 'traveling' ? 'Voyage' : b.status}</span>
-              </div>
-              <div class="buddy-healthbar"><div class="buddy-healthfill ${healthClass}" style="width:${healthRatio * 100}%;"></div></div>
-              ${travelHTML}
-              <div class="buddy-location">${locationText}</div>
-          </div>
-        `;
-        const $newEl = $(newEntryHTML);
-
-        // Events
-        $newEl.on('click', function(e) {
-           e.preventDefault(); e.stopPropagation();
-           window.setup.showPnjModal($(this).data('name'));
-        });
-        $newEl.on('contextmenu', function(e) {
-           e.preventDefault(); e.stopPropagation();
-           window.setup.showBuddyContextMenu(e, $(this).data('name'));
-        });
-
-        $panel.append($newEl);
-      }
+      $panel.append($entry);
     });
 
-    // Nettoyage éléments supprimés
-    $panel.find('.to-remove').remove();
-
-    // === ANIMATION TIMER (Intervalle) ===
+    // Animation Timer Voyage
     if ($panel.find('.buddy-travel-wrapper').length > 0) {
-      const updateTimers = () => {
-        const now = Date.now();
-        let active = false;
+        window.setup.buddiesPanelInterval = setInterval(() => {
+            const now = Date.now();
+            $panel.find('.buddy-travel-wrapper').each(function() {
+                const $w = $(this);
+                const end = Number($w.data('end'));
+                const total = Number($w.data('total'));
+                const remaining = end - now;
 
-        $panel.find('.buddy-travel-wrapper').each(function() {
-          const $wrapper = $(this);
-          const endTime = Number($wrapper.data('end'));
-          const totalTime = Number($wrapper.data('total'));
-          const stepDist = Number($wrapper.data('dist')) || 0;
-          const futureDist = Number($wrapper.data('future')) || 0; // Distance des étapes SUIVANTES
-
-          const remaining = endTime - now;
-          let percent = 0;
-
-          if (remaining <= 0) {
-            percent = 100;
-            $wrapper.find('.travel-timer-text').text("Fin...");
-            $wrapper.find('.travel-total-km').text(futureDist > 0 ? `${futureDist.toFixed(1)} km` : "Arrivé");
-          } else {
-            active = true;
-            // Progression barre (Step actuel)
-            percent = Math.min(100, Math.max(0, ((totalTime - remaining) / totalTime) * 100));
-
-            // Temps restant (Step actuel)
-            const secs = Math.ceil(remaining / 1000);
-            const timeStr = secs > 60
-                ? `${Math.floor(secs / 60)}m ${(secs % 60).toString().padStart(2, '0')}s`
-                : `${secs}s`;
-            $wrapper.find('.travel-timer-text').text(timeStr);
-
-            // Distance restante TOTALE (Reste du step + Futur)
-            // Règle de trois sur le temps pour la distance du step courant
-            const ratio = remaining / totalTime;
-            const distLeftInStep = stepDist * ratio;
-            const totalDistLeft = distLeftInStep + futureDist;
-
-            $wrapper.find('.travel-total-km').text(`${totalDistLeft.toFixed(1)} km`);
-          }
-
-          $wrapper.find('.travel-progress-fill').css('width', `${percent}%`);
-        });
-
-        if (!active && window.setup.buddiesPanelInterval) {
-          clearInterval(window.setup.buddiesPanelInterval);
-          window.setup.buddiesPanelInterval = null;
-        }
-      };
-
-      updateTimers(); // Premier appel immédiat
-      window.setup.buddiesPanelInterval = setInterval(updateTimers, 100);
+                if (remaining <= 0) {
+                    $w.find('.travel-progress-fill').css('width', '100%');
+                    $w.find('.travel-timer-text').text('');
+                } else {
+                    const pct = Math.min(100, Math.max(0, ((total - remaining) / total) * 100));
+                    $w.find('.travel-progress-fill').css('width', `${pct}%`);
+                    $w.find('.travel-timer-text').text(`${Math.ceil(remaining/1000)}s`);
+                }
+            });
+        }, 100);
     }
-  };
+};
 
 
   window.setup.showBuddyContextMenu = function(e, name) {
@@ -5027,86 +4914,75 @@
   // ------------------------------------------------------
   window.setup.showGiveToBuddyMenu = function(x, y, id, label, type) {
     $('#give-buddy-menu').remove();
-    const v = V();
-    // UNIQUEMENT les compagnons (isBuddy = true)
+    const v = State.variables;
+
     const buddies = Object.entries(v.npcs || {}).filter(([key, npc]) =>
       npc.isBuddy && npc.isSpawned && npc.isActive && npc.isAlive
     );
+
     if (!buddies.length) {
-      window.setup.showNotification('Info', 'Aucun compagnon disponible.', 3000, x, y);
+      window.setup.showNotification('Info', 'Aucun compagnon disponible.', 3000);
       return;
     }
+
+    // Utilisation de la classe .context-menu standard
     const menu = $('<div id="give-buddy-menu" class="context-menu"></div>').appendTo('body');
-    menu.css({
-      position: 'absolute',
-      top: `${y + 5}px`,
-      left: `${x + 5}px`,
-      background: 'rgba(0,0,0,0.92)',
-      border: '1px solid #fff',
-      borderRadius: '8px',
-      padding: '0.4em 0',
-      minWidth: '180px',
-      zIndex: 9999,
-      fontSize: '0.9em',
-      boxShadow: '0 0 16px rgba(0,0,0,0.8)',
-      animation: 'fadeMenu 0.2s ease forwards'
-    });
-    menu.append('<div class="context-title">Donner à un compagnon :</div>');
+
+    // Positionnement intelligent
+    const winW = $(window).width();
+    const winH = $(window).height();
+    let posX = x + 5;
+    let posY = y + 5;
+    if (posX + 200 > winW) posX = x - 205;
+    if (posY + (buddies.length * 40) > winH) posY = winH - (buddies.length * 40);
+
+    menu.css({ top: `${posY}px`, left: `${posX}px` });
+    menu.append('<div class="context-title">Donner à :</div>');
+
     buddies.forEach(([key, buddy]) => {
-      const healthInfo = buddy.isAlive ?
-        ` — ${buddy.health || 0}/${buddy.maxHealth || 1} PV` :
-        ' — ❌ Mort';
-      const statusInfo = buddy.status === 'follow' ? ' 👥' : ' 📍';
-      const option = $(`<div class="context-option">${buddy.name}${statusInfo}${healthInfo}</div>`);
-      option.on('click', function(e) {
+      const statusIcon = buddy.status === 'follow' ? '👣' : '📍';
+      const hp = `${buddy.health}/${buddy.maxHealth}`;
+
+      const $opt = $(`<div class="context-option" style="justify-content:space-between;">
+          <span>${buddy.name}</span>
+          <span style="font-size:0.8em; opacity:0.7;">${statusIcon} ${hp}</span>
+      </div>`);
+
+      $opt.on('click', function(e) {
         e.stopPropagation();
         menu.remove();
-        console.log(`🎯 Don de ${id} (${label}) à ${buddy.name}`);
-        // CORRECTION : POUR TOUS LES OBJETS, utiliser giveItemToBuddy
-        // Même les objets de soin sont maintenant donnés via giveItemToBuddy
-        const success = window.setup.giveItemToBuddy(key, id, 1);
-        if (!success) {
-          console.error(`❌ Échec du don de ${id} à ${key}`);
-        }
+        window.setup.giveItemToBuddy(key, id, 1);
       });
-      menu.append(option);
+
+      menu.append($opt);
     });
-    // Fermeture si clic ailleurs
-    $(document).off('mousedown.givebuddy').on('mousedown.givebuddy', function(e) {
-      if (!$(e.target).closest('#give-buddy-menu').length) {
-        $('#give-buddy-menu').remove();
-        $(document).off('mousedown.givebuddy');
-      }
-    });
-  };
+
+    setTimeout(() => {
+        $(document).one('click.closegive', function() { menu.remove(); });
+    }, 10);
+};
 
   // ==========================================================
   // DONNER AUX COMPAGNONS
   // ==========================================================
-  window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
+window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
     try {
       const v = V();
       const npc = npcEnsure(pnjId);
       console.log(`🎁 DON: Tentative de donner ${itemId} x${quantity} à ${pnjId}`);
 
-      // Vérifier que c'est bien un compagnon
-      if (!npc.isBuddy) {
-        window.setup.showNotification('Impossible', `${npc.name} n'est pas votre compagnon`, 3000);
+      // Vérifications de base
+      if (!npc.isBuddy || !npc.isSpawned) {
+        window.setup.showNotification('Impossible', `${npc.name} n'est pas disponible`, 3000);
         return false;
       }
 
-      if (!npc.isSpawned || !npc.isActive || !npc.isAlive) {
-        window.setup.showNotification('Impossible', `${npc.name} ne peut pas recevoir d'objets`, 3000);
-        return false;
-      }
-
-      // Vérifier si l'item existe dans l'inventaire du joueur
+      // Vérification inventaire joueur
       const playerInventory = v.inventory || [];
       const playerItemIndex = playerInventory.findIndex(item => item.id === itemId);
 
       if (playerItemIndex === -1) {
-        console.error(`❌ Item ${itemId} non trouvé dans l'inventaire`);
-        window.setup.showNotification('Erreur', `Objet non trouvé dans l'inventaire`, 3000);
+        window.setup.showNotification('Erreur', `Objet non trouvé`, 3000);
         return false;
       }
 
@@ -5114,94 +4990,91 @@
       const itemLabel = playerItem.label || itemId;
 
       if (playerItem.qty < quantity) {
-        console.error(`❌ Quantité insuffisante: ${playerItem.qty} < ${quantity}`);
-        window.setup.showNotification('Erreur', `Vous n'avez pas assez de ${itemLabel}`, 3000);
+        window.setup.showNotification('Erreur', `Pas assez de ${itemLabel}`, 3000);
         return false;
       }
 
-      // === RETRAIT DE L'INVENTAIRE ===
-      playerItem.qty -= quantity;
+      // === VÉRIFICATION CRITIQUE AVANT TRANSFERT ===
+      const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
 
+      // On vérifie la compatibilité si l'objet existe
+      // checkPnjEquipRequirements gère les Stats ET le Type d'arme
+      if (itemData) {
+          // Si c'est une arme OU si l'objet a des stats requises
+          if (itemData.type === 'weapon' || itemData.requirements) {
+              // checkPnjEquipRequirements avec verbose=true va :
+              // 1. Vérifier type/stats
+              // 2. Si échec : Jouer le dialogue de refus ET renvoyer false
+              if (!window.setup.checkPnjEquipRequirements(pnjId, itemId, true)) {
+                  console.log(`🚫 DON ANNULÉ : ${npc.name} refuse l'objet (Incompatible ou stats insuffisantes)`);
+                  // On arrête tout : l'objet reste chez le joueur, pas de transfert.
+                  return false;
+              }
+          }
+      }
+
+      // === TRANSACTION VALIDÉE : RETRAIT JOUEUR ===
+      playerItem.qty -= quantity;
       if (playerItem.qty <= 0) {
         v.inventory.splice(playerItemIndex, 1);
-        // Déséquiper l'objet si il était équipé
+        // Déséquiper du joueur si nécessaire
         const equipped = v.equipped || {};
         Object.keys(equipped).forEach(slot => {
-          if (equipped[slot] === itemId) {
-            window.setup.unequipItem(itemId, slot, true);
-          }
+          if (equipped[slot] === itemId) window.setup.unequipItem(itemId, slot, true);
         });
       }
-
-      // Mettre à jour le dictionnaire "has" du joueur
       v.has = v.has || {};
       v.has[itemId] = Math.max(0, (v.has[itemId] || 0) - quantity);
-      if (v.has[itemId] === 0) {
-        delete v.has[itemId];
-      }
+      if (v.has[itemId] === 0) delete v.has[itemId];
 
-      // Ajouter à l'inventaire du compagnon
+      // === TRANSACTION : AJOUT SAC COMPAGNON ===
       if (npc.inventory[itemId]) {
         npc.inventory[itemId] += quantity;
       } else {
         npc.inventory[itemId] = quantity;
       }
 
-      // Équipement automatique si c'est une arme et que le compagnon n'en a pas
-      const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
+      const pnjData = window.setup.loadPNJ(pnjId);
+
+      // === TENTATIVE D'ÉQUIPEMENT AUTOMATIQUE (Uniquement pour les armes) ===
+      // On sait que c'est possible car on a déjà vérifié au début
       if (itemData && itemData.type === 'weapon' && !npc.equipment.weapon) {
-        if (window.setup.canPnjEquipItem(pnjId, itemId)) {
-          const success = window.setup.equipItemForPnj(pnjId, itemId, 'weapon');
-          if (success) {
-            // Supprimer la notification d'équipement qui doublait
-            // window.setup.showNotification('Équipement', `${npc.name} équipe ${itemData.label}`, 3000);
-          }
-        }
+        console.log(`⚔️ Équipement auto pour ${npc.name}...`);
+        window.setup.equipItemForPnj(pnjId, itemId, 'weapon');
       }
 
-      // Améliorer la relation et la loyauté
+      // Améliorer la relation
       npc.relation = Math.min(100, (npc.relation || 50) + 2);
-      npc.loyalty = Math.min(100, (npc.loyalty || 50) + 1);
 
-      // ==========================================================
-      // CORRECTION : REMPLACER LA NOTIFICATION PAR UNE NOTIFICATION DE DIALOGUE
-      // ==========================================================
-
-      // Charger les données du PNJ pour obtenir ses réactions
-      const pnjData = window.setup.loadPNJ(pnjId);
+      // === NOTIFICATION DE REMERCIEMENT ===
       const reactions = pnjData.pnj?.réaction_joueur?.addItem;
-
-      let reactionText = `${quantity} ${itemLabel} donné à ${npc.name}`; // Texte par défaut
+      let reactionText = `${quantity} ${itemLabel} donné à ${npc.name}`;
 
       if (reactions && itemData) {
-        // Déterminer le type d'item
         const itemType = itemData.type || 'misc';
-
-        // Vérifier si le type existe dans les réactions
+        // Priorité aux dialogues spécifiques (weapon, food, etc.)
         if (reactions[itemType] && Array.isArray(reactions[itemType]) && reactions[itemType].length > 0) {
-          // Choisir une phrase aléatoire
           const randomIndex = Math.floor(Math.random() * reactions[itemType].length);
           reactionText = reactions[itemType][randomIndex];
         } else if (reactions['misc'] && Array.isArray(reactions['misc']) && reactions['misc'].length > 0) {
-          // Fallback sur 'misc'
           const randomIndex = Math.floor(Math.random() * reactions['misc'].length);
           reactionText = reactions['misc'][randomIndex];
         }
       }
 
-      // Afficher UNIQUEMENT la notification de dialogue (plus la notification normale)
+      // Afficher le merci
       window.setup.showDialogueNotificationShort(npc.name, reactionText, reactionText, false);
 
-      // Mettre à jour l'interface IMMÉDIATEMENT
+      // Mise à jour finale
       window.setup.updateHUD();
       if (window.renderBuddiesPanel) window.renderBuddiesPanel();
 
-      console.log(`✅ DON RÉUSSI: ${itemId} x${quantity} donné à ${pnjId}`);
+      console.log(`✅ DON TERMINÉ: ${itemId} transféré.`);
       return true;
 
     } catch (error) {
       console.error("❌ ERREUR CRITIQUE dans giveItemToBuddy:", error);
-      window.setup.showNotification('Erreur', 'Problème lors du don de l\'objet', 3000);
+      window.setup.showNotification('Erreur', 'Problème lors du don', 3000);
       return false;
     }
   };
@@ -5422,17 +5295,29 @@
           nom: name,
           nom_complet: name,
           peuple: 'Inconnu',
-          metier_principal: 'Voyageur'
+          metier_principal: 'Voyageur',
+          type_arme: [] // Pas de préférence par défaut
         },
-        description_narrative: `${name} est un personnage mystérieux. Son apparence et son histoire restent à découvrir.`,
+        description_narrative: `${name} est un personnage mystérieux.`,
         personnalite: 'Neutre',
-        contexte: 'Origine inconnue',
         réaction_joueur: {
           addItem: {
             weapon: ["Merci pour cette arme.", "Je vais en prendre soin.", "Utile."],
             health: ["Merci pour ces soins.", "Je me sens mieux.", "Bonne idée."],
             food: ["Merci pour la nourriture.", "J'avais faim.", "Bon repas."],
             misc: ["Merci.", "Je garde ça.", "Utile."]
+          },
+          // Ajout des fallbacks de refus pour ne jamais être muet
+          weapon_checks: {
+            wrongType: ["Ce n'est pas mon genre d'arme.", "Je ne sais pas utiliser ça."],
+            insufficientStrength: ["C'est trop lourd pour moi."],
+            insufficientDexterity: ["Je ne suis pas assez agile."],
+            insufficientLevel: ["Je manque d'expérience."]
+          },
+          equipment_checks: {
+            insufficientStrength: ["Trop lourd à porter."],
+            insufficientDexterity: ["Ça gêne mes mouvements."],
+            insufficientLevel: ["Ce n'est pas pour mon niveau."]
           }
         }
       }

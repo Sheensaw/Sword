@@ -2,7 +2,7 @@
   "pnj": {
     "identite": {
       "nom": "Cyndra",
-      "nom_complet": "Cyndra des Basses-Tourbières (dite 'La Boueuse')",
+      "nom_complet": "Cyndra",
       "type_arme": ["bow", "longbow", "crossbow"],
       "age": 28,
       "sexe": "féminin",

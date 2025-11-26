@@ -63,8 +63,26 @@
 
   // Cache d'objets par défaut pour les objets manquants
   window.setup.fallbackItems = {
-    'viande_salee': { id: 'viande_salee', label: 'Viande Salée', type: 'food', bonus: { health: 5 }, description: 'De la viande séchée et salée.', isQuestItem: false },
-    'essence_phoenix': { id: 'essence_phoenix', label: 'Essence de Phénix', type: 'usable', bonus: { health: 20 }, description: 'Une essence rare.', isQuestItem: false }
+    'viande_salee': {
+      id: 'viande_salee',
+      label: 'Viande Salée',
+      type: 'food',
+      bonus: {
+        health: 5
+      },
+      description: 'De la viande séchée et salée.',
+      isQuestItem: false
+    },
+    'essence_phoenix': {
+      id: 'essence_phoenix',
+      label: 'Essence de Phénix',
+      type: 'usable',
+      bonus: {
+        health: 20
+      },
+      description: 'Une essence rare.',
+      isQuestItem: false
+    }
   };
 
   // Chargement séquentiel robuste avec fallback
@@ -95,10 +113,10 @@
 
           // Liste des chemins à tester : Dossier loot, Serveur, ou Racine du projet
           const possiblePaths = [
-            path,                       // ex: loot/weapon_simple.js
-            `./${path}`,                // ex: ./loot/weapon_simple.js
-            filename,                   // ex: weapon_simple.js (RACINE - Souvent la solution)
-            `./${filename}`,            // ex: ./weapon_simple.js
+            path, // ex: loot/weapon_simple.js
+            `./${path}`, // ex: ./loot/weapon_simple.js
+            filename, // ex: weapon_simple.js (RACINE - Souvent la solution)
+            `./${filename}`, // ex: ./weapon_simple.js
             `/server/${path}`
           ];
 
@@ -191,12 +209,12 @@
 
     // Si l'objet est dans le cache, on le retourne tout de suite
     if (window.setup.itemCache && window.setup.itemCache[itemId]) {
-        return window.setup.itemCache[itemId];
+      return window.setup.itemCache[itemId];
     }
 
     // Si le système n'est pas prêt, on retourne null (cela déclenchera le chargement dans addItems)
     if (!window.setup.lootState.ready) {
-        return null;
+      return null;
     }
 
     console.warn(`❌ Item introuvable dans le cache final : ${itemId}`);
@@ -236,119 +254,70 @@
   Macro.add('quest', {
     handler: function() {
       const [id, title, shortDesc, fullDesc = shortDesc, rewardStr = '{}'] = this.args;
+      if (!id || !title || !shortDesc) return this.error('<<quest id title shortDesc...>>');
 
-      if (!id || !title || !shortDesc) {
-        return this.error('<<quest id title shortDesc [fullDesc] [reward]>>');
-      }
-
-      // Fonction de traitement une fois le loot prêt
       const processQuest = (lootReady) => {
-        const v = V();
+        const v = State.variables;
         v.quests = v.quests || [];
         v.completedQuests = v.completedQuests || [];
         v.pendingQuests = v.pendingQuests || {};
+        if (v.quests.some(q => q.id === id) || v.completedQuests.includes(id)) return;
 
-        if (v.quests.some(q => q.id === id) || v.completedQuests.includes(id)) {
-          return; // Quête déjà existante
-        }
-
-        // Parsing de la récompense
+        // Parsing sommaire
         let reward = {
           gold: 0,
           items: []
         };
         try {
-          const parsed = JSON.parse(rewardStr);
-          reward.gold = Number(parsed.gold) || 0;
-          reward.items = Array.isArray(parsed.items) ? parsed.items : [];
-        } catch (e) {
-          console.warn("Récompense invalide:", rewardStr, e);
-        }
+          reward = JSON.parse(rewardStr);
+        } catch (e) {} // Simplifié
 
-        // Résolution des items random
-        const finalItems = [];
-        for (const item of reward.items) {
-          if (typeof item === 'string' && item.startsWith('random:')) {
-            const type = item.slice(7);
-            const randomId = window.setup.randomLoot?.[type];
-            const randomItem = randomId ? window.setup.getItemFromCache(randomId) : null;
-
-            if (randomItem) {
-              finalItems.push(randomItem);
-            } else {
-              console.warn("Loot aléatoire introuvable:", type);
-            }
-          } else if (typeof item === 'object' && item.id) {
-            const cachedItem = window.setup.getItemFromCache(item.id);
-            if (cachedItem) {
-              finalItems.push(cachedItem);
-            }
-          }
-        }
-
-        // Stockage temporaire
         v.pendingQuests[id] = {
           title,
           shortDesc,
           fullDesc,
-          reward: {
-            gold: reward.gold,
-            items: finalItems
-          }
+          reward
         };
 
-        // --- AFFICHAGE MODAL ---
         $('#quest-proposal-modal, #modal-overlay-quest-proposal').remove();
         const $overlay = $('<div id="modal-overlay-quest-proposal"></div>').appendTo('body');
         const $modal = $('<div id="quest-proposal-modal" role="dialog"></div>').appendTo('body');
 
-        let rewardHTML = '';
-        if (reward.gold) rewardHTML += `${reward.gold} or<br>`;
-        if (finalItems.length)
-          rewardHTML += finalItems.map(i => window.setup.escapeHtml(i.label)).join('<br>');
-        if (!rewardHTML) rewardHTML = 'Aucune';
+        const content = `
+            <div style="font-weight:bold; color:#b1a270; margin-bottom:10px;">${window.setup.escapeHtml(title)}</div>
+            <div style="margin-bottom:15px; font-style:italic;">${window.setup.escapeHtml(fullDesc)}</div>
+            <hr style="border:0; border-top:1px dashed #555; margin:10px 0;">
+            <div style="font-size:0.9em; color:#aaa;">Récompense disponible à l'acceptation.</div>
+        `;
 
-        $modal.append(`
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <img class="icon-1em" src="${window.ICONS.quest}" alt="Quête">
-                        <span>Quête</span>
-                    </div>
-                    <div class="modal-body">
-                        <strong>${window.setup.escapeHtml(title)}</strong><br>
-                        ${window.setup.escapeHtml(fullDesc)}
-                        <hr>
-                        <strong>Récompense :</strong><br>${rewardHTML}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="modal-btn accept-quest">Accepter</button>
-                        <button type="button" class="modal-close">Refuser</button>
-                    </div>
-                </div>
-            `);
-
-        $('body').addClass('modal-open');
-
-        $modal.find('.modal-close').on('click', () => {
-          $modal.remove();
-          $overlay.remove();
-          $('body').removeClass('modal-open');
+        const modalContent = window.setup.buildModalHTML({
+          title: "Nouvelle Quête",
+          icon: window.ICONS.quest,
+          content: content,
+          footer: `
+                <button type="button" class="modal-btn accept-quest">Accepter</button>
+                <button type="button" class="modal-close">Refuser</button>
+            `
         });
 
-        $modal.find('.accept-quest').on('click', () => {
-          new Wikifier(null, `<<startquest "${id}">>`);
+        $modal.append(modalContent);
+        $('body').addClass('modal-open');
+
+        const close = () => {
           $modal.remove();
           $overlay.remove();
           $('body').removeClass('modal-open');
+        };
+        $modal.find('.modal-close').on('click', close);
+        $overlay.on('click', close);
+        $modal.find('.accept-quest').on('click', () => {
+          new Wikifier(null, `<<startquest "${id}">>`);
+          close();
         });
       };
 
-      // Attendre que le loot soit prêt si nécessaire
-      if (!window.setup.lootState.ready) {
-        window.setup.ensureLootReady(processQuest);
-      } else {
-        processQuest(true);
-      }
+      if (!window.setup.lootState.ready) window.setup.ensureLootReady(processQuest);
+      else processQuest(true);
     }
   });
 
@@ -470,40 +439,44 @@
 
     // 1. Initialisation des structures si manquantes
     v.passageCoords = v.passageCoords || {};
-    v.playerCoordinates = v.playerCoordinates || { x: 45, y: 55, continent: "Eldaron" }; // Valeurs par défaut (Lorn)
+    v.playerCoordinates = v.playerCoordinates || {
+      x: 45,
+      y: 55,
+      continent: "Eldaron"
+    }; // Valeurs par défaut (Lorn)
 
     // 2. Tentative de récupération des coordonnées pour ce passage
     let coords = v.passageCoords[currentPassage];
 
     // 3. STRATÉGIE DE FALLBACK INTELLIGENT (Auto-Detection via Velkarum)
     if (!coords) {
-        const geo = window.setup.getGeographyData();
+      const geo = window.setup.getGeographyData();
 
-        // Si le nom du passage correspond exactement à un noeud (ex: "Lorn", "Taverne_Dragon_Borgne")
-        if (geo && geo.nodes && geo.nodes[currentPassage]) {
-            const node = geo.nodes[currentPassage];
-            coords = {
-                x: node.x,
-                y: node.y,
-                continent: node.continent || "Eldaron",
-                source: 'velkarum_auto'
-            };
-            console.log(`🗺️ [AUTO-GEO] Passage "${currentPassage}" reconnu dans Velkarum. Coords appliquées.`);
-        }
+      // Si le nom du passage correspond exactement à un noeud (ex: "Lorn", "Taverne_Dragon_Borgne")
+      if (geo && geo.nodes && geo.nodes[currentPassage]) {
+        const node = geo.nodes[currentPassage];
+        coords = {
+          x: node.x,
+          y: node.y,
+          continent: node.continent || "Eldaron",
+          source: 'velkarum_auto'
+        };
+        console.log(`🗺️ [AUTO-GEO] Passage "${currentPassage}" reconnu dans Velkarum. Coords appliquées.`);
+      }
     }
 
     // 4. STRATÉGIE DE PERSISTANCE (Si toujours rien, on garde la dernière position connue)
     if (!coords) {
-        // On suppose que le joueur est toujours au même endroit géographique
-        // (ex: il entre dans une sous-pièce non cartographiée d'un bâtiment)
-        coords = {
-            x: v.playerCoordinates.x,
-            y: v.playerCoordinates.y,
-            continent: v.playerCoordinates.continent,
-            source: 'persistence'
-        };
-        // On ne log pas trop pour éviter le spam, mais c'est une info utile
-        // console.log(`⚓ [PERSIST] Pas de coords pour "${currentPassage}", maintien de la position précédente.`);
+      // On suppose que le joueur est toujours au même endroit géographique
+      // (ex: il entre dans une sous-pièce non cartographiée d'un bâtiment)
+      coords = {
+        x: v.playerCoordinates.x,
+        y: v.playerCoordinates.y,
+        continent: v.playerCoordinates.continent,
+        source: 'persistence'
+      };
+      // On ne log pas trop pour éviter le spam, mais c'est une info utile
+      // console.log(`⚓ [PERSIST] Pas de coords pour "${currentPassage}", maintien de la position précédente.`);
     }
 
     // 5. Sauvegarde et Mise à jour
@@ -512,11 +485,11 @@
 
     // Mise à jour officielle de la position du joueur
     v.playerCoordinates = {
-        x: Number(coords.x),
-        y: Number(coords.y),
-        continent: coords.continent,
-        passage: currentPassage,
-        lastUpdate: Date.now() // Utile pour le debug
+      x: Number(coords.x),
+      y: Number(coords.y),
+      continent: coords.continent,
+      passage: currentPassage,
+      lastUpdate: Date.now() // Utile pour le debug
     };
 
     v.currentPassage = currentPassage; // Redondant mais sécurisant pour les scripts tiers
@@ -529,15 +502,20 @@
     // Cette fonction est maintenant un wrapper pour garantir la rétrocompatibilité
     // mais elle force une synchronisation propre.
     if (passageName === State.passage) {
-        return window.setup.syncPlayerPosition();
+      return window.setup.syncPlayerPosition();
     }
 
     // Si on demande des coords d'un autre passage que l'actuel (rare)
     const v = State.variables;
     if (v.passageCoords && v.passageCoords[passageName]) {
-        return v.passageCoords[passageName];
+      return v.passageCoords[passageName];
     }
-    return { x: 0, y: 0, continent: "Eldaron", isDefault: true };
+    return {
+      x: 0,
+      y: 0,
+      continent: "Eldaron",
+      isDefault: true
+    };
   };
 
   /* ---- MACRO : displaylocation ---- */
@@ -565,7 +543,7 @@
   });
 
   /* ---- MACRO : addItem ---- */
-Macro.add('addItem', {
+  Macro.add('addItem', {
     handler: function() {
       const id = this.args[0];
       let qty = Number(this.args[1] || 1);
@@ -673,7 +651,7 @@ Macro.add('addItem', {
     }
   });
 
-Macro.add('addItems', {
+  Macro.add('addItems', {
     handler: function() {
       if (this.args.length === 0) return this.error('Usage: <<addItems [liste]>> ou <<addItems "id" qty ...>>');
 
@@ -684,17 +662,31 @@ Macro.add('addItems', {
       for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         if (Array.isArray(arg)) {
-            arg.forEach(item => { if (item?.id) itemsToAdd.push({ id: item.id, qty: Number(item.qty) || 1 }); });
-            continue;
+          arg.forEach(item => {
+            if (item?.id) itemsToAdd.push({
+              id: item.id,
+              qty: Number(item.qty) || 1
+            });
+          });
+          continue;
         }
         if (typeof arg === 'object' && arg?.id) {
-            itemsToAdd.push({ id: arg.id, qty: Number(arg.qty) || 1 });
-            continue;
+          itemsToAdd.push({
+            id: arg.id,
+            qty: Number(arg.qty) || 1
+          });
+          continue;
         }
         if (typeof arg === 'string') {
-            let qty = 1;
-            if (i + 1 < args.length && typeof args[i+1] === 'number') { qty = args[i+1]; i++; }
-            itemsToAdd.push({ id: arg, qty: qty });
+          let qty = 1;
+          if (i + 1 < args.length && typeof args[i + 1] === 'number') {
+            qty = args[i + 1];
+            i++;
+          }
+          itemsToAdd.push({
+            id: arg,
+            qty: qty
+          });
         }
       }
 
@@ -708,48 +700,48 @@ Macro.add('addItems', {
 
         // Forcer la ré-initialisation si le cache est vide mais qu'on a des catégories
         if (Object.keys(window.setup.itemCache || {}).length < 5 && window.lootCategories) {
-            initLootSystem();
+          initLootSystem();
         }
 
         for (const item of itemsToAdd) {
-            // Tentative d'ajout
-            const success = window.setup.addItemDirect(item.id, item.qty);
+          // Tentative d'ajout
+          const success = window.setup.addItemDirect(item.id, item.qty);
 
-            if (success) {
-                v.inventoryNewItems = v.inventoryNewItems || [];
-                if (!v.inventoryNewItems.includes(item.id)) v.inventoryNewItems.push(item.id);
+          if (success) {
+            v.inventoryNewItems = v.inventoryNewItems || [];
+            if (!v.inventoryNewItems.includes(item.id)) v.inventoryNewItems.push(item.id);
 
-                const itemData = window.setup.getItemFromCache(item.id);
-                const label = itemData ? (itemData.label || item.id) : item.id;
-                summary.push(`${label} x${item.qty}`);
-            } else {
-                missingItems.push(item.id);
-                console.error(`❌ ADDITEMS : Impossible de trouver l'ID "${item.id}" dans le cache.`);
-            }
+            const itemData = window.setup.getItemFromCache(item.id);
+            const label = itemData ? (itemData.label || item.id) : item.id;
+            summary.push(`${label} x${item.qty}`);
+          } else {
+            missingItems.push(item.id);
+            console.error(`❌ ADDITEMS : Impossible de trouver l'ID "${item.id}" dans le cache.`);
+          }
         }
 
         // Notification de succès
         if (summary.length > 0) {
-            window.setup.showNotification('Objets reçus', summary.join('<br>'), 4000);
-            v.inventoryViewed = false;
-            window.setup.updateInventoryCounter();
-            window.setup.updateHUD();
+          window.setup.showNotification('Objets reçus', summary.join('<br>'), 4000);
+          v.inventoryViewed = false;
+          window.setup.updateInventoryCounter();
+          window.setup.updateHUD();
         }
 
         // Notification d'erreur technique (pour le débug)
         if (missingItems.length > 0) {
-            console.warn("⚠️ Objets manquants :", missingItems);
-            // Optionnel : Afficher une notif d'erreur à l'écran
-            // window.setup.showNotification('Erreur technique', `Items introuvables: ${missingItems.join(', ')}`, 5000, null, null, 'red');
+          console.warn("⚠️ Objets manquants :", missingItems);
+          // Optionnel : Afficher une notif d'erreur à l'écran
+          // window.setup.showNotification('Erreur technique', `Items introuvables: ${missingItems.join(', ')}`, 5000, null, null, 'red');
         }
       };
 
       // Logique d'attente
       if (!window.setup.lootState.ready) {
-          console.log(`⏳ ADDITEMS : En attente du chargement pour ajouter ${itemsToAdd.length} objets...`);
-          window.setup.ensureLootReady(processBulkAdd);
+        console.log(`⏳ ADDITEMS : En attente du chargement pour ajouter ${itemsToAdd.length} objets...`);
+        window.setup.ensureLootReady(processBulkAdd);
       } else {
-          processBulkAdd();
+        processBulkAdd();
       }
     }
   });
@@ -793,7 +785,7 @@ Macro.add('addItems', {
 
     v.has[id] = (v.has[id] || 0) + qty;
     return true;
-};
+  };
 
   /* ---- MACRO : removeItem ---- */
   Macro.add('removeItem', {
@@ -1409,7 +1401,12 @@ Macro.add('addItems', {
         id: "eldaron",
         name: "Eldaron (Secours)",
         regions: [],
-        bounds: { x_min: 0, x_max: 100, y_min: 0, y_max: 100 }
+        bounds: {
+          x_min: 0,
+          x_max: 100,
+          y_min: 0,
+          y_max: 100
+        }
       }
     },
     nodes: {},
@@ -1428,7 +1425,7 @@ Macro.add('addItems', {
     // Ordre de chargement : Macro -> Micro (Le dernier écrase les détails du premier)
     const geoFiles = [
       'velkarum.json', // Niveau 0 : Monde
-      'eldaron.json',  // Niveau 1 : Continents & Villes
+      'eldaron.json', // Niveau 1 : Continents & Villes
       'thaurgrim.json',
       'iskarion.json',
       'helrun.json',
@@ -1452,9 +1449,13 @@ Macro.add('addItems', {
           const response = await fetch(basePath + filename);
           if (response.ok) {
             const json = await response.json();
-            return { filename, json };
+            return {
+              filename,
+              json
+            };
           }
-        } catch (e) { /* continue */ }
+        } catch (e) {
+          /* continue */ }
       }
       console.warn(`❌ Fichier introuvable : ${filename}`);
       return null;
@@ -1465,7 +1466,10 @@ Macro.add('addItems', {
 
     results.forEach(res => {
       if (!res) return;
-      const { filename, json } = res;
+      const {
+        filename,
+        json
+      } = res;
       successCount++;
 
       // 1. Fusion Continents
@@ -1500,7 +1504,7 @@ Macro.add('addItems', {
 
       // Reconstruire le graphe immédiatement
       if (window.setup.buildNavigationGraph) {
-          window.setup.buildNavigationGraph();
+        window.setup.buildNavigationGraph();
       }
     } else {
       console.error("⚠️ ÉCHEC CRITIQUE GÉOGRAPHIE. Fallback activé.");
@@ -1560,33 +1564,32 @@ Macro.add('addItems', {
   // MULTIPLICATEURS DE VITESSE PAR TYPE DE ROUTE
   // Plus le facteur est élevé, plus le trajet est RAPIDE (divise le temps)
   window.setup.TRAVEL_SPEEDS = {
-      'road': 1.0,          // Marche
-      'path': 0.8,          // Sentier (plus lent)
-      'forest_path': 0.8,
-      'mountain_path': 0.7,
-      'swamp_path': 0.6,
-      'badlands': 0.6,
-      'desert_path': 0.7,
-      'wild_path': 0.6,
-      'tunnel': 0.8,
+    'road': 1.0, // Marche
+    'path': 0.8, // Sentier (plus lent)
+    'forest_path': 0.8,
+    'mountain_path': 0.7,
+    'swamp_path': 0.6,
+    'badlands': 0.6,
+    'desert_path': 0.7,
+    'wild_path': 0.6,
+    'tunnel': 0.8,
 
-      // Véhicules & Montures (Plus rapides)
-      'carriage': 2.5,      // Diligence / Chariot (x2.5 vitesse)
-      'boat': 2.0,          // Bateau fluvial
-      'sea': 3.0,           // Navire haute mer
-      'sled': 3.5,          // Traîneau sur glace (très rapide)
-      'sand_skiff': 4.0,    // Char à voile (très rapide)
-      'beetle': 2.0,        // Scarabée géant (Varnäl)
-      'cable_car': 2.0,     // Téléphérique
-      'air': 8.0,           // Dirigeable / Vol (Ultra rapide)
-      'ice_road': 1.2       // Route glacée (marche difficile)
+    // Véhicules & Montures (Plus rapides)
+    'carriage': 2.5, // Diligence / Chariot (x2.5 vitesse)
+    'boat': 2.0, // Bateau fluvial
+    'sea': 3.0, // Navire haute mer
+    'sled': 3.5, // Traîneau sur glace (très rapide)
+    'sand_skiff': 4.0, // Char à voile (très rapide)
+    'beetle': 2.0, // Scarabée géant (Varnäl)
+    'cable_car': 2.0, // Téléphérique
+    'air': 8.0, // Dirigeable / Vol (Ultra rapide)
+    'ice_road': 1.2 // Route glacée (marche difficile)
   };
 
   // Exemple : 300km = 60 secondes d'attente réelle avec ce réglage.
 
   // Cache pour le graphe de navigation
   window.setup.navGraph = null;
-
 
   // -------------------------------------------------------------------------
   // 1. CONSTRUCTION DU GRAPHE DE NAVIGATION
@@ -1629,8 +1632,18 @@ Macro.add('addItems', {
         // Les liens "Link" (Macro->Micro) ont souvent 0km, coût minime pour Dijkstra
         const cost = Math.max(0.1, dist * (route.cost_multiplier || 1.0));
 
-        graph[from].connections.push({ target: to, cost, dist, routeData: route });
-        graph[to].connections.push({ target: from, cost, dist, routeData: route });
+        graph[from].connections.push({
+          target: to,
+          cost,
+          dist,
+          routeData: route
+        });
+        graph[to].connections.push({
+          target: from,
+          cost,
+          dist,
+          routeData: route
+        });
       } else {
         console.warn(`⚠️ Route brisée: ${route.id} (${from} -> ${to}). Un noeud manque.`);
       }
@@ -1696,7 +1709,10 @@ Macro.add('addItems', {
         const alt = distances[minNode] + edge.cost;
         if (alt < distances[edge.target]) {
           distances[edge.target] = alt;
-          previous[edge.target] = { prevNode: minNode, edge };
+          previous[edge.target] = {
+            prevNode: minNode,
+            edge
+          };
         }
       }
     }
@@ -1808,9 +1824,9 @@ Macro.add('addItems', {
 
       // Si c'est une route rapide et qu'on quitte une station, c'est plus immersif
       if (routeInfo && routeInfo.name) {
-          travelStep.desc = `${verb} ${dir} via ${travelStep.routeName}`;
+        travelStep.desc = `${verb} ${dir} via ${travelStep.routeName}`;
       } else {
-          travelStep.desc = `${verb} ${dir}`;
+        travelStep.desc = `${verb} ${dir}`;
       }
 
       steps.push(travelStep);
@@ -2003,13 +2019,13 @@ Macro.add('addItems', {
 
         const dx = node.data.x - coords.x;
         const dy = node.data.y - coords.y;
-        const d2 = dx*dx + dy*dy;
+        const d2 = dx * dx + dy * dy;
 
         // Priorité aux noeuds "exacts" (Micro) si on est dessus (dist < 0.01)
         if (d2 < 0.0001) {
-           bestDist = d2;
-           bestNode = node.id;
-           return; // Trouvé exact !
+          bestDist = d2;
+          bestNode = node.id;
+          return; // Trouvé exact !
         }
 
         if (d2 < bestDist) {
@@ -2017,7 +2033,10 @@ Macro.add('addItems', {
           bestNode = node.id;
         }
       });
-      return { id: bestNode, dist: Math.sqrt(bestDist) * window.setup.GEO_SCALE };
+      return {
+        id: bestNode,
+        dist: Math.sqrt(bestDist) * window.setup.GEO_SCALE
+      };
     };
 
     const startAnchor = getClosestNode(startCoords, sCont);
@@ -2046,7 +2065,10 @@ Macro.add('addItems', {
         };
       }
       console.error(`❌ Aucun chemin entre ${sCont} et ${eCont}`);
-      return { type: 'error', totalDistance: 0 };
+      return {
+        type: 'error',
+        totalDistance: 0
+      };
     }
 
     // Calcul distance totale (Marche vers Ancre A + Trajet Réseau + Marche depuis Ancre B)
@@ -2106,7 +2128,10 @@ Macro.add('addItems', {
       // 1. On s'assure que le joueur est bien localisé avant de bouger les PNJ
       const playerPos = window.setup.syncPlayerPosition();
       const destinationPassage = playerPos.passage;
-      const destCoords = { x: playerPos.x, y: playerPos.y };
+      const destCoords = {
+        x: playerPos.x,
+        y: playerPos.y
+      };
       const destContinent = playerPos.continent;
 
       // Debug optionnel
@@ -2128,28 +2153,28 @@ Macro.add('addItems', {
 
           // Calcul de distance
           const distDirect = window.setup.calculateDistance(
-              npc.coordinates,
-              destCoords,
-              npc.continent,
-              destContinent
+            npc.coordinates,
+            destCoords,
+            npc.continent,
+            destContinent
           );
 
           // LOGIQUE DE DÉPLACEMENT
           // Si distance > 0.5km (pour éviter les micro-mouvements dans une pièce)
           // ET que c'est sur le même continent (ou géré par le pathfinding complexe)
           if (distDirect > 0.5) {
-             // Le PNJ voyage vers le joueur
-             window.setup.startPNJTravel(
-                 pnjId,
-                 destinationPassage,
-                 destCoords,
-                 destContinent,
-                 'follow'
-             );
+            // Le PNJ voyage vers le joueur
+            window.setup.startPNJTravel(
+              pnjId,
+              destinationPassage,
+              destCoords,
+              destContinent,
+              'follow'
+            );
           } else {
-             // Trop proche : Téléportation discrète (ex: entrer dans une auberge depuis la rue devant)
-             window.setup.stopPNJTravelAndTeleport(npc, destinationPassage, destCoords);
-             npc.continent = destContinent; // Important : sync le continent
+            // Trop proche : Téléportation discrète (ex: entrer dans une auberge depuis la rue devant)
+            window.setup.stopPNJTravelAndTeleport(npc, destinationPassage, destCoords);
+            npc.continent = destContinent; // Important : sync le continent
           }
         }
       });
@@ -2157,7 +2182,6 @@ Macro.add('addItems', {
       if (window.setup.updateHUD) window.setup.updateHUD();
     }, 50); // Délai court (50ms)
   };
-
 
   window.setup.stopPNJTravelAndTeleport = function(npc, passage, coords) {
     npc.status = 'follow';
@@ -2171,10 +2195,10 @@ Macro.add('addItems', {
     if (npc.travelTimeout) clearTimeout(npc.travelTimeout);
   };
 
-    window.setup.calculateDistance = function(c1, c2) {
+  window.setup.calculateDistance = function(c1, c2) {
     const dx = c1.x - c2.x;
     const dy = c1.y - c2.y;
-    return Math.sqrt(dx*dx + dy*dy) * window.setup.GEO_SCALE;
+    return Math.sqrt(dx * dx + dy * dy) * window.setup.GEO_SCALE;
   };
 
   // 6. SÉCURITÉ COORDONNÉES
@@ -2327,9 +2351,9 @@ Macro.add('addItems', {
        0) SOUS-TYPE D'ARME (NOUVEAU)
        ------------------------------------------------------ */
     if (item.type === "weapon" && item.subtype) {
-        const subtypeLabel = window.setup.weaponSubtypes[item.subtype] || item.subtype;
-        // On utilise une couleur distincte ou un style neutre
-        tags.push(`
+      const subtypeLabel = window.setup.weaponSubtypes[item.subtype] || item.subtype;
+      // On utilise une couleur distincte ou un style neutre
+      tags.push(`
             <span class="bonus-tag" style="background:rgba(100,100,100,0.3); color:#ddd; border:1px solid #666;">
                 ${subtypeLabel}
             </span>
@@ -2839,11 +2863,10 @@ Macro.add('addItems', {
   window.setup.buildModalHTML = function(options) {
     const { title, icon, content, footer = '', className = '' } = options;
     const safeTitle = window.setup.escapeHtml(title || '');
-    // Gestion de l'icône : on s'assure qu'elle existe avant de créer la balise img
     const iconHTML = icon ? `<img class="icon-1em" src="${icon}" alt="" onerror="this.style.display='none'">` : '';
 
     return `
-        <div class="modal-content border-medieval ${className}">
+        <div class="modal-content ${className}">
             <div class="modal-header">
                 ${iconHTML}
                 <span>${safeTitle}</span>
@@ -2855,7 +2878,6 @@ Macro.add('addItems', {
         </div>
     `;
   };
-
 
   /* =========================================================================
      FONCTION UNIFIÉE — CONSTRUCTION MODALE ITEM (SANS EN-TÊTE INTERNE)
@@ -2887,7 +2909,7 @@ Macro.add('addItems', {
 
       // Fonction helper pour formater une ligne de pré-requis
       const addReq = (label, val) => {
-          requirementsLines.push(`
+        requirementsLines.push(`
             <div style="display:flex; justify-content:space-between; font-size:0.9em; color:#ccc; border-bottom:1px dashed rgba(255,255,255,0.1); padding:2px 0;">
                 <span>${label}</span>
                 <span style="font-weight:bold; color:#fff;">${val}</span>
@@ -2897,7 +2919,7 @@ Macro.add('addItems', {
 
       if (req.levelMin) addReq("Niveau requis", req.levelMin);
       if (req.forceMin) addReq("Force requise", req.forceMin);
-      if (req.dexMin)   addReq("Dextérité requise", req.dexMin);
+      if (req.dexMin) addReq("Dextérité requise", req.dexMin);
 
       if (requirementsLines.length > 0) {
         requirementsHTML = `
@@ -2940,193 +2962,335 @@ Macro.add('addItems', {
   window.setup.showItemModal = function(item) {
     if (!item) return;
 
-    // Nettoyage
     $('#item-modal, #modal-overlay-item').remove();
-
-    // Overlay & Conteneur
     const $overlay = $('<div id="modal-overlay-item"></div>').appendTo('body');
-    // Note: opacity:1 important pour contrer d'éventuelles animations CSS lentes
-    const $modal = $('<div id="item-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
+    const $modal = $('<div id="item-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
 
-    // Choix de l'icône
+    // 1. Gestion des icônes
     const ICON_MAP = {
-      usable: 'Images/icons/usable.png',
-      health: 'Images/icons/heal.png',
-      food: 'Images/icons/food.png',
-      weapon: 'Images/icons/weapon.png',
-      shield: 'Images/icons/shield.png',
-      head: 'Images/icons/head.png',
-      torso: 'Images/icons/torso.png',
-      arms: 'Images/icons/arms.png',
-      legs: 'Images/icons/legs.png',
-      feet: 'Images/icons/feet.png',
-      material: 'Images/icons/material.png',
-      key: 'Images/icons/key.png',
-      misc: 'Images/icons/key.png'
+      usable: 'images/icons/usable.png',
+      health: 'images/icons/heal.png',
+      food: 'images/icons/food.png',
+      weapon: 'images/icons/weapon.png',
+      shield: 'images/icons/shield.png',
+      head: 'images/icons/head.png',
+      torso: 'images/icons/torso.png',
+      arms: 'images/icons/arms.png',
+      legs: 'images/icons/legs.png',
+      feet: 'images/icons/feet.png',
+      material: 'images/icons/material.png',
+      key: 'images/icons/key.png',
+      misc: 'images/icons/key.png'
     };
-    // Fallback sur misc si type inconnu
     const iconSrc = ICON_MAP[item.type] || ICON_MAP['misc'];
 
-    // Génération du contenu
-    const innerHTML = window.setup.buildItemModalHTML(item);
+    // 2. Construction des ENCARTS (Tags caractéristiques)
+    let encartsHTML = '';
+    if (typeof window.setup.renderItemEncarts === 'function') {
+        encartsHTML = window.setup.renderItemEncarts(item);
+    }
 
-    // Construction finale via le builder standard
+    // Fallback simple si pas d'encarts
+    if (!encartsHTML) {
+        if(item.type === 'weapon') encartsHTML += `<span class="bonus-tag">Dégâts: ${item.damage?.min||1}-${item.damage?.max||2}</span>`;
+        if(item.bonus?.strength) encartsHTML += `<span class="bonus-tag">+${item.bonus.strength} Force</span>`;
+        if(item.bonus?.health) encartsHTML += `<span class="bonus-tag">Soin ${item.bonus.health}</span>`;
+        if(encartsHTML) encartsHTML = `<div class="item-tags">${encartsHTML}</div>`;
+    }
+
+    // 3. Description et Requirements
+    const desc = item.description || "Aucune description.";
+    let reqHTML = '';
+    if (item.requirements) {
+        const r = item.requirements;
+        let parts = [];
+        if (r.forceMin) parts.push(`Force ${r.forceMin}`);
+        if (r.dexMin) parts.push(`Dex ${r.dexMin}`);
+        if (r.levelMin) parts.push(`Niveau ${r.levelMin}`);
+        if(parts.length) reqHTML = `<div style="margin-top:1em; color:#9c5959; font-size:0.85em;">Requis: ${parts.join(', ')}</div>`;
+    }
+
+    // 4. Assemblage "Sobre"
+    const contentHTML = `
+        <div style="font-style:italic; color:#ccc; margin-bottom:1em;">${window.setup.escapeHtml(desc)}</div>
+        ${encartsHTML}
+        ${reqHTML}
+    `;
+
     const modalContent = window.setup.buildModalHTML({
       title: item.label || 'Objet',
       icon: iconSrc,
-      content: innerHTML,
-      footer: '<button type="button" class="modal-close">Fermer</button>',
-      className: 'item-modal'
+      content: contentHTML,
+      footer: '<button type="button" class="modal-close">Fermer</button>'
     });
 
     $modal.append(modalContent);
     $('body').addClass('modal-open');
-    $modal.addClass('visible'); // Pour les animations CSS si présentes
 
-    // Gestion fermeture
-    const close = () => {
-        $modal.remove();
-        $overlay.remove();
-        $('body').removeClass('modal-open');
-    };
-
+    const close = () => { $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open'); };
     $modal.find('.modal-close').on('click', close);
-    $overlay.on('click', close); // Clic sur le fond gris ferme aussi
+    $overlay.on('click', close);
   };
 
   /* ==========================================================
      FONCTION : AFFICHER MODALE PNJ - VERSION CORRIGÉE POUR VOTRE STRUCTURE JSON
      ========================================================== */
   window.setup.showPnjModal = function(pnjId) {
+    if(!pnjId) return;
+
     $('#pnj-modal, #modal-overlay-pnj').remove();
     const $overlay = $('<div id="modal-overlay-pnj"></div>').appendTo('body');
-    const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true" style="opacity:1;"></div>').appendTo('body');
+    const $modal = $('<div id="pnj-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
 
     const npc = window.npcEnsure(pnjId);
+    const pnjData = window.setup.getPnjData(pnjId) || {};
+    const identite = pnjData.identite || {};
+    const safeName = window.setup.escapeHtml(identite.nom_complet || identite.nom || npc.name || "Inconnu");
 
-    const processPnjModal = () => {
-      const pnjData = window.setup.getPnjData(pnjId);
-      const identite = pnjData.identite;
-      const safeName = window.setup.escapeHtml(identite.nom_complet || identite.nom || npc.name);
+    // Helper pour insérer les icônes d'origine proprement
+    const icon = (src) => `<img class="icon-1em" src="${src}" alt="" style="vertical-align:middle; margin-right:4px;">`;
 
-      // Stats en-tête
-      const statsHTML = `
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.5em; margin-bottom:1em; text-align:center;">
-            <div class="hud-block"><img src="${window.ICONS.health}" class="icon-1em"> ${npc.health}/${npc.maxHealth}</div>
-            <div class="hud-block"><img src="${window.ICONS.strength}" class="icon-1em"> ${npc.stats?.strength||0}</div>
-            <div class="hud-block"><img src="images/icons/dexterity.png" class="icon-1em"> ${npc.stats?.dexterity||0}</div>
-            <div class="hud-block"><img src="${window.ICONS.defense}" class="icon-1em"> ${npc.stats?.resistance||0}</div>
-        </div>
-      `;
+    // 1. STATS
+    const statsHTML = `
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; background:rgba(255,255,255,0.05); padding:10px; border-radius:4px; margin-bottom:1em; text-align:center;">
+          <div title="Santé" style="color:#ddd;">${icon(window.ICONS.health)} ${npc.health}/${npc.maxHealth}</div>
+          <div title="Force" style="color:#ddd;">${icon(window.ICONS.strength)} ${npc.stats?.strength||0}</div>
+          <div title="Dextérité" style="color:#ddd;">${icon('images/icons/dexterity.png')} ${npc.stats?.dexterity||0}</div>
+          <div title="Résistance" style="color:#ddd;">${icon(window.ICONS.defense)} ${npc.stats?.resistance||0}</div>
+      </div>
+    `;
 
-      // SECTION ÉQUIPEMENT (Style unifié)
-      const slotNames = { head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier' };
-      const slotsOrder = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+    // 2. ÉQUIPEMENT (Liste textuelle sobre)
+    const slotNames = { weapon: 'Arme', shield: 'Bouclier', head: 'Tête', torso: 'Torse', legs: 'Jambes', feet: 'Pieds', arms: 'Bras' };
+    const slotsOrder = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
 
-      let equipListHTML = '';
-      slotsOrder.forEach(slot => {
-         const itemId = npc.equipment ? npc.equipment[slot] : null;
-         let content = ' <em style="opacity:.4; font-size:0.9em;">Vide</em>';
-         let slotClass = 'equipment-slot';
+    let equipHTML = '';
+    slotsOrder.forEach(slot => {
+        const itemId = npc.equipment ? npc.equipment[slot] : null;
+        if(itemId) {
+            const item = window.setup.getItemFromCache(itemId);
+            const label = item ? item.label : itemId;
+            equipHTML += `
+                <div class="pnj-equipment-item">
+                    <span style="opacity:0.7;">${slotNames[slot] || slot}</span>
+                    <span style="color:#d4c598; font-weight:bold;">${window.setup.escapeHtml(label)}</span>
+                </div>`;
+        }
+    });
+    if(!equipHTML) equipHTML = '<em style="opacity:0.5; font-size:0.9em; display:block; padding:5px;">Aucun équipement visible.</em>';
 
-         if (itemId) {
-             const itemData = window.setup.getItemFromCache(itemId);
-             const label = itemData ? itemData.label : itemId;
-             slotClass += ' filled-slot';
-             content = ` <span class="equipped-name">${window.setup.escapeHtml(label)}</span>`;
-         }
+    // 3. INVENTAIRE (STYLE SLOTS AVEC ENCARTS - INTERACTIF)
+    let invHTML = '';
+    const invIds = Object.keys(npc.inventory || {});
 
-         equipListHTML += `
-            <div class="${slotClass}">
-                <strong>${slotNames[slot]}:</strong>
-                ${content}
-            </div>
-         `;
-      });
-
-      // SECTION INVENTAIRE (Style unifié)
-      let itemsHTML = '';
-      const invIds = Object.keys(npc.inventory || {});
-      if (invIds.length > 0) {
-          invIds.forEach(itemId => {
-              const qty = npc.inventory[itemId];
-              if (qty > 0) {
-                  const itemData = window.setup.getItemFromCache(itemId);
-                  const displayItem = Object.assign({}, itemData, { qty: qty });
-                  const encarts = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(displayItem) : '';
-
-                  itemsHTML += `
-                    <div class="inventory-item">
-                        <div class="item-header">
-                            <span class="item-name">${window.setup.escapeHtml(displayItem.label || itemId)}</span>
-                            <span class="item-qty">x${qty}</span>
-                        </div>
-                        ${encarts}
-                    </div>
-                  `;
-              }
-          });
-          itemsHTML = `<div class="pnj-inventory-grid">${itemsHTML}</div>`;
-      } else {
-          itemsHTML = '<em style="opacity:0.5; display:block; padding:10px;">Sac vide.</em>';
-      }
-
-      // Assemblage
-      const modalContent = window.setup.buildModalHTML({
-        title: safeName,
-        icon: window.ICONS.buddy,
-        content: `
-            <div style="text-align:center; font-style:italic; color:#f2d675; margin-bottom:1em;">${identite.peuple || ''} &bull; ${identite.metier_principal || ''}</div>
-            <div style="font-size:0.9em; color:#ccc; margin-bottom:1em; padding:0.5em; background:rgba(255,255,255,0.05); border-radius:4px;">
-                ${window.setup.escapeHtml(pnjData.description || "...")}
-            </div>
-            ${statsHTML}
-            <div class="pnj-equipment-section">
-                <div class="section-title">Équipement</div>
-                <div class="pnj-equipment-grid">${equipListHTML}</div>
-            </div>
-            <div class="pnj-inventory-section">
-                <div class="section-title">Sac</div>
-                ${itemsHTML}
-            </div>
-        `,
-        footer: '<button type="button" class="modal-close">Fermer</button>',
-        className: 'pnj-modal'
-      });
-
-      $modal.append(modalContent);
-      $('body').addClass('modal-open');
-      const close = () => { $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open'); };
-      $modal.find('.modal-close').on('click', close);
-      $overlay.on('click', close);
+    const typeLabels = {
+        usable: "Conso", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier",
+        head: "Tête", torso: "Torse", arms: "Bras", legs: "Jambes", feet: "Pieds",
+        material: "Matériau", key: "Clé", misc: "Divers"
     };
 
-    if (!window.setup.pnjState.ready) window.setup.ensurePNJReady(processPnjModal);
-    else processPnjModal();
-};
+    if (invIds.length > 0) {
+        invIds.forEach(itemId => {
+            const qty = npc.inventory[itemId];
+            if (qty > 0) {
+                const itemData = window.setup.getItemFromCache(itemId);
+                const displayItem = Object.assign({}, itemData, { qty: qty });
+
+                const label = displayItem.label || itemId;
+                const typeLabel = typeLabels[displayItem.type] || "Objet";
+
+                let encartsHTML = '';
+                if (typeof window.setup.renderItemEncarts === 'function') {
+                    encartsHTML = window.setup.renderItemEncarts(displayItem);
+                }
+
+                // AJOUT : data-id et cursor pointer pour l'interaction
+                invHTML += `
+                    <div class="inventory-item pnj-inv-slot" data-id="${itemId}" data-label="${window.setup.escapeHtml(label)}" style="cursor:pointer;">
+                        <div class="item-header">
+                            <span class="item-name">${window.setup.escapeHtml(label)}</span>
+                            <span class="item-qty">x${qty}</span>
+                        </div>
+                        <span class="inventory-type">${typeLabel}</span>
+                        ${encartsHTML}
+                    </div>
+                `;
+            }
+        });
+    } else {
+        invHTML = '<em style="opacity:0.5; font-size:0.9em; display:block; padding:5px;">Sac vide.</em>';
+    }
+
+    // ASSEMBLAGE DU CONTENU
+    const contentHTML = `
+        <div style="text-align:center; font-style:italic; color:#b1a270; margin-bottom:12px; font-size:0.95em;">
+            ${identite.peuple || ''} &bull; ${identite.metier_principal || ''}
+        </div>
+        
+        <div style="font-size:0.9em; margin-bottom:15px; line-height:1.5; color:#ccc; background:rgba(0,0,0,0.2); padding:8px; border-radius:4px;">
+            ${window.setup.escapeHtml(pnjData.description || "Aucune description disponible.")}
+        </div>
+        
+        ${statsHTML}
+
+        <div class="section-title" style="margin-top:15px;">Équipement</div>
+        <div class="pnj-equipment-grid" style="margin-bottom:15px;">${equipHTML}</div>
+
+        <div class="section-title">Inventaire (Clic G: Info / Droit: Reprendre)</div>
+        <div class="pnj-inventory-list" style="display:flex; flex-direction:column; gap:5px; max-height:250px; overflow-y:auto; padding-right:5px;">
+            ${invHTML}
+        </div>
+    `;
+
+    const modalContent = window.setup.buildModalHTML({
+      title: safeName,
+      icon: window.ICONS.buddy,
+      content: contentHTML,
+      footer: '<button type="button" class="modal-close">Fermer</button>'
+    });
+
+    $modal.append(modalContent);
+    $('body').addClass('modal-open');
+
+    // === GESTION DES ÉVÉNEMENTS ===
+
+    // 1. CLIC GAUCHE : Ouvrir la modale de l'item
+    $modal.find('.pnj-inv-slot').on('click', function(e) {
+        e.stopPropagation();
+        const itemId = $(this).data('id');
+        const itemData = window.setup.getItemFromCache(itemId);
+        if (itemData) {
+             // On ferme temporairement la modale PNJ ? Non, on empile par dessus (z-index géré par CSS)
+             window.setup.showItemModal(itemData);
+        }
+    });
+
+    // 2. CLIC DROIT : Menu contextuel "Reprendre"
+    $modal.find('.pnj-inv-slot').on('contextmenu', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const itemId = $(this).data('id');
+        const label = $(this).data('label');
+        window.setup.showPnjInventoryMenu(e.pageX, e.pageY, pnjId, itemId, label);
+    });
+
+    const close = () => { $modal.remove(); $overlay.remove(); $('body').removeClass('modal-open'); };
+    $modal.find('.modal-close').on('click', close);
+    $overlay.on('click', close);
+  }
+
+  window.setup.showPnjInventoryMenu = function(x, y, pnjId, itemId, itemLabel) {
+      $('.context-menu').remove();
+
+      const $menu = $('<div class="context-menu"></div>').appendTo('body');
+
+      // Option "Reprendre"
+      $('<div class="context-option">Reprendre</div>').on('click', function(e){
+          e.stopPropagation();
+          window.setup.takeItemFromBuddy(pnjId, itemId, 1);
+          $menu.remove();
+          // Rafraîchir la modale PNJ pour voir le changement
+          window.setup.showPnjModal(pnjId);
+      }).appendTo($menu);
+
+      // Option "Tout reprendre" (si quantité > 1)
+      const npc = window.npcEnsure(pnjId);
+      const qty = npc.inventory[itemId] || 0;
+      if (qty > 1) {
+          $('<div class="context-option">Tout reprendre</div>').on('click', function(e){
+              e.stopPropagation();
+              window.setup.takeItemFromBuddy(pnjId, itemId, qty);
+              $menu.remove();
+              window.setup.showPnjModal(pnjId);
+          }).appendTo($menu);
+      }
+
+      // Positionnement
+      const winW = $(window).width();
+      const winH = $(window).height();
+      let posX = x + 5;
+      let posY = y + 5;
+
+      if (posX + 150 > winW) posX = x - 155;
+      if (posY + 100 > winH) posY = y - 100;
+
+      $menu.css({ top: posY + 'px', left: posX + 'px', zIndex: 99999 });
+
+      setTimeout(() => {
+          $(document).one('click.closePnjCtx', function() { $menu.remove(); });
+      }, 10);
+  };
+
+  window.setup.takeItemFromBuddy = function(pnjId, itemId, qty = 1) {
+      const npc = window.npcEnsure(pnjId);
+      const v = State.variables;
+
+      if (!npc.inventory[itemId] || npc.inventory[itemId] < qty) {
+          window.setup.showNotification('Erreur', "Le compagnon n'a pas cet objet.");
+          return;
+      }
+
+      // 1. Retrait de l'inventaire PNJ
+      npc.inventory[itemId] -= qty;
+      if (npc.inventory[itemId] <= 0) {
+          delete npc.inventory[itemId];
+
+          // Vérifier si c'était équipé et le retirer
+          Object.keys(npc.equipment).forEach(slot => {
+              if (npc.equipment[slot] === itemId) {
+                  window.setup.unequipItemForPnj(pnjId, slot);
+              }
+          });
+      }
+
+      // 2. Ajout à l'inventaire Joueur
+      window.setup.addItemDirect(itemId, qty);
+
+      const itemData = window.setup.getItemFromCache(itemId);
+      const label = itemData ? itemData.label : itemId;
+
+      window.setup.showNotification('Objet récupéré', `${qty}x ${label} repris à ${npc.name}.`);
+
+      // Mise à jour de l'interface
+      // OPTIMISATION : On appelle uniquement updateHUD.
+      // updateHUD() est "debounced" (attente intelligente) et s'occupe déjà de rafraîchir
+      // renderBuddiesPanel si le panneau est ouvert. Cela évite le double clignotement.
+      window.setup.updateHUD();
+  };
+
   // ------------------------------------------------------
   // HUD + INVENTAIRE + ÉQUIPEMENT + (BUDDIES) - VERSION CORRIGÉE
   // ------------------------------------------------------
   window.setup.updateHUD = (function() {
     let timeout;
+
+    // Caches d'état pour éviter les redessins DOM inutiles
     let lastInventoryState = "";
     let lastEquipmentState = "";
+    let lastHudTopState = "";   // Cache pour la barre du haut (Stats)
+    let lastTogglesState = "";  // Cache pour la barre des boutons
 
     function icon(img) {
       const src = img || 'images/icons/map.png';
       return `<img class="icon-1em" src="${src}" alt="" onerror="this.style.display='none';">`;
     }
 
-    function V() { return State.variables; }
+    function V() {
+      return State.variables;
+    }
 
     return function() {
       clearTimeout(timeout);
+      // Debounce 40ms (~25fps max updates)
       timeout = setTimeout(() => {
         const $hud = $('#hud');
         if (!$hud.length) return;
 
         const v = V();
-        // --- Récupération des stats ---
+
+        // ---------------------------------------------------------
+        // 1. OPTIMISATION BARRE DU HAUT (STATS)
+        // ---------------------------------------------------------
         const health = v.current_player_health ?? 10;
         const maxHealth = v.max_player_health ?? 10;
         const strength = v.strength || 0;
@@ -3139,12 +3303,18 @@ Macro.add('addItems', {
         const expToNextLevel = v.expToNextLevel || 100;
         const expPercent = Math.min(100, (exp / expToNextLevel) * 100);
 
-        // --- Construction HUD (HTML) ---
-        if (!$hud.find('.hud-inner').length) {
-            let locationString = "Position inconnue";
-            if (v.playerCoordinates) locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
+        // Localisation
+        let locationString = "Position inconnue";
+        if (v.playerCoordinates) {
+             locationString = window.setup.getLocationString(v.playerCoordinates, v.playerCoordinates.continent);
+        }
 
-            $hud.html(`
+        // Création de la signature d'état (String unique représentant l'affichage actuel)
+        const currentHudTopState = `${health}/${maxHealth}|${strength}|${dexterity}|${resistance}|${magic}|${gold}|${level}|${expPercent.toFixed(1)}|${locationString}`;
+
+        // Initialisation HTML (Premier affichage seulement)
+        if (!$hud.find('.hud-inner').length) {
+          $hud.html(`
             <div class="hud-inner">
                 <div class="hud-row-top">
                     <div class="hud-stats">
@@ -3173,123 +3343,172 @@ Macro.add('addItems', {
             <div id="buddies-panel" class="side-panel"></div>
           `);
           $(document).trigger('hudready');
-        } else {
-             // Mise à jour simple
-             $('.hud-health').html(`${icon(window.ICONS.health)} ${health}/${maxHealth}`);
-             $('.hud-strength').html(`${icon(window.ICONS.strength)} ${strength}`);
-             $('.hud-dexterity').html(`${icon('images/icons/dexterity.png')} ${dexterity}`);
-             $('.hud-exp-fill').css('width', `${expPercent}%`);
+          lastHudTopState = currentHudTopState; // Sync initiale
+        }
+        else if (currentHudTopState !== lastHudTopState) {
+          // MISE À JOUR CIBLÉE (Seulement si changement détecté)
+          // On ne touche au DOM que si nécessaire
+          $('.hud-health').html(`${icon(window.ICONS.health)} ${health}/${maxHealth}`);
+          $('.hud-strength').html(`${icon(window.ICONS.strength)} ${strength}`);
+          $('.hud-dexterity').html(`${icon('images/icons/dexterity.png')} ${dexterity}`);
+          $('.hud-resistance').html(`${icon(window.ICONS.defense)} ${resistance}`);
+          $('.hud-magic').html(`${icon(window.ICONS.magic)} ${magic}`);
+          $('.hud-gold').html(`${icon(window.ICONS.gold)} ${gold}`);
+
+          $('.hud-exp-fill').css('width', `${expPercent}%`);
+          $('.hud-level').first().text(level);
+          $('.hud-level').last().text(level + 1);
+
+          // Update Location si changement
+          const $locText = $hud.find('.location-text');
+          if ($locText.text() !== locationString) {
+              $locText.text(locationString);
+              $hud.find('.hud-location').attr('title', locationString);
+          }
+
+          lastHudTopState = currentHudTopState;
         }
 
-        // --- GESTION DES BOUTONS (TOGGLES) ---
-        const $toggles = $('#hud .hud-toggles');
+        // ---------------------------------------------------------
+        // 2. OPTIMISATION BOUTONS (TOGGLES)
+        // ---------------------------------------------------------
+        const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned && n.isAlive && n.isActive).length;
 
-        // 1. Bouton Compagnons (Buddy) - RESTAURÉ
-        const buddiesCount = Object.values(v.npcs || {}).filter(n => n.isBuddy && n.isSpawned).length;
-        if (!document.getElementById('buddy-toggle')) {
-            // On l'ajoute en premier (prepend) ou après selon préférence
-            $toggles.prepend(`<div id="buddy-toggle" title="Compagnons" style="display:none;">${icon(window.ICONS.buddy)}<span id="buddy-counter">0</span></div>`);
+        // On vérifie la structure des boutons (pas les compteurs internes)
+        // Cela évite de réattacher les événements 'click' inutilement
+        const currentTogglesState = `buddy:${buddiesCount > 0}`;
 
-            // Binding du clic Buddy
-            $('#buddy-toggle').on('click', (e) => {
+        if (currentTogglesState !== lastTogglesState) {
+            const $toggles = $('#hud .hud-toggles');
+
+            // 1. Bouton Compagnons
+            if (!document.getElementById('buddy-toggle')) {
+              $toggles.prepend(`<div id="buddy-toggle" title="Compagnons" style="display:none;">${icon(window.ICONS.buddy)}<span id="buddy-counter">0</span></div>`);
+              $('#buddy-toggle').on('click', (e) => {
                 e.stopPropagation();
                 window.setup.togglePanel('#buddies-panel');
-            });
+              });
+            }
+            $('#buddy-toggle').toggle(buddiesCount > 0);
+
+            // 2. Bouton Inventaire (Statique, mais on vérifie l'existence)
+            if (!document.getElementById('inventory-toggle')) {
+              $toggles.append(`<div id="inventory-toggle" title="Inventaire">${icon(window.ICONS.inventory)}<span id="inventory-counter">0</span></div>`);
+              $('#inventory-toggle').on('click', (e) => {
+                e.stopPropagation();
+                window.setup.togglePanel('#inventory-panel');
+                v.inventoryViewed = true;
+                window.setup.updateInventoryCounter();
+                window.setup.updateHUD(); // Refresh pour enlever le badge 'new' visuellement
+              });
+            }
+
+            // 3. Bouton Équipement
+            if (!document.getElementById('equipment-toggle')) {
+              $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(window.ICONS.equipment)}</div>`);
+              $('#equipment-toggle').on('click', (e) => {
+                e.stopPropagation();
+                window.setup.togglePanel('#equipment-panel');
+              });
+            }
+
+            lastTogglesState = currentTogglesState;
         }
-        // Visibilité dynamique du bouton Buddy
-        $('#buddy-toggle').toggle(buddiesCount > 0);
+
+        // Mise à jour des compteurs (Texte uniquement, très léger)
         $('#buddy-counter').text(buddiesCount > 0 ? String(buddiesCount) : '').toggle(buddiesCount > 0);
-
-        // 2. Bouton Inventaire
-        if (!document.getElementById('inventory-toggle')) {
-          $toggles.append(`<div id="inventory-toggle" title="Inventaire">${icon(window.ICONS.inventory)}<span id="inventory-counter">0</span></div>`);
-          $('#inventory-toggle').on('click', (e) => {
-              e.stopPropagation();
-              window.setup.togglePanel('#inventory-panel');
-              v.inventoryViewed = true;
-              window.setup.updateInventoryCounter();
-              window.setup.updateHUD();
-          });
-        }
-
-        // 3. Bouton Équipement
-        if (!document.getElementById('equipment-toggle')) {
-          $toggles.append(`<div id="equipment-toggle" title="Équipement">${icon(window.ICONS.equipment)}</div>`);
-          $('#equipment-toggle').on('click', (e) => {
-              e.stopPropagation();
-              window.setup.togglePanel('#equipment-panel');
-          });
-        }
 
         // --- Logique d'ouverture des panneaux ---
         window.setup.togglePanel = function(panelSelector) {
-            const $panel = $(panelSelector);
-            const isVisible = $panel.hasClass('show');
-            $('.side-panel').removeClass('show');
-            $('.context-menu').remove();
+          const $panel = $(panelSelector);
+          const isVisible = $panel.hasClass('show');
+          $('.side-panel').removeClass('show');
+          $('.context-menu').remove();
 
-            if (!isVisible) {
-                $panel.addClass('show');
-                if(panelSelector === '#inventory-panel') { lastInventoryState = ""; renderInventory(); }
-                if(panelSelector === '#equipment-panel') { lastEquipmentState = ""; renderEquipment(); }
-                if(panelSelector === '#buddies-panel') { if(window.renderBuddiesPanel) window.renderBuddiesPanel(); }
+          if (!isVisible) {
+            $panel.addClass('show');
+            if (panelSelector === '#inventory-panel') {
+              lastInventoryState = ""; // Force refresh à l'ouverture
+              renderInventory();
             }
+            if (panelSelector === '#equipment-panel') {
+              lastEquipmentState = ""; // Force refresh à l'ouverture
+              renderEquipment();
+            }
+            if (panelSelector === '#buddies-panel') {
+              if (window.renderBuddiesPanel) window.renderBuddiesPanel();
+            }
+          }
         };
 
-        // --- FONCTION RENDU INVENTAIRE ---
+        // ---------------------------------------------------------
+        // 3. RENDU PANNEAUX (OPTIMISÉ : Seulement si visible)
+        // ---------------------------------------------------------
+
         function renderInventory() {
-            const $panel = $('#inventory-panel');
-            const inventory = v.inventory || [];
-            const equippedIds = Object.values(v.equipped || {});
+          const $panel = $('#inventory-panel');
+          const inventory = v.inventory || [];
+          const equippedIds = Object.values(v.equipped || {});
 
-            // Hash incluant les stats pour rafraîchir le grisage si la force change
-            const currentHash = JSON.stringify(inventory) + JSON.stringify(equippedIds) + `S:${v.strength}D:${v.dexterity}L:${v.level}`;
-            if (currentHash === lastInventoryState && $panel.children().length > 0) return;
+          // Hash incluant les stats pour rafraîchir le grisage si la force change
+          const currentHash = JSON.stringify(inventory) + JSON.stringify(equippedIds) + `S:${v.strength}D:${v.dexterity}L:${v.level}`;
 
-            lastInventoryState = currentHash;
-            $panel.empty();
+          // CHECK CACHE
+          if (currentHash === lastInventoryState && $panel.children().length > 0) return;
 
-            if (inventory.length === 0) {
-                 $panel.append('<div class="empty-msg"><em style="opacity:.6;">Votre sac est vide.</em></div>');
-                 return;
+          lastInventoryState = currentHash;
+          $panel.empty();
+
+          if (inventory.length === 0) {
+            $panel.append('<div class="empty-msg"><em style="opacity:.6;">Votre sac est vide.</em></div>');
+            return;
+          }
+
+          const typeLabels = { usable: "Conso", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Tête", torso: "Torse", arms: "Bras", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Divers" };
+          const frag = document.createDocumentFragment();
+
+          inventory.forEach(it => {
+             const cachedData = window.setup.getItemFromCache(it.id) || {};
+            const displayItem = Object.assign({}, cachedData, it);
+
+            const isNew = v.inventoryNewItems && v.inventoryNewItems.includes(it.id);
+            const isEquipped = equippedIds.includes(it.id);
+
+            // --- CHECK STATS ---
+            let isUnusable = false;
+            let reqTextParts = [];
+            const equipTypes = ['weapon', 'shield', 'head', 'torso', 'arms', 'legs', 'feet'];
+            if (equipTypes.includes(displayItem.type)) {
+              const req = displayItem.requirements || {};
+              if (req.forceMin && v.strength < req.forceMin) {
+                isUnusable = true;
+                reqTextParts.push(`Force ${req.forceMin}`);
+              }
+              if (req.dexMin && v.dexterity < req.dexMin) {
+                isUnusable = true;
+                reqTextParts.push(`Dex ${req.dexMin}`);
+              }
+              if (req.levelMin && v.level < req.levelMin) {
+                isUnusable = true;
+                reqTextParts.push(`Niv ${req.levelMin}`);
+              }
             }
 
-            const typeLabels = { usable: "Conso", health: "Soin", food: "Nourriture", weapon: "Arme", shield: "Bouclier", head: "Tête", torso: "Torse", arms: "Bras", legs: "Jambes", feet: "Pieds", material: "Matériau", key: "Clé", misc: "Divers" };
-            const frag = document.createDocumentFragment();
+            // Badges
+            let badgesHTML = '<div class="item-badge-container">';
+            if (isEquipped) badgesHTML += '<span class="badge-pill badge-equipped">Équipé</span>';
+            if (isNew) badgesHTML += '<span class="badge-pill badge-new">Nouveau</span>';
+            badgesHTML += '</div>';
 
-            inventory.forEach(it => {
-                const cachedData = window.setup.getItemFromCache(it.id) || {};
-                const displayItem = Object.assign({}, cachedData, it);
+            // Warning Stats
+            let warningHTML = '';
+            if (isUnusable) warningHTML = `<div class="req-warning">⚠️ Manque: ${reqTextParts.join(', ')}</div>`;
 
-                const isNew = v.inventoryNewItems && v.inventoryNewItems.includes(it.id);
-                const isEquipped = equippedIds.includes(it.id);
+            // Encarts
+            const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(displayItem) : '';
+            const itemClass = `inventory-item ${isUnusable ? 'item-unusable' : ''} ${isNew ? 'new' : ''}`;
 
-                // --- CHECK STATS ---
-                let isUnusable = false;
-                let reqTextParts = [];
-                const equipTypes = ['weapon', 'shield', 'head', 'torso', 'arms', 'legs', 'feet'];
-                if (equipTypes.includes(displayItem.type)) {
-                    const req = displayItem.requirements || {};
-                    if (req.forceMin && v.strength < req.forceMin) { isUnusable = true; reqTextParts.push(`Force ${req.forceMin}`); }
-                    if (req.dexMin && v.dexterity < req.dexMin) { isUnusable = true; reqTextParts.push(`Dex ${req.dexMin}`); }
-                    if (req.levelMin && v.level < req.levelMin) { isUnusable = true; reqTextParts.push(`Niv ${req.levelMin}`); }
-                }
-
-                // Badges
-                let badgesHTML = '<div class="item-badge-container">';
-                if (isEquipped) badgesHTML += '<span class="badge-pill badge-equipped">Équipé</span>';
-                if (isNew) badgesHTML += '<span class="badge-pill badge-new">Nouveau</span>';
-                badgesHTML += '</div>';
-
-                // Warning Stats
-                let warningHTML = '';
-                if (isUnusable) warningHTML = `<div class="req-warning">⚠️ Manque: ${reqTextParts.join(', ')}</div>`;
-
-                // Encarts
-                const encartsHTML = window.setup.renderItemEncarts ? window.setup.renderItemEncarts(displayItem) : '';
-                const itemClass = `inventory-item ${isUnusable ? 'item-unusable' : ''} ${isNew ? 'new' : ''}`;
-
-                const $item = $(`
+            const $item = $(`
                     <div class="${itemClass}" data-id="${it.id}" data-type="${it.type}">
                         ${badgesHTML}
                         <div class="item-header">
@@ -3302,83 +3521,104 @@ Macro.add('addItems', {
                     </div>
                 `);
 
-                // Events
-                $item.on('click', function(e) {
-                    e.preventDefault(); e.stopPropagation();
-                    if (v._pendingEquipSlot) {
-                        if (it.type === v._pendingEquipSlot) {
-                            if (isUnusable) { window.setup.showNotification('Impossible', `Stats insuffisantes`, 3000); return; }
-                            window.setup.equipItem(it.id, v._pendingEquipSlot);
-                            v._pendingEquipSlot = null;
-                            $('#inventory-panel').removeClass('show');
-                        } else { window.setup.showNotification('Erreur', 'Mauvais emplacement.', 2000); }
-                        return;
-                    }
-                    window.setup.showItemModal(displayItem);
-                });
-
-                $item.on('contextmenu', function(e) {
-                    e.preventDefault(); e.stopPropagation();
-                    window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this), isUnusable);
-                });
-
-                $item.on('mouseenter', function() {
-                    if ($(this).hasClass('new')) {
-                        $(this).removeClass('new');
-                        $(this).find('.badge-new').fadeOut();
-                        if (v.inventoryNewItems) v.inventoryNewItems = v.inventoryNewItems.filter(nid => nid !== it.id);
-                        window.setup.updateInventoryCounter();
-                    }
-                });
-
-                frag.appendChild($item[0]);
+            // Events
+            $item.on('click', function(e) {
+              e.preventDefault(); e.stopPropagation();
+              if (v._pendingEquipSlot) {
+                if (it.type === v._pendingEquipSlot) {
+                  if (isUnusable) return window.setup.showNotification('Impossible', `Stats insuffisantes`, 3000);
+                  window.setup.equipItem(it.id, v._pendingEquipSlot);
+                  v._pendingEquipSlot = null;
+                  $('#inventory-panel').removeClass('show');
+                } else {
+                  window.setup.showNotification('Erreur', 'Mauvais emplacement.', 2000);
+                }
+                return;
+              }
+              window.setup.showItemModal(displayItem);
             });
-            $panel[0].appendChild(frag);
+
+            $item.on('contextmenu', function(e) {
+              e.preventDefault(); e.stopPropagation();
+              window.setup.showItemMenu(e.pageX, e.pageY, it.id, it.label, it.type, $(this), isUnusable);
+            });
+
+             $item.on('mouseenter', function() {
+              if ($(this).hasClass('new')) {
+                $(this).removeClass('new');
+                $(this).find('.badge-new').fadeOut();
+                if (v.inventoryNewItems) v.inventoryNewItems = v.inventoryNewItems.filter(nid => nid !== it.id);
+                window.setup.updateInventoryCounter();
+              }
+            });
+
+            frag.appendChild($item[0]);
+          });
+          $panel[0].appendChild(frag);
         }
 
         function renderEquipment() {
-             const $panel = $('#equipment-panel');
-             const currentEqState = JSON.stringify(v.equipped);
-             if (currentEqState === lastEquipmentState && $panel.children().length > 0) return;
-             lastEquipmentState = currentEqState;
-             $panel.empty();
-             const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
-             const slotNames = { head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier' };
+          const $panel = $('#equipment-panel');
+          const currentEqState = JSON.stringify(v.equipped);
 
-             slots.forEach(slot => {
-                const itemId = v.equipped[slot];
-                let content = ' <em style="opacity:.5; font-size:0.9em">Vide</em>';
-                let itemClass = 'empty-slot';
-                if (itemId) {
-                    const itemData = window.setup.getItemFromCache(itemId);
-                    const label = itemData ? itemData.label : itemId;
-                    content = ` <span class="equipped-name" style="color:#f2d675; font-weight:bold;">${window.setup.escapeHtml(label)}</span>`;
-                    itemClass = 'filled-slot inventory-item';
-                }
-                const $slotDiv = $(`<div class="equipment-slot ${itemClass}" data-slot="${slot}" data-id="${itemId || ''}" data-type="${slot}">
+          // CHECK CACHE
+          if (currentEqState === lastEquipmentState && $panel.children().length > 0) return;
+
+          lastEquipmentState = currentEqState;
+          $panel.empty();
+
+          const slots = ['head', 'torso', 'arms', 'legs', 'feet', 'weapon', 'shield'];
+          const slotNames = {
+            head: 'Tête', torso: 'Torse', arms: 'Bras', legs: 'Jambes', feet: 'Pieds', weapon: 'Arme', shield: 'Bouclier'
+          };
+
+          slots.forEach(slot => {
+            const itemId = v.equipped[slot];
+            let content = ' <em style="opacity:.5; font-size:0.9em">Vide</em>';
+            let itemClass = 'empty-slot';
+            if (itemId) {
+              const itemData = window.setup.getItemFromCache(itemId);
+              const label = itemData ? itemData.label : itemId;
+              content = ` <span class="equipped-name" style="color:#f2d675; font-weight:bold;">${window.setup.escapeHtml(label)}</span>`;
+              itemClass = 'filled-slot inventory-item';
+            }
+            const $slotDiv = $(`<div class="equipment-slot ${itemClass}" data-slot="${slot}" data-id="${itemId || ''}" data-type="${slot}">
                     <strong style="text-transform:uppercase; font-size:0.8em; color:#aaa;">${slotNames[slot]}:</strong>${content}
                 </div>`);
-                if (itemId) {
-                    $slotDiv.on('click', () => { const d = window.setup.getItemFromCache(itemId); if(d) window.setup.showItemModal(d); });
-                    $slotDiv.on('contextmenu', (e) => { e.preventDefault(); window.setup.showEquipContextMenu(e.pageX, e.pageY, itemId, "", slot, $slotDiv); });
-                }
-                $panel.append($slotDiv);
-             });
+            if (itemId) {
+              $slotDiv.on('click', () => {
+                const d = window.setup.getItemFromCache(itemId);
+                if (d) window.setup.showItemModal(d);
+              });
+              $slotDiv.on('contextmenu', (e) => {
+                e.preventDefault();
+                window.setup.showEquipContextMenu(e.pageX, e.pageY, itemId, "", slot, $slotDiv);
+              });
+            }
+            $panel.append($slotDiv);
+          });
         }
 
-        // Rafraîchissement des panneaux actifs
+        // ---------------------------------------------------------
+        // 4. RAFRAÎCHISSEMENT SELECTIF (Seulement si panneau ouvert)
+        // ---------------------------------------------------------
         if ($('#inventory-panel').hasClass('show')) renderInventory();
         if ($('#equipment-panel').hasClass('show')) renderEquipment();
-        if ($('#buddies-panel').hasClass('show') && window.renderBuddiesPanel) window.renderBuddiesPanel();
 
-        // Update compteurs
+        // Optimisation: On appelle renderBuddiesPanel (qui a son propre cache)
+        // seulement si le panneau est visible
+        if ($('#buddies-panel').hasClass('show') && window.renderBuddiesPanel) {
+            window.renderBuddiesPanel();
+        }
+
+        // Update compteurs (Toujours, car très léger et critique pour les notifs)
         window.setup.updateMessageCounter();
         window.setup.updateQuestCounter();
         window.setup.updateInventoryCounter();
 
       }, 40);
     };
-})();
+  })();
   // ------------------------------------------------------
   // COMPTEURS — NOUVEAUX COMPORTEMENTS
   // ------------------------------------------------------
@@ -3387,7 +3627,7 @@ Macro.add('addItems', {
     const hasNewQuest = v.quests?.some(q => !q.viewed);
     const $c = $('#quest-counter');
     if ($c.length) {
-        $c.text('!').toggle(!!hasNewQuest); // Affiche '!' ou nombre
+      $c.text('!').toggle(!!hasNewQuest); // Affiche '!' ou nombre
     }
   };
   window.setup.updateInventoryCounter = function() {
@@ -3395,7 +3635,7 @@ Macro.add('addItems', {
     const hasNewItem = (v.inventoryNewItems || []).length > 0 && !v.inventoryViewed;
     const $c = $('#inventory-counter');
     if ($c.length) {
-       $c.text(v.inventoryNewItems.length || '!').toggle(hasNewItem);
+      $c.text(v.inventoryNewItems.length || '!').toggle(hasNewItem);
     }
   };
   // ------------------------------------------------------
@@ -3512,9 +3752,9 @@ Macro.add('addItems', {
 
     // Fermeture au clic ailleurs (géré aussi par updateHUD mais sécurité ici)
     setTimeout(() => {
-        $(document).one('click.closecontext', function() {
-            menu.remove();
-        });
+      $(document).one('click.closecontext', function() {
+        menu.remove();
+      });
     }, 10);
   };
   // ------------------------------------------------------
@@ -3558,15 +3798,15 @@ Macro.add('addItems', {
     }
 
     if (equippedSlot) {
-        addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
+      addOption('Déséquiper', () => window.setup.unequipItem(id, equippedSlot));
     } else {
-        addOption('Fermer', () => {});
+      addOption('Fermer', () => {});
     }
 
     setTimeout(() => {
-        $(document).one('click.closecontext', function() {
-            menu.remove();
-        });
+      $(document).one('click.closecontext', function() {
+        menu.remove();
+      });
     }, 10);
   };
   // ------------------------------------------------------
@@ -3712,7 +3952,7 @@ Macro.add('addItems', {
     // Vérification Type
     // (Note: on accepte si le type correspond, ou règle spéciale 2 mains)
     if (item.type.toLowerCase() !== slot.toLowerCase()) {
-         return window.setup.showNotification('Impossible', 'Cet objet ne va pas dans cet emplacement.');
+      return window.setup.showNotification('Impossible', 'Cet objet ne va pas dans cet emplacement.');
     }
 
     // --- VÉRIFICATION DES STATS (CRITIQUE) ---
@@ -3729,8 +3969,8 @@ Macro.add('addItems', {
     if (req.levelMin && v.level < req.levelMin) errors.push(`Niveau ${req.levelMin}`);
 
     if (errors.length > 0) {
-        // Bloque l'équipement
-        return window.setup.showNotification('Impossible', `Pré-requis : ${errors.join(', ')}`, 3500);
+      // Bloque l'équipement
+      return window.setup.showNotification('Impossible', `Pré-requis : ${errors.join(', ')}`, 3500);
     }
 
     // --- Gestion Main Gauche / Deux Mains ---
@@ -3739,26 +3979,26 @@ Macro.add('addItems', {
 
     // Si on équipe une arme à 2 mains, on retire le bouclier
     if (slot === 'weapon' && cachedItem.isTwoHanded) {
-        if (equippedShieldId) {
-             window.setup.unequipItem(equippedShieldId, 'shield', false);
-             window.setup.showNotification('Info', 'Bouclier retiré (Arme à 2 mains).', 2000);
-        }
+      if (equippedShieldId) {
+        window.setup.unequipItem(equippedShieldId, 'shield', false);
+        window.setup.showNotification('Info', 'Bouclier retiré (Arme à 2 mains).', 2000);
+      }
     }
     // Si on équipe un bouclier alors qu'on a une arme à 2 mains
     if (slot === 'shield') {
-        if (equippedWeaponId) {
-            const currentWeapon = window.setup.getItemFromCache(equippedWeaponId);
-            if (currentWeapon && currentWeapon.isTwoHanded) {
-                window.setup.unequipItem(equippedWeaponId, 'weapon', false);
-                window.setup.showNotification('Info', 'Arme retirée (Nécessite 2 mains).', 2000);
-            }
+      if (equippedWeaponId) {
+        const currentWeapon = window.setup.getItemFromCache(equippedWeaponId);
+        if (currentWeapon && currentWeapon.isTwoHanded) {
+          window.setup.unequipItem(equippedWeaponId, 'weapon', false);
+          window.setup.showNotification('Info', 'Arme retirée (Nécessite 2 mains).', 2000);
         }
+      }
     }
 
     // --- EXECUTION ---
     // 1. Déséquiper l'existant
     if (v.equipped[slot]) {
-        window.setup.unequipItem(v.equipped[slot], slot, true); // silent
+      window.setup.unequipItem(v.equipped[slot], slot, true); // silent
     }
 
     // 2. Assigner le nouveau
@@ -3767,7 +4007,7 @@ Macro.add('addItems', {
     // 3. Appliquer les bonus
     const bonus = cachedItem.bonus || {};
     for (const k in bonus) {
-        v[k] = (v[k] || 0) + (Number(bonus[k]) || 0);
+      v[k] = (v[k] || 0) + (Number(bonus[k]) || 0);
     }
 
     if (slot === 'weapon') v.hasWeapon = true;
@@ -3777,7 +4017,7 @@ Macro.add('addItems', {
     window.setup.showNotification('Équipé', `${cachedItem.label} ${bonusTxt ? '('+bonusTxt+')' : ''}`);
 
     window.setup.updateHUD();
-};
+  };
   // ==========================================================
   // DÉSÉQUIPER OBJET — VERSION CORRIGÉE AVEC PROTECTION
   // ==========================================================
@@ -4219,15 +4459,16 @@ Macro.add('addItems', {
   ========================================================== */
 
   function ensureNPCStore() {
-    const v = V();
+    const v = State.variables; // Utilisation directe de State.variables
     if (!v.npcs) {
       v.npcs = {};
     }
   }
 
-  function npcEnsure(name) {
+  // CORRECTION : On attache npcEnsure à window pour qu'il soit accessible globalement
+  window.npcEnsure = function(name) {
     ensureNPCStore();
-    const v = V();
+    const v = State.variables;
     if (!v.npcs[name]) {
       // CRÉATION d'un nouveau PNJ
       const newNPC = {
@@ -4320,11 +4561,18 @@ Macro.add('addItems', {
       if (!n.passage) n.passage = '';
     }
     return v.npcs[name];
-  }
+  };
 
-  function npcGet(name) {
-    return npcEnsure(name);
-  }
+  // Alias local pour que le reste du script continue de fonctionner
+  const npcEnsure = window.npcEnsure;
+
+  // CORRECTION : On exporte aussi npcGet
+  window.npcGet = function(name) {
+    return window.npcEnsure(name);
+  };
+
+  // Alias local
+  const npcGet = window.npcGet;
 
   function clamp(val, min, max) {
     return Math.max(min, Math.min(max, val));
@@ -4500,27 +4748,27 @@ Macro.add('addItems', {
   // ==========================================================
   // 0. NOUVEAU : Vérifie si le PNJ accepte ce TYPE d'arme (ex: Cyndra n'accepte que les arcs)
   window.setup.checkPnjWeaponCompatibility = function(pnjId, itemData) {
-      // Si ce n'est pas une arme, pas de restriction de ce type
-      if (itemData.type !== 'weapon') return true;
+    // Si ce n'est pas une arme, pas de restriction de ce type
+    if (itemData.type !== 'weapon') return true;
 
-      const pnjData = window.setup.loadPNJ(pnjId);
-      // Accès sécurisé aux préférences d'armes dans le JSON (tableau ou string)
-      const allowedTypes = pnjData.pnj?.identite?.type_arme;
+    const pnjData = window.setup.loadPNJ(pnjId);
+    // Accès sécurisé aux préférences d'armes dans le JSON (tableau ou string)
+    const allowedTypes = pnjData.pnj?.identite?.type_arme;
 
-      // Si le PNJ n'a pas de restriction définie dans son JSON, il accepte tout
-      if (!allowedTypes) return true;
+    // Si le PNJ n'a pas de restriction définie dans son JSON, il accepte tout
+    if (!allowedTypes) return true;
 
-      // Normalisation en tableau pour la comparaison (gère "bow" ou ["bow", "dagger"])
-      const allowedArray = Array.isArray(allowedTypes) ? allowedTypes : [allowedTypes];
+    // Normalisation en tableau pour la comparaison (gère "bow" ou ["bow", "dagger"])
+    const allowedArray = Array.isArray(allowedTypes) ? allowedTypes : [allowedTypes];
 
-      // Le sous-type de l'arme (ex: 'dagger', 'sword', 'bow') défini dans weapon_simple.js
-      const itemSubtype = itemData.subtype;
+    // Le sous-type de l'arme (ex: 'dagger', 'sword', 'bow') défini dans weapon_simple.js
+    const itemSubtype = itemData.subtype;
 
-      // Si l'arme n'a pas de sous-type, on autorise (ou bloquer selon votre design)
-      if (!itemSubtype) return true;
+    // Si l'arme n'a pas de sous-type, on autorise (ou bloquer selon votre design)
+    if (!itemSubtype) return true;
 
-      // Vérification : est-ce que le sous-type est dans la liste autorisée ?
-      return allowedArray.includes(itemSubtype);
+    // Vérification : est-ce que le sous-type est dans la liste autorisée ?
+    return allowedArray.includes(itemSubtype);
   };
 
   // 1. VÉRIFICATEUR GLOBAL (Force, Dex, Niveau ET Type d'arme)
@@ -4529,48 +4777,48 @@ Macro.add('addItems', {
     const itemData = window.setup.itemCache && window.setup.itemCache[itemId];
 
     if (!itemData) {
-        if (verbose) console.warn(`⚠️ Item ${itemId} introuvable dans le cache (Check ignoré)`);
-        return false;
+      if (verbose) console.warn(`⚠️ Item ${itemId} introuvable dans le cache (Check ignoré)`);
+      return false;
     }
 
     // --- A. VÉRIFICATION DU TYPE D'ARME (Compatibilité Lore) ---
     if (itemData.type === 'weapon') {
-        if (!window.setup.checkPnjWeaponCompatibility(pnjId, itemData)) {
-            if (verbose) {
-                // Génération d'un dialogue de refus pour le mauvais type d'arme
-                const pnjData = window.setup.loadPNJ(pnjId);
-                const npcName = npc.name;
+      if (!window.setup.checkPnjWeaponCompatibility(pnjId, itemData)) {
+        if (verbose) {
+          // Génération d'un dialogue de refus pour le mauvais type d'arme
+          const pnjData = window.setup.loadPNJ(pnjId);
+          const npcName = npc.name;
 
-                // On cherche la catégorie "wrongType" dans le JSON
-                // Attention aux accents : réaction_joueur vs reaction_joueur
-                const weaponChecks = pnjData.pnj?.réaction_joueur?.weapon_checks || pnjData.pnj?.reaction_joueur?.weapon_checks;
-                const reactions = weaponChecks?.wrongType;
+          // On cherche la catégorie "wrongType" dans le JSON
+          // Attention aux accents : réaction_joueur vs reaction_joueur
+          const weaponChecks = pnjData.pnj?.réaction_joueur?.weapon_checks || pnjData.pnj?.reaction_joueur?.weapon_checks;
+          const reactions = weaponChecks?.wrongType;
 
-                // === DEBUG AJOUTÉ ===
-                console.group(`🔍 DEBUG DIALOGUE REFUS [${pnjId}]`);
-                console.log("Données PNJ complètes:", pnjData);
-                console.log("Section réaction_joueur:", pnjData.pnj?.réaction_joueur);
-                console.log("Section weapon_checks:", weaponChecks);
-                console.log("Messages 'wrongType' trouvés:", reactions);
-                console.groupEnd();
-                // ====================
+          // === DEBUG AJOUTÉ ===
+          console.group(`🔍 DEBUG DIALOGUE REFUS [${pnjId}]`);
+          console.log("Données PNJ complètes:", pnjData);
+          console.log("Section réaction_joueur:", pnjData.pnj?.réaction_joueur);
+          console.log("Section weapon_checks:", weaponChecks);
+          console.log("Messages 'wrongType' trouvés:", reactions);
+          console.groupEnd();
+          // ====================
 
-                let dialogueText = "";
+          let dialogueText = "";
 
-                if (reactions && Array.isArray(reactions) && reactions.length > 0) {
-                     // Choix d'une phrase spécifique "wrongType"
-                     dialogueText = reactions[Math.floor(Math.random() * reactions.length)];
-                } else {
-                     // Phrase par défaut si pas de JSON spécifique ou si fallback PNJ
-                     dialogueText = `Ce n'est pas mon style d'arme. Je préfère : ${pnjData.pnj?.identite?.type_arme || 'autre chose'}.`;
-                     console.warn(`⚠️ Pas de dialogue 'wrongType' trouvé pour ${pnjId}, utilisation du fallback.`);
-                }
+          if (reactions && Array.isArray(reactions) && reactions.length > 0) {
+            // Choix d'une phrase spécifique "wrongType"
+            dialogueText = reactions[Math.floor(Math.random() * reactions.length)];
+          } else {
+            // Phrase par défaut si pas de JSON spécifique ou si fallback PNJ
+            dialogueText = `Ce n'est pas mon style d'arme. Je préfère : ${pnjData.pnj?.identite?.type_arme || 'autre chose'}.`;
+            console.warn(`⚠️ Pas de dialogue 'wrongType' trouvé pour ${pnjId}, utilisation du fallback.`);
+          }
 
-                window.setup.showDialogueNotificationShort(npcName, dialogueText, dialogueText, false);
-                console.log(`⛔ REFUS TYPE ARME [${pnjId}] : "${itemData.subtype}" n'est pas dans [${pnjData.pnj?.identite?.type_arme}]`);
-            }
-            return false;
+          window.setup.showDialogueNotificationShort(npcName, dialogueText, dialogueText, false);
+          console.log(`⛔ REFUS TYPE ARME [${pnjId}] : "${itemData.subtype}" n'est pas dans [${pnjData.pnj?.identite?.type_arme}]`);
         }
+        return false;
+      }
     }
 
     // --- B. VÉRIFICATION DES STATS (Force, Dex, Level) ---
@@ -4578,53 +4826,57 @@ Macro.add('addItems', {
     if (!itemData.requirements) return true;
 
     const req = itemData.requirements;
-    const stats = npc.stats || { strength: 0, dexterity: 0, level: 1 };
+    const stats = npc.stats || {
+      strength: 0,
+      dexterity: 0,
+      level: 1
+    };
 
     let failureReason = null;
 
     // Vérification stricte
     if (req.levelMin && (stats.level || 1) < req.levelMin) {
-        failureReason = 'insufficientLevel';
+      failureReason = 'insufficientLevel';
     } else if (req.forceMin && (stats.strength || 0) < req.forceMin) {
-        failureReason = 'insufficientStrength';
+      failureReason = 'insufficientStrength';
     } else if (req.dexMin && (stats.dexterity || 0) < req.dexMin) {
-        failureReason = 'insufficientDexterity';
+      failureReason = 'insufficientDexterity';
     }
 
     // Si succès stats
     if (!failureReason) {
-        if (verbose) {
-            console.log(`✅ CONDITIONS VALIDÉES pour ${npc.name} avec ${itemId}`);
-            console.log(`   Stats: [F:${stats.strength}|D:${stats.dexterity}|L:${stats.level}] VS Req: [F:${req.forceMin || 0}|D:${req.dexMin || 0}|L:${req.levelMin || 0}]`);
-        }
-        return true;
+      if (verbose) {
+        console.log(`✅ CONDITIONS VALIDÉES pour ${npc.name} avec ${itemId}`);
+        console.log(`   Stats: [F:${stats.strength}|D:${stats.dexterity}|L:${stats.level}] VS Req: [F:${req.forceMin || 0}|D:${req.dexMin || 0}|L:${req.levelMin || 0}]`);
+      }
+      return true;
     }
 
     // Si échec stats
     if (verbose) {
-        const pnjData = window.setup.loadPNJ(pnjId);
-        // Gestion des accents (réaction vs reaction)
-        const reactionsData = pnjData.pnj?.réaction_joueur || pnjData.pnj?.reaction_joueur || {};
+      const pnjData = window.setup.loadPNJ(pnjId);
+      // Gestion des accents (réaction vs reaction)
+      const reactionsData = pnjData.pnj?.réaction_joueur || pnjData.pnj?.reaction_joueur || {};
 
-        const isWeapon = itemData.type === 'weapon';
-        const checkCategory = isWeapon ? 'weapon_checks' : 'equipment_checks';
+      const isWeapon = itemData.type === 'weapon';
+      const checkCategory = isWeapon ? 'weapon_checks' : 'equipment_checks';
 
-        const dialogueList = reactionsData[checkCategory]?.[failureReason];
-        let dialogueText = "";
+      const dialogueList = reactionsData[checkCategory]?.[failureReason];
+      let dialogueText = "";
 
-        if (dialogueList && Array.isArray(dialogueList) && dialogueList.length > 0) {
-            const randomIndex = Math.floor(Math.random() * dialogueList.length);
-            dialogueText = dialogueList[randomIndex];
-        } else {
-            // Fallback générique si le JSON ne contient pas la catégorie d'erreur
-            const itemLabel = itemData.label || "cet objet";
-            if (failureReason === 'insufficientStrength') dialogueText = `C'est trop lourd pour moi.`;
-            else if (failureReason === 'insufficientDexterity') dialogueText = `Je ne suis pas assez agile pour utiliser ${itemLabel}.`;
-            else dialogueText = `Je n'ai pas assez d'expérience pour utiliser ${itemLabel}.`;
-        }
+      if (dialogueList && Array.isArray(dialogueList) && dialogueList.length > 0) {
+        const randomIndex = Math.floor(Math.random() * dialogueList.length);
+        dialogueText = dialogueList[randomIndex];
+      } else {
+        // Fallback générique si le JSON ne contient pas la catégorie d'erreur
+        const itemLabel = itemData.label || "cet objet";
+        if (failureReason === 'insufficientStrength') dialogueText = `C'est trop lourd pour moi.`;
+        else if (failureReason === 'insufficientDexterity') dialogueText = `Je ne suis pas assez agile pour utiliser ${itemLabel}.`;
+        else dialogueText = `Je n'ai pas assez d'expérience pour utiliser ${itemLabel}.`;
+      }
 
-        window.setup.showDialogueNotificationShort(npc.name, dialogueText, dialogueText, false);
-        console.log(`⛔ REFUS D'ÉQUIPEMENT [${pnjId}] : ${failureReason} (Stats: F${stats.strength}/D${stats.dexterity}) vs (Req: F${req.forceMin}/D${req.dexMin})`);
+      window.setup.showDialogueNotificationShort(npc.name, dialogueText, dialogueText, false);
+      console.log(`⛔ REFUS D'ÉQUIPEMENT [${pnjId}] : ${failureReason} (Stats: F${stats.strength}/D${stats.dexterity}) vs (Req: F${req.forceMin}/D${req.dexMin})`);
     }
 
     return false;
@@ -4660,7 +4912,7 @@ Macro.add('addItems', {
     // B. VÉRIFICATION STRICTE (Stats + Type)
     // Si checkPnjEquipRequirements renvoie false, ON ARRÊTE TOUT ICI.
     if (!window.setup.checkPnjEquipRequirements(pnjId, itemId, true)) {
-        return false;
+      return false;
     }
 
     // C. Déséquiper l'item actuel si présent
@@ -4703,7 +4955,6 @@ Macro.add('addItems', {
     if (window.renderBuddiesPanel) window.renderBuddiesPanel();
     return true;
   };
-
 
   // ------------------------------
   // Relations / Loyauté / Humeur — APIs + Macros
@@ -4748,23 +4999,53 @@ Macro.add('addItems', {
   // PANNEAU COMPAGNONS + MENU CONTEXTUEL (corrigé)
   // — version stable : le menu reste ouvert même avec filtres / interactions UI
   // ==========================================================
+  window.setup.lastBuddiesState = null;
+
   window.renderBuddiesPanel = function() {
     const v = State.variables;
     const $panel = $('#buddies-panel');
-
-    // Nettoyage timer existant
-    if (window.setup.buddiesPanelInterval) {
-      clearInterval(window.setup.buddiesPanelInterval);
-      window.setup.buddiesPanelInterval = null;
-    }
 
     // Filtrage des compagnons actifs
     const all = Object.values(v.npcs || {});
     const list = all.filter(n => n.isSpawned && n.isBuddy);
 
     if (!list.length) {
-      $panel.html('<em style="opacity:.6; font-style:italic; padding:10px; display:block;">Aucun compagnon.</em>');
+      // Si vide, on met le message par défaut (si pas déjà mis)
+      const emptyHTML = '<em style="opacity:.6; font-style:italic; padding:10px; display:block;">Aucun compagnon.</em>';
+      if ($panel.html() !== emptyHTML) {
+          $panel.html(emptyHTML);
+          window.setup.lastBuddiesState = "EMPTY";
+      }
       return;
+    }
+
+    // 1. GÉNÉRATION DU HASH D'ÉTAT (Pour éviter le redraw)
+    // On construit une chaîne signature unique basée sur les données affichées.
+    // Si cette chaîne ne change pas, pas besoin de toucher au DOM.
+    const currentState = list.map(b => {
+        let loc = window.setup.getLocationString(b.coordinates, b.continent);
+        // Si en voyage, on ajoute l'heure de fin pour que le changement d'étape rafraîchisse l'UI
+        if(b.status === 'traveling' && b.travelCurrentStep) {
+            loc += `_${b.travelCurrentStep.desc}_${b.travelCurrentStep.endTime}`;
+        }
+        // Signature : Nom + Santé + Statut + Lieu
+        return `${b.name}|${b.health}/${b.maxHealth}|${b.status}|${loc}`;
+    }).join('||');
+
+    // 2. VÉRIFICATION DU CACHE
+    // Si l'état n'a pas changé et que le panneau est bien rempli, on ne fait RIEN.
+    // Cela épargne le CPU et évite le scintillement.
+    if (currentState === window.setup.lastBuddiesState && $panel.children().length > 0) {
+        return;
+    }
+
+    // Mise à jour du cache
+    window.setup.lastBuddiesState = currentState;
+
+    // Si on arrive ici, on doit redessiner. On nettoie le timer d'animation précédent.
+    if (window.setup.buddiesPanelInterval) {
+      clearInterval(window.setup.buddiesPanelInterval);
+      window.setup.buddiesPanelInterval = null;
     }
 
     // On vide pour reconstruire proprement
@@ -4778,19 +5059,28 @@ Macro.add('addItems', {
       // Statut
       let statusClass = 'buddy-fixed';
       let statusLabel = 'Attend';
-      if (b.status === 'follow') { statusClass = 'buddy-follow'; statusLabel = 'Suit'; }
-      if (b.status === 'traveling') { statusClass = 'buddy-traveling'; statusLabel = 'Voyage'; }
-      if (!b.isAlive) { statusClass = 'buddy-dead'; statusLabel = 'Mort'; }
+      if (b.status === 'follow') {
+        statusClass = 'buddy-follow';
+        statusLabel = 'Suit';
+      }
+      if (b.status === 'traveling') {
+        statusClass = 'buddy-traveling';
+        statusLabel = 'Voyage';
+      }
+      if (!b.isAlive) {
+        statusClass = 'buddy-dead';
+        statusLabel = 'Mort';
+      }
 
       // Localisation
       let locationText = window.setup.getLocationString(b.coordinates, b.continent);
 
-      // Bloc Voyage
+      // Bloc Voyage (Barre de progression)
       let travelHTML = '';
       if (b.status === 'traveling' && b.travelCurrentStep) {
-          const step = b.travelCurrentStep;
-          locationText = `En route vers ${step.targetName || 'destination'}`;
-          travelHTML = `
+        const step = b.travelCurrentStep;
+        locationText = `En route vers ${step.targetName || 'destination'}`;
+        travelHTML = `
             <div class="buddy-travel-wrapper" 
                  data-end="${step.endTime}" 
                  data-total="${step.duration}">
@@ -4822,47 +5112,48 @@ Macro.add('addItems', {
 
       // Clic -> Modale Détails
       $entry.on('click', function(e) {
-         e.preventDefault(); e.stopPropagation();
-         window.setup.showPnjModal($(this).data('name'));
+        e.preventDefault();
+        e.stopPropagation();
+        window.setup.showPnjModal($(this).data('name'));
       });
 
       // Clic Droit -> Menu Contextuel
       $entry.on('contextmenu', function(e) {
-         e.preventDefault(); e.stopPropagation();
-         window.setup.showBuddyContextMenu(e, $(this).data('name'));
+        e.preventDefault();
+        e.stopPropagation();
+        window.setup.showBuddyContextMenu(e, $(this).data('name'));
       });
 
       $panel.append($entry);
     });
 
-    // Animation Timer Voyage
+    // Animation Timer Voyage (Relancée uniquement si nécessaire)
     if ($panel.find('.buddy-travel-wrapper').length > 0) {
-        window.setup.buddiesPanelInterval = setInterval(() => {
-            const now = Date.now();
-            $panel.find('.buddy-travel-wrapper').each(function() {
-                const $w = $(this);
-                const end = Number($w.data('end'));
-                const total = Number($w.data('total'));
-                const remaining = end - now;
+      window.setup.buddiesPanelInterval = setInterval(() => {
+        const now = Date.now();
+        $panel.find('.buddy-travel-wrapper').each(function() {
+          const $w = $(this);
+          const end = Number($w.data('end'));
+          const total = Number($w.data('total'));
+          const remaining = end - now;
 
-                if (remaining <= 0) {
-                    $w.find('.travel-progress-fill').css('width', '100%');
-                    $w.find('.travel-timer-text').text('');
-                } else {
-                    const pct = Math.min(100, Math.max(0, ((total - remaining) / total) * 100));
-                    $w.find('.travel-progress-fill').css('width', `${pct}%`);
-                    $w.find('.travel-timer-text').text(`${Math.ceil(remaining/1000)}s`);
-                }
-            });
-        }, 100);
+          if (remaining <= 0) {
+            $w.find('.travel-progress-fill').css('width', '100%');
+            $w.find('.travel-timer-text').text('');
+          } else {
+            const pct = Math.min(100, Math.max(0, ((total - remaining) / total) * 100));
+            $w.find('.travel-progress-fill').css('width', `${pct}%`);
+            $w.find('.travel-timer-text').text(`${Math.ceil(remaining/1000)}s`);
+          }
+        });
+      }, 100);
     }
-};
-
+  };
 
   window.setup.showBuddyContextMenu = function(e, name) {
     const v = State.variables;
     const npc = v.npcs[name];
-    if(!npc) return;
+    if (!npc) return;
 
     const $menu = $('<div id="buddy-context-menu" class="context-menu"></div>').appendTo('body');
 
@@ -4886,7 +5177,9 @@ Macro.add('addItems', {
       addOption('Attendre ici', () => {
         npc.status = 'fixed';
         npc.passage = State.passage;
-        npc.coordinates = { ...window.setup.ensurePassageCoords(State.passage) };
+        npc.coordinates = {
+          ...window.setup.ensurePassageCoords(State.passage)
+        };
         window.renderBuddiesPanel();
       });
       addOption('Parler', () => window.setup.openChatModal(name));
@@ -4902,7 +5195,10 @@ Macro.add('addItems', {
 
     const posX = Math.min(e.pageX + 10, window.innerWidth - 240);
     const posY = Math.min(e.pageY + 10, window.innerHeight - 240);
-    $menu.css({ top: `${posY}px`, left: `${posX}px` });
+    $menu.css({
+      top: `${posY}px`,
+      left: `${posX}px`
+    });
 
     $(document).one('mousedown.buddymenuclose', ev => {
       if (!$(ev.target).closest('#buddy-context-menu').length) $menu.remove();
@@ -4936,7 +5232,10 @@ Macro.add('addItems', {
     if (posX + 200 > winW) posX = x - 205;
     if (posY + (buddies.length * 40) > winH) posY = winH - (buddies.length * 40);
 
-    menu.css({ top: `${posY}px`, left: `${posX}px` });
+    menu.css({
+      top: `${posY}px`,
+      left: `${posX}px`
+    });
     menu.append('<div class="context-title">Donner à :</div>');
 
     buddies.forEach(([key, buddy]) => {
@@ -4958,14 +5257,16 @@ Macro.add('addItems', {
     });
 
     setTimeout(() => {
-        $(document).one('click.closegive', function() { menu.remove(); });
+      $(document).one('click.closegive', function() {
+        menu.remove();
+      });
     }, 10);
-};
+  };
 
   // ==========================================================
   // DONNER AUX COMPAGNONS
   // ==========================================================
-window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
+  window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
     try {
       const v = V();
       const npc = npcEnsure(pnjId);
@@ -5000,17 +5301,17 @@ window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
       // On vérifie la compatibilité si l'objet existe
       // checkPnjEquipRequirements gère les Stats ET le Type d'arme
       if (itemData) {
-          // Si c'est une arme OU si l'objet a des stats requises
-          if (itemData.type === 'weapon' || itemData.requirements) {
-              // checkPnjEquipRequirements avec verbose=true va :
-              // 1. Vérifier type/stats
-              // 2. Si échec : Jouer le dialogue de refus ET renvoyer false
-              if (!window.setup.checkPnjEquipRequirements(pnjId, itemId, true)) {
-                  console.log(`🚫 DON ANNULÉ : ${npc.name} refuse l'objet (Incompatible ou stats insuffisantes)`);
-                  // On arrête tout : l'objet reste chez le joueur, pas de transfert.
-                  return false;
-              }
+        // Si c'est une arme OU si l'objet a des stats requises
+        if (itemData.type === 'weapon' || itemData.requirements) {
+          // checkPnjEquipRequirements avec verbose=true va :
+          // 1. Vérifier type/stats
+          // 2. Si échec : Jouer le dialogue de refus ET renvoyer false
+          if (!window.setup.checkPnjEquipRequirements(pnjId, itemId, true)) {
+            console.log(`🚫 DON ANNULÉ : ${npc.name} refuse l'objet (Incompatible ou stats insuffisantes)`);
+            // On arrête tout : l'objet reste chez le joueur, pas de transfert.
+            return false;
           }
+        }
       }
 
       // === TRANSACTION VALIDÉE : RETRAIT JOUEUR ===
@@ -5331,8 +5632,12 @@ window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
     // Fallback si loadPNJ échoue
     if (!pnjData) {
       return {
-          identite: { nom: pnjId, peuple: 'Inconnu', metier_principal: 'Inconnu' },
-          description: "Données non trouvées."
+        identite: {
+          nom: pnjId,
+          peuple: 'Inconnu',
+          metier_principal: 'Inconnu'
+        },
+        description: "Données non trouvées."
       };
     }
 
@@ -5466,133 +5771,242 @@ window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
   /* ==========================================================
            MODALE CHAT PNJ — VERSION 100% CONFORME AU CSS CORRIGÉ
            ========================================================== */
-  window.setup.openChatModal = function(pnjId) {
-    $('#chat-modal, #modal-overlay-chat').remove();
+(function() {
+    'use strict';
 
-    const $overlay = $('<div id="modal-overlay-chat"></div>').appendTo('body');
-    const $modal = $('<div id="chat-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
+    window.setup = window.setup || {};
 
-    const pnj = window.setup.loadPNJ(pnjId);
-    const v = V();
+    /* ------------------------------------------------------
+       1. SCANNER D'ÉTAT DU JEU (Game Context)
+       ------------------------------------------------------ */
+    window.setup.getGameContext = function(pnjId) {
+        const v = State.variables;
 
-    const safeName = window.setup.escapeHtml(
-      pnj.pnj?.identite?.nom_complet ||
-      pnj.pnj?.identite?.nom ||
-      pnj.nom_complet ||
-      pnj.nom ||
-      pnjId
-    );
+        // 1. RÉCUPÉRATION PNJ (Recherche Insensible à la Casse)
+        let npc = v.npcs ? v.npcs[pnjId] : null;
+        if (!npc && v.npcs) {
+            const targetKey = Object.keys(v.npcs).find(k => k.toLowerCase() === pnjId.toLowerCase());
+            if (targetKey) npc = v.npcs[targetKey];
+        }
 
-    const race = pnj.pnj?.identite?.peuple || pnj.pnj?.identite?.race || '';
-    const metier = pnj.pnj?.identite?.metier_principal || pnj.pnj?.identite?.metier || '';
-    const subtitle = [race, metier].filter(Boolean).join(' - ');
+        // Fallback
+        npc = npc || {
+            health: 20, maxHealth: 20, inventory: {}, equipment: {}, status: 'unknown',
+            coordinates: {x:0, y:0}, continent: "Eldaron"
+        };
 
-    v.chatHistory = v.chatHistory || {};
-    const history = v.chatHistory[pnjId] = v.chatHistory[pnjId] || [];
+        // --- A. GÉOGRAPHIE ---
+        // On récupère la position calculée par le système JS
+        const geoData = window.setup.getGeographyData ? window.setup.getGeographyData() : null;
 
-    $modal.html(`
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <img class="icon-1em" src="${ICONS.speak}" alt="">
-                                    <div>
-                                        <span>${safeName}</span>
-                                        ${subtitle ? `<span style="font-size:0.78em; opacity:0.8; display:block; margin-top:3px;">${window.setup.escapeHtml(subtitle)}</span>` : ''}
-                                    </div>
-                                </div>
-            
-                                <div class="modal-body">
-                                    <div id="chat-log">
-                                        ${history.slice(-20).map(m => 
-                                            `<div class="${m.role==='user'?'chat-player':'chat-pnj'}">
-                                                ${window.setup.escapeHtml(m.content)}
-                                            </div>`
-                                        ).join('')}
-                                    </div>
-                                    <textarea id="chat-input" placeholder="Écrivez votre message..."></textarea>
-                                </div>
-            
-                                <div class="modal-footer">
-                                    <button id="chat-send">Envoyer</button>
-                                    <button id="chat-close" class="modal-close">Fermer</button>
-                                </div>
-                            </div>
-                        `);
+        // SÉCURISATION DES COORDONNÉES (Float forcé)
+        const targetCoords = {
+            x: Number(npc.coordinates?.x || 0),
+            y: Number(npc.coordinates?.y || 0)
+        };
+        const targetContinent = npc.continent || "Eldaron";
 
-    $('body').addClass('modal-open');
+        // Calcul du nom du lieu (Logique JS conservée car elle est la vérité terrain pour le joueur)
+        let locationName = window.setup.getLocationString ?
+                           window.setup.getLocationString(targetCoords, targetContinent) :
+                           "Lieu Inconnu";
 
-    const $log = $('#chat-log');
-    const $input = $('#chat-input');
-    const $send = $('#chat-send');
+        // On essaie de récupérer la description du nœud le plus proche pour enrichir le contexte
+        let locationDesc = "Environnement sauvage ou indéfini.";
+        let locationId = "unknown";
 
-    setTimeout(() => $log.scrollTop($log[0].scrollHeight), 50);
+        if (geoData && geoData.nodes) {
+            let bestNode = null;
+            let minDistance = 2.0; // Rayon de "présence"
 
-    $overlay.add('#chat-close').on('click', () => {
-      $modal.remove();
-      $overlay.remove();
-      $('body').removeClass('modal-open');
-    });
+            Object.entries(geoData.nodes).forEach(([id, node]) => {
+                const nodeCont = (node.continent || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                const npcCont = targetContinent.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                if (nodeCont !== npcCont) return;
 
-    async function send() {
-      const text = $input.val().trim();
-      if (!text) return;
+                const dist = Math.sqrt(Math.pow(node.x - targetCoords.x, 2) + Math.pow(node.y - targetCoords.y, 2));
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    bestNode = node;
+                    locationId = id;
+                }
+            });
 
-      $input.val('').prop('disabled', true);
-      $send.prop('disabled', true).text('Envoi...');
+            if (bestNode) {
+                locationDesc = bestNode.description || locationDesc;
+                // Si on est très proche, on utilise le nom exact du nœud
+                if (minDistance < 0.5) locationName = bestNode.name;
+            }
+        }
 
-      $log.append(`<div class="chat-player">${window.setup.escapeHtml(text)}</div>`);
-      history.push({
-        role: 'user',
-        content: text,
-        timestamp: Date.now()
-      });
-      $log.scrollTop($log[0].scrollHeight);
+        // --- B. HELPER ITEMS ---
+        const getItemLabel = (id) => {
+            if (!id) return "Rien";
+            const item = window.setup.getItemFromCache ? window.setup.getItemFromCache(id) : null;
+            return item ? (item.label || id) : id;
+        };
 
-      try {
-        const res = await fetch('http://127.0.0.1:5001/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            pnj_id: pnjId,
-            player_message: text,
-            player_history: history.slice(-12),
-            pnj_data: pnj
-          })
+        // --- C. FORMATAGE ÉQUIPEMENT ---
+        const formatEquipment = (equipData) => {
+            if (!equipData || Object.keys(equipData).length === 0) return "Rien d'équipé (En civil / Désarmé)";
+            const parts = [];
+            const slots = ['weapon', 'shield', 'head', 'torso'];
+            slots.forEach(slot => {
+                const itemId = equipData[slot];
+                if (itemId) {
+                    const label = getItemLabel(itemId);
+                    if (slot === 'weapon') parts.push(`ARME: ${label}`);
+                    else if (slot === 'shield') parts.push(`MAIN GAUCHE: ${label}`);
+                    else parts.push(`${slot.toUpperCase()}: ${label}`);
+                }
+            });
+            if (parts.length === 0) return "Rien d'équipé";
+            return parts.join(' | ');
+        };
+
+        // CONSTRUCTION DU PACKET
+        // On envoie explicitement les coordonnées brutes ET le texte interprété
+        const context = {
+            location: {
+                nom_visuel: locationName, // "Eldaron - Proche de Lorn"
+                description_sensorielle: locationDesc,
+                id_technique: locationId,
+                continent: targetContinent,
+                coords: targetCoords, // x, y (Nombres garantis)
+                joueur_present: true // On assume true si on chatte
+            },
+            player: {
+                nom: "Joueur", // Pourrait être dynamique
+                sante: `${v.current_player_health || 10}/${v.max_player_health || 10}`,
+                equipement_visible: formatEquipment(v.equipped)
+            },
+            npc: {
+                sante: `${npc.health}/${npc.maxHealth}`,
+                statut: npc.status || 'fixed',
+                equipement_reelle: formatEquipment(npc.equipment),
+                humeur: npc.mood || 0
+            }
+        };
+
+        console.log(`📦 [CONTEXT] Envoi au cerveau PNJ:`, context);
+        return context;
+    };
+
+    /* ------------------------------------------------------
+       2. MODALE DE CHAT CONNECTÉE AU SERVEUR
+       ------------------------------------------------------ */
+    window.setup.openChatModal = function(pnjId) {
+        $('#chat-modal, #modal-overlay-chat').remove();
+        const $overlay = $('<div id="modal-overlay-chat"></div>').appendTo('body');
+        const $modal = $('<div id="chat-modal" role="dialog" aria-modal="true"></div>').appendTo('body');
+
+        const pnj = window.setup.loadPNJ ? window.setup.loadPNJ(pnjId) : { pnj: { identite: { nom_complet: pnjId } } };
+        const v = State.variables;
+        const safeName = window.setup.escapeHtml(pnj.pnj?.identite?.nom_complet || pnjId);
+        const subtitle = [pnj.pnj?.identite?.peuple, pnj.pnj?.identite?.metier_principal].filter(Boolean).join(' - ');
+
+        v.chatHistory = v.chatHistory || {};
+        const history = v.chatHistory[pnjId] = v.chatHistory[pnjId] || [];
+
+        const contentHTML = `
+            <div class="modal-header">
+                <img class="icon-1em" src="${window.ICONS ? window.ICONS.speak : 'images/icons/speak.png'}" alt="">
+                <div style="display:flex; flex-direction:column;">
+                    <span style="line-height:1;">${safeName}</span>
+                    ${subtitle ? `<span style="font-size:0.55em; opacity:0.7; font-weight:normal;">${window.setup.escapeHtml(subtitle)}</span>` : ''}
+                </div>
+            </div>
+            <div class="modal-body" style="display:flex; flex-direction:column; overflow:hidden; padding:0;">
+                <div id="chat-log">
+                    ${history.slice(-20).map(m => 
+                        `<div class="${m.role==='user'?'chat-player':'chat-pnj'}">
+                            ${window.setup.escapeHtml(m.content)}
+                        </div>`
+                    ).join('')}
+                </div>
+                <div style="padding:10px; background:rgba(0,0,0,0.2);">
+                     <textarea id="chat-input" placeholder="Écrivez votre message..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="chat-send">Envoyer</button>
+                <button id="chat-close" class="modal-close">Fermer</button>
+            </div>
+        `;
+
+        $modal.html(`<div class="modal-content" style="height:100%;">${contentHTML}</div>`);
+        $('body').addClass('modal-open');
+
+        const $log = $('#chat-log');
+        const $input = $('#chat-input');
+        const $send = $('#chat-send');
+
+        setTimeout(() => $log.scrollTop($log[0].scrollHeight), 50);
+
+        const close = () => {
+          $modal.remove();
+          $overlay.remove();
+          $('body').removeClass('modal-open');
+        };
+        $overlay.on('click', close);
+        $modal.find('#chat-close').on('click', close);
+
+        async function send() {
+            const text = $input.val().trim();
+            if (!text) return;
+
+            $input.val('').prop('disabled', true);
+            $log.append(`<div class="chat-player">${window.setup.escapeHtml(text)}</div>`);
+            history.push({ role: 'user', content: text, timestamp: Date.now() });
+            $log.scrollTop($log[0].scrollHeight);
+
+            // --- GÉNÉRATION DU CONTEXTE ---
+            const gameContext = window.setup.getGameContext(pnjId);
+            console.log("📤 [CHAT] Envoi Payload:", { pnj_id: pnjId, context: gameContext });
+
+            try {
+                const response = await fetch("http://127.0.0.1:5001/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        pnj_id: pnjId,
+                        player_message: text,
+                        history: history.slice(-10),
+                        game_context: gameContext
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.ok && data.reply) {
+                    $log.append(`<div class="chat-pnj">${window.setup.escapeHtml(data.reply)}</div>`);
+                    history.push({ role: 'assistant', content: data.reply, timestamp: Date.now() });
+                } else {
+                    $log.append(`<div class="chat-error" style="color:#ff6b6b; font-size:0.8em;">Erreur: ${data.error || "Réponse vide"}</div>`);
+                }
+
+            } catch (e) {
+                console.error(e);
+                $log.append(`<div class="chat-error" style="color:#ff6b6b; font-size:0.8em;">Serveur PNJ injoignable.</div>`);
+            }
+
+            $log.scrollTop($log[0].scrollHeight);
+            $input.prop('disabled', false).focus();
+        }
+
+        $send.on('click', send);
+        $input.on('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                send();
+            }
         });
 
-        const data = await res.json();
-        const reply = data.ok ? data.reply : `[${safeName} ne répond pas…]`;
+        setTimeout(() => $input.focus(), 100);
+    };
 
-        $log.append(`<div class="chat-pnj">${window.setup.escapeHtml(reply)}</div>`);
-        history.push({
-          role: 'assistant',
-          content: reply,
-          timestamp: Date.now()
-        });
-      } catch (err) {
-        $log.append(`<div class="chat-error">Erreur serveur</div>`);
-        console.error(err);
-      }
-
-      $log.scrollTop($log[0].scrollHeight);
-      $input.prop('disabled', false).focus();
-      $send.prop('disabled', false).text('Envoyer');
-
-      const npc = npcEnsure(pnjId);
-      npc.relation = Math.min(100, (npc.relation || 40) + 1);
-    }
-
-    $send.on('click', send);
-    $input.on('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        send();
-      }
-    });
-
-    setTimeout(() => $input.focus(), 100);
-  };
+    console.log("✅ Tracking PNJ V2 (Casse-Insensible + Équipement Explicite) activé.");
+})();
 
   // ==========================================================
   // DEBUG IMMÉDIAT
@@ -5799,10 +6213,10 @@ window.setup.giveItemToBuddy = function(pnjId, itemId, quantity = 1) {
     // C'est ici que la magie opère : on verrouille la position du joueur (Macro ou Auto-détection)
     // Cela garantit que v.playerCoordinates est correct AVANT de bouger les PNJ.
     if (window.setup.syncPlayerPosition) {
-        window.setup.syncPlayerPosition();
+      window.setup.syncPlayerPosition();
     } else {
-        // Fallback de sécurité si la fonction n'est pas encore chargée
-        window.setup.ensurePassageCoords(State.variables.currentPassage);
+      // Fallback de sécurité si la fonction n'est pas encore chargée
+      window.setup.ensurePassageCoords(State.variables.currentPassage);
     }
 
     // C. GESTION DU DÉPLACEMENT PNJ

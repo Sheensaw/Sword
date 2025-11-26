@@ -6,6 +6,7 @@ SWORD - Lanceur du jeu Twine (Mode Fenêtré 4:3 Strict)
 import sys
 import logging
 import json
+import subprocess
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl, QPoint
@@ -62,11 +63,17 @@ class SwordGame(QMainWindow):
         super().__init__()
         self.setWindowTitle("SWORD RPG - 4:3 Windowed")
 
+        # Processus du serveur
+        self.server_process = None
+
         # Chemins des fichiers
-        base_path = Path(__file__).resolve().parent
-        self.html_path = base_path / "Game.html"
-        self.js_path = base_path / "JavaScript.js"
-        self.css_path = base_path / "CSS.css"
+        self.base_path = Path(__file__).resolve().parent
+        self.html_path = self.base_path / "Game.html"
+        self.js_path = self.base_path / "JavaScript.js"
+        self.css_path = self.base_path / "CSS.css"
+
+        # Démarrage du serveur PNJ
+        self.start_server()
 
         # Vue WebEngine
         self.view = QWebEngineView(self)
@@ -84,6 +91,39 @@ class SwordGame(QMainWindow):
         self._add_shortcuts()
         self.center_on_active_screen()
         self.show()
+
+    def start_server(self):
+        """Lance le serveur python situé dans server/pnj_server.py"""
+        server_script = self.base_path / "server" / "pnj_server.py"
+
+        if server_script.exists():
+            try:
+                logger.info(f"🚀 Démarrage du serveur PNJ : {server_script}")
+                # Lance le serveur avec l'interpréteur python actuel
+                self.server_process = subprocess.Popen(
+                    [sys.executable, str(server_script)],
+                    cwd=str(self.base_path / "server")  # Définit le dossier de travail
+                )
+            except Exception as e:
+                logger.error(f"❌ Impossible de lancer le serveur PNJ : {e}")
+        else:
+            logger.warning(f"⚠️ Serveur PNJ introuvable à : {server_script}")
+
+    def stop_server(self):
+        """Arrête le serveur proprement à la fermeture"""
+        if self.server_process:
+            logger.info("🛑 Arrêt du serveur PNJ...")
+            self.server_process.terminate()
+            try:
+                self.server_process.wait(timeout=2)
+            except subprocess.TimeoutExpired:
+                self.server_process.kill()
+            self.server_process = None
+
+    def closeEvent(self, event):
+        """Surcharge la fermeture de la fenêtre pour tuer le serveur"""
+        self.stop_server()
+        super().closeEvent(event)
 
     def _setup_web_engine(self):
         profile = QWebEngineProfile.defaultProfile()
